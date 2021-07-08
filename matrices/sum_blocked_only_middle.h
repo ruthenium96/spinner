@@ -54,9 +54,15 @@ public:
     void eigendecomposition(arma::vec & eigval, arma::vec & s_squared_new_basis_vector,
                             arma::vec & degeneracy) {
         // TODO: что-то вроде проверки на то, что матрица построена
+
+        construct_hamiltonian();
+
         arma::mat eigvec;
         arma::eig_sym(eigval, eigvec, middle_of_hamiltonian);
         eigval -= eigval.min();
+        middle_of_hamiltonian.reset();
+
+        construct_s_squared();
         arma::mat s_squared_new_basis = eigvec.t() * middle_of_s_squared * eigvec;
         s_squared_new_basis_vector = s_squared_new_basis.diag();
         degeneracy = sqrt(4 * s_squared_new_basis_vector + arma::ones(size(s_squared_new_basis_vector)));
