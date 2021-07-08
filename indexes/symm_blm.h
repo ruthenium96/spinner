@@ -18,9 +18,9 @@ struct Spin_Boundary {
     std::vector<unsigned long> symm_boundaries;
 };
 
-struct Block_Lex_Map_Symm : Block_Lex_Map {
+struct Block_Lex_Map_Symm : Indexes {
 public:
-    explicit Block_Lex_Map_Symm(std::vector<int> mults) : Block_Lex_Map(std::move(mults)) {}
+    explicit Block_Lex_Map_Symm(std::vector<int> mults) : Indexes(std::move(mults)) {}
     arma::dmat construct_transformation(int spin, int symmetry) const;
     std::vector<Spin_Boundary> spin_boundaries;
 

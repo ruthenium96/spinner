@@ -6,5 +6,6 @@
 #include "sum_blocked.h"
 #include "sum_blocked_only_middle.h"
 #include "sum_blocked_only_middle_sparse.h"
+#include "sym_matrices.h"
 
-#endif //JULY_MATRICES_H
+#endif

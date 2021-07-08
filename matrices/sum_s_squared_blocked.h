@@ -18,7 +18,7 @@ public:
 
     Add_To_Matrix hamiltonian_ = static_cast<Add_To_Matrix>(&Only_J_S_Squared::add_to_hamiltonian);
 
-    Only_J_S_Squared(const Block_Lex_Map &blm,
+    Only_J_S_Squared(const Indexes &blm,
                      const arma::dmat &js) : Matrices(blm), js(js) {}
 
     void construct_hamiltonian() {

@@ -12,10 +12,11 @@ add_library(blm
         indexes/base_blm.h indexes/base_blm.cpp
         indexes/symm_blm.h indexes/symm_blm.cpp
         indexes/P1_blm.h indexes/P1_blm.cpp
-        indexes/P2_blm.h indexes/P2_blm.cpp)
+        indexes/P2_blm.h indexes/P2_blm.cpp indexes/base_blm_C1.h
+        indexes/base_blm_C2.h indexes/base_blm_C2.cpp)
 
 add_library(matrices
-        matrices/base_matrices.h matrices/base_matrices.cpp)
+        matrices/base_matrices.h matrices/base_matrices.cpp matrices/sym_matrices.h)
 
 target_link_libraries(blm ${ARMADILLO_LIBRARIES} wignerSymbols)
 target_link_libraries(matrices ${ARMADILLO_LIBRARIES})
