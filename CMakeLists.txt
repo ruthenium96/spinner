@@ -4,21 +4,25 @@ add_subdirectory(libs)
 
 project(july)
 
+find_package(Boost)
+include_directories(${Boost_INCLUDE_DIRS})
+
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 add_library(blm
         indexes/blm.h
         indexes/base_blm.h indexes/base_blm.cpp
-        indexes/symm_blm.h indexes/symm_blm.cpp
-        indexes/P1_blm.h indexes/P1_blm.cpp
-        indexes/P2_blm.h indexes/P2_blm.cpp)
+        indexes/base_blm_C1.h indexes/base_blm_C1.cpp
+        indexes/base_blm_C2.h indexes/base_blm_C2.cpp indexes/quantum_numbers.h)
 
 add_library(matrices
-        matrices/base_matrices.h matrices/base_matrices.cpp)
+        matrices/base_matrices.h matrices/base_matrices.cpp
+        matrices/full.h matrices/base_matrices.h matrices/sum_blocked.h
+        matrices/sum_blocked_only_middle.h matrices/sum_s2_blocked.h)
 
-target_link_libraries(blm ${ARMADILLO_LIBRARIES} wignerSymbols)
-target_link_libraries(matrices ${ARMADILLO_LIBRARIES})
+target_link_libraries(blm ${ARMADILLO_LIBRARIES} wignerSymbols ${Boost_LIBRARIES})
+target_link_libraries(matrices ${ARMADILLO_LIBRARIES} blm)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)

@@ -12,8 +12,8 @@ public:
     }
 };
 
-// to unify all triples {energies, s_squared, degeneracy}
-// returns 2-column matrix {energies, s_squared} sorted by energy
+// to unify all triples {energies, block_of_s_squared, degeneracy}
+// returns 2-column matrix {energies, block_of_s_squared} sorted by energy
 arma::dmat unify(arma::vec energy, arma::vec s_squared, arma::vec degeneracy) {
     EXPECT_EQ(energy.n_elem, s_squared.n_elem);
     EXPECT_EQ(energy.n_elem, degeneracy.n_elem);
@@ -41,7 +41,7 @@ TEST(Full_correctness, 22) {
     arma::vec s_squared;
     arma::vec degeneracy;
     std::vector<int> mults = {2, 2};
-    Block_Lex_Map blm(mults);
+    Indexes blm(mults);
 
     for (int i = 0; i < 100; ++i) {
         std::uniform_real_distribution<double> dist(0, 200.0);

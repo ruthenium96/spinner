@@ -5,73 +5,100 @@
 
 // build and diagonalize central block of Hamiltonian.
 // then multiply formulas to multiplicity
-struct Only_J : Matrices {
-public:
-    arma::dmat middle_of_hamiltonian;
-    arma::dmat middle_of_s_squared;
-
+struct Proj_Middle_Blocked_Matrices : Matrices {
+    const Indexes_P2 & blm;
     void add_to_s_squared(unsigned int i, unsigned int j, double v) override {
-        middle_of_s_squared(i - start_of_middle, j - start_of_middle) += v;
-    };
-    Add_To_Matrix s_squared_ = static_cast<Add_To_Matrix>(&Only_J::add_to_s_squared);
+        block_of_s_squared(i - current_start, j - current_start) += v;
+    }
+
+    Add_To_Matrix s_squared_ = static_cast<Add_To_Matrix>(&Proj_Middle_Blocked_Matrices::add_to_s_squared);
+
 
     void add_to_hamiltonian(unsigned int i, unsigned int j, double v) override {
-        middle_of_hamiltonian(i - start_of_middle, j - start_of_middle) += v;
-    }
-    Add_To_Matrix hamiltonian_ = static_cast<Add_To_Matrix>(&Only_J::add_to_hamiltonian);
-
-    Only_J(const Block_Lex_Map &blm,
-           const arma::dmat &js) : Matrices(blm), js(js) {
-
-        unsigned long index = blm.block_boundaries.size() / 2 - 1;
-
-        start_of_middle = blm.block_boundaries[index];
-        end_of_middle = blm.block_boundaries[index + 1];
-
-        unsigned long size = end_of_middle - start_of_middle;
-        std::cout << size << std::endl;
-        middle_of_hamiltonian.resize(size, size);
-        middle_of_s_squared.resize(size, size);
+        block_of_hamiltonian(i - current_start, j - current_start) += v;
     }
 
-    void construct_hamiltonian() {
+    Add_To_Matrix hamiltonian_ = static_cast<Add_To_Matrix>(&Proj_Middle_Blocked_Matrices::add_to_hamiltonian);
+
+    Proj_Middle_Blocked_Matrices(const Indexes_P2 &blm_,
+                                 const arma::dmat &js) : Matrices(blm_), js(js), blm(blm_) {
+    }
+
+    void construct_hamiltonian(unsigned int repr) {
+        unsigned long current_length = current_end - current_start;
+        block_of_hamiltonian.resize(current_length, current_length);
+        block_of_hamiltonian.zeros(current_length, current_length);
 #pragma omp parallel for
-        for (unsigned long block = start_of_middle; block < end_of_middle; ++block) {
+        for (unsigned long sym = current_start; sym < current_end; ++sym) {
             for (int a = 0; a < blm.v_size; ++a) {
                 for (int b = a + 1; b < blm.v_size; ++b) {
                     if (!std::isnan(js(a, b))) {
-                        scalar_product_total(hamiltonian_, -2 * js(a, b), block, a, b);
+                        scalar_product_total(hamiltonian_, repr, -2 * js(a, b), sym, a, b);
                     }
                 }
             }
         }
+//        std::cout << block_of_hamiltonian << std::endl;
     }
 
-    void construct_s_squared() {
-        construct_block_of_s_squared(start_of_middle, end_of_middle, s_squared_);
+    void construct_s_squared(unsigned int repr) {
+        unsigned long current_length = current_end - current_start;
+        block_of_s_squared.resize(current_length, current_length);
+        block_of_s_squared.zeros(current_length, current_length);
+        double diagonal_sum = 0;
+        for (double s : blm.spins) {
+            diagonal_sum += s * (s + 1);
+        }
+#pragma omp parallel for
+        for (unsigned long sym = current_start; sym < current_end; ++sym) {
+            add_to_s_squared(sym, sym, diagonal_sum);
+            for (int a = 0; a < blm.v_size; ++a) {
+                for (int b = a + 1; b < blm.v_size; ++b) {
+                    if (a != b) {
+                        scalar_product_total(s_squared_, repr, 2, sym, a, b);
+                    }
+                }
+            }
+        }
+//        std::cout << block_of_s_squared << std::endl;
     }
 
     void eigendecomposition(arma::vec & eigval, arma::vec & s_squared_new_basis_vector,
-                            arma::vec & degeneracy) {
-        // TODO: что-то вроде проверки на то, что матрица построена
+                            arma::vec & degeneracy) override {
+        eigval.reset();
+        s_squared_new_basis_vector.reset();
+        degeneracy.reset();
+        for (unsigned int r = 0; r < blm.num_of_repr; ++r) {
+            int middle = blm.sym_sum_boundaries[r].size() / 2 - 1;
+            current_start = blm.sym_sum_boundaries[r][middle];
+            current_end = blm.sym_sum_boundaries[r][middle + 1];
 
-        construct_hamiltonian();
+            construct_hamiltonian(r);
+            arma::mat eigvec;
+            arma::vec new_eigval;
+            arma::eig_sym(new_eigval, eigvec, block_of_hamiltonian);
+            eigval = arma::join_cols(eigval, new_eigval);
+            block_of_hamiltonian.reset();
 
-        arma::mat eigvec;
-        arma::eig_sym(eigval, eigvec, middle_of_hamiltonian);
+            construct_s_squared(r);
+            arma::mat s_squared_new_basis = eigvec.t() * block_of_s_squared * eigvec;
+            arma::vec new_s_squared_new_basis_vector = s_squared_new_basis.diag();
+
+            arma::vec new_degeneracy = sqrt(4 * new_s_squared_new_basis_vector + arma::ones(size(new_s_squared_new_basis_vector)));
+
+            s_squared_new_basis_vector = arma::join_cols(s_squared_new_basis_vector, new_s_squared_new_basis_vector);
+            degeneracy = arma::join_cols(degeneracy, new_degeneracy);
+
+        }
         eigval -= eigval.min();
-        middle_of_hamiltonian.reset();
-
-        construct_s_squared();
-        arma::mat s_squared_new_basis = eigvec.t() * middle_of_s_squared * eigvec;
-        s_squared_new_basis_vector = s_squared_new_basis.diag();
-        degeneracy = sqrt(4 * s_squared_new_basis_vector + arma::ones(size(s_squared_new_basis_vector)));
+//        std::cout << eigval << std::endl << std::endl << s_squared_new_basis_vector << std::endl << std::endl << degeneracy << std::endl;
     }
 
-private:
     const arma::dmat &js;
-    unsigned int start_of_middle;
-    unsigned int end_of_middle;
+    arma::dmat block_of_hamiltonian;
+    arma::dmat block_of_s_squared;
+    unsigned int current_start;
+    unsigned int current_end;
 };
 
 #endif //JULY_SUM_BLOCKED_ONLY_MIDDLE_H
