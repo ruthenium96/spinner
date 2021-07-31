@@ -224,18 +224,6 @@ void Indexes_P2::construct_branching_diagram() {
     construct_spin_boundaries();
 }
 
-int Indexes_P2::bds_total_mult(int i) const {
-    return bds[i].total_mult;
-}
-
-unsigned int Indexes_P2::bds_total_repr(int i) const {
-    return bds[i].representation;
-}
-
-unsigned long Indexes_P2::bds_size() const {
-    return bds.size();
-}
-
 //        for (int mult : v) {
 //            bd_to.clear();
 //            for (const Spin_P2_Diagramm & bdi : bd_from) {

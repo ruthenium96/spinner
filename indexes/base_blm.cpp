@@ -178,10 +178,13 @@ void Indexes::construct_spin_boundaries() {
 
     int diff_values_of_spin = ceil((double) max_mult / 2.0);
 
-    sym_spin_boundaries.resize(num_of_repr, std::vector<unsigned long>(diff_values_of_spin + 1, bds_size()));
+//    sym_spin_boundaries.resize(num_of_repr, std::vector<unsigned long>(diff_values_of_spin + 1, bds_size()));
+    sym_spin_boundaries.resize(num_of_repr, std::vector<unsigned long>(diff_values_of_spin + 1, qns.size()));
 
-    for (unsigned long i = 0; i < bds_size(); ++i) {
-        if (bds_total_repr(i) != current_repr) {
+    for (unsigned long i = 0; i < qns.size(); ++i) {
+//        if (bds_total_repr(i) != current_repr) {
+        if (qns[i].representation != current_repr) {
+
             for (; current_mult > -2; ----current_mult) {
                 int index = (max_mult - current_mult) / 2;
                 sym_spin_boundaries[current_repr][index] = i;
@@ -189,7 +192,9 @@ void Indexes::construct_spin_boundaries() {
             current_mult = max_mult;
             ++current_repr;
         }
-        for (; (bds_total_mult(i) <= current_mult) && (current_mult > 0); ----current_mult) {
+//        for (; (bds_total_mult(i) <= current_mult) && (current_mult > 0); ----current_mult) {
+        for (; (qns[i].back_mult() <= current_mult) && (current_mult > 0); ----current_mult) {
+
             int index = (max_mult - current_mult) / 2;
             sym_spin_boundaries[current_repr][index] = i;
         }

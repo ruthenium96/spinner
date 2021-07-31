@@ -5,7 +5,7 @@
 
 struct Full_Matrices : Matrices {
 
-    const Indexes_P2 & blm;
+    const Indexes & blm;
 
     void add_to_s_squared(unsigned int i, unsigned int j, double v) override {
         block_of_s_squared(i - current_start, j - current_start) += v;
@@ -21,7 +21,7 @@ struct Full_Matrices : Matrices {
     Add_To_Matrix hamiltonian_ = static_cast<Add_To_Matrix>(&Full_Matrices::add_to_hamiltonian);
 
 
-    Full_Matrices(const Indexes_P2 &blm_,
+    Full_Matrices(const Indexes &blm_,
                   const arma::dmat &js) : Matrices(blm_), js(js), blm(blm_) {
     }
 
@@ -39,7 +39,7 @@ struct Full_Matrices : Matrices {
                 }
             }
         }
-        std::cout << block_of_hamiltonian << std::endl;
+//        std::cout << block_of_hamiltonian << std::endl;
     }
 
 
@@ -62,7 +62,7 @@ struct Full_Matrices : Matrices {
                 }
             }
         }
-        std::cout << block_of_s_squared << std::endl;
+//        std::cout << block_of_s_squared << std::endl;
     }
 
 
@@ -93,7 +93,7 @@ struct Full_Matrices : Matrices {
             degeneracy = arma::ones(size(eigval));
         }
         eigval -= eigval.min();
-        std::cout << eigval << std::endl << std::endl << s_squared_new_basis_vector << std::endl;
+//        std::cout << eigval << std::endl << std::endl << s_squared_new_basis_vector << std::endl;
 
     }
 

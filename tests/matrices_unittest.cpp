@@ -41,7 +41,7 @@ TEST(Full_correctness, 22) {
     arma::vec s_squared;
     arma::vec degeneracy;
     std::vector<int> mults = {2, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
 
     for (int i = 0; i < 100; ++i) {
         std::uniform_real_distribution<double> dist(0, 200.0);
@@ -54,7 +54,7 @@ TEST(Full_correctness, 22) {
         arma::dmat js_arma(mults.size(), mults.size());
         js_arma(0, 1) = J; js_arma(1, 0) = J;
 
-        Full_Matrix_J fmj(blm, js_arma);
+        Full_Matrices fmj(blm, js_arma);
         fmj.eigendecomposition(eigval, s_squared, degeneracy);
         EXPECT_EQ(2*J, eigval[3] - eigval[2]);
     }
@@ -66,7 +66,7 @@ TEST(Full_and_Sum_S_Square_equivalence, 2222) {
     arma::vec s_squared;
     arma::vec degeneracy;
     std::vector<int> mults = {2, 2, 2, 2};
-    Block_Lex_Map_P1 blm(mults);
+    Indexes_P1 blm(mults);
     blm.construct_branching_diagram();
 
     double J = 10;
@@ -76,12 +76,12 @@ TEST(Full_and_Sum_S_Square_equivalence, 2222) {
     js_arma(1, 2) = J; js_arma(2, 1) = J;
     js_arma(2, 3) = J; js_arma(3, 2) = J;
 
-    Full_Matrix_J fmj(blm, js_arma);
+    Full_Matrices fmj(blm, js_arma);
     fmj.eigendecomposition(eigval, s_squared, degeneracy);
 
     arma::dmat fmj_results = unify(eigval, s_squared, degeneracy);
 
-    Only_J_S2 ssj(blm, js_arma);
+    S2_Proj_Blocked_Matrices ssj(blm, js_arma);
     ssj.eigendecomposition(eigval, s_squared, degeneracy);
 
     arma::dmat ssj_results = unify(eigval, s_squared, degeneracy);

@@ -17,40 +17,6 @@ Indexes_P1::Indexes_P1(std::vector<int> mults_) : Indexes(mults_) {
     resize_CGs();
 }
 
-int Indexes_P1::bds_total_mult(int i) const {
-    return bds[i].total_mult;
-}
-
-unsigned int Indexes_P1::bds_total_repr(int i) const {
-    return 0;
-}
-
-unsigned long Indexes_P1::bds_size() const {
-    return bds.size();
-}
-
-double Indexes_P1::total_coeff(unsigned long state, unsigned long sym) const {
-    unsigned long block = sym;
-    const std::vector<unsigned int> & sp_path = bds[state].path;
-    double c = 1;
-    double t_spin = 0;
-    double t_proj = 0;
-    for (int i = 0; i < sp_path.size(); ++i) {
-        double n_spin = ((double) mults[i] - 1.0) / 2.0;
-        double n_proj = (double) block_to_nzi(block, i) - n_spin;
-        double delta_t_spin = (double) sp_path[i] - n_spin;
-        c *= hashed_clebsh_gordan(t_spin, n_spin,t_spin + delta_t_spin,
-                                  t_proj, n_proj);
-        t_spin = t_spin + delta_t_spin;
-        t_proj = t_proj + n_proj;
-
-        if (c == 0.0) {
-            return c;
-        }
-    }
-    return c;
-}
-
 void Indexes_P1::construct_branching_diagram() {
 
     spin_addition_scheme.resize(v_size - 1);
@@ -67,16 +33,6 @@ void Indexes_P1::construct_branching_diagram() {
 //    }
 
     spin_addition();
-
-    // TODO: rewrite without pushbacks!
-    std::vector<Spin_P1_Diagramm> bd_from;
-    std::vector<Spin_P1_Diagramm> bd_to;
-    bd_from.push_back({1});
-
-    tensor_product_spins(bd_from, bd_to, mults.begin(), mults.end());
-
-    std::stable_sort(bd_from.begin(), bd_from.end());
-    bds = std::move(bd_from);
 
     construct_spin_boundaries();
 }

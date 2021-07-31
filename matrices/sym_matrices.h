@@ -39,7 +39,7 @@ struct Symm_Matrices : Matrices {
                 }
             }
         }
-        std::cout << block_of_hamiltonian << std::endl;
+//        std::cout << block_of_hamiltonian << std::endl;
     }
 
 
@@ -63,7 +63,7 @@ struct Symm_Matrices : Matrices {
                 }
             }
         }
-        std::cout << block_of_s_squared << std::endl;
+//        std::cout << block_of_s_squared << std::endl;
     }
 
 
@@ -80,6 +80,16 @@ struct Symm_Matrices : Matrices {
             double b = -a;
 
             construct_hamiltonian(r);
+
+            for (int i = 0; i < block_of_hamiltonian.n_rows; ++i) {
+                for (int j = 0; j < block_of_hamiltonian.n_cols; ++j) {
+                    int k = (block_of_hamiltonian(i, j) != 0.0) ? 1 : 0;
+                    std::cout << k;
+                }
+                std::cout << std::endl;
+            }
+//            std::cout << "-" << std::endl;
+
 
 //            arma::dmat rotation_one;
 //            rotation_one.resize(16, 16);
@@ -121,7 +131,7 @@ struct Symm_Matrices : Matrices {
 //            degeneracy = arma::ones(size(eigval));
         }
         eigval -= eigval.min();
-        std::cout << eigval << std::endl;
+//        std::cout << eigval << std::endl;
     }
 
     // "factor" is the factor before \sum_{i<j}(S_i; S_j)

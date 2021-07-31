@@ -56,7 +56,7 @@ public:
 
     void construct_symm_decomposition();
 
-    double total_coeff(unsigned long state, unsigned long sym) const override;
+    double total_coeff(unsigned long state, unsigned long sym) const;
 
     unsigned long symmetrized_block(unsigned long block);
 
@@ -64,9 +64,6 @@ public:
 
     std::vector<Spin_P2_Diagramm> bds;
 
-    int bds_total_mult(int i) const override;
-    unsigned int bds_total_repr(int i) const override;
-    unsigned long bds_size() const override;
 
 private:
     unsigned int pairs;

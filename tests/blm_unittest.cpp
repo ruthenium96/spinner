@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
-#include <indexes/base_blm.h>
+#include <indexes/blm.h>
 
 TEST(lex2block_correctness, 222) {
     std::vector<int> mults = {2, 2, 2};
     std::vector<int> correct_lex2block = {0, 1, 2, 4, 3, 5, 6, 7};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         EXPECT_EQ(correct_lex2block[lex], blm.lex_to_block(lex));
     }
@@ -13,7 +13,7 @@ TEST(lex2block_correctness, 222) {
 TEST(block2lex_correctness, 222) {
     std::vector<int> mults = {2, 2, 2};
     std::vector<int> correct_block2lex = {0, 1, 2, 4, 3, 5, 6, 7};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int block = 0; block < blm.tensor_size; ++block) {
         EXPECT_EQ(correct_block2lex[block], blm.block_to_lex(block));
     }
@@ -22,7 +22,7 @@ TEST(block2lex_correctness, 222) {
 TEST(lex2block_correctness, 2222) {
     std::vector<int> mults = {2, 2, 2, 2};
     std::vector<int> correct_lex2block = {0, 1, 2, 5, 3, 6, 7, 11, 4, 8, 9, 12, 10, 13, 14, 15};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         EXPECT_EQ(correct_lex2block[lex], blm.lex_to_block(lex));
     }
@@ -31,7 +31,7 @@ TEST(lex2block_correctness, 2222) {
 TEST(block2lex_correctness, 2222) {
     std::vector<int> mults = {2, 2, 2, 2};
     std::vector<int> correct_block2lex = {0, 1, 2, 4, 8, 3, 5, 6, 9, 10, 12, 7, 11, 13, 14, 15};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int block = 0; block < blm.tensor_size; ++block) {
         EXPECT_EQ(correct_block2lex[block], blm.block_to_lex(block));
     }
@@ -39,7 +39,7 @@ TEST(block2lex_correctness, 2222) {
 
 TEST(block_lex_reversibility, 2222) {
     std::vector<int> mults = {2, 2, 2, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int k = 0; k < blm.tensor_size; ++k) {
         EXPECT_EQ(k, blm.block_to_lex(blm.lex_to_block(k)));
         EXPECT_EQ(k, blm.lex_to_block(blm.block_to_lex(k)));
@@ -48,7 +48,7 @@ TEST(block_lex_reversibility, 2222) {
 
 TEST(block_lex_reversibility, 765432) {
     std::vector<int> mults = {7, 6, 5, 4, 3, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int k = 0; k < blm.tensor_size; ++k) {
         EXPECT_EQ(k, blm.block_to_lex(blm.lex_to_block(k)));
         EXPECT_EQ(k, blm.lex_to_block(blm.block_to_lex(k)));
@@ -57,7 +57,7 @@ TEST(block_lex_reversibility, 765432) {
 
 TEST(nzi_lex_reversibility, 2222) {
     std::vector<int> mults = {2, 2, 2, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         int calc_lex = 0;
         for (int i = 0; i < blm.v_size; ++i) {
@@ -69,7 +69,7 @@ TEST(nzi_lex_reversibility, 2222) {
 
 TEST(nzi_lex_reversibility, 765432) {
     std::vector<int> mults = {7, 6, 5, 4, 3, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         int calc_lex = 0;
         for (int i = 0; i < blm.v_size; ++i) {
@@ -81,7 +81,7 @@ TEST(nzi_lex_reversibility, 765432) {
 
 TEST(nzs_block_reversibility, 765432) {
     std::vector<int> mults = {7, 6, 5, 4, 3, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (unsigned long block = 0; block < blm.tensor_size; ++block) {
         std::vector<int> nzs = blm.block_to_nzs(block);
         unsigned long calc_block = blm.nzs_to_block(nzs);
@@ -92,7 +92,7 @@ TEST(nzs_block_reversibility, 765432) {
 
 TEST(nzi_nzs_equivalence, 765432) {
     std::vector<int> mults = {7, 6, 5, 4, 3, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int block = 0; block < blm.tensor_size; ++block) {
         std::vector<int> nzs = blm.block_to_nzs(block);
         for (int i = 0; i < blm.v_size; ++i) {
@@ -103,7 +103,7 @@ TEST(nzi_nzs_equivalence, 765432) {
 
 TEST(lexicographicity_of_lex, 765432) {
     std::vector<int> mults = {7, 6, 5, 4, 3, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     std::vector<std::vector<int>> vectors(blm.tensor_size, std::vector<int>(blm.v_size, 0));
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         for (int i = 0; i < blm.v_size; ++i) {
@@ -117,7 +117,7 @@ TEST(lexicographicity_of_lex, 765432) {
 
 TEST(blocklexicographicity_of_block, 765432) {
     std::vector<int> mults = {7, 6, 5, 4, 3, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     std::vector<std::vector<int>> vectors(blm.tensor_size, std::vector<int>(blm.v_size, 0));
     std::vector<int> sums(blm.tensor_size, 0);
     for (int block = 0; block < blm.tensor_size; ++block) {
@@ -136,7 +136,7 @@ TEST(blocklexicographicity_of_block, 765432) {
 
 TEST(lex_ladder_correctness, 222_zero) {
     std::vector<int> mults = {2, 2, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         for (int i = 0; i < blm.v_size; ++i) {
             int calc_lex = blm.lex_ladder(lex, i, 0);
@@ -147,7 +147,7 @@ TEST(lex_ladder_correctness, 222_zero) {
 
 TEST(lex_ladder_correctness, 222_one) {
     std::vector<int> mults = {2, 2, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     std::vector<int> nz(blm.tensor_size, 0);
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         // initialize current nz(lex)
@@ -184,7 +184,7 @@ TEST(lex_ladder_correctness, 222_one) {
 
 TEST(lex_ladder_correctness, 765432_one) {
     std::vector<int> mults = {7, 6, 5, 4, 3, 2};
-    Indexes blm(mults);
+    Indexes_P1 blm(mults);
     std::vector<int> nz(blm.tensor_size, 0);
     for (int lex = 0; lex < blm.tensor_size; ++lex) {
         // initialize current nz(lex)
@@ -222,19 +222,19 @@ TEST(lex_ladder_correctness, 765432_one) {
 TEST(boundaries_correctness, _222) {
     std::vector<int> mults = {2, 2, 2};
     std::vector<int> correct_boundaries = {0, 1, 4, 7, 8};
-    Indexes blm(mults);
-    ASSERT_EQ(correct_boundaries.size(), blm.block_boundaries.size());
+    Indexes_P1 blm(mults);
+    ASSERT_EQ(correct_boundaries.size(), blm.sym_sum_boundaries[0].size());
     for (int i = 0; i < correct_boundaries.size(); ++i) {
-        EXPECT_EQ(correct_boundaries[i], blm.block_boundaries[i]);
+        EXPECT_EQ(correct_boundaries[i], blm.sym_sum_boundaries[0][i]);
     }
 }
 
 TEST(boundaries_correctness, _22) {
     std::vector<int> mults = {2, 2};
     std::vector<int> correct_boundaries = {0, 1, 3, 4};
-    Indexes blm(mults);
-    ASSERT_EQ(correct_boundaries.size(), blm.block_boundaries.size());
+    Indexes_P1 blm(mults);
+    ASSERT_EQ(correct_boundaries.size(), blm.sym_sum_boundaries[0].size());
     for (int i = 0; i < correct_boundaries.size(); ++i) {
-        EXPECT_EQ(correct_boundaries[i], blm.block_boundaries[i]);
+        EXPECT_EQ(correct_boundaries[i], blm.sym_sum_boundaries[0][i]);
     }
 }

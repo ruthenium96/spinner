@@ -84,16 +84,10 @@ protected:
     double max_t_spin;
     double max_n_spin;
 
-    virtual int bds_total_mult(int i) const = 0;
-    virtual unsigned int bds_total_repr(int i) const = 0;
-    // размер bds, то есть количество общих спинов, полученное при сложении всех спинов,
-    // то есть количество неприводимых представлений, полученных при тензорном произведении начальных спинов из mults
-    virtual unsigned long bds_size() const = 0;
-
     void resize_CGs();
     double hashed_clebsh_gordan(double l1, double l2, double l3, double m1, double m2) const;
     // symmetry-dependent function:
-    virtual double total_coeff(unsigned long state, unsigned long sym) const = 0;
+//    virtual double total_coeff(unsigned long state, unsigned long sym) const;
 
     std::vector<unsigned long> lex2block;
     std::vector<unsigned long> block2lex;

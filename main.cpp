@@ -6,29 +6,91 @@
 
 int main() {
 
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
-    Indexes_P1 ind(mults);
-
-    ind.construct_branching_diagram();
-//
     arma::dmat js_arma(mults.size(), mults.size());
-    // 0 - 2
-    // 3 - 1
-    double J = 10;
-//    js_arma(0, 1) = J; js_arma(1, 0) = J;
-    js_arma(0, 2) = J; js_arma(2, 0) = J;
-    js_arma(1, 2) = J; js_arma(2, 1) = J;
-    js_arma(1, 3) = J; js_arma(3, 1) = J;
-    js_arma(3, 0) = J; js_arma(0, 3) = J;
 
-//
-    S2_Proj_Blocked_Matrices sm(ind, js_arma);
+    js_arma(0, 1) = 10;js_arma(0, 2) = 10;
+    js_arma(0, 3) = 10;js_arma(0, 4) = 10;
+    js_arma(0, 5) = 10;js_arma(0, 6) = 10;
+    js_arma(0, 7) = 10;js_arma(0, 8) = 10;
+    js_arma(0, 9) = 10;js_arma(1, 0) = 10;
+    js_arma(1, 2) = 10;js_arma(1, 3) = 10;
+    js_arma(1, 4) = 10;js_arma(1, 5) = 10;
+    js_arma(1, 6) = 10;js_arma(1, 7) = 10;
+    js_arma(1, 8) = 10;js_arma(1, 9) = 10;
+    js_arma(2, 0) = 10;js_arma(2, 1) = 10;
+    js_arma(2, 3) = 10;js_arma(2, 4) = 10;
+    js_arma(2, 5) = 10;js_arma(2, 6) = 10;
+    js_arma(2, 7) = 10;    js_arma(2, 8) = 10;
+    js_arma(2, 9) = 10;    js_arma(3, 0) = 10;
+    js_arma(3, 1) = 10;    js_arma(3, 2) = 10;
+    js_arma(3, 4) = 10;    js_arma(3, 5) = 10;
+    js_arma(3, 6) = 10;    js_arma(3, 7) = 10;
+    js_arma(3, 8) = 10;    js_arma(3, 9) = 10;
+    js_arma(4, 0) = 10;    js_arma(4, 1) = 10;
+    js_arma(4, 2) = 10;    js_arma(4, 3) = 10;
+    js_arma(4, 5) = 10;    js_arma(4, 6) = 10;
+    js_arma(4, 7) = 10;    js_arma(4, 8) = 10;
+    js_arma(4, 9) = 10;    js_arma(5, 0) = 10;
+    js_arma(5, 1) = 10;    js_arma(5, 2) = 10;
+    js_arma(5, 3) = 10;    js_arma(5, 4) = 10;
+    js_arma(5, 6) = 10;    js_arma(5, 7) = 10;
+    js_arma(5, 8) = 10;    js_arma(5, 9) = 10;
+    js_arma(6, 0) = 10;    js_arma(6, 1) = 10;
+    js_arma(6, 2) = 10;    js_arma(6, 3) = 10;
+    js_arma(6, 4) = 10;    js_arma(6, 5) = 10;
+    js_arma(6, 7) = 10;    js_arma(6, 8) = 10;
+    js_arma(6, 9) = 10;    js_arma(7, 0) = 10;
+    js_arma(7, 1) = 10;js_arma(7, 2) = 10;
+    js_arma(7, 3) = 10;js_arma(7, 4) = 10;
+    js_arma(7, 5) = 10;js_arma(7, 6) = 10;
+    js_arma(7, 8) = 10;js_arma(7, 9) = 10;
+    js_arma(8, 0) = 10;js_arma(8, 1) = 10;
+    js_arma(8, 2) = 10;js_arma(8, 3) = 10;
+    js_arma(8, 4) = 10;js_arma(8, 5) = 10;
+    js_arma(8, 6) = 10;js_arma(8, 7) = 10;
+    js_arma(8, 9) = 10;js_arma(9, 0) = 10;
+    js_arma(9, 1) = 10;js_arma(9, 2) = 10;
+    js_arma(9, 3) = 10;js_arma(9, 4) = 10;
+    js_arma(9, 5) = 10;js_arma(9, 6) = 10;
+    js_arma(9, 7) = 10;js_arma(9, 8) = 10;
+
+
+
+    Indexes_P2 ind(mults, 5);
+    Symm_Matrices fm(ind, js_arma);
+
     arma::vec eigval;
     arma::vec s_squared_new_basis_vector;
     arma::vec degeneracy;
+
+    fm.eigendecomposition(eigval, s_squared_new_basis_vector, degeneracy);
+
+
+//    std::vector<int> mults = {2, 2, 2, 2};
 //
-    sm.eigendecomposition(eigval, s_squared_new_basis_vector, degeneracy);
+//    Indexes_P1 ind(mults);
+//
+//    ind.construct_branching_diagram();
+////
+//    arma::dmat js_arma(mults.size(), mults.size());
+//    // 0 - 2
+//    // 3 - 1
+//    double J = 10;
+////    js_arma(0, 1) = J; js_arma(1, 0) = J;
+//    js_arma(0, 2) = J; js_arma(2, 0) = J;
+//    js_arma(1, 2) = J; js_arma(2, 1) = J;
+//    js_arma(1, 3) = J; js_arma(3, 1) = J;
+//    js_arma(3, 0) = J; js_arma(0, 3) = J;
+//
+////
+//    S2_Proj_Blocked_Matrices sm(ind, js_arma);
+//    arma::vec eigval;
+//    arma::vec s_squared_new_basis_vector;
+//    arma::vec degeneracy;
+////
+//    sm.eigendecomposition(eigval, s_squared_new_basis_vector, degeneracy);
 
 //    Full_Matrix_J fm(ind_typ, js_arma);
 //    fm.eigendecomposition(eigval, s_squared_new_basis_vector, degeneracy);

@@ -34,6 +34,7 @@ struct Indexes_P1 : Indexes {
     // num_of_repr = 1;
     // group_size = 1;
 
+public:
     explicit Indexes_P1(std::vector<int> mults_);
 
     std::vector<unsigned int> dim_of_repr;
@@ -42,17 +43,8 @@ struct Indexes_P1 : Indexes {
 
     void construct_symm_decomposition();
 
-    double total_coeff(unsigned long state, unsigned long sym) const override;
-
-    int bds_total_mult(int i) const override;
-    unsigned int bds_total_repr(int i) const override;
-    unsigned long bds_size() const override;
-
-
-public:
 
 private:
-    std::vector<Spin_P1_Diagramm> bds;
     std::vector<Quantum_Numbers> qns;
 
 };
