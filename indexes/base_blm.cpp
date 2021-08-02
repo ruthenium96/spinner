@@ -10,6 +10,7 @@ Indexes::Indexes(std::vector<int> mults_): mults(std::move(mults_)) {
         spins[i] = (mults[i] - 1) / 2.0;
     }
 
+    // Constructing of lex <-> block transformation
     std::vector<Sum_and_Lex> sum_and_lexes = tensor_product();
     std::stable_sort(sum_and_lexes.begin(), sum_and_lexes.end());
     construct_two_side_maps(sum_and_lexes);
@@ -22,10 +23,6 @@ int Indexes::lex_to_nzi(unsigned long lex, int i) const {
 unsigned long Indexes::nzi_to_lex(int nzi, int i) const{
     return nzi * cumulative_product[i + 1];
 }
-
-//unsigned long Indexes::nzi_to_block(int nzi, int i) const{
-//    return lex2block[nzi * cumulative_product[i + 1]];
-//}
 
 unsigned long Indexes::lex_to_block(unsigned long lex) const{
     return lex2block[lex];
@@ -63,11 +60,12 @@ void Indexes::construct_cumulative_prod() {
     }
 }
 
-// one should check projection value before ladding
+// NB: one should check projection value before ladding
 unsigned long Indexes::lex_ladder(unsigned long lex, int i, int ladder) const{
     return lex + ladder * cumulative_product[i + 1];
 }
 
+// NB: one should check projection value before ladding
 unsigned long Indexes::block_ladder(unsigned long block, int i, int ladder) const{
     return lex_to_block(lex_ladder(block_to_lex(block), i, ladder));
 }
@@ -103,23 +101,23 @@ void Indexes::construct_two_side_maps(const std::vector<Sum_and_Lex>& sum_and_le
         unsigned long lex = sum_and_lexes[block].lex_index;
         block2lex[block] = lex;
         lex2block[lex] = block;
-        if (sum_and_lexes[block].total_projection > current_sum) {
-            current_sum = sum_and_lexes[block].total_projection;
-        }
+        current_sum = std::max(current_sum, sum_and_lexes[block].total_projection);
     }
 }
 
 arma::dmat Indexes::construct_s2_transformation(int spin, unsigned int repr) const {
+    // boundaries in state-basis
     unsigned long br_start = sym_spin_boundaries[repr][spin];
     unsigned long br_end = sym_spin_boundaries[repr][spin + 1];
     unsigned long br_len = br_end - br_start;
 
+    // boundaries in projection-basis
     unsigned long current_start = sym_sum_boundaries[repr][spin];
     unsigned long current_end = sym_sum_boundaries[repr][spin + 1];
     unsigned long bl_len = current_end - current_start;
 
     arma::dmat trans(br_len, bl_len);
-#pragma omp parallel for
+    #pragma omp parallel for
     for (unsigned long state = br_start; state < br_end; ++state) {
         for (unsigned long sym = current_start; sym < current_end; ++sym) {
             trans(state - br_start, sym - current_start) = total_coeff_new(state, sym);
@@ -131,11 +129,16 @@ arma::dmat Indexes::construct_s2_transformation(int spin, unsigned int repr) con
     return std::move(trans);
 }
 
+// Clebsch-Gordan function has six parameters. It's hard to hash it.
+// But the sixth parameter (projection of total spin) should be equal the sum of other
+// projections, otherwise coefficient is zero. So we can hash only five parameters.
+// Total spin, by a triangle law, possess values from |S1 - S2| to (S1 + S2),
+// this fact also can be used for optimization.
 void Indexes::resize_CGs() {
     boost::multi_array<double, 5>::extent_gen extents;
     int max_t_spin_number = (int) (2 * max_t_spin + 1);
     int max_n_spin_number = (int) (2 * max_n_spin + 1);
-    // правило треугольника:
+    // a triangle law:
     // TODO: test it and maybe refactor!
     int max_s_spin_number = (int) (4 * max_n_spin + 1);
 //    CGs.resize(extents[max_t_spin_number][max_n_spin_number][max_t_spin_number][2 * max_t_spin_number + 1][2 * max_n_spin_number + 1]);
@@ -145,14 +148,14 @@ void Indexes::resize_CGs() {
 
 double Indexes::hashed_clebsh_gordan(double l1, double l2, double l3,
                                      double m1, double m2) const {
-    // правило треугольника:
+    // a triangle law:
     if (l3 > l1 + l2 || l3 < std::abs(l1 - l2)) {
         return 0;
     }
     int il1 = (int) (2 * l1);
     int il2 = (int) (2 * l2);
 
-    // правило треугольника:
+    // a triangle law:
     // TODO: test it and maybe refactor!
     int min_l = std::abs(il1 - il2);
     int il3 = (int) (2 * l3) - min_l;
@@ -168,6 +171,7 @@ double Indexes::hashed_clebsh_gordan(double l1, double l2, double l3,
 
 }
 
+// Construct sym_spin_boundaries vector.
 void Indexes::construct_spin_boundaries() {
 
     // TODO: аналогичная переменная есть для CGs.
@@ -176,6 +180,7 @@ void Indexes::construct_spin_boundaries() {
     int current_mult = max_mult;
     unsigned int current_repr = 0;
 
+    // number of different values of possible spin:
     int diff_values_of_spin = ceil((double) max_mult / 2.0);
 
 //    sym_spin_boundaries.resize(num_of_repr, std::vector<unsigned long>(diff_values_of_spin + 1, bds_size()));
@@ -199,15 +204,15 @@ void Indexes::construct_spin_boundaries() {
             sym_spin_boundaries[current_repr][index] = i;
         }
     }
-//        std::cout << "sym_sum_boundaries" << std::endl;
-//
-//        for (const auto& v : sym_sum_boundaries) {
-//            for (auto n : v) {
-//                std::cout << n << " ";
-//            }
-//            std::cout << std::endl;
-//        }
-//
+        std::cout << "sym_sum_boundaries" << std::endl;
+
+        for (const auto& v : sym_sum_boundaries) {
+            for (auto n : v) {
+                std::cout << n << " ";
+            }
+            std::cout << std::endl;
+        }
+
     std::cout << "sym_spin_boundaries" << std::endl;
 
     for (const auto& v : sym_spin_boundaries) {
@@ -251,9 +256,8 @@ void Indexes::spin_addition() {
 //    }
 }
 
-// TODO: реализовать виртуальную функцию, которая возвращает наиболее подходящий Decomposition
-// TODO: или всегда достаточно хранить в нулевой ячейке полносимметричное представление?
 double Indexes::total_coeff_new(unsigned long state, unsigned long sym) const {
+    // TODO: It works only for P1 symmetry now.
     unsigned long block = sym;
     const Quantum_Numbers & qni = qns[state];
     double c = 1;

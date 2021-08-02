@@ -3,6 +3,7 @@
 
 #include "base_matrices.h"
 
+// NB: Now this method equivalents to sym_matrices. It seems like you cannot turn off symmetry now.
 struct Full_Matrices : Matrices {
 
     const Indexes & blm;
@@ -74,9 +75,6 @@ struct Full_Matrices : Matrices {
         for (unsigned int r = 0; r < blm.num_of_repr; ++r) {
             current_start = blm.sym_sum_boundaries[r].front();
             current_end = blm.sym_sum_boundaries[r].back();
-
-            double a = 1/sqrt(2);
-            double b = -a;
 
             construct_hamiltonian(r);
 

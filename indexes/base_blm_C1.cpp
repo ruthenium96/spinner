@@ -17,6 +17,12 @@ Indexes_P1::Indexes_P1(std::vector<int> mults_) : Indexes(mults_) {
     resize_CGs();
 }
 
+
+// It is a "branching diagram", i.e. the diagram produced by step-by-step addition of mults.
+// 1) S_1
+// 2) (S_1) + S_2
+// 3) (S_1 + S_2) + S_3
+// i) (S_1 + S_2 + ... + S_{i-1}) + S_i
 void Indexes_P1::construct_branching_diagram() {
 
     spin_addition_scheme.resize(v_size - 1);
@@ -62,16 +68,3 @@ void Indexes_P1::construct_symm_decomposition() {
     }
     sym_sum_boundaries[0].push_back(tensor_size);
 }
-
-//    for (int mult : mults) {
-//        bd_to.clear();
-//        for (const Spin_P1_Diagramm & bdi : bd_from) {
-//            int t_mult = bdi.back_mult;
-//            std::vector<unsigned int> t_full = bdi.path;
-//            for (int k = std::abs(t_mult - mult) + 1; k < t_mult + mult; ++++k) {
-//                bd_to.push_back({k, t_full});
-//                bd_to.back().path.push_back((k - t_mult + mult) / 2);
-//            }
-//        }
-//        std::swap(bd_from, bd_to);
-//    }

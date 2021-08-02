@@ -27,6 +27,7 @@
 // and at the end we add (n - 2k) non-paired mults
 // 3-1) (S_1 + ... S_{2k}) + S_{2k+1}
 // 3-i) (S_1 + ... S_{2k+i-1}) + S_{2k+i}
+// TODO: it should be deleted:
 class Spin_P2_Diagramm {
 public:
     int total_mult;
@@ -52,20 +53,26 @@ public:
     Indexes_P2(std::vector<int> mults_, unsigned int pairs_);
 
     std::vector<unsigned int> dim_of_repr;
+    // Calculate dimensions of symmetrized projection-basis subspace.
     void calculate_dim_of_repr();
 
+    // constructs sym-basis
     void construct_symm_decomposition();
 
+    // symmetry-dependent version of total_coeff
     double total_coeff(unsigned long state, unsigned long sym) const;
 
+    // return block-index of symmetrized block
     unsigned long symmetrized_block(unsigned long block);
 
     void construct_branching_diagram() override;
 
+    // TODO: Delete it.
     std::vector<Spin_P2_Diagramm> bds;
 
 
 private:
+    // TODO: It is the really bad way to specify orbits. Refactor it.
     unsigned int pairs;
     static unsigned int character_multiplication(unsigned int a, unsigned int b);
 };

@@ -1,6 +1,11 @@
 #ifndef JULY_QUANTUM_NUMBERS_H
 #define JULY_QUANTUM_NUMBERS_H
 
+// Quantum_Numbers is vector with size N + (N - 1).
+// First N values is particles' spins, other (N - 1) values is the sums of spins,
+// produced during additions of particles' spins.
+// Order of summation is written in addition_scheme vector of Indexes class.
+
 struct Quantum_Numbers {
 public:
     unsigned int representation;

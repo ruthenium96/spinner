@@ -3,6 +3,7 @@
 
 #include "base_matrices.h"
 
+// Here we are using the fact that HDvV commutes with Tz.
 struct Proj_Blocked_Matrices : Matrices {
     const Indexes_P2 & blm;
     void add_to_s_squared(unsigned int i, unsigned int j, double v) override {

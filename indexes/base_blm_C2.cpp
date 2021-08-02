@@ -209,43 +209,17 @@ void Indexes_P2::construct_branching_diagram() {
     std::stable_sort(bd_result.begin(), bd_result.end());
     bds = std::move(bd_result);
 
-    for (const Spin_P2_Diagramm & pmf : bds) {
-        for (auto n : pmf.pairs_mults) {
-            std::cout << n << " ";
-        }
-        std::cout << "| ";
-        for (auto n : pmf.path) {
-            std::cout << n << " ";
-        }
-        std::cout << "| representation : " << pmf.representation << " | back_mult: " << pmf.total_mult << std::endl;
-    }
-    std::cout << std::endl;
+//    for (const Spin_P2_Diagramm & pmf : bds) {
+//        for (auto n : pmf.pairs_mults) {
+//            std::cout << n << " ";
+//        }
+//        std::cout << "| ";
+//        for (auto n : pmf.path) {
+//            std::cout << n << " ";
+//        }
+//        std::cout << "| representation : " << pmf.representation << " | back_mult: " << pmf.total_mult << std::endl;
+//    }
+//    std::cout << std::endl;
 
     construct_spin_boundaries();
 }
-
-//        for (int mult : v) {
-//            bd_to.clear();
-//            for (const Spin_P2_Diagramm & bdi : bd_from) {
-//                int t_mult = bdi.back_mult;
-//                std::vector<unsigned int> t_full = bdi.path;
-//                for (int k = std::abs(t_mult - mult) + 1; k < t_mult + mult; ++++k) {
-//                    bd_to.push_back({k, bdi.representation, bdi.pairs_mults, t_full});
-//                    bd_to.back().path.push_back((k - t_mult + mult) / 2);
-//                }
-//            }
-//            std::swap(bd_from, bd_to);
-//        }
-//        for (unsigned int i = 2 * pairs; i < mults.size(); ++i) {
-//            int mult = mults[i];
-//            bd_to.clear();
-//            for (const Spin_P2_Diagramm & bdi : bd_from) {
-//                int t_mult = bdi.back_mult;
-//                std::vector<unsigned int> t_full = bdi.path;
-//                for (int k = std::abs(t_mult - mult) + 1; k < t_mult + mult; ++++k) {
-//                    bd_to.push_back({k, bdi.representation, bdi.pairs_mults, t_full});
-//                    bd_to.back().path.push_back((k - t_mult + mult) / 2);
-//                }
-//            }
-//            std::swap(bd_from, bd_to);
-//        }

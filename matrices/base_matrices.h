@@ -9,11 +9,14 @@ struct Matrices {
 public:
     const Indexes & blm;
 
+    // That is the strange way to use similar code for building matrices:
     virtual void add_to_hamiltonian(unsigned int i, unsigned int j, double v) = 0;
     virtual void add_to_s_squared(unsigned int i, unsigned int j, double v) = 0;
+    typedef void (Matrices::*Add_To_Matrix)(unsigned int i, unsigned int j, double v);
+
+    // Construct all matrices, do eigen-decomposition.
     virtual void eigendecomposition(arma::vec & eigval, arma::vec & s_squared_new_basis_vector,
                                     arma::vec & degeneracy) = 0;
-    typedef void (Matrices::*Add_To_Matrix)(unsigned int i, unsigned int j, double v);
 
     explicit Matrices(const Indexes & blm): blm(blm) {};
 
@@ -30,25 +33,6 @@ public:
         std::cout << "}" << std::endl;
     }
 
-    // build block of block_of_s_squared matrix from (start, start) to (end - 1, end - 1)
-//    void construct_block_of_s_squared(unsigned long start, unsigned long end, unsigned int repr, Add_To_Matrix s_squared_) {
-//        double diagonal_sum = 0;
-//        for (double s : blm.mults) {
-//            diagonal_sum += s * (s + 1);
-//        }
-//        #pragma omp parallel for
-//        for (unsigned long sym = start; sym < end; ++sym) {
-//            add_to_s_squared(block, block, diagonal_sum);
-//            for (int a = 0; a < blm.v_size; ++a) {
-//                for (int b = a + 1; b < blm.v_size; ++b) {
-//                    if (a != b) {
-//                        scalar_product_total(s_squared_, repr, 2, sym, a, b);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     // "factor" is the factor before \sum_{i<j}(S_i; S_j)
     // for HDvV factor should be -2J
     // for S^2 factor should be 2:
@@ -59,7 +43,10 @@ public:
             int na = blm.block_to_nzi(d.index, a);
             int nb = blm.block_to_nzi(d.index, b);
 
+            // From block to sym and back again
             double decomposition_factor = d.coeff * blm.block_to_sym(d.index)[repr].coeff;
+
+            // (Sa, Sb) = Sax*Sbx + Say*Sby + Saz*Sbz = 0.5 * (Sa+Sb- + Sa-Sb+) + Saz*Sbz
 
             // Saz Sbz
             (this->*add_to_matrix)(sym, sym, (na - blm.spins[a]) * (nb - blm.spins[b]) * factor * decomposition_factor);

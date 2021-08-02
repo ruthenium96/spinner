@@ -58,14 +58,15 @@ int main() {
 
 
 
-    Indexes_P2 ind(mults, 5);
-    Symm_Matrices fm(ind, js_arma);
+    Indexes_P1 ind(mults);
+    ind.construct_branching_diagram();
+//    S2_Proj_Blocked_Matrices fm(ind, js_arma);
 
     arma::vec eigval;
     arma::vec s_squared_new_basis_vector;
     arma::vec degeneracy;
 
-    fm.eigendecomposition(eigval, s_squared_new_basis_vector, degeneracy);
+//    fm.eigendecomposition(eigval, s_squared_new_basis_vector, degeneracy);
 
 
 //    std::vector<int> mults = {2, 2, 2, 2};

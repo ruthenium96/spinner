@@ -6,6 +6,5 @@
 #include "sum_s2_blocked.h"
 #include "sum_blocked.h"
 #include "sum_blocked_only_middle.h"
-#include "sum_blocked_only_middle_sparse.h"
 
 #endif
