@@ -36,6 +36,11 @@ add_library(matrices
         matrices/full.h matrices/base_matrices.h matrices/sum_blocked.h
         matrices/sum_blocked_only_middle.h matrices/sum_s2_blocked.h)
 
+add_executable(components
+        components/A.h components/B.h components/tz_sorter.h components/main_components.cpp components/c2_symmetrizer.h)
+
+set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
+
 target_link_libraries(blm ${ARMADILLO_LIBRARIES} wignerSymbols ${Boost_LIBRARIES})
 target_link_libraries(matrices ${ARMADILLO_LIBRARIES} blm)
 
