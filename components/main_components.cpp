@@ -2,7 +2,7 @@
 // Created by radium on 17.08.2021.
 //
 
-#include "A.h"
+#include "Task.h"
 #include "tz_sorter.h"
 #include "c2_symmetrizer.h"
 

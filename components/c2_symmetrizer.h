@@ -1,7 +1,7 @@
 #ifndef JULY_C2_SYMMETRIZER_H
 #define JULY_C2_SYMMETRIZER_H
 
-#include "A.h"
+#include "Task.h"
 #include "cmath"
 
 Task& c2_symmetrizer(Task& T, int pairs) {

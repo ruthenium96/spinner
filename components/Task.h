@@ -1,8 +1,8 @@
-#ifndef JULY_A_H
-#define JULY_A_H
+#ifndef JULY_TASK_H
+#define JULY_TASK_H
 
 #include <deque>
-#include "B.h"
+#include "Subspace.h"
 #include <iostream>
 
 struct Task {
@@ -43,4 +43,4 @@ struct Task {
 };
 
 
-#endif //JULY_A_H
+#endif //JULY_TASK_H

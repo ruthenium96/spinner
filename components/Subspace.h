@@ -1,5 +1,5 @@
-#ifndef JULY_B_H
-#define JULY_B_H
+#ifndef JULY_SUBSPACE_H
+#define JULY_SUBSPACE_H
 
 #include <vector>
 
@@ -15,4 +15,4 @@ struct Subspace {
     std::vector<std::vector<Decomposition_>> basis;
 };
 
-#endif //JULY_B_H
+#endif //JULY_SUBSPACE_H
