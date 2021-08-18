@@ -51,10 +51,10 @@ Task& c2_symmetrizer(Task& T, int pairs) {
             // TODO: dirty trick, it can cause troubles with other groups
             if (v_symm[0].index < v[0].index) {
                 for (int i = 0; i < v.size(); ++i) {
-                    projections[0].push_back({v[i].index, 1/sqrt(2.0)});
-                    projections[0].push_back({v_symm[i].index, 1/sqrt(2)});
-                    projections[1].push_back({v[i].index, 1/sqrt(2)});
-                    projections[1].push_back({v_symm[i].index, -1/sqrt(2)});
+                    projections[0].push_back({v[i].index, 1/sqrt(2.0) * v[i].coeff});
+                    projections[0].push_back({v_symm[i].index, 1/sqrt(2) * v[i].coeff});
+                    projections[1].push_back({v[i].index, 1/sqrt(2) * v[i].coeff});
+                    projections[1].push_back({v_symm[i].index, -1/sqrt(2) * v[i].coeff});
                 }
             }
         }
