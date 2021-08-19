@@ -1,26 +1,24 @@
-//
-// Created by radium on 17.08.2021.
-//
-
 #include "Task.h"
 #include "tz_sorter.h"
 #include "c2_symmetrizer.h"
+#include <chrono>
 
 
 int main() {
 
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<int> mults = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4,};
 
-    Task T(mults);
+    auto start = std::chrono::high_resolution_clock::now();
+    int cycles = 100;
+    for (int i = 0; i < cycles; ++i) {
+        Task T(mults);
 
-    T.print();
+        T = tz_sorter(T);
 
-    T = tz_sorter(T);
-
-    T.print();
-
-    T = c2_symmetrizer(T, 2);
-
-    T.print();
+        T = c2_symmetrizer(T, 5);
+    }
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_once = (finish - start) / cycles;
+    std::cout << "Elapsed time: " << elapsed_once.count() << " s\n";
 
 }
