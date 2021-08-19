@@ -2,6 +2,7 @@
 #define JULY_TASK_H
 
 #include <deque>
+#include <map>
 #include "Subspace.h"
 #include <iostream>
 
@@ -24,20 +25,25 @@ struct Task {
         Subspace& lex_block = blocks[0];
         lex_block.basis.resize(tensor_size);
         for (unsigned long i = 0; i < tensor_size; ++i) {
-            lex_block.basis[i].push_back({i, 1.0});
+//            lex_block.basis[i].push_back({i, 1.0});
+            lex_block.basis[i][i] = 1.0;
         }
     }
 
     void print() {
         for (Subspace& Ss : blocks) {
-            for (auto& v: Ss.basis) {
-                for (Decomposition_& d: v) {
-                    std::cout << d.coeff << "*" << d.index << " ";
+            for (auto& m: Ss.basis) {
+//            for (auto& v: Ss.basis) {
+//                for (Decomposition_& d: v) {
+                for (auto& d: m) {
+                    std::cout << d.second << "*[" << d.first << "] ";
+//                    std::cout << d.coeff << "*" << d.index << " ";
                 }
                 std::cout << std::endl;
             }
             std::cout << std::endl;
         }
+        std::cout << "------" << std::endl;
     }
 
 };
