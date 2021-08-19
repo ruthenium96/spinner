@@ -41,7 +41,6 @@ Task& tz_sorter(Task& T) {
 
         for (int i = 0; i < Ss_front.basis.size(); ++i) {
             int ntz_proj = lex_to_ntzproj(Ss_front.basis[i].begin()->first);
-//            int ntz_proj = lex_to_ntzproj(Ss_front.basis[i][0].index);
             if (ntz_proj_to_block[ntz_proj] == -1) {
                 T.blocks.push_back(Ss_blank);
                 T.blocks.back().n_proj = ntz_proj;
