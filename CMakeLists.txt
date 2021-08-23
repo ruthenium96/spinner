@@ -1,8 +1,31 @@
 cmake_minimum_required(VERSION 3.13)
 
-add_subdirectory(libs)
-
 project(july)
+
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        "2f80c2ba71c0e8922a03b9b855e5b019ad1f7064"
+)
+FetchContent_GetProperties(googletest)
+if(NOT googletest_POPULATED)
+    FetchContent_Populate(googletest)
+    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+endif()
+
+FetchContent_Declare(
+        wignersymbols
+        GIT_REPOSITORY https://github.com/joeydumont/wignerSymbols.git
+        GIT_TAG        "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
+)
+FetchContent_GetProperties(wignersymbols)
+if(NOT wignersymbols_POPULATED)
+    FetchContent_Populate(wignersymbols)
+    add_subdirectory(${wignersymbols_SOURCE_DIR} ${wignersymbols_BINARY_DIR})
+    include_directories(${wignersymbols_SOURCE_DIR}/include/)
+endif()
+
 
 find_package(Boost)
 include_directories(${Boost_INCLUDE_DIRS})
