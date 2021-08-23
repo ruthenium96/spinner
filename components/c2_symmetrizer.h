@@ -3,6 +3,16 @@
 
 #include "Task.h"
 #include "cmath"
+#include "unordered_set"
+#include "unordered_map"
+#include <boost/functional/hash.hpp>
+
+struct MapHash {
+    std::size_t operator()(const std::map<Index, Coefficient>& m) const noexcept
+    {
+        return boost::hash_range(m.begin(), m.end());
+    }
+};
 
 Task& c2_symmetrizer(Task& T, int pairs) {
 
@@ -39,13 +49,27 @@ Task& c2_symmetrizer(Task& T, int pairs) {
         return symm_lex;
     };
 
-    auto projector = [&symmetrized_lex, max_repr](std::map<Index, Coefficient> & m){
+    auto projector = [&symmetrized_lex, max_repr](std::map<Index, Coefficient> & m,
+            std::unordered_map<size_t, size_t> & hs){
+//            std::unordered_set<std::map<Index, Coefficient>, MapHash> & hs){
         std::vector<std::map<Index, Coefficient>> projections(max_repr);
         std::map<Index, Coefficient> m_symm;
         for (auto& p : m) {
             unsigned long symm_lex = symmetrized_lex(p.first);
             m_symm[symm_lex] = p.second;
         }
+        size_t key_seed = 0;
+        size_t value_seed = 11;
+        boost::hash_range(key_seed, m.begin(), m.end());
+        boost::hash_range(value_seed, m.begin(), m.end());
+        hs[key_seed] = value_seed;
+
+        key_seed = 0;
+        value_seed = 11;
+        boost::hash_range(key_seed, m_symm.begin(), m_symm.end());
+        boost::hash_range(value_seed, m_symm.begin(), m_symm.end());
+        hs[key_seed] = value_seed;
+
         auto it_m = m.begin();
         auto it_m_symm = m_symm.begin();
         while (it_m != m.end()) {
@@ -75,17 +99,27 @@ Task& c2_symmetrizer(Task& T, int pairs) {
         Ss_blank.basis.clear();
         std::vector<int> repr_to_block(max_repr, -1);
 
+//        std::unordered_set<std::map<Index, Coefficient>, MapHash> visited;
+        std::unordered_map<size_t, size_t> visited;
+
         for (int i = 0; i < Ss_front.basis.size(); ++i) {
-            std::vector<std::map<Index, Coefficient>> projections = projector(Ss_front.basis[i]);
-            for (int repr = 0; repr < max_repr; ++repr) {
-                if (!projections[repr].empty()) {
-                    if (repr_to_block[repr] == -1) {
-                        T.blocks.push_back(Ss_blank);
-                        T.blocks.back().representation = repr;
-                        repr_to_block[repr] = T.blocks.size() - 1;
+            size_t key_seed = 0;
+            size_t value_seed = 11;
+            boost::hash_range(key_seed, Ss_front.basis[i].begin(), Ss_front.basis[i].end());
+            boost::hash_range(value_seed, Ss_front.basis[i].begin(), Ss_front.basis[i].end());
+
+            if (visited[key_seed] != value_seed) {
+                std::vector<std::map<Index, Coefficient>> projections = projector(Ss_front.basis[i], visited);
+                for (int repr = 0; repr < max_repr; ++repr) {
+                    if (!projections[repr].empty()) {
+                        if (repr_to_block[repr] == -1) {
+                            T.blocks.push_back(Ss_blank);
+                            T.blocks.back().representation = repr;
+                            repr_to_block[repr] = T.blocks.size() - 1;
+                        }
+                        int j = repr_to_block[repr];
+                        T.blocks[j].basis.emplace_back(std::move(projections[repr]));
                     }
-                    int j = repr_to_block[repr];
-                    T.blocks[j].basis.emplace_back(std::move(projections[repr]));
                 }
             }
         }
