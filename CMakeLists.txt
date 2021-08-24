@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.14)
 
 project(july)
 
@@ -8,23 +8,15 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG        "release-1.11.0"
 )
-FetchContent_GetProperties(googletest)
-if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-endif()
+FetchContent_MakeAvailable(googletest)
 
 FetchContent_Declare(
         wignersymbols
         GIT_REPOSITORY https://github.com/joeydumont/wignerSymbols.git
         GIT_TAG        "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
 )
-FetchContent_GetProperties(wignersymbols)
-if(NOT wignersymbols_POPULATED)
-    FetchContent_Populate(wignersymbols)
-    add_subdirectory(${wignersymbols_SOURCE_DIR} ${wignersymbols_BINARY_DIR})
-    include_directories(${wignersymbols_SOURCE_DIR}/include/)
-endif()
+FetchContent_MakeAvailable(wignersymbols)
+include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
 
 find_package(Boost)
