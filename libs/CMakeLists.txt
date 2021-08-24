@@ -1,2 +1,0 @@
-add_subdirectory(wignerSymbols)
-add_subdirectory(googletest)

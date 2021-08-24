@@ -7,7 +7,7 @@
 #include <boost/multi_array.hpp>
 
 #include "quantum_numbers.h"
-#include "../libs/wignerSymbols/include/wignerSymbols.h"
+#include "wignerSymbols.h"
 
 
 // Assistive class, it is required for building of lex <-> block transformation.
