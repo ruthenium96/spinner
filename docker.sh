@@ -2,7 +2,7 @@
 
 function init(){
     docker build . -t july 
-    docker run --name july -v $PWD:/project -d july
+    docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
 }
 
 function clean(){
