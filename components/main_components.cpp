@@ -13,9 +13,13 @@ int main() {
     for (int i = 0; i < cycles; ++i) {
         Task T(mults);
 
+        Tz_Sorter tz_sorter(mults);
+
         T = tz_sorter(T);
 
-        T = c2_symmetrizer(T, 2);
+        Symmetrizer c2_symmetrizer(mults, 2);
+
+        T = c2_symmetrizer(T);
 
         T.print();
     }
