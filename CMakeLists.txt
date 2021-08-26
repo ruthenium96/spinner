@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(july)
 
 include(FetchContent)
@@ -36,8 +38,10 @@ add_library(matrices
         matrices/full.h matrices/base_matrices.h matrices/sum_blocked.h
         matrices/sum_blocked_only_middle.h matrices/sum_s2_blocked.h)
 
+include_directories(${CMAKE_CURRENT_LIST_DIR})
 add_executable(components
-        components/Task.h components/Subspace.h components/tz_sorter.h components/main_components.cpp components/c2_symmetrizer.h)
+        main/main_components.cpp 
+        components/c2_symmetrizer.cpp)
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
 
