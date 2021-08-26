@@ -32,13 +32,6 @@ Task& Symmetrizer::operator()(Task& T) {
         std::unordered_map<size_t, size_t> visited;
 
         for (int i = 0; i < Ss_front.basis.size(); ++i) {
-            size_t key_seed = 0;
-            size_t value_seed = 11;
-            boost::hash_range(key_seed, Ss_front.basis[i].begin(),
-                              Ss_front.basis[i].end());
-            boost::hash_range(value_seed, Ss_front.basis[i].begin(),
-                              Ss_front.basis[i].end());
-
             if (!is_in_hash_table(Ss_front.basis[i], visited)) {
                 std::vector<std::map<Index, Coefficient>> projections =
                     projector(Ss_front.basis[i], visited);
