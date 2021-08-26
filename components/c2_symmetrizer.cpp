@@ -18,43 +18,43 @@ Symmetrizer::Symmetrizer(std::vector<int> mults_, int pairs_)
     max_repr = 2;
 }
 
-Task& Symmetrizer::operator()(Task& T) {
-    if (T.is_C2_symmetrized) {
-        return T;
+Space& Symmetrizer::operator()(Space& space) {
+    if (space.is_C2_symmetrized) {
+        return space;
     }
 
-    while (T.blocks.front().representation == -1) {
-        Subspace& Ss_front = T.blocks.front();
-        Subspace Ss_blank = T.blocks.front();
-        Ss_blank.basis.clear();
+    while (space.blocks.front().representation == -1) {
+        Subspace& subspace_parent = space.blocks.front();
+        Subspace subspace_child = space.blocks.front();
+        subspace_child.basis.clear();
         std::vector<int> repr_to_block(max_repr, -1);
 
         std::unordered_map<size_t, size_t> visited;
 
-        for (int i = 0; i < Ss_front.basis.size(); ++i) {
-            if (!is_in_hash_table(Ss_front.basis[i], visited)) {
+        for (int i = 0; i < subspace_parent.basis.size(); ++i) {
+            if (!is_in_hash_table(subspace_parent.basis[i], visited)) {
                 std::vector<std::map<Index, Coefficient>> projections =
-                    projector(Ss_front.basis[i], visited);
+                    projector(subspace_parent.basis[i], visited);
                 for (int repr = 0; repr < max_repr; ++repr) {
                     if (!projections[repr].empty()) {
                         if (repr_to_block[repr] == -1) {
-                            T.blocks.push_back(Ss_blank);
-                            T.blocks.back().representation = repr;
-                            repr_to_block[repr] = T.blocks.size() - 1;
+                            space.blocks.push_back(subspace_child);
+                            space.blocks.back().representation = repr;
+                            repr_to_block[repr] = space.blocks.size() - 1;
                         }
                         int j = repr_to_block[repr];
-                        T.blocks[j].basis.emplace_back(
+                        space.blocks[j].basis.emplace_back(
                             std::move(projections[repr]));
                     }
                 }
             }
         }
 
-        T.blocks.pop_front();
+        space.blocks.pop_front();
     }
 
-    T.is_C2_symmetrized = true;
-    return T;
+    space.is_C2_symmetrized = true;
+    return space;
 }
 
 unsigned long Symmetrizer::symmetrized_lex(const unsigned long lex) const {

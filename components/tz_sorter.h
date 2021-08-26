@@ -1,7 +1,7 @@
 #ifndef JULY_TZ_SORTER_H
 #define JULY_TZ_SORTER_H
 
-#include "common/Task.h"
+#include "common/Space.h"
 #include <numeric>
 #include <utility>
 
@@ -33,38 +33,38 @@ public:
         return ntz_proj;
     };
 
-    Task& operator()(Task& T) const {
+    Space& operator()(Space& space) const {
         // It does not make any sense to use tz_sorter twice.
-        if (T.is_Tz_sorted) {
-            return T;
+        if (space.is_Tz_sorted) {
+            return space;
         }
-        while (T.blocks.front().n_proj == -1) {
-            Subspace& Ss_front = T.blocks.front();
-            Subspace Ss_blank = T.blocks.front();
-            Ss_blank.basis.clear();
+        while (space.blocks.front().n_proj == -1) {
+            Subspace& subspace_parent = space.blocks.front();
+            Subspace subspace_child = space.blocks.front();
+            subspace_child.basis.clear();
             // it is a mapping between Subspace with specific projection value and position into deque
             std::vector<int> ntz_proj_to_block(max_ntz_proj, -1);
 
-            for (int i = 0; i < Ss_front.basis.size(); ++i) {
+            for (int i = 0; i < subspace_parent.basis.size(); ++i) {
                 // Value of total projection is calculated from the first index of map.
                 // NB: there is no validation of the fact, that all indexes of decomposition
                 // correspond to the same projection value, user should check it yourself.
-                int ntz_proj = lex_to_ntzproj(Ss_front.basis[i].begin()->first);
+                int ntz_proj = lex_to_ntzproj(subspace_parent.basis[i].begin()->first);
                 // if it is the first basis vector with this ntz_proj, create new Subspace in deque
                 if (ntz_proj_to_block[ntz_proj] == -1) {
-                    T.blocks.push_back(Ss_blank);
-                    T.blocks.back().n_proj = ntz_proj;
-                    ntz_proj_to_block[ntz_proj] = T.blocks.size() - 1;
+                    space.blocks.push_back(subspace_child);
+                    space.blocks.back().n_proj = ntz_proj;
+                    ntz_proj_to_block[ntz_proj] = space.blocks.size() - 1;
                 }
                 int j = ntz_proj_to_block[ntz_proj];
-                T.blocks[j].basis.emplace_back(std::move(Ss_front.basis[i]));
+                space.blocks[j].basis.emplace_back(std::move(subspace_parent.basis[i]));
             }
 
-            T.blocks.pop_front();
+            space.blocks.pop_front();
         }
 
-        T.is_Tz_sorted = true;
-        return T;
+        space.is_Tz_sorted = true;
+        return space;
     }
 
 private:

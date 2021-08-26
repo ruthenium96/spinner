@@ -9,7 +9,7 @@
 #define JULY_C2_SYMMETRIZER_H
 
 #include "cmath"
-#include "common/Task.h"
+#include "common/Space.h"
 #include "unordered_map"
 #include "unordered_set"
 #include <boost/functional/hash.hpp>
@@ -18,7 +18,7 @@
 class Symmetrizer {
   public:
     Symmetrizer(std::vector<int> mults_, int pairs_);
-    Task& operator()(Task& T);
+    Space& operator()(Space& space);
 
     unsigned long symmetrized_lex(const unsigned long lex) const;
 

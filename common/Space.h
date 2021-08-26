@@ -1,12 +1,12 @@
-#ifndef JULY_TASK_H
-#define JULY_TASK_H
+#ifndef JULY_SPACE_H
+#define JULY_SPACE_H
 
 #include <deque>
 #include <map>
 #include "Subspace.h"
 #include <iostream>
 
-struct Task {
+struct Space {
     std::vector<int> mults;
 
     bool is_Tz_sorted = false;
@@ -14,7 +14,7 @@ struct Task {
 
     std::deque<Subspace> blocks;
 
-    explicit Task(std::vector<int> mults_) : mults(mults_) {
+    explicit Space(std::vector<int> mults_) : mults(mults_) {
 
         int tensor_size = 1;
         for (int mult : mults) {
@@ -45,4 +45,4 @@ struct Task {
 };
 
 
-#endif //JULY_TASK_H
+#endif //JULY_SPACE_H
