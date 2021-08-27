@@ -41,7 +41,7 @@ add_library(old_matrices
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 add_executable(components
         main/main_components.cpp 
-        components/c2_symmetrizer.cpp)
+        components/c2_symmetrizer.cpp common/Indexes.cpp common/Indexes.h components/tz_sorter.cpp common/Space.cpp)
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
 

@@ -4,14 +4,15 @@
 #include <map>
 #include <vector>
 
-typedef unsigned long Index;
-typedef double Coefficient;
+using Index = unsigned long;
+using Coefficient = double;
+using Decomposition = std::map<Index, Coefficient>;
 
 struct Subspace {
     int n_proj = -1;
     int representation = -1;
 
-    std::vector<std::map<Index, Coefficient>> basis;
+    std::vector<Decomposition> basis;
 };
 
 #endif // JULY_SUBSPACE_H

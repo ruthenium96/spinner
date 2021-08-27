@@ -1,19 +1,7 @@
-
 #include "c2_symmetrizer.h"
 
-Symmetrizer::Symmetrizer(std::vector<int> mults_, int pairs_)
-    : mults(mults_), pairs(pairs_) {
-    tensor_size = 1;
-    for (int mult : mults) {
-        tensor_size *= mult;
-    }
-
-    cumulative_product.resize(mults.size() + 1, 0);
-    cumulative_product[0] = tensor_size;
-    for (int k = 1; k < mults.size() + 1; ++k) {
-        cumulative_product[k] = cumulative_product[k - 1] / mults[k - 1];
-    }
-
+Symmetrizer::Symmetrizer(const Spaces::Indexes& indexes, int pairs_)
+    : indexes_(indexes), pairs(pairs_) {
     // TODO: copy it from Group object:
     max_repr = 2;
 }
@@ -33,7 +21,7 @@ Space& Symmetrizer::operator()(Space& space) {
 
         for (int i = 0; i < subspace_parent.basis.size(); ++i) {
             if (!is_in_hash_table(subspace_parent.basis[i], visited)) {
-                std::vector<std::map<Index, Coefficient>> projections =
+                std::vector<Decomposition> projections =
                     projector(subspace_parent.basis[i], visited);
                 for (int repr = 0; repr < max_repr; ++repr) {
                     if (!projections[repr].empty()) {
@@ -43,8 +31,7 @@ Space& Symmetrizer::operator()(Space& space) {
                             repr_to_block[repr] = space.blocks.size() - 1;
                         }
                         int j = repr_to_block[repr];
-                        space.blocks[j].basis.emplace_back(
-                            std::move(projections[repr]));
+                        space.blocks[j].basis.emplace_back(std::move(projections[repr]));
                     }
                 }
             }
@@ -58,23 +45,16 @@ Space& Symmetrizer::operator()(Space& space) {
 }
 
 unsigned long Symmetrizer::symmetrized_lex(const unsigned long lex) const {
-    std::vector<int> nzs(mults.size());
-    for (int i = 0; i < mults.size(); ++i) {
-        nzs[i] = (lex % cumulative_product[i]) / cumulative_product[i + 1];
-    }
+    std::vector<int> nzs = indexes_.lex_to_nzs(lex);
     for (int k = 0; k < pairs; ++k) {
         std::swap(nzs[2 * k], nzs[2 * k + 1]);
     }
-    unsigned long symm_lex = 0;
-    for (int i = 0; i < mults.size(); ++i) {
-        symm_lex += nzs[i] * cumulative_product[i + 1];
-    }
+    unsigned long symm_lex = indexes_.nzs_to_lex(nzs);
     return symm_lex;
 };
 
-std::vector<std::map<Index, Coefficient>>
-Symmetrizer::projector(std::map<Index, Coefficient>& m,
-                       std::unordered_map<size_t, size_t>& hs) {
+std::vector<Decomposition> Symmetrizer::projector(Decomposition & m,
+                                                  std::unordered_map<size_t, size_t>& hs) {
     std::vector<std::map<Index, Coefficient>> projections(max_repr);
     std::map<Index, Coefficient> m_symm;
     for (auto& p : m) {
@@ -100,9 +80,8 @@ Symmetrizer::projector(std::map<Index, Coefficient>& m,
     return projections;
 };
 
-void
-Symmetrizer::add_to_hash_table(std::map<Index, Coefficient>& m,
-                               std::unordered_map<size_t, size_t>& hs) {
+void Symmetrizer::add_to_hash_table(Decomposition & m,
+                                    std::unordered_map<size_t, size_t>& hs) {
     size_t key_seed = 0;
     size_t value_seed = 11;
     boost::hash_range(key_seed, m.begin(), m.end());
@@ -110,8 +89,7 @@ Symmetrizer::add_to_hash_table(std::map<Index, Coefficient>& m,
     hs[key_seed] = value_seed;
 }
 
-void Symmetrizer::erase_if_zero(
-    std::vector<std::map<Index, Coefficient>>& projections) {
+void Symmetrizer::erase_if_zero(std::vector<Decomposition>& projections) {
     for (std::map<Index, Coefficient>& mm : projections) {
         for (auto i = mm.begin(), last = mm.end(); i != last;) {
             if (std::abs(i->second) < 0.001) {
@@ -123,9 +101,8 @@ void Symmetrizer::erase_if_zero(
     }
 }
 
-bool
-Symmetrizer::is_in_hash_table(const std::map<Index, Coefficient>& m,
-                              std::unordered_map<size_t, size_t>& hs) {
+bool Symmetrizer::is_in_hash_table(const Decomposition & m,
+                                   std::unordered_map<size_t, size_t>& hs) {
     size_t key_seed = 0;
     size_t value_seed = 11;
     boost::hash_range(key_seed, m.begin(), m.end());

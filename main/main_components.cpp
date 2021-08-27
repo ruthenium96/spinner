@@ -17,11 +17,13 @@ int main() {
 
     std::vector<int> mults = {2, 2, 2, 2};
 
-    PerformanceTest([&mults]() {
-        Space T(mults);
-        Tz_Sorter tz_sorter(mults);
+    Spaces::Indexes indexes(mults);
+
+    PerformanceTest([&indexes]() {
+        Space T(indexes);
+        Tz_Sorter tz_sorter(indexes);
         T = tz_sorter(T);
-        Symmetrizer c2_symmetrizer(mults, 2);
+        Symmetrizer c2_symmetrizer(indexes, 2);
         T = c2_symmetrizer(T);
         T.print();
     });
