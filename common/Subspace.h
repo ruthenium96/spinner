@@ -9,6 +9,7 @@ using Coefficient = double;
 using Decomposition = std::map<Index, Coefficient>;
 
 struct Subspace {
+    // TODO: I guess, we can pack all subspace properties to Properties class.
     int n_proj = -1;
     int representation = -1;
 

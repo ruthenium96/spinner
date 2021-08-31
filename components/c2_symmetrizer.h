@@ -16,10 +16,15 @@ class Symmetrizer {
     Symmetrizer(const Spaces::Indexes& indexes, int pairs_);
     Space& operator()(Space& space);
 
+    // TODO: it should be part of Group class
     unsigned long symmetrized_lex(unsigned long lex) const;
 
+    // TODO: this function (nzs => symmetrized nzs) can be realized both in Group and here.
+    //  I guess, Group realization will be better.
     std::vector<Decomposition> projector(Decomposition& m, std::unordered_map<size_t, size_t>& hs);
 
+    // TODO: these functions are not about symmetrization.
+    //  Should we refactor them and create a new class?
     static void add_to_hash_table(Decomposition& m, std::unordered_map<size_t, size_t>& hs);
 
     static void erase_if_zero(std::vector<Decomposition>& projections);

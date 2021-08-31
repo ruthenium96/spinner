@@ -8,6 +8,7 @@
 #include <iostream>
 
 struct Space {
+    // TODO: I guess, we can pack all these properties to Space::History class.
     bool is_Tz_sorted = false;
     bool is_C2_symmetrized = false;
 
