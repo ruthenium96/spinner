@@ -17,11 +17,11 @@ class Symmetrizer {
     Space& operator()(Space& space);
 
     // TODO: it should be part of Group class
-    unsigned long symmetrized_lex(unsigned long lex) const;
+    Lex_Index symmetrized_lex(Lex_Index lex) const;
 
     // TODO: this function (nzs => symmetrized nzs) can be realized both in Group and here.
     //  I guess, Group realization will be better.
-    std::vector<Decomposition> projector(Decomposition& m, std::unordered_map<size_t, size_t>& hs);
+    std::vector<Decomposition> projector(Decomposition& m, std::unordered_map<size_t, size_t>& hs) const;
 
     // TODO: these functions are not about symmetrization.
     //  Should we refactor them and create a new class?

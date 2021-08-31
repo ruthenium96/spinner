@@ -1,12 +1,13 @@
 #ifndef JULY_SUBSPACE_H
 #define JULY_SUBSPACE_H
 
+#include <cstdint>
 #include <map>
 #include <vector>
 
-using Index = unsigned long;
+using Lex_Index = uint32_t;
 using Coefficient = double;
-using Decomposition = std::map<Index, Coefficient>;
+using Decomposition = std::map<Lex_Index, Coefficient>;
 
 struct Subspace {
     // TODO: I guess, we can pack all subspace properties to Properties class.

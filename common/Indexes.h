@@ -4,19 +4,22 @@
 #include <functional>
 #include <numeric>
 #include <vector>
+#include "Subspace.h"
+
+using Projection = uint8_t;
 
 namespace Spaces {
     class Indexes {
     public:
         explicit Indexes(std::vector<int> mults);
-        int lex_to_ntzproj (unsigned long lex) const;
-        std::vector<int> lex_to_nzs(unsigned long lex) const;
-        unsigned long nzs_to_lex(const std::vector<int>& nzs) const;
+        Projection lex_to_ntzproj (Lex_Index lex) const;
+        std::vector<Projection> lex_to_nzs(Lex_Index lex) const;
+        Lex_Index nzs_to_lex(const std::vector<Projection>& nzs) const;
 
-        unsigned int total_space_size;
+        uint32_t total_space_size;
         const std::vector<int> mults_;
     private:
-        std::vector<int> cumulative_product;
+        std::vector<uint32_t> cumulative_product;
     };
 }
 

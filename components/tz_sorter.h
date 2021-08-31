@@ -13,7 +13,7 @@ public:
 
 private:
     const Spaces::Indexes& indexes_;
-    int max_ntz_proj;
+    uint32_t max_ntz_proj;
 };
 
 #endif //JULY_TZ_SORTER_H

@@ -18,7 +18,7 @@ Space::Space(const Spaces::Indexes& indexes) {
     blocks.emplace_back();
     Subspace& lex_block = blocks[0];
     lex_block.basis.resize(indexes.total_space_size);
-    for (unsigned long i = 0; i < indexes.total_space_size; ++i) {
-        lex_block.basis[i][i] = 1.0;
+    for (Lex_Index lex = 0; lex < indexes.total_space_size; ++lex) {
+        lex_block.basis[lex][lex] = 1.0;
     }
 }
