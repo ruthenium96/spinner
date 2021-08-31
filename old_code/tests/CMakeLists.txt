@@ -22,4 +22,4 @@ set_target_properties(july_unittests PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-target_include_directories(july_unittests PRIVATE "${PROJECT_SOURCE_DIR}")
+target_include_directories(july_unittests PRIVATE "../..")

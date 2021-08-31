@@ -1,6 +1,0 @@
-[submodule "libs/wignerSymbols"]
-	path = libs/wignerSymbols
-	url = https://github.com/joeydumont/wignerSymbols
-[submodule "libs/googletest"]
-	path = libs/googletest
-	url = https://github.com/google/googletest

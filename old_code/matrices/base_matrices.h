@@ -1,7 +1,7 @@
 #ifndef JULY_BASE_MATRICES_H
 #define JULY_BASE_MATRICES_H
 
-#include "../indexes/blm.h"
+#include "old_code/indexes/blm.h"
 #include <iostream>
 #include <armadillo>
 
