@@ -1,13 +1,13 @@
 #include "c2_symmetrizer.h"
 
-Symmetrizer::Symmetrizer(const Spaces::Indexes& indexes, int pairs_)
+Symmetrizer::Symmetrizer(const spaces::LexicographicIndexConverter& indexes, int pairs_)
     : indexes_(indexes), pairs(pairs_) {
     // TODO: copy it from Group object:
     max_repr = 2;
 }
 
 Space& Symmetrizer::operator()(Space& space) {
-    if (space.is_C2_symmetrized) {
+    if (space.history.isC2Symmetrized) {
         return space;
     }
 
@@ -39,16 +39,16 @@ Space& Symmetrizer::operator()(Space& space) {
         space.blocks.pop_front();
     }
 
-    space.is_C2_symmetrized = true;
+    space.history.isC2Symmetrized = true;
     return space;
 }
 
-Lex_Index Symmetrizer::symmetrized_lex(const Lex_Index lex) const {
-    std::vector<Projection> nzs = indexes_.lex_to_nzs(lex);
+uint32_t Symmetrizer::symmetrized_lex(const uint32_t lex) const {
+    std::vector<uint8_t> nzs = indexes_.lex_to_nzs(lex);
     for (int k = 0; k < pairs; ++k) {
         std::swap(nzs[2 * k], nzs[2 * k + 1]);
     }
-    Lex_Index symm_lex = indexes_.nzs_to_lex(nzs);
+    uint32_t symm_lex = indexes_.nzs_to_lex(nzs);
     return symm_lex;
 }
 
@@ -57,7 +57,7 @@ std::vector<Decomposition> Symmetrizer::projector(Decomposition & m,
     std::vector<Decomposition> projections(max_repr);
     Decomposition m_symm;
     for (auto& p : m) {
-        Lex_Index symm_lex = symmetrized_lex(p.first);
+        uint32_t symm_lex = symmetrized_lex(p.first);
         m_symm[symm_lex] = p.second;
     }
 
@@ -67,7 +67,7 @@ std::vector<Decomposition> Symmetrizer::projector(Decomposition & m,
     auto it_m = m.begin();
     auto it_m_symm = m_symm.begin();
     while (it_m != m.end()) {
-        Coefficient old_coeff = it_m->second;
+        double old_coeff = it_m->second;
         projections[0][it_m->first] += 1 * old_coeff;
         projections[0][it_m_symm->first] += 1 * old_coeff;
         projections[1][it_m->first] += 1 * old_coeff;

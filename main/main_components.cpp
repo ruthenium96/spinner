@@ -1,4 +1,4 @@
-#include "common/Space.h"
+#include "entities/Space.h"
 #include "components/c2_symmetrizer.h"
 #include "components/tz_sorter.h"
 #include <chrono>
@@ -18,13 +18,13 @@ int main() {
 
     std::vector<int> mults = {2, 2, 2, 2};
 
-    Spaces::Indexes indexes(mults);
+    spaces::LexicographicIndexConverter converter(mults);
 
-    PerformanceTest([&indexes]() {
-        Space space(indexes);
-        Tz_Sorter tz_sorter(indexes);
+    PerformanceTest([&converter]() {
+        Space space(converter);
+        Tz_Sorter tz_sorter(converter);
         space = tz_sorter(space);
-        Symmetrizer c2_symmetrizer(indexes, 2);
+        Symmetrizer c2_symmetrizer(converter, 2);
         space = c2_symmetrizer(space);
         std::cout << space;
     });
