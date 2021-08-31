@@ -2,6 +2,7 @@
 #include "components/c2_symmetrizer.h"
 #include "components/tz_sorter.h"
 #include <chrono>
+#include "common/Logger.h"
 
 void PerformanceTest(std::function<void(void)> f, int cycles = 1) {
     auto start = std::chrono::high_resolution_clock::now();
@@ -20,11 +21,11 @@ int main() {
     Spaces::Indexes indexes(mults);
 
     PerformanceTest([&indexes]() {
-        Space T(indexes);
+        Space space(indexes);
         Tz_Sorter tz_sorter(indexes);
-        T = tz_sorter(T);
+        space = tz_sorter(space);
         Symmetrizer c2_symmetrizer(indexes, 2);
-        T = c2_symmetrizer(T);
-        T.print();
+        space = c2_symmetrizer(space);
+        std::cout << space;
     });
 }

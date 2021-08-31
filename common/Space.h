@@ -16,7 +16,7 @@ struct Space {
 
     explicit Space(const Spaces::Indexes& indexes);
 
-    void print();
+    friend std::ostream &operator<<(std::ostream &os, const Space &space);
 
 };
 
