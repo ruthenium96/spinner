@@ -1,9 +1,8 @@
 #include "Space.h"
 
 using namespace entities;
-using namespace space;
 
-Space(const spaces::LexicographicIndexConverter& indexes): Entity(Entity::SPACE) {
+Space::Space(const spaces::LexicographicIndexConverter& indexes): Entity(Entity::SPACE) {
     blocks.emplace_back();
     Subspace& lex_block = blocks[0];
     lex_block.basis.resize(indexes.total_space_size);

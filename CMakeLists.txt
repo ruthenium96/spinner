@@ -11,6 +11,7 @@ FetchContent_Declare(
         GIT_TAG        "release-1.11.0"
 )
 FetchContent_MakeAvailable(googletest)
+include_directories(${CMAKE_SOURCE_DIR}/libs/googletest/googletest/include)
 
 FetchContent_Declare(
         wignersymbols
@@ -20,19 +21,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(wignersymbols)
 include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
-
 find_package(Boost)
 include_directories(${Boost_INCLUDE_DIRS})
 
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
-
-include_directories(${CMAKE_CURRENT_LIST_DIR})
-add_executable(components
-        main/main_components.cpp 
-        components/c2_symmetrizer.cpp common/LexicographicIndexConverter.cpp common/LexicographicIndexConverter.h components/tz_sorter.cpp entities/Space.cpp)
-
-set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -41,8 +34,16 @@ if (OPENMP_FOUND)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-option(PACKAGE_TESTS "Build the tests" ON)
-if(PACKAGE_TESTS)
-    enable_testing()
-    include(GoogleTest)
-endif()
+include_directories(${CMAKE_SOURCE_DIR})
+add_executable(components
+        main/main_components.cpp 
+        components/c2_symmetrizer.cpp 
+        common/LexicographicIndexConverter.cpp 
+        common/LexicographicIndexConverter.h 
+        components/tz_sorter.cpp 
+        entities/Space.cpp
+        )
+
+set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
+
+add_subdirectory(test)
