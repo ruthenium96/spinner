@@ -6,18 +6,18 @@
 #define JULY_C2_SYMMETRIZER_H
 
 #include "cmath"
-#include "common/Space.h"
+#include "entities/Space.h"
 #include "unordered_map"
 #include <boost/functional/hash.hpp>
 #include <vector>
 
 class Symmetrizer {
   public:
-    Symmetrizer(const Spaces::Indexes& indexes, int pairs_);
+    Symmetrizer(const spaces::LexicographicIndexWorker& indexes, int pairs_);
     Space& operator()(Space& space);
 
     // TODO: it should be part of Group class
-    Lex_Index symmetrized_lex(Lex_Index lex) const;
+    uint32_t symmetrized_lex(uint32_t lex) const;
 
     // TODO: this function (nzs => symmetrized nzs) can be realized both in Group and here.
     //  I guess, Group realization will be better.
@@ -32,7 +32,7 @@ class Symmetrizer {
     static bool is_in_hash_table(const Decomposition& m, std::unordered_map<size_t, size_t>& hs);
 
   private:
-    const Spaces::Indexes& indexes_;
+    const spaces::LexicographicIndexWorker& indexes_;
     int pairs;
     int max_repr;
 };

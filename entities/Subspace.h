@@ -5,9 +5,7 @@
 #include <map>
 #include <vector>
 
-using Lex_Index = uint32_t;
-using Coefficient = double;
-using Decomposition = std::map<Lex_Index, Coefficient>;
+using Decomposition = std::map<uint32_t, double>;
 
 struct Subspace {
     // TODO: I guess, we can pack all subspace properties to Properties class.

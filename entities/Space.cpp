@@ -1,11 +1,12 @@
 #include "Space.h"
 
-Space::Space(const Spaces::Indexes& indexes) {
+using namespace entities;
 
+Space::Space(const spaces::LexicographicIndexWorker& indexes): Entity(Entity::SPACE) {
     blocks.emplace_back();
     Subspace& lex_block = blocks[0];
     lex_block.basis.resize(indexes.total_space_size);
-    for (Lex_Index lex = 0; lex < indexes.total_space_size; ++lex) {
+    for (uint32_t lex = 0; lex < indexes.total_space_size; ++lex) {
         lex_block.basis[lex][lex] = 1.0;
     }
 }
