@@ -32,7 +32,6 @@ const GroupInfo GroupInfoP3 = {6, 3, 2,
 };
 
 enum GroupNames {
-    P1,
     P2,
     P3,
 };

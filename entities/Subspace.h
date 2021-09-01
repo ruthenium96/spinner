@@ -10,7 +10,7 @@ using Decomposition = std::map<uint32_t, double>;
 struct Subspace {
     // TODO: I guess, we can pack all subspace properties to Properties class.
     int n_proj = -1;
-    int representation = -1;
+    std::vector<int> representation;
 
     std::vector<Decomposition> basis;
 };
