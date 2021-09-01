@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "entities/Space.h"
-#include "components/c2_symmetrizer.h"
+#include "components/symmetrizer.h"
 #include "components/tz_sorter.h"
 #include <chrono>
 
@@ -24,8 +24,12 @@ TEST(performanceTest, simple2ComponentSchema) {
         Space space(converter);
         Tz_Sorter tz_sorter(converter);
         space = tz_sorter(space);
-        Symmetrizer c2_symmetrizer(converter, 2);
-        space = c2_symmetrizer(space);
+        Group group_first(P2, {{1, 0, 3, 2}});
+        Symmetrizer symmetrizer_first(converter, group_first);
+        space = symmetrizer_first(space);
+        Group group_second(P2, {{3, 2, 1, 0}});
+        Symmetrizer symmetrizer_second(converter, group_second);
+        space = symmetrizer_second(space);
         std::cout << space;
     });
 }

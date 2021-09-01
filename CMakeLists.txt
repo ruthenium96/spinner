@@ -35,9 +35,12 @@ if (OPENMP_FOUND)
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR})
+
+add_library(groups groups/Group.h groups/Group.cpp groups/Group_Info.h)
+
 add_executable(components
         main/main_components.cpp 
-        components/c2_symmetrizer.cpp
+        components/symmetrizer.cpp
         common/LexicographicIndexWorker.cpp
         common/LexicographicIndexWorker.h
         components/tz_sorter.cpp 

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <cstdint>
-#include <common/Subspace.h>
-#include <common/Indexes.h>
+#include <entities/Subspace.h>
+#include <common/LexicographicIndexWorker.h>
 #include "groups/Group_Info.h"
 
 using Permutation = std::vector<uint8_t>;
@@ -16,10 +16,9 @@ using Permutation = std::vector<uint8_t>;
 // 4) coefficients_of_projectors
 class Group {
 public:
-//    explicit Group(GroupNames group_name, std::vector<Permutation> generators);
-    explicit Group(const GroupInfo& group_info, std::vector<Permutation> generators);
+    explicit Group(GroupNames group_name, std::vector<Permutation> generators);
 
-    std::vector<std::vector<Projection>> permutate(const std::vector<Projection>& initial) const;
+    std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
 
     const GroupInfo& groupInfo;
 

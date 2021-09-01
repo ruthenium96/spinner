@@ -2,7 +2,7 @@
 #define JULY_SYMMETRIZER_H
 
 #include "cmath"
-#include "common/Space.h"
+#include "entities/Space.h"
 #include "unordered_map"
 #include <boost/functional/hash.hpp>
 #include <vector>
@@ -10,7 +10,7 @@
 
 class Symmetrizer {
   public:
-    Symmetrizer(const Spaces::Indexes& indexes, const Group& group);
+    Symmetrizer(const spaces::LexicographicIndexWorker& indexes, const Group& group);
     Space& operator()(Space& space) const;
 
     std::vector<Decomposition> get_symmetrical_projected_decompositions(Decomposition& m, std::unordered_map<size_t, size_t>& hs) const;
@@ -24,7 +24,7 @@ class Symmetrizer {
     static bool is_in_hash_table(const Decomposition& m, std::unordered_map<size_t, size_t>& hs);
 
   private:
-    const Spaces::Indexes& indexes_;
+    const spaces::LexicographicIndexWorker& indexes_;
     const Group& group_;
 };
 

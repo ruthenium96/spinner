@@ -15,16 +15,16 @@ struct GroupInfo {
     std::vector<std::vector<size_t>> group_in_form_of_generators;
     // the coefficients of projectors to representations
     // It has the size (number_of_representations) x (group_size).
-    std::vector<std::vector<Coefficient>> coefficients_of_projectors;
+    std::vector<std::vector<double>> coefficients_of_projectors;
 };
 
-const GroupInfo GroupInfoP2 = {2, 2, 1,
+static const GroupInfo GroupInfoP2 = {2, 2, 1,
                                {{0}, {1}},
                                {{1, 1},
                                 {1, -1}}
 };
 
-const GroupInfo GroupInfoP3 = {6, 3, 2,
+static const GroupInfo GroupInfoP3 = {6, 3, 2,
                                {{0, 0}, {1, 0}, {2, 0}, {0, 1}, {1, 1}, {2, 1}},
                                {{1, 1, 1, 1, 1, 1},
                                 {1, 1, 1, -1, -1, -1},
@@ -36,14 +36,14 @@ enum GroupNames {
     P3,
 };
 
-//const GroupInfo& return_group_info_by_group_name(GroupNames group_name) {
-//    if (group_name == P2) {
-//        return GroupInfoP2;
-//    }
-//    if (group_name == P3) {
-//        return GroupInfoP3;
-//    }
-//}
+static const GroupInfo& return_group_info_by_group_name(GroupNames group_name) {
+    if (group_name == P2) {
+        return GroupInfoP2;
+    }
+    if (group_name == P3) {
+        return GroupInfoP3;
+    }
+}
 
 
 #endif //JULY_GROUP_INFO_H

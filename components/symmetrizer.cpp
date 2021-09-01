@@ -1,13 +1,13 @@
 #include "symmetrizer.h"
 
-Symmetrizer::Symmetrizer(const Spaces::Indexes& indexes, const Group& group)
+Symmetrizer::Symmetrizer(const spaces::LexicographicIndexWorker& indexes, const Group& group)
     : indexes_(indexes), group_(group) {
 }
 
 Space& Symmetrizer::operator()(Space& space) const {
-    if (space.is_C2_symmetrized) {
+//    if (space.is_C2_symmetrized) {
 //        return space;
-    }
+//    }
 
     // save old numbers of symmetrizer usage.
     size_t old_number_of_simmetrization = space.blocks.front().representation.size();
@@ -46,7 +46,7 @@ Space& Symmetrizer::operator()(Space& space) const {
         space.blocks.pop_front();
     }
 
-    space.is_C2_symmetrized = true;
+//    space.is_C2_symmetrized = true;
     return space;
 }
 
@@ -56,11 +56,11 @@ std::vector<Decomposition> Symmetrizer::get_symmetrical_projected_decompositions
     std::vector<Decomposition> ms_parent(group_.groupInfo.group_size);
 
     for (auto& p : m) {
-        std::vector<Projection> nzs = indexes_.lex_to_nzs(p.first);
-        std::vector<std::vector<Projection>> permutated_vectors = group_.permutate(nzs);
+        std::vector<uint8_t> nzs = indexes_.lex_to_nzs(p.first);
+        std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
 
         for (uint32_t i = 0; i < permutated_vectors.size(); ++i) {
-            Lex_Index permutated_lex = indexes_.nzs_to_lex(permutated_vectors[i]);
+            uint32_t permutated_lex = indexes_.nzs_to_lex(permutated_vectors[i]);
             ms_parent[i][permutated_lex] = p.second;
         }
     }
@@ -74,7 +74,7 @@ std::vector<Decomposition> Symmetrizer::get_symmetrical_projected_decompositions
         ms_parent_iterator[i] = ms_parent[i].begin();
     }
     while (ms_parent_iterator[0] != ms_parent[0].end()) {
-        Coefficient old_coeff = ms_parent_iterator[0]->second;
+        double old_coeff = ms_parent_iterator[0]->second;
         for (uint32_t i = 0; i < group_.groupInfo.number_of_representations; ++i) {
             for (uint32_t j = 0; j < group_.groupInfo.group_size; ++j) {
                 projections[i][ms_parent_iterator[j]->first] += group_.groupInfo.coefficients_of_projectors[i][j] * old_coeff;
