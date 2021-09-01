@@ -13,7 +13,7 @@
 
 class Symmetrizer {
   public:
-    Symmetrizer(const spaces::LexicographicIndexConverter& indexes, int pairs_);
+    Symmetrizer(const spaces::LexicographicIndexWorker& indexes, int pairs_);
     Space& operator()(Space& space);
 
     // TODO: it should be part of Group class
@@ -32,7 +32,7 @@ class Symmetrizer {
     static bool is_in_hash_table(const Decomposition& m, std::unordered_map<size_t, size_t>& hs);
 
   private:
-    const spaces::LexicographicIndexConverter& indexes_;
+    const spaces::LexicographicIndexWorker& indexes_;
     int pairs;
     int max_repr;
 };

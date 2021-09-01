@@ -37,9 +37,9 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR})
 add_executable(components
         main/main_components.cpp 
-        components/c2_symmetrizer.cpp 
-        common/LexicographicIndexConverter.cpp 
-        common/LexicographicIndexConverter.h 
+        components/c2_symmetrizer.cpp
+        common/LexicographicIndexWorker.cpp
+        common/LexicographicIndexWorker.h
         components/tz_sorter.cpp 
         entities/Space.cpp
         )

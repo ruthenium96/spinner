@@ -4,13 +4,12 @@
 #include <functional>
 #include <numeric>
 #include <vector>
-
-using uint8_t = uint8_t;
+#include <cstdint>
 
 namespace spaces {
-    class LexicographicIndexConverter {
+    class LexicographicIndexWorker {
     public:
-        explicit LexicographicIndexConverter(std::vector<int> mults);
+        explicit LexicographicIndexWorker(std::vector<int> mults);
         uint8_t lex_to_ntzproj (uint32_t lex) const;
         std::vector<uint8_t> lex_to_nzs(uint32_t lex) const;
         uint32_t nzs_to_lex(const std::vector<uint8_t>& nzs) const;

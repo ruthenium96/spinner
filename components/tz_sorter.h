@@ -7,12 +7,12 @@
 
 class Tz_Sorter {
 public:
-    explicit Tz_Sorter(const spaces::LexicographicIndexConverter& indexes);
+    explicit Tz_Sorter(const spaces::LexicographicIndexWorker& indexes);
 
     Space& operator()(Space& space) const;
 
 private:
-    const spaces::LexicographicIndexConverter& indexes_;
+    const spaces::LexicographicIndexWorker& indexes_;
     uint32_t max_ntz_proj;
 };
 

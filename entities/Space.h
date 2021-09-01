@@ -3,14 +3,14 @@
 
 #include "Entity.h"
 #include "Subspace.h"
-#include "common/LexicographicIndexConverter.h"
+#include "common/LexicographicIndexWorker.h"
 #include <deque>
 #include <iostream>
 #include <map>
 
 struct Space : public entities::Entity {
 
-    explicit Space(const spaces::LexicographicIndexConverter& indexes);
+    explicit Space(const spaces::LexicographicIndexWorker& indexes);
     friend std::ostream& operator<<(std::ostream& os, const Space& space);
 
     std::deque<Subspace> blocks;

@@ -1,6 +1,6 @@
 #include "c2_symmetrizer.h"
 
-Symmetrizer::Symmetrizer(const spaces::LexicographicIndexConverter& indexes, int pairs_)
+Symmetrizer::Symmetrizer(const spaces::LexicographicIndexWorker& indexes, int pairs_)
     : indexes_(indexes), pairs(pairs_) {
     // TODO: copy it from Group object:
     max_repr = 2;

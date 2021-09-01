@@ -18,7 +18,7 @@ TEST(performanceTest, simple2ComponentSchema) {
 
     std::vector<int> mults = {2, 2, 2, 2};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    spaces::LexicographicIndexWorker converter(mults);
 
     PerformanceTest([&converter]() {
         Space space(converter);

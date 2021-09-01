@@ -34,7 +34,7 @@ Space &Tz_Sorter::operator()(Space &space) const {
     return space;
 }
 
-Tz_Sorter::Tz_Sorter(const spaces::LexicographicIndexConverter& indexes) : indexes_(indexes) {
+Tz_Sorter::Tz_Sorter(const spaces::LexicographicIndexWorker& indexes) : indexes_(indexes) {
     // We want to get 2T + 1 (projections are counted from zero to multiplicity),
     // where T = sum_{1}^{N} S_i. So 2T + 1 = sum_{1}^{N} (2S_i + 1) - N + 1.
     max_ntz_proj = std::accumulate(indexes.mults_.begin(),
