@@ -18,7 +18,7 @@ public:
 
     std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
 
-    const GroupInfo& groupInfo;
+    const GroupInfo& info;
 
     std::vector<Permutation> elements_;
 

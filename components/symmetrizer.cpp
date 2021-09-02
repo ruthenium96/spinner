@@ -17,7 +17,7 @@ Space& Symmetrizer::operator()(Space& space) const {
         Subspace& subspace_parent = space.blocks.front();
         Subspace subspace_child = space.blocks.front();
         subspace_child.basis.clear();
-        std::vector<size_t> repr_to_block(group_.groupInfo.number_of_representations, -1);
+        std::vector<size_t> repr_to_block(group_.info.number_of_representations, -1);
 
         // it is an auxiliary hash table. It helps excludes exact copies of the vectors.
         std::unordered_map<size_t, size_t> visited;
@@ -29,7 +29,7 @@ Space& Symmetrizer::operator()(Space& space) const {
             if (!is_in_hash_table(basi, visited)) {
                 std::vector<Decomposition> projected_basi = get_symmetrical_projected_decompositions(
                         basi, visited);
-                for (int repr = 0; repr < group_.groupInfo.number_of_representations; ++repr) {
+                for (int repr = 0; repr < group_.info.number_of_representations; ++repr) {
                     if (!projected_basi[repr].empty()) {
                         if (repr_to_block[repr] == -1) {
                             space.blocks.push_back(subspace_child);
@@ -52,8 +52,8 @@ Space& Symmetrizer::operator()(Space& space) const {
 
 std::vector<Decomposition> Symmetrizer::get_symmetrical_projected_decompositions(Decomposition & m,
                                                                                  std::unordered_map<size_t, size_t>& hs) const {
-    std::vector<Decomposition> projections(group_.groupInfo.number_of_representations);
-    std::vector<Decomposition> ms_parent(group_.groupInfo.group_size);
+    std::vector<Decomposition> projections(group_.info.number_of_representations);
+    std::vector<Decomposition> ms_parent(group_.info.group_size);
 
     for (auto& p : m) {
         std::vector<uint8_t> nzs = indexes_.lex_to_nzs(p.first);
@@ -69,18 +69,18 @@ std::vector<Decomposition> Symmetrizer::get_symmetrical_projected_decompositions
         add_to_hash_table(mm, hs);
     }
 
-    std::vector<Decomposition::iterator> ms_parent_iterator(group_.groupInfo.group_size);
-    for (uint32_t i = 0; i < group_.groupInfo.group_size; ++i) {
+    std::vector<Decomposition::iterator> ms_parent_iterator(group_.info.group_size);
+    for (uint32_t i = 0; i < group_.info.group_size; ++i) {
         ms_parent_iterator[i] = ms_parent[i].begin();
     }
     while (ms_parent_iterator[0] != ms_parent[0].end()) {
         double old_coeff = ms_parent_iterator[0]->second;
-        for (uint32_t i = 0; i < group_.groupInfo.number_of_representations; ++i) {
-            for (uint32_t j = 0; j < group_.groupInfo.group_size; ++j) {
-                projections[i][ms_parent_iterator[j]->first] += group_.groupInfo.coefficients_of_projectors[i][j] * old_coeff;
+        for (uint32_t i = 0; i < group_.info.number_of_representations; ++i) {
+            for (uint32_t j = 0; j < group_.info.group_size; ++j) {
+                projections[i][ms_parent_iterator[j]->first] += group_.info.coefficients_of_projectors[i][j] * old_coeff;
             }
         }
-        for (uint32_t i = 0; i < group_.groupInfo.group_size; ++i) {
+        for (uint32_t i = 0; i < group_.info.group_size; ++i) {
             ++ms_parent_iterator[i];
         }
     }
