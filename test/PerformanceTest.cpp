@@ -16,7 +16,7 @@ void PerformanceTest(std::function<void(void)> f, int cycles = 1) {
 
 TEST(performanceTest, simple2ComponentSchema) {
 
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<int> mults = {3, 3, 3};
 
     spaces::LexicographicIndexWorker converter(mults);
 
@@ -24,12 +24,9 @@ TEST(performanceTest, simple2ComponentSchema) {
         Space space(converter);
         Tz_Sorter tz_sorter(converter);
         space = tz_sorter(space);
-        Group group_first(P2, {{1, 0, 3, 2}});
+        Group group_first(P3, {{1, 2, 0}, {0, 2, 1}});
         Symmetrizer symmetrizer_first(converter, group_first);
         space = symmetrizer_first(space);
-        Group group_second(P2, {{3, 2, 1, 0}});
-        Symmetrizer symmetrizer_second(converter, group_second);
-        space = symmetrizer_second(space);
         std::cout << space;
     });
 }

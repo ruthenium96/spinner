@@ -94,6 +94,7 @@ void Symmetrizer::add_to_hash_table(Decomposition & m,
                                     std::unordered_map<size_t, size_t>& hs) {
     // TODO: It is not the fastest way, can we do something else?
     // TODO: Probably, implementing of something like GCD will be also good (but still slow).
+    // TODO: We have problems with linear-dependent set of functions in the case of non-Abelian groups.
     if (m.begin()->second < 0) {
         for (auto& p : m) {
             p.second *= -1;

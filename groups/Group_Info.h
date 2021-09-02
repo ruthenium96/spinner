@@ -1,6 +1,8 @@
 #ifndef JULY_GROUP_INFO_H
 #define JULY_GROUP_INFO_H
 
+// TODO: create simple way to keep _all_ projectors for non-Abelian groups
+
 struct GroupInfo {
     // the number of permutations in the group
     uint8_t group_size;
