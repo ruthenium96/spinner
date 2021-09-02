@@ -18,17 +18,25 @@ struct GroupInfo {
     std::vector<std::vector<double>> coefficients_of_projectors;
 };
 
-static const GroupInfo GroupInfoP2 = {2, 2, 1,
-                               {{0}, {1}},
-                               {{1, 1},
-                                {1, -1}}
+static const GroupInfo GroupInfoP2 = {2, // group size
+                                      2, // number of representations
+                                      1, // number of generators
+                                      // group elements as product of generators:
+                                      {{0}, {1}},
+                                      // coefficients of projectors
+                                      {{1, 1},  // "a" representation
+                                       {1, -1}} // "b" representation
 };
 
-static const GroupInfo GroupInfoP3 = {6, 3, 2,
-                               {{0, 0}, {1, 0}, {2, 0}, {0, 1}, {1, 1}, {2, 1}},
-                               {{1, 1, 1, 1, 1, 1},
-                                {1, 1, 1, -1, -1, -1},
-                                {2, -1, -1, 0, 0, 0}}
+static const GroupInfo GroupInfoP3 = {6, // group size
+                                      3, // number of representations
+                                      2, // number of generators
+                                      // group elements as product of generators:
+                                      {{0, 0}, {1, 0}, {2, 0}, {0, 1}, {1, 1}, {2, 1}},
+                                      // coefficients of projectors
+                                      {{1, 1, 1, 1, 1, 1},    // "a" representation
+                                       {1, 1, 1, -1, -1, -1}, // "b" representation
+                                       {2, -1, -1, 0, 0, 0}}  // "e" representation
 };
 
 enum GroupNames {

@@ -3,8 +3,6 @@
 
 #include <vector>
 #include <cstdint>
-#include <entities/Subspace.h>
-#include <common/LexicographicIndexWorker.h>
 #include "groups/Group_Info.h"
 
 using Permutation = std::vector<uint8_t>;
