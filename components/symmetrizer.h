@@ -13,15 +13,15 @@ class Symmetrizer {
     Symmetrizer(const spaces::LexicographicIndexWorker& indexes, const Group& group);
     Space& operator()(Space& space) const;
 
-    std::vector<Decomposition> get_symmetrical_projected_decompositions(Decomposition& m, std::unordered_map<size_t, size_t>& hs) const;
+    std::vector<std::vector<Decomposition>> get_symmetrical_projected_decompositions(Decomposition& m) const;
 
     // TODO: these functions are not about symmetrization.
     //  Should we refactor them and create a new class?
-    static void add_to_hash_table(Decomposition& m, std::unordered_map<size_t, size_t>& hs);
+    static void increment_in_hash_table(Decomposition& m, std::unordered_map<uint32_t , uint8_t>& hs);
 
-    static void erase_if_zero(std::vector<Decomposition>& projections);
+    static void erase_if_zero(std::vector<std::vector<Decomposition>>& projections);
 
-    static bool is_in_hash_table(const Decomposition& m, std::unordered_map<size_t, size_t>& hs);
+    static uint8_t count_in_hash_table(const Decomposition& m, std::unordered_map<uint32_t , uint8_t>& hs);
 
   private:
     const spaces::LexicographicIndexWorker& indexes_;

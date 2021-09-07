@@ -38,14 +38,16 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 add_library(groups groups/Group.h groups/Group.cpp groups/Group_Info.h)
 
-add_executable(components
+add_library(components
+        components/symmetrizer.cpp components/symmetrizer.h
+        components/tz_sorter.cpp components/tz_sorter.h
+        )
+
+add_executable(main_components
         main/main_components.cpp 
-        components/symmetrizer.cpp
         common/LexicographicIndexWorker.cpp
         common/LexicographicIndexWorker.h
-        components/tz_sorter.cpp 
-        entities/Space.cpp
-        )
+        entities/Space.cpp)
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
 
