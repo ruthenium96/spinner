@@ -36,7 +36,10 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-add_library(groups groups/Group.h groups/Group.cpp groups/Group_Info.h)
+add_library(groups
+        groups/Group.h groups/Group.cpp
+        groups/Group_Info.h groups/Group_Info.cpp
+        )
 
 add_library(components
         components/symmetrizer.cpp components/symmetrizer.h
@@ -44,10 +47,11 @@ add_library(components
         )
 
 add_executable(main_components
-        main/main_components.cpp 
-        common/LexicographicIndexWorker.cpp
-        common/LexicographicIndexWorker.h
+        main/main_components.cpp
+        common/LexicographicIndexConverter.cpp common/LexicographicIndexConverter.h
         entities/Space.cpp)
+
+target_link_libraries(main_components components groups)
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
 

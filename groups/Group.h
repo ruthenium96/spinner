@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cstdint>
-#include "groups/Group_Info.h"
+#include "Group_Info.h"
 
 using Permutation = std::vector<uint8_t>;
 
@@ -14,11 +14,11 @@ using Permutation = std::vector<uint8_t>;
 // 4) coefficients_of_projectors
 class Group {
 public:
-    explicit Group(GroupNames group_name, std::vector<Permutation> generators);
+    explicit Group(group::GroupNames group_name, std::vector<Permutation> generators);
 
     std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
 
-    const GroupInfo& info;
+    const group::GroupInfo& info;
 
     std::vector<Permutation> elements_;
 

@@ -1,10 +1,10 @@
 #include "symmetrizer.h"
 
-Symmetrizer::Symmetrizer(const spaces::LexicographicIndexWorker& indexes, const Group& group)
+Symmetrizer::Symmetrizer(const spaces::LexicographicIndexConverter& indexes, const Group& group)
     : indexes_(indexes), group_(group) {
 }
 
-Space& Symmetrizer::operator()(Space& space) const {
+Space& Symmetrizer::apply(Space& space) const {
 //    if (space.is_C2_symmetrized) {
 //        return space;
 //    }
@@ -37,7 +37,7 @@ Space& Symmetrizer::operator()(Space& space) const {
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
             if (count_in_hash_table(basi, visited) < dimension_of_parent) {
-                std::vector<std::vector<Decomposition>> projected_basi = get_symmetrical_projected_decompositions(basi);
+                std::vector<std::vector<DecompositionMap>> projected_basi = get_symmetrical_projected_decompositions(basi);
                 // TODO: we actually have to add only first (full symmetrical) representation,
                 //  but this implementation knows where it is
                 increment_in_hash_table(projected_basi[0][0], visited);
@@ -45,7 +45,7 @@ Space& Symmetrizer::operator()(Space& space) const {
                     std::unordered_map<uint32_t, uint8_t> added;
                     uint8_t dimension_of_child = group_.info.dimension_of_representation[repr];
                     for (uint8_t k = 0; k < group_.info.number_of_projectors_of_representation[repr]; ++k) {
-                        // check if the Decomposition is empty:
+                        // check if the DecompositionMap is empty:
                         if (!projected_basi[repr][k].empty()) {
                             if (repr_to_block[repr] == -1) {
                                 space.blocks.push_back(subspace_child);
@@ -70,19 +70,19 @@ Space& Symmetrizer::operator()(Space& space) const {
     return space;
 }
 
-std::vector<std::vector<Decomposition>> Symmetrizer::get_symmetrical_projected_decompositions(Decomposition & m) const {
+std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projected_decompositions(DecompositionMap & m) const {
     // it is a set (partitioned by representations) of all projected decompositions:
-    std::vector<std::vector<Decomposition>> projections(group_.info.number_of_representations);
+    std::vector<std::vector<DecompositionMap>> projections(group_.info.number_of_representations);
     for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
         projections[repr].resize(group_.info.number_of_projectors_of_representation[repr]);
     }
 
     for (auto& p : m) {
-        std::vector<uint8_t> nzs = indexes_.lex_to_nzs(p.first);
+        std::vector<uint8_t> nzs = indexes_.convert_lex_index_to_sz_projections(p.first);
         std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
 
         for (uint8_t g = 0; g < group_.info.group_size; ++g) {
-            uint32_t permutated_lex = indexes_.nzs_to_lex(permutated_vectors[g]);
+            uint32_t permutated_lex = indexes_.convert_sz_projections_to_lex_index(permutated_vectors[g]);
             for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
                 for (uint8_t projector = 0; projector < group_.info.number_of_projectors_of_representation[repr]; ++projector) {
                     projections[repr][projector][permutated_lex] += group_.info.coefficients_of_projectors[repr][projector][g] * p.second;
@@ -96,8 +96,8 @@ std::vector<std::vector<Decomposition>> Symmetrizer::get_symmetrical_projected_d
     return projections;
 }
 
-void Symmetrizer::increment_in_hash_table(Decomposition & m,
-                                    std::unordered_map<uint32_t , uint8_t>& hs) {
+void Symmetrizer::increment_in_hash_table(DecompositionMap & m,
+                                          std::unordered_map<uint32_t , uint8_t>& hs) {
     for (const auto p : m) {
         if (hs.find(p.first) == hs.end()) {
             hs[p.first] = 1;
@@ -107,9 +107,9 @@ void Symmetrizer::increment_in_hash_table(Decomposition & m,
     }
 }
 
-void Symmetrizer::erase_if_zero(std::vector<std::vector<Decomposition>>& projections) {
+void Symmetrizer::erase_if_zero(std::vector<std::vector<DecompositionMap>>& projections) {
     for (auto & v : projections) {
-        for (Decomposition& mm : v) {
+        for (DecompositionMap& mm : v) {
             for (auto i = mm.begin(), last = mm.end(); i != last;) {
                 if (std::abs(i->second) < 0.001) {
                     i = mm.erase(i);
@@ -121,7 +121,7 @@ void Symmetrizer::erase_if_zero(std::vector<std::vector<Decomposition>>& project
     }
 }
 
-uint8_t Symmetrizer::count_in_hash_table(const Decomposition & m,
+uint8_t Symmetrizer::count_in_hash_table(const DecompositionMap & m,
                                    std::unordered_map<uint32_t , uint8_t>& hs) {
     uint8_t counter = 0;
     for (const auto p : m) {

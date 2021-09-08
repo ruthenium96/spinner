@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 
-using Decomposition = std::map<uint32_t, double>;
+using DecompositionMap = std::map<uint32_t, double>;
 
 struct Subspace {
     // TODO: I guess, we can pack all subspace properties to Properties class.
@@ -13,7 +13,7 @@ struct Subspace {
     int degeneracy = 1;
     std::vector<int> representation;
 
-    std::vector<Decomposition> basis;
+    std::vector<DecompositionMap> basis;
 };
 
 #endif // JULY_SUBSPACE_H
