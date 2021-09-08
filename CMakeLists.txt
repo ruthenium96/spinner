@@ -49,7 +49,7 @@ add_library(components
 add_executable(main_components
         main/main_components.cpp
         common/LexicographicIndexConverter.cpp common/LexicographicIndexConverter.h
-        entities/Space.cpp)
+        entities/Space.cpp entities/BlockProperties.h)
 
 target_link_libraries(main_components components groups)
 

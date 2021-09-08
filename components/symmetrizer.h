@@ -11,7 +11,7 @@
 class Symmetrizer {
   public:
     Symmetrizer(const spaces::LexicographicIndexConverter& indexes, const Group& group);
-    Space& apply(Space& space) const;
+    Space apply(Space& space) const;
 
     std::vector<std::vector<DecompositionMap>> get_symmetrical_projected_decompositions(DecompositionMap& m) const;
 

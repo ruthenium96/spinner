@@ -9,7 +9,7 @@ class Tz_Sorter {
 public:
     explicit Tz_Sorter(const spaces::LexicographicIndexConverter& indexes);
 
-    Space& apply(Space& space) const;
+    Space apply(Space& space) const;
 
 private:
     const spaces::LexicographicIndexConverter& indexes_;

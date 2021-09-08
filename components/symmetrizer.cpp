@@ -4,19 +4,15 @@ Symmetrizer::Symmetrizer(const spaces::LexicographicIndexConverter& indexes, con
     : indexes_(indexes), group_(group) {
 }
 
-Space& Symmetrizer::apply(Space& space) const {
+Space Symmetrizer::apply(Space& space) const {
 //    if (space.is_C2_symmetrized) {
 //        return space;
 //    }
 
-    // save old numbers of symmetrizer usage.
-    size_t old_number_of_simmetrization = space.blocks.front().representation.size();
+    std::vector<Subspace> vector_result;
+    entities::Entity::History history_result = space.history;
 
-    // while we are working with old subspaces:
-    while (space.blocks.front().representation.size() == old_number_of_simmetrization) {
-        Subspace& subspace_parent = space.blocks.front();
-        Subspace subspace_child = space.blocks.front();
-        subspace_child.basis.clear();
+    for (Subspace& subspace_parent : space.blocks) {
         std::vector<size_t> repr_to_block(group_.info.number_of_representations, -1);
 
         // it is an auxiliary hash table. It helps to calculate each orbit only once (see below).
@@ -24,13 +20,13 @@ Space& Symmetrizer::apply(Space& space) const {
 
         for (auto & basi : subspace_parent.basis) {
             uint8_t dimension_of_parent;
-            if (subspace_parent.representation.empty()) {
+            if (subspace_parent.properties.representation.empty()) {
                 dimension_of_parent = 1;
             } else {
                 // TODO: now we can use only the same groups, because we don't have Properties class
                 //  here we have to use _the previous_ group, not the current one
                 //  another idea: keep dimension (and degeneracy) of subspace
-                uint8_t last_representation = subspace_parent.representation.back();
+                uint8_t last_representation = subspace_parent.properties.representation.back();
                 dimension_of_parent = group_.info.dimension_of_representation[last_representation];
             }
             // when we work with basi, we actually do all work for the orbit of basi,
@@ -48,14 +44,15 @@ Space& Symmetrizer::apply(Space& space) const {
                         // check if the DecompositionMap is empty:
                         if (!projected_basi[repr][k].empty()) {
                             if (repr_to_block[repr] == -1) {
-                                space.blocks.push_back(subspace_child);
-                                space.blocks.back().representation.emplace_back(repr);
-                                repr_to_block[repr] = space.blocks.size() - 1;
+                                vector_result.emplace_back();
+                                vector_result.back().properties = subspace_parent.properties;
+                                vector_result.back().properties.representation.emplace_back(repr);
+                                repr_to_block[repr] = vector_result.size() - 1;
                             }
                             size_t j = repr_to_block[repr];
                             if (count_in_hash_table(projected_basi[repr][k], added) < dimension_of_child) {
                                 increment_in_hash_table(projected_basi[repr][k], added);
-                                space.blocks[j].basis.emplace_back(std::move(projected_basi[repr][k]));
+                                vector_result[j].basis.emplace_back(std::move(projected_basi[repr][k]));
                             }
                         }
                     }
@@ -63,11 +60,11 @@ Space& Symmetrizer::apply(Space& space) const {
             }
         }
 
-        space.blocks.pop_front();
+        subspace_parent.basis.clear();
     }
 
-//    space.is_C2_symmetrized = true;
-    return space;
+//    history_result.isSymmetrized = true;
+    return Space(vector_result, history_result);
 }
 
 std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projected_decompositions(DecompositionMap & m) const {

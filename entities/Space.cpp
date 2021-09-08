@@ -1,3 +1,6 @@
+
+#include <entities/Space.h>
+
 #include "Space.h"
 
 using namespace entities;
@@ -23,4 +26,10 @@ std::ostream &operator<<(std::ostream &os, const Space &space) {
     }
     os << "------" << std::endl;
     return os;
+}
+
+Space::Space(std::vector<Subspace> v, entities::Entity::History h): Entity(Entity::SPACE) {
+
+    blocks = v;
+    history = h;
 }

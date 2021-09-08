@@ -4,15 +4,12 @@
 #include <cstdint>
 #include <map>
 #include <vector>
+#include "BlockProperties.h"
 
 using DecompositionMap = std::map<uint32_t, double>;
 
 struct Subspace {
-    // TODO: I guess, we can pack all subspace properties to Properties class.
-    int n_proj = -1;
-    int degeneracy = 1;
-    std::vector<int> representation;
-
+    BlockProperties properties;
     std::vector<DecompositionMap> basis;
 };
 

@@ -1,14 +1,15 @@
 #include "tz_sorter.h"
 
-Space &Tz_Sorter::apply(Space &space) const {
+Space Tz_Sorter::apply(Space& space) const {
     // It does not make any sense to use tz_sorter twice.
     if (space.history.isTzSorted) {
-        return space;
+        return std::move(space);
     }
-    while (space.blocks.front().n_proj == -1) {
-        Subspace& subspace_parent = space.blocks.front();
-        Subspace subspace_child = space.blocks.front();
-        subspace_child.basis.clear();
+
+    std::vector<Subspace> vector_result;
+    entities::Entity::History history_result = space.history;
+
+    for (Subspace& subspace_parent : space.blocks) {
         // it is a mapping between Subspace with specific projection value and position into deque
         std::vector<size_t> ntz_proj_to_block(max_ntz_proj, -1);
 
@@ -19,19 +20,21 @@ Space &Tz_Sorter::apply(Space &space) const {
             uint8_t ntz_proj = indexes_.convert_lex_index_to_tz_projection(basi.begin()->first);
             // if it is the first basis vector with this ntz_proj, create new Subspace in deque
             if (ntz_proj_to_block[ntz_proj] == -1) {
-                space.blocks.push_back(subspace_child);
-                space.blocks.back().n_proj = ntz_proj;
-                ntz_proj_to_block[ntz_proj] = space.blocks.size() - 1;
+                vector_result.emplace_back();
+                vector_result.back().properties = subspace_parent.properties;
+                vector_result.back().properties.n_proj = ntz_proj;
+                ntz_proj_to_block[ntz_proj] = vector_result.size() - 1;
             }
             size_t j = ntz_proj_to_block[ntz_proj];
-            space.blocks[j].basis.emplace_back(std::move(basi));
+
+            vector_result[j].basis.emplace_back(std::move(basi));
         }
 
-        space.blocks.pop_front();
+        subspace_parent.basis.clear();
     }
 
-    space.history.isTzSorted = true;
-    return space;
+    history_result.isTzSorted = true;
+    return Space(vector_result, history_result);
 }
 
 Tz_Sorter::Tz_Sorter(const spaces::LexicographicIndexConverter& indexes) : indexes_(indexes) {
