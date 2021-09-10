@@ -124,6 +124,20 @@ TEST(group_info_tests, projectors_orthogonality) {
                 << j << "' are not orthogonal";
             }
         }
+    }
+}
 
+TEST(group_info_tests, 00_corresponds_to_full_symmetric_representation) {
+    for (auto& group_name : group_names) {
+        const group::GroupInfo& group_info = group::return_group_info_by_group_name(group_name);
+        EXPECT_EQ(group_info.coefficients_of_projectors[0].size(), 1)
+        << "In the group '" << group_name << "' first representation has "
+        << group_info.coefficients_of_projectors[0].size()
+        << " projectors, but must have only one, because it should be full-symmetric representation";
+        double value = group_info.coefficients_of_projectors[0][0][0];
+        for (auto d : group_info.coefficients_of_projectors[0][0]) {
+            EXPECT_EQ(d, value) << "In the group '" << group_name
+            << "' projector of the first representation has different coefficients, this means it is not full-symmetric projector";
+        }
     }
 }

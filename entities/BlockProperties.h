@@ -3,6 +3,7 @@
 
 struct BlockProperties {
     int n_proj = -1;
+    int dimensionality = 1;
     int degeneracy = 1;
     std::vector<int> representation;
 };

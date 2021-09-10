@@ -1,7 +1,5 @@
 #include "LexicographicIndexConverter.h"
 
-//TODO using namesapace spaces;
-
 spaces::LexicographicIndexConverter::LexicographicIndexConverter(std::vector<int> mults) : mults_(mults) {
     // auxiliary vector for uint32_t <-> std::vector<uint8_t> transformation
     cumulative_product.resize(mults.size() + 1);

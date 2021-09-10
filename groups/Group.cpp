@@ -2,6 +2,7 @@
 
 Group::Group(group::GroupNames group_name, std::vector<Permutation> generators) :
         generators_(std::move(generators)), info(group::return_group_info_by_group_name(group_name)) {
+    // TODO: throw exception, if generators.size() and generators[i].size() are not correct
     Permutation identity(generators_[0].size());
     for (uint32_t i = 0; i < generators_[0].size(); ++i) {
         identity[i] = i;

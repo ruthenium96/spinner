@@ -15,46 +15,38 @@ Space Symmetrizer::apply(Space& space) const {
     for (Subspace& subspace_parent : space.blocks) {
         std::vector<size_t> repr_to_block(group_.info.number_of_representations, -1);
 
-        // it is an auxiliary hash table. It helps to calculate each orbit only once (see below).
+        // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
         std::unordered_map<uint32_t, uint8_t> visited;
+        // It is another auxiliary hash table. It remembers the number of lex indexes in child subspace
+        // with specific representation. The number must not be greater than dimension of representation.
+        std::vector<std::unordered_map<uint32_t, uint8_t>> added (group_.info.number_of_representations);
+
+        std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> new_added (group_.info.number_of_representations);
 
         for (auto & basi : subspace_parent.basis) {
-            uint8_t dimension_of_parent;
-            if (subspace_parent.properties.representation.empty()) {
-                dimension_of_parent = 1;
-            } else {
-                // TODO: now we can use only the same groups, because we don't have Properties class
-                //  here we have to use _the previous_ group, not the current one
-                //  another idea: keep dimension (and degeneracy) of subspace
-                uint8_t last_representation = subspace_parent.properties.representation.back();
-                dimension_of_parent = group_.info.dimension_of_representation[last_representation];
-            }
+            uint8_t dimension_of_parent = subspace_parent.properties.dimensionality;
             // when we work with basi, we actually do all work for the orbit of basi,
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
             if (count_in_hash_table(basi, visited) < dimension_of_parent) {
                 std::vector<std::vector<DecompositionMap>> projected_basi = get_symmetrical_projected_decompositions(basi);
-                // TODO: we actually have to add only first (full symmetrical) representation,
-                //  but this implementation knows where it is
                 increment_in_hash_table(projected_basi[0][0], visited);
                 for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
-                    std::unordered_map<uint32_t, uint8_t> added;
-                    uint8_t dimension_of_child = group_.info.dimension_of_representation[repr];
+                    uint8_t dimension_of_child = dimension_of_parent * group_.info.dimension_of_representation[repr];
                     for (uint8_t k = 0; k < group_.info.number_of_projectors_of_representation[repr]; ++k) {
-                        // check if the DecompositionMap is empty:
-                        if (!projected_basi[repr][k].empty()) {
-                            if (repr_to_block[repr] == -1) {
-                                vector_result.emplace_back();
-                                vector_result.back().properties = subspace_parent.properties;
-                                vector_result.back().properties.representation.emplace_back(repr);
-                                repr_to_block[repr] = vector_result.size() - 1;
-                            }
-                            size_t j = repr_to_block[repr];
-                            if (count_in_hash_table(projected_basi[repr][k], added) < dimension_of_child) {
-                                increment_in_hash_table(projected_basi[repr][k], added);
-                                vector_result[j].basis.emplace_back(std::move(projected_basi[repr][k]));
-                            }
+                        if (projected_basi[repr][k].empty()) {
+                            // check if the DecompositionMap is empty:
+                            continue;
                         }
+                        if (repr_to_block[repr] == -1) {
+                            vector_result.emplace_back();
+                            vector_result.back().properties = subspace_parent.properties;
+                            vector_result.back().properties.representation.emplace_back(repr);
+                            vector_result.back().properties.dimensionality = dimension_of_child;
+                            repr_to_block[repr] = vector_result.size() - 1;
+                        }
+                        size_t j = repr_to_block[repr];
+                        add_vector_if_orthogonal_to_others(projected_basi[repr][k], new_added[repr], vector_result[j].basis);
                     }
                 }
             }
@@ -127,4 +119,36 @@ uint8_t Symmetrizer::count_in_hash_table(const DecompositionMap & m,
         }
     }
     return counter;
+}
+
+void Symmetrizer::add_vector_if_orthogonal_to_others(DecompositionMap &m,
+                                                     std::unordered_map<uint32_t, std::vector<size_t>> &hs,
+                                                     std::vector<DecompositionMap> &basis) {
+    // TODO: should we check this only once per orbit?
+    std::unordered_set<size_t> us;
+    // we want to check orthogonality only with vectors, including the same lex-vectors:
+    for (const auto p : m) {
+        // hs[p.first] -- all vectors, including p.first lex-vector:
+        for (const auto& lex : hs[p.first]) {
+            // we do not want to check vector twice (or more):
+            if (us.count(lex) > 0) {
+                continue;
+            }
+            double accumulator = 0;
+            for (const auto pp : m) {
+                if (basis[lex].find(pp.first) != basis[lex].end()) {
+                    accumulator += pp.second * basis[lex][pp.first];
+                }
+            }
+            if (accumulator != 0) {
+                return;
+            }
+            us.insert(lex);
+        }
+    }
+    // if we reach this line -- DecompositionMap is okay, we can add it
+    basis.emplace_back(std::move(m));
+    for (auto p : basis.back()) {
+        hs[p.first].emplace_back(basis.size() - 1);
+    }
 }

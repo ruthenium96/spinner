@@ -18,6 +18,8 @@ namespace group {
                                    It has the size (group_size) x (number of generators).
 
      coefficients_of_projectors : has the size (number_of_representations) x (dimension of representation) x (group_size).
+                                  important: coefficients_of_projectors[0][0] should correspond to full-symmetric representation.
+
      */
 
     struct GroupInfo {
