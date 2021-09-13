@@ -12,15 +12,13 @@ Space::Space(uint32_t total_space_size) {
     }
 }
 
-Space::Space(std::vector<Subspace>&& v, Space::History h) {
+Space::Space(std::vector<Subspace>&& v) {
 
     for (auto& subspace : v) {
         if (!subspace.basis.empty()) {
             blocks.emplace_back(std::move(subspace));
         }
     }
-
-    history = h;
 }
 
 std::ostream &operator<<(std::ostream &os, const Space &space) {

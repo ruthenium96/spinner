@@ -4,6 +4,7 @@
 #include "components/TzSorter.h"
 #include "common/Logger.h"
 #include <chrono>
+#include "Runner.h"
 
 void PerformanceTest(std::function<void(void)> f, int cycles = 1) {
     auto start = std::chrono::high_resolution_clock::now();
