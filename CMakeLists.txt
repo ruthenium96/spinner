@@ -49,7 +49,7 @@ add_library(space
 add_library(components
         components/symmetrizer.cpp components/symmetrizer.h
         components/tz_sorter.cpp components/tz_sorter.h
-        )
+        components/NonAbelianSimplifier.cpp components/NonAbelianSimplifier.h)
 
 add_executable(main_components
         main/main_components.cpp
