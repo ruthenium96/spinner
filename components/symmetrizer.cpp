@@ -17,11 +17,8 @@ Space Symmetrizer::apply(Space& space) const {
 
         // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
         std::unordered_map<uint32_t, uint8_t> visited;
-        // It is another auxiliary hash table. It remembers the number of lex indexes in child subspace
-        // with specific representation. The number must not be greater than dimension of representation.
-        std::vector<std::unordered_map<uint32_t, uint8_t>> added (group_.info.number_of_representations);
 
-        std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> new_added (group_.info.number_of_representations);
+        std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> added (group_.info.number_of_representations);
 
         for (auto & basi : subspace_parent.basis) {
             uint8_t dimension_of_parent = subspace_parent.properties.dimensionality;
@@ -46,7 +43,7 @@ Space Symmetrizer::apply(Space& space) const {
                             repr_to_block[repr] = vector_result.size() - 1;
                         }
                         size_t j = repr_to_block[repr];
-                        add_vector_if_orthogonal_to_others(projected_basi[repr][k], new_added[repr], vector_result[j].basis);
+                        add_vector_if_orthogonal_to_others(projected_basi[repr][k], added[repr], vector_result[j].basis);
                     }
                 }
             }
