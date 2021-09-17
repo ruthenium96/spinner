@@ -13,11 +13,21 @@ Space Symmetrizer::apply(Space& space) const {
     entities::Entity::History history_result = space.history;
 
     for (Subspace& subspace_parent : space.blocks) {
-        std::vector<size_t> repr_to_block(group_.info.number_of_representations, -1);
+        if (subspace_parent.basis.empty()) {
+            // do nothing if subspace is empty
+            continue;
+        }
+        // add child subspaces of all representation (even if they will be empty)
+        for (size_t i = 0; i < group_.info.number_of_representations; ++i) {
+            vector_result.emplace_back();
+            vector_result.back().properties = subspace_parent.properties;
+            vector_result.back().properties.representation.emplace_back(i);
+            vector_result.back().properties.dimensionality *= group_.info.dimension_of_representation[i];
+        }
 
         // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
         std::unordered_map<uint32_t, uint8_t> visited;
-
+        // It is also an auxiliary hash table. It helps to do not check orthogonality over and over.
         std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> added (group_.info.number_of_representations);
 
         for (auto & basi : subspace_parent.basis) {
@@ -29,20 +39,12 @@ Space Symmetrizer::apply(Space& space) const {
                 std::vector<std::vector<DecompositionMap>> projected_basi = get_symmetrical_projected_decompositions(basi);
                 increment_in_hash_table(projected_basi[0][0], visited);
                 for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
-                    uint8_t dimension_of_child = dimension_of_parent * group_.info.dimension_of_representation[repr];
                     for (uint8_t k = 0; k < group_.info.number_of_projectors_of_representation[repr]; ++k) {
                         if (projected_basi[repr][k].empty()) {
                             // check if the DecompositionMap is empty:
                             continue;
                         }
-                        if (repr_to_block[repr] == -1) {
-                            vector_result.emplace_back();
-                            vector_result.back().properties = subspace_parent.properties;
-                            vector_result.back().properties.representation.emplace_back(repr);
-                            vector_result.back().properties.dimensionality = dimension_of_child;
-                            repr_to_block[repr] = vector_result.size() - 1;
-                        }
-                        size_t j = repr_to_block[repr];
+                        size_t j = vector_result.size() + repr - group_.info.number_of_representations;
                         add_vector_if_orthogonal_to_others(projected_basi[repr][k], added[repr], vector_result[j].basis);
                     }
                 }

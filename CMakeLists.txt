@@ -42,9 +42,10 @@ add_library(groups
         )
 
 add_library(space
-        entities/BlockProperties.h entities/Entity.h
+        entities/BlockProperties.h entities/BlockProperties.cpp
+        entities/Entity.h
         entities/Space.h entities/Space.cpp
-        entities/Subspace.h entities/Subspace.cpp)
+        entities/Subspace.h entities/Subspace.cpp )
 
 add_library(components
         components/symmetrizer.cpp components/symmetrizer.h

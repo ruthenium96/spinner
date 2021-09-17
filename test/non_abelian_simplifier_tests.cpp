@@ -13,20 +13,10 @@ void compare_two_spaces(const Space& one, const Space& two) {
         int one_degeneracy = one.blocks[i].properties.degeneracy;
         int two_degeneracy = two.blocks[i].properties.degeneracy;
 
-        // TODO: implement it in BlockProperties:
-        std::string representation_name = "";
-        for (size_t j = 0; j < one.blocks[i].properties.representation.size(); ++j) {
-            representation_name += (one.blocks[i].properties.representation[j] + '0');
-        }
-
         EXPECT_EQ(one_dimensionality * one_degeneracy,
                   two_dimensionality * two_degeneracy)
-                  << "dimensionality * degeneracy are not equal,\nrepresentation: "
-                  << representation_name << ",\nblock: " << i
-                  << ",\none_dimensionality: " << one_dimensionality
-                  << ",\ntwo_dimensionality: " << two_dimensionality
-                  << ",\none_degeneracy: " << one_degeneracy
-                  << ",\ntwo_degeneracy: " << two_degeneracy;
+                  << "First space :" << one.blocks[i].properties
+                  << "Second space :" << two.blocks[i].properties;
 
         std::unordered_map<uint32_t, uint32_t> one_met;
         std::unordered_map<uint32_t, uint32_t> two_met;
@@ -55,7 +45,7 @@ void compare_two_spaces(const Space& one, const Space& two) {
         for (const auto& p : one_met) {
             EXPECT_EQ(p.second * one_degeneracy,two_met[p.first] * two_degeneracy)
                       << "Lex index [" << p.first << "] is met different times in spaces, representation: "
-                      << representation_name;
+                      << one.blocks[i].properties.get_representation_name();
         }
     }
 }

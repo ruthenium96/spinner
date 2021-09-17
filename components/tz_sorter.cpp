@@ -10,6 +10,11 @@ Space Tz_Sorter::apply(Space& space) const {
     entities::Entity::History history_result = space.history;
 
     for (Subspace& subspace_parent : space.blocks) {
+        if (subspace_parent.basis.empty()) {
+            // do nothing if subspace is empty
+            continue;
+        }
+
         // it is a mapping between Subspace with specific projection value and position into deque
         std::vector<size_t> ntz_proj_to_block(max_ntz_proj, -1);
 
