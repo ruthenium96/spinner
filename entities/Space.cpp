@@ -22,8 +22,13 @@ std::ostream &operator<<(std::ostream &os, const Space &space) {
     return os;
 }
 
-Space::Space(std::vector<Subspace> v, entities::Entity::History h): Entity(Entity::SPACE) {
+Space::Space(std::vector<Subspace>&& v, entities::Entity::History h): Entity(Entity::SPACE) {
 
-    blocks = v;
+    for (auto& subspace : v) {
+        if (!subspace.basis.empty()) {
+            blocks.emplace_back(std::move(subspace));
+        }
+    }
+
     history = h;
 }

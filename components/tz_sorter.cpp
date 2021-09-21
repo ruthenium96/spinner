@@ -7,31 +7,25 @@ Space Tz_Sorter::apply(Space& space) const {
     }
 
     std::vector<Subspace> vector_result;
+    vector_result.resize(space.blocks.size() * (max_ntz_proj + 1));
     entities::Entity::History history_result = space.history;
 
-    for (Subspace& subspace_parent : space.blocks) {
-        if (subspace_parent.basis.empty()) {
-            // do nothing if subspace is empty
-            continue;
-        }
+#pragma omp parallel for shared(space, vector_result) default(none)
+    for (size_t i = 0; i < space.blocks.size(); ++i) {
+        Subspace& subspace_parent = space.blocks[i];
 
-        // it is a mapping between Subspace with specific projection value and position into deque
-        std::vector<size_t> ntz_proj_to_block(max_ntz_proj, -1);
+        for (size_t ntz_proj = 0; ntz_proj < max_ntz_proj + 1; ++ntz_proj) {
+            BlockProperties block_properties = subspace_parent.properties;
+            block_properties.n_proj = ntz_proj;
+            vector_result[(max_ntz_proj + 1) * i + ntz_proj].properties = block_properties;
+        }
 
         for (auto & basi : subspace_parent.basis) {
             // Value of total projection is calculated from the first index of map.
             // NB: there is no validation of the fact, that all indexes of decomposition
             // correspond to the same projection value, user should check it yourself.
             uint8_t ntz_proj = indexes_.convert_lex_index_to_tz_projection(basi.begin()->first);
-            // if it is the first basis vector with this ntz_proj, create new Subspace in deque
-            if (ntz_proj_to_block[ntz_proj] == -1) {
-                vector_result.emplace_back();
-                vector_result.back().properties = subspace_parent.properties;
-                vector_result.back().properties.n_proj = ntz_proj;
-                ntz_proj_to_block[ntz_proj] = vector_result.size() - 1;
-            }
-            size_t j = ntz_proj_to_block[ntz_proj];
-
+            size_t j = (max_ntz_proj + 1) * i + ntz_proj;
             vector_result[j].basis.emplace_back(std::move(basi));
         }
 
@@ -39,7 +33,7 @@ Space Tz_Sorter::apply(Space& space) const {
     }
 
     history_result.isTzSorted = true;
-    return Space(vector_result, history_result);
+    return Space(std::move(vector_result), history_result);
 }
 
 Tz_Sorter::Tz_Sorter(const spaces::LexicographicIndexConverter& indexes) : indexes_(indexes) {

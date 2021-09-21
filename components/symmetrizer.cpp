@@ -10,19 +10,18 @@ Space Symmetrizer::apply(Space& space) const {
 //    }
 
     std::vector<Subspace> vector_result;
+    vector_result.resize(space.blocks.size() * group_.info.number_of_representations);
     entities::Entity::History history_result = space.history;
 
-    for (Subspace& subspace_parent : space.blocks) {
-        if (subspace_parent.basis.empty()) {
-            // do nothing if subspace is empty
-            continue;
-        }
+#pragma omp parallel for shared(space, vector_result) default(none)
+    for (size_t i = 0; i < space.blocks.size(); ++i) {
+        Subspace& subspace_parent = space.blocks[i];
         // add child subspaces of all representation (even if they will be empty)
-        for (size_t i = 0; i < group_.info.number_of_representations; ++i) {
-            vector_result.emplace_back();
-            vector_result.back().properties = subspace_parent.properties;
-            vector_result.back().properties.representation.emplace_back(i);
-            vector_result.back().properties.dimensionality *= group_.info.dimension_of_representation[i];
+        for (size_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
+            BlockProperties block_properties = subspace_parent.properties;
+            block_properties.representation.emplace_back(repr);
+            block_properties.dimensionality *= group_.info.dimension_of_representation[repr];
+            vector_result[group_.info.number_of_representations * i + repr].properties = block_properties;
         }
 
         // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
@@ -44,7 +43,7 @@ Space Symmetrizer::apply(Space& space) const {
                             // check if the DecompositionMap is empty:
                             continue;
                         }
-                        size_t j = vector_result.size() + repr - group_.info.number_of_representations;
+                        size_t j = group_.info.number_of_representations * i + repr;
                         add_vector_if_orthogonal_to_others(projected_basi[repr][k], added[repr], vector_result[j].basis);
                     }
                 }
@@ -55,7 +54,7 @@ Space Symmetrizer::apply(Space& space) const {
     }
 
 //    history_result.isSymmetrized = true;
-    return Space(vector_result, history_result);
+    return Space(std::move(vector_result), history_result);
 }
 
 std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projected_decompositions(DecompositionMap & m) const {
