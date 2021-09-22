@@ -18,11 +18,11 @@ class Symmetrizer {
 
     // TODO: these functions are not about symmetrization.
     //  Should we refactor them and create a new class?
-    static void increment_in_hash_table(DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
+    static void increment_visited(DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
 
     static void erase_if_zero(std::vector<std::vector<DecompositionMap>>& projections);
 
-    static uint8_t count_in_hash_table(const DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
+    static uint8_t count_how_many_it_was_visited(const DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
 
     static void add_vector_if_orthogonal_to_others(DecompositionMap& m, std::unordered_map<uint32_t, std::vector<size_t>>& hs,
                                                     std::vector<DecompositionMap>& basis);

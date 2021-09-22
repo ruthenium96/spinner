@@ -32,9 +32,9 @@ Space Symmetrizer::apply(Space& space) const {
             // when we work with basi, we actually do all work for the orbit of basi,
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
-            if (count_in_hash_table(basi, visited) < dimension_of_parent) {
+            if (count_how_many_it_was_visited(basi, visited) < dimension_of_parent) {
                 std::vector<std::vector<DecompositionMap>> projected_basi = get_symmetrical_projected_decompositions(basi);
-                increment_in_hash_table(projected_basi[0][0], visited);
+                increment_visited(projected_basi[0][0], visited);
                 for (size_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
                     for (size_t k = 0; k < group_.info.number_of_projectors_of_representation[repr]; ++k) {
                         if (projected_basi[repr][k].empty()) {
@@ -80,8 +80,8 @@ std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projecte
     return projections;
 }
 
-void Symmetrizer::increment_in_hash_table(DecompositionMap & m,
-                                          std::unordered_map<uint32_t , uint8_t>& hs) {
+void Symmetrizer::increment_visited(DecompositionMap & m,
+                                    std::unordered_map<uint32_t , uint8_t>& hs) {
     for (const auto p : m) {
         if (hs.find(p.first) == hs.end()) {
             hs[p.first] = 1;
@@ -105,8 +105,8 @@ void Symmetrizer::erase_if_zero(std::vector<std::vector<DecompositionMap>>& proj
     }
 }
 
-uint8_t Symmetrizer::count_in_hash_table(const DecompositionMap & m,
-                                   std::unordered_map<uint32_t , uint8_t>& hs) {
+uint8_t Symmetrizer::count_how_many_it_was_visited(const DecompositionMap & m,
+                                                   std::unordered_map<uint32_t , uint8_t>& hs) {
     uint8_t counter = 0;
     for (const auto p : m) {
         if (hs.find(p.first) != hs.end()) {
