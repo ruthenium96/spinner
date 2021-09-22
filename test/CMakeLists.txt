@@ -10,4 +10,4 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/test/symmetrizer_tests.cpp
         ${CMAKE_SOURCE_DIR}/test/non_abelian_simplifier_tests.cpp)
 
-target_link_libraries(julytest gtest gtest_main groups components space)
+target_link_libraries(julytest gtest gtest_main groups components space common)

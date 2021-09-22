@@ -12,7 +12,6 @@ struct Space : public entities::Entity {
 
     explicit Space(uint32_t total_space_size);
     explicit Space(std::vector<Subspace>&& m, entities::Entity::History h);
-    friend std::ostream& operator<<(std::ostream& os, const Space& space);
 
     std::vector<Subspace> blocks;
 };

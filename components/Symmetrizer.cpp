@@ -1,7 +1,9 @@
-#include "symmetrizer.h"
+#include "Symmetrizer.h"
 
-Symmetrizer::Symmetrizer(const spaces::LexicographicIndexConverter& indexes, const Group& group)
-    : indexes_(indexes), group_(group) {
+#include <utility>
+
+Symmetrizer::Symmetrizer(spaces::LexicographicIndexConverter converter, Group group)
+: converter_(std::move(converter)), group_(std::move(group)) {
 }
 
 Space Symmetrizer::apply(Space& space) const {
@@ -65,11 +67,11 @@ std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projecte
     }
 
     for (auto& p : m) {
-        std::vector<uint8_t> nzs = indexes_.convert_lex_index_to_sz_projections(p.first);
+        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_sz_projections(p.first);
         std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
 
         for (uint8_t g = 0; g < group_.info.group_size; ++g) {
-            uint32_t permutated_lex = indexes_.convert_sz_projections_to_lex_index(permutated_vectors[g]);
+            uint32_t permutated_lex = converter_.convert_sz_projections_to_lex_index(permutated_vectors[g]);
             for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
                 for (uint8_t projector = 0; projector < group_.info.number_of_projectors_of_representation[repr]; ++projector) {
                     projections[repr][projector][permutated_lex] += group_.info.coefficients_of_projectors[repr][projector][g] * p.second;

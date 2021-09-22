@@ -14,14 +14,6 @@ Space::Space(uint32_t total_space_size): Entity(Entity::SPACE) {
     }
 }
 
-std::ostream &operator<<(std::ostream &os, const Space &space) {
-    for (const Subspace& subspace : space.blocks) {
-        os << subspace;
-    }
-    os << "------" << std::endl;
-    return os;
-}
-
 Space::Space(std::vector<Subspace>&& v, entities::Entity::History h): Entity(Entity::SPACE) {
 
     for (auto& subspace : v) {

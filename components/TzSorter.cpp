@@ -1,6 +1,8 @@
-#include "tz_sorter.h"
+#include "TzSorter.h"
 
-Space Tz_Sorter::apply(Space& space) const {
+#include <utility>
+
+Space TzSorter::apply(Space& space) const {
     // It does not make any sense to use tz_sorter twice.
     if (space.history.isTzSorted) {
         return std::move(space);
@@ -24,7 +26,7 @@ Space Tz_Sorter::apply(Space& space) const {
             // Value of total projection is calculated from the first index of map.
             // NB: there is no validation of the fact, that all indexes of decomposition
             // correspond to the same projection value, user should check it yourself.
-            uint8_t ntz_proj = indexes_.convert_lex_index_to_tz_projection(basi.begin()->first);
+            uint8_t ntz_proj = converter_.convert_lex_index_to_tz_projection(basi.begin()->first);
             size_t j = (max_ntz_proj + 1) * i + ntz_proj;
             vector_result[j].basis.emplace_back(std::move(basi));
         }
@@ -36,10 +38,10 @@ Space Tz_Sorter::apply(Space& space) const {
     return Space(std::move(vector_result), history_result);
 }
 
-Tz_Sorter::Tz_Sorter(const spaces::LexicographicIndexConverter& indexes) : indexes_(indexes) {
+TzSorter::TzSorter(spaces::LexicographicIndexConverter indexes) : converter_(std::move(indexes)) {
     // We want to get 2T + 1 (projections are counted from zero to multiplicity),
     // where T = sum_{1}^{N} S_i. So 2T + 1 = sum_{1}^{N} (2S_i + 1) - N + 1.
-    max_ntz_proj = std::accumulate(indexes.mults_.begin(),
-                                   indexes.mults_.end(),
-                                   1 - indexes.mults_.size());
+    max_ntz_proj = std::accumulate(converter_.mults_.begin(),
+                                   converter_.mults_.end(),
+                                   1 - converter_.mults_.size());
 }

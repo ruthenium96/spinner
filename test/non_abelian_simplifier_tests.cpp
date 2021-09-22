@@ -1,8 +1,9 @@
 #include "gtest/gtest.h"
 #include "entities/Space.h"
-#include "components/symmetrizer.h"
-#include "components/tz_sorter.h"
+#include "components/Symmetrizer.h"
+#include "components/TzSorter.h"
 #include "components/NonAbelianSimplifier.h"
+#include "common/Logger.h"
 
 void compare_two_spaces(const Space& one, const Space& two) {
     EXPECT_EQ(one.blocks.size(), two.blocks.size())

@@ -1,6 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include <mutex>
+#include "entities/Space.h"
 extern std::mutex logMutex;
 // clang-format off
 #define LOG(t,x) do{\
@@ -17,3 +18,7 @@ extern std::mutex logMutex;
 // clang-format on
 // for color text
 // https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
+
+std::ostream &operator<<(std::ostream &os, const BlockProperties &properties);
+std::ostream &operator<<(std::ostream &os, const Subspace &subspace);
+std::ostream &operator<<(std::ostream &os, const Space &space);

@@ -8,7 +8,7 @@ Space NonAbelianSimplifier::apply(Space &space) const {
 #pragma omp parallel for shared(space, vector_result) default(none)
     for (size_t i = 0; i < space.blocks.size(); ++i) {
         Subspace& subspace_parent = space.blocks[i];
-        int old_dimensionality = subspace_parent.properties.dimensionality;
+        uint32_t old_dimensionality = subspace_parent.properties.dimensionality;
         if (old_dimensionality == 1) {
             // it is senseless to modify subspaces with old_dimensionality == 1:
             vector_result[i] = std::move(subspace_parent);

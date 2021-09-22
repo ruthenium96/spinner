@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(july)
@@ -36,25 +37,14 @@ endif()
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-add_library(groups
-        groups/Group.h groups/Group.cpp
-        groups/Group_Info.h groups/Group_Info.cpp
-        )
-
-add_library(space
-        entities/BlockProperties.h entities/BlockProperties.cpp
-        entities/Entity.h
-        entities/Space.h entities/Space.cpp
-        entities/Subspace.h entities/Subspace.cpp )
-
-add_library(components
-        components/symmetrizer.cpp components/symmetrizer.h
-        components/tz_sorter.cpp components/tz_sorter.h
-        components/NonAbelianSimplifier.cpp components/NonAbelianSimplifier.h)
+add_subdirectory(groups)
+add_subdirectory(common)
+add_subdirectory(entities)
+add_subdirectory(components)
 
 add_executable(main_components
         main/main_components.cpp
-        common/LexicographicIndexConverter.cpp common/LexicographicIndexConverter.h)
+        )
 
 target_link_libraries(main_components components groups space)
 

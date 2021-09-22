@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 #include "entities/Space.h"
-#include "components/symmetrizer.h"
-#include "components/tz_sorter.h"
+#include "components/Symmetrizer.h"
+#include "common/Logger.h"
+#include "components/TzSorter.h"
 
 size_t number_of_vectors(const Space& space) {
     size_t acc = 0;

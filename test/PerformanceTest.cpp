@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 #include "entities/Space.h"
-#include "components/symmetrizer.h"
-#include "components/tz_sorter.h"
+#include "components/Symmetrizer.h"
+#include "components/TzSorter.h"
+#include "common/Logger.h"
 #include <chrono>
 
 void PerformanceTest(std::function<void(void)> f, int cycles = 1) {
@@ -24,7 +25,7 @@ TEST(performanceTest, simple2ComponentSchema) {
 
         Space space(converter.total_space_size);
 
-        Tz_Sorter tz_sorter(converter);
+        TzSorter tz_sorter(converter);
 
         space = tz_sorter.apply(space);
 

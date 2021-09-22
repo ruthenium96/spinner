@@ -1,18 +1,18 @@
 #ifndef JULY_BLOCKPROPERTIES_H
 #define JULY_BLOCKPROPERTIES_H
 
+#include <optional>
 #include <ostream>
 #include <string>
 #include <vector>
 
 struct BlockProperties {
-    friend std::ostream &operator<<(std::ostream &os, const BlockProperties &properties);
     std::string get_representation_name() const;
 
-    int n_proj = -1;
-    int dimensionality = 1;
-    int degeneracy = 1;
-    std::vector<int> representation;
+    std::optional<uint32_t> n_proj = std::nullopt;
+    uint32_t dimensionality = 1;
+    uint32_t degeneracy = 1;
+    std::vector<uint32_t> representation;
 };
 
 #endif //JULY_BLOCKPROPERTIES_H
