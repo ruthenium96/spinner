@@ -7,10 +7,6 @@ Symmetrizer::Symmetrizer(spaces::LexicographicIndexConverter converter, Group gr
 }
 
 Space Symmetrizer::apply(Space& space) const {
-//    if (space.is_C2_symmetrized) {
-//        return space;
-//    }
-
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * group_.info.number_of_representations);
     entities::Entity::History history_result = space.history;
@@ -39,8 +35,8 @@ Space Symmetrizer::apply(Space& space) const {
             if (count_in_hash_table(basi, visited) < dimension_of_parent) {
                 std::vector<std::vector<DecompositionMap>> projected_basi = get_symmetrical_projected_decompositions(basi);
                 increment_in_hash_table(projected_basi[0][0], visited);
-                for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
-                    for (uint8_t k = 0; k < group_.info.number_of_projectors_of_representation[repr]; ++k) {
+                for (size_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
+                    for (size_t k = 0; k < group_.info.number_of_projectors_of_representation[repr]; ++k) {
                         if (projected_basi[repr][k].empty()) {
                             // check if the DecompositionMap is empty:
                             continue;
@@ -55,7 +51,6 @@ Space Symmetrizer::apply(Space& space) const {
         subspace_parent.basis.clear();
     }
 
-//    history_result.isSymmetrized = true;
     return Space(std::move(vector_result), history_result);
 }
 

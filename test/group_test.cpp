@@ -1,3 +1,4 @@
+#include <groups/Group.h>
 #include "gtest/gtest.h"
 #include "groups/Group_Info.h"
 
@@ -140,4 +141,26 @@ TEST(group_info_tests, 00_corresponds_to_full_symmetric_representation) {
             << "' projector of the first representation has different coefficients, this means it is not full-symmetric projector";
         }
     }
+}
+
+TEST(group_tests, throw_wrong_number_of_generators) {
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}), std::length_error);
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0}}), std::length_error);
+}
+
+TEST(group_tests, throw_wrong_size_of_generators) {
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0}, {0, 2, 1, 4}}), std::length_error);
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0}, {0, 2}}), std::length_error);
+}
+
+TEST(group_tests, throw_duplicate_of_number_in_generator) {
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0}, {0, 2, 2}}), std::invalid_argument);
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0}, {2, 2, 2}}), std::invalid_argument);
+    EXPECT_THROW(Group group(group::S3, {{1, 0, 0}, {0, 2, 1}}), std::invalid_argument);
+    EXPECT_THROW(Group group(group::S3, {{0, 0, 0}, {0, 2, 1}}), std::invalid_argument);
+}
+
+TEST(group_tests, throw_contains_wrong_number) {
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0}, {0, 2, 3}}), std::invalid_argument);
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 3}, {0, 2, 1}}), std::invalid_argument);
 }
