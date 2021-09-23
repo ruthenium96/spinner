@@ -12,16 +12,12 @@ Group::Group(group::GroupNames group_name, std::vector<Permutation> generators) 
         if (generators_[0].size() != generators_[i].size()) {
             throw std::length_error("The sizes of generators are different.");
         }
-        std::vector<bool> contains_number(generators_[i].size(), false);
-        for (unsigned char j : generators_[i]) {
-            if (contains_number[j]) {
-                throw std::invalid_argument("Generator contains number twice.");
-            } else {
-                contains_number[j] = true;
+        Permutation generator_sorted = generators_[i];
+        std::sort(generator_sorted.begin(), generator_sorted.end());
+        for (size_t j = 0; j < generator_sorted.size(); ++j) {
+            if (generator_sorted[j] != j) {
+                throw std::invalid_argument("Generator is invalid.");
             }
-        }
-        if (std::find(contains_number.begin(), contains_number.end(), false) != contains_number.end()) {
-            throw std::invalid_argument("Generator does not contain all numbers.");
         }
     }
     // TODO: check that generator ^ {order_of_generator} == identity
@@ -66,4 +62,22 @@ std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t> &i
         }
     }
     return std::move(permutated_vectors);
+}
+
+/*
+ Different sets of generators can produce isomorphic group.
+ So we cannot compare the generators.
+ The isomorphic groups in our case differ only in elements order,
+ thus sorting will help to unify them.
+ */
+bool Group::operator==(const Group &rhs) const {
+    std::vector<Permutation> left_elements_copy = elements_;
+    std::vector<Permutation> right_elements_copy = rhs.elements_;
+    std::sort(left_elements_copy.begin(), left_elements_copy.end());
+    std::sort(right_elements_copy.begin(), right_elements_copy.end());
+    return left_elements_copy == right_elements_copy;
+}
+
+bool Group::operator!=(const Group &rhs) const {
+    return !(rhs == *this);
 }

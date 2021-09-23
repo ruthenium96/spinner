@@ -7,16 +7,15 @@
 
 using Permutation = std::vector<uint8_t>;
 
-// To create specific group, one has to define
-// 1) group_size,
-// 2) number_of_representations,
-// 3) group_in_form_of_generators,
-// 4) coefficients_of_projectors
 class Group {
 public:
     explicit Group(group::GroupNames group_name, std::vector<Permutation> generators);
 
     std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
+
+    bool operator==(const Group &rhs) const;
+
+    bool operator!=(const Group &rhs) const;
 
     const group::GroupInfo& info;
 
