@@ -1,28 +1,56 @@
 #include "Group.h"
-#include <stdexcept>
 #include <algorithm>
 #include <numeric>
+#include <stdexcept>
 
-Group::Group(group::GroupNames group_name, std::vector<Permutation> generators) :
-        generators_(std::move(generators)), info(group::return_group_info_by_group_name(group_name)) {
-    if (generators_.size() != info.number_of_generators) {
-        throw std::length_error("The number of generators does not equal to the number of group number_of_generators.");
-    }
+namespace {
+
+bool NumberOfGeneratorsConsistent(std::vector<Permutation> const& generators,
+                             group::GroupInfo const& info) {
+    return generators.size() != info.number_of_generators;
+}
+
+bool SizesAreEqual(std::vector<Permutation> const& generators, group::GroupInfo const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
-        if (generators_[0].size() != generators_[i].size()) {
-            throw std::length_error("The sizes of generators are different.");
+        if (generators[0].size() != generators[i].size()) {
+            return false;
         }
-        Permutation generator_sorted = generators_[i];
+    }
+    return true;
+}
+
+bool GeneratorIsValid(std::vector<Permutation> const& generators, group::GroupInfo const& info) {
+    for (size_t i = 0; i < info.number_of_generators; ++i) {
+        Permutation generator_sorted = generators[i];
         std::sort(generator_sorted.begin(), generator_sorted.end());
         for (size_t j = 0; j < generator_sorted.size(); ++j) {
             if (generator_sorted[j] != j) {
-                throw std::invalid_argument("Generator is invalid.");
+                return false;
             }
         }
     }
+    return true;
+}
+
+} // namespace
+
+Group::Group(group::GroupNames group_name, std::vector<Permutation> generators)
+    : generators_(std::move(generators)), info(group::return_group_info_by_group_name(group_name)) {
+
+    if (!NumberOfGeneratorsConsistent(generators_, info)) {
+        throw std::length_error(
+            "The number of generators does not equal to the number of group number_of_generators.");
+    }
+
+    if (!SizesAreEqual(generators_, info)) {
+        throw std::length_error("The sizes of generators are different.");
+    }
+
+    if (!GeneratorIsValid(generators_, info)) {
+        throw std::invalid_argument("Generator is invalid.");
+    }
     // TODO: check that generator ^ {order_of_generator} == identity
     //  how to find / save orders of generators?
-
 
     Permutation identity(generators_[0].size());
     for (uint32_t i = 0; i < generators_[0].size(); ++i) {
@@ -49,10 +77,9 @@ Group::Group(group::GroupNames group_name, std::vector<Permutation> generators) 
 
     // TODO: check that element ^ {order_of_element} == identity
     //  how to find / save orders of elements?
-
 }
 
-std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t> &initial) const {
+std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& initial) const {
     std::vector<std::vector<uint8_t>> permutated_vectors(info.group_size);
     for (size_t i = 0; i < info.group_size; ++i) {
         permutated_vectors[i].resize(initial.size());
@@ -70,7 +97,7 @@ std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t> &i
  The isomorphic groups in our case differ only in elements order,
  thus sorting will help to unify them.
  */
-bool Group::operator==(const Group &rhs) const {
+bool Group::operator==(const Group& rhs) const {
     std::vector<Permutation> left_elements_copy = elements_;
     std::vector<Permutation> right_elements_copy = rhs.elements_;
     std::sort(left_elements_copy.begin(), left_elements_copy.end());
@@ -78,6 +105,6 @@ bool Group::operator==(const Group &rhs) const {
     return left_elements_copy == right_elements_copy;
 }
 
-bool Group::operator!=(const Group &rhs) const {
+bool Group::operator!=(const Group& rhs) const {
     return !(rhs == *this);
 }
