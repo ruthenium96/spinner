@@ -15,4 +15,6 @@ struct BlockProperties {
     std::vector<uint32_t> representation;
 };
 
+std::ostream &operator<<(std::ostream &os, const BlockProperties &properties);
+
 #endif //JULY_BLOCKPROPERTIES_H

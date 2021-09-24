@@ -24,3 +24,11 @@ Space::Space(std::vector<Subspace>&& v, entities::Entity::History h): Entity(Ent
 
     history = h;
 }
+
+std::ostream &operator<<(std::ostream &os, const Space &space) {
+    for (const Subspace& subspace : space.blocks) {
+        os << subspace;
+    }
+    os << "------" << std::endl;
+    return os;
+}

@@ -16,4 +16,6 @@ struct Space : public entities::Entity {
     std::vector<Subspace> blocks;
 };
 
+std::ostream &operator<<(std::ostream &os, const Space &space);
+
 #endif // JULY_SPACE_H

@@ -14,4 +14,7 @@ struct Subspace {
     std::vector<DecompositionMap> basis;
 };
 
+std::ostream &operator<<(std::ostream &os, const Subspace &subspace);
+
+
 #endif // JULY_SUBSPACE_H
