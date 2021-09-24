@@ -7,7 +7,7 @@ namespace {
 
 bool NumberOfGeneratorsConsistent(std::vector<Permutation> const& generators,
                              group::GroupInfo const& info) {
-    return generators.size() != info.number_of_generators;
+    return generators.size() == info.number_of_generators;
 }
 
 bool SizesAreEqual(std::vector<Permutation> const& generators, group::GroupInfo const& info) {
@@ -32,6 +32,32 @@ bool GeneratorIsValid(std::vector<Permutation> const& generators, group::GroupIn
     return true;
 }
 
+Permutation ElementInPower(const Permutation& element, size_t power) {
+    Permutation result = element;
+    for (size_t i = 1; i < power; ++i) {
+        Permutation tmp_result(result.size());
+        for (size_t n = 0; n < tmp_result.size(); ++n) {
+            tmp_result[n] = result[element[n]];
+        }
+        result = tmp_result;
+    }
+    return std::move(result);
+};
+
+bool ElementsInPowerOfItsOrderIsIdentity(const std::vector<Permutation>& elements,
+                                         const std::vector<size_t>& order_of_elements) {
+    Permutation identity(elements[0].size());
+    for (size_t i = 0; i < elements[0].size(); ++i) {
+        identity[i] = i;
+    }
+    for (size_t i = 0; i < elements.size(); ++i) {
+        if (ElementInPower(elements[i], order_of_elements[i]) != identity) {
+            return false;
+        }
+    }
+    return true;
+}
+
 } // namespace
 
 Group::Group(group::GroupNames group_name, std::vector<Permutation> generators)
@@ -49,11 +75,13 @@ Group::Group(group::GroupNames group_name, std::vector<Permutation> generators)
     if (!GeneratorIsValid(generators_, info)) {
         throw std::invalid_argument("Generator is invalid.");
     }
-    // TODO: check that generator ^ {order_of_generator} == identity
-    //  how to find / save orders of generators?
+
+    if (!ElementsInPowerOfItsOrderIsIdentity(generators_, info.orders_of_generators)) {
+        throw std::invalid_argument("Generator in power of its order does not equal identity.");
+    }
 
     Permutation identity(generators_[0].size());
-    for (uint32_t i = 0; i < generators_[0].size(); ++i) {
+    for (size_t i = 0; i < generators_[0].size(); ++i) {
         identity[i] = i;
     }
     elements_.resize(info.group_size);
@@ -75,8 +103,9 @@ Group::Group(group::GroupNames group_name, std::vector<Permutation> generators)
         elements_[i] = element;
     }
 
-    // TODO: check that element ^ {order_of_element} == identity
-    //  how to find / save orders of elements?
+    if (!ElementsInPowerOfItsOrderIsIdentity(elements_, info.orders_of_elements)) {
+        throw std::invalid_argument("Element in power of its order does not equal identity.");
+    }
 }
 
 std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& initial) const {

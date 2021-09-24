@@ -28,7 +28,9 @@ namespace group {
         std::vector<uint8_t> dimension_of_representation;
         std::vector<uint8_t> number_of_projectors_of_representation;
         uint8_t number_of_generators;
+        std::vector<size_t> orders_of_generators;
         std::vector<std::vector<size_t>> group_in_form_of_generators;
+        std::vector<size_t> orders_of_elements;
         std::vector<std::vector<std::vector<double>>> coefficients_of_projectors;
     };
 

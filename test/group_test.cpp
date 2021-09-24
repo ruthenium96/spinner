@@ -164,3 +164,13 @@ TEST(group_tests, throw_contains_wrong_number) {
     EXPECT_THROW(Group group(group::S3, {{1, 2, 0}, {0, 2, 3}}), std::invalid_argument);
     EXPECT_THROW(Group group(group::S3, {{1, 2, 3}, {0, 2, 1}}), std::invalid_argument);
 }
+
+TEST(group_tests, throw_wrong_order_of_generators) {
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 3, 0}, {0, 2, 1, 3}}), std::invalid_argument);
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0, 3}, {1, 2, 0, 3}}), std::invalid_argument);
+}
+
+TEST(group_tests, throw_wrong_order_of_elements) {
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0, 3}, {0, 1, 3, 2}}), std::invalid_argument);
+    EXPECT_THROW(Group group(group::S3, {{1, 2, 0, 3}, {3, 1, 2, 0}}), std::invalid_argument);
+}
