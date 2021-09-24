@@ -32,6 +32,24 @@ TEST(group_info_tests, size_of_dimension_of_representation_equals_number_of_repr
     }
 }
 
+TEST(group_info_tests, size_of_orders_of_generators_equals_number_of_generators) {
+    for (auto& group_name : group_names) {
+        const group::GroupInfo& group_info = group::return_group_info_by_group_name(group_name);
+        EXPECT_EQ(group_info.number_of_generators, group_info.orders_of_generators.size())
+        << "In the group '" << group_name <<
+        "' size of orders_of_generators does not equal to number_of_generators";
+    }
+}
+
+TEST(group_info_tests, size_of_orders_of_elements_equals_group_size) {
+    for (auto& group_name : group_names) {
+        const group::GroupInfo& group_info = group::return_group_info_by_group_name(group_name);
+        EXPECT_EQ(group_info.group_size, group_info.orders_of_elements.size())
+        << "In the group '" << group_name <<
+        "' size of orders_of_elements does not equal to group_size";
+    }
+}
+
 TEST(group_info_tests, size_of_number_of_projectors_of_representation_equals_number_of_representations) {
     for (auto& group_name : group_names) {
         const group::GroupInfo& group_info = group::return_group_info_by_group_name(group_name);
