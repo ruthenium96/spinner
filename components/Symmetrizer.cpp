@@ -32,7 +32,7 @@ Space Symmetrizer::apply(Space& space) const {
             // when we work with basi, we actually do all work for the orbit of basi,
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
-            if (count_how_many_it_was_visited(basi, visited) < dimension_of_parent) {
+            if (count_how_many_orbit_was_visited(basi, visited) < dimension_of_parent) {
                 std::vector<std::vector<DecompositionMap>> projected_basi = get_symmetrical_projected_decompositions(basi);
                 increment_visited(projected_basi[0][0], visited);
                 for (size_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
@@ -105,15 +105,15 @@ void Symmetrizer::erase_if_zero(std::vector<std::vector<DecompositionMap>>& proj
     }
 }
 
-uint8_t Symmetrizer::count_how_many_it_was_visited(const DecompositionMap & m,
-                                                   std::unordered_map<uint32_t , uint8_t>& hs) {
-    uint8_t counter = 0;
+uint8_t Symmetrizer::count_how_many_orbit_was_visited(const DecompositionMap & m,
+                                                      std::unordered_map<uint32_t , uint8_t>& hs) {
+    uint8_t maximum = 0;
     for (const auto p : m) {
         if (hs.find(p.first) != hs.end()) {
-            counter = std::max(counter, hs[p.first]);
+            maximum = std::max(maximum, hs[p.first]);
         }
     }
-    return counter;
+    return maximum;
 }
 
 void Symmetrizer::add_vector_if_orthogonal_to_others(DecompositionMap &m,

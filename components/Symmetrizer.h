@@ -22,7 +22,7 @@ class Symmetrizer {
 
     static void erase_if_zero(std::vector<std::vector<DecompositionMap>>& projections);
 
-    static uint8_t count_how_many_it_was_visited(const DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
+    static uint8_t count_how_many_orbit_was_visited(const DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
 
     static void add_vector_if_orthogonal_to_others(DecompositionMap& m, std::unordered_map<uint32_t, std::vector<size_t>>& hs,
                                                     std::vector<DecompositionMap>& basis);
