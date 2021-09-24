@@ -4,15 +4,17 @@
 #include <cstdint>
 #include <map>
 #include <vector>
+#include <ostream>
+#include "BlockProperties.h"
 
-using Decomposition = std::map<uint32_t, double>;
+using DecompositionMap = std::map<uint32_t, double>;
 
 struct Subspace {
-    // TODO: I guess, we can pack all subspace properties to Properties class.
-    int n_proj = -1;
-    int representation = -1;
-
-    std::vector<Decomposition> basis;
+    BlockProperties properties;
+    std::vector<DecompositionMap> basis;
 };
+
+std::ostream &operator<<(std::ostream &os, const Subspace &subspace);
+
 
 #endif // JULY_SUBSPACE_H

@@ -23,6 +23,9 @@ RUN apt update && apt install -y \
 RUN apt install -y \
     gfortran
 
+# OpenMP:
+RUN apt install -y libomp-dev
+
 # Tools
 RUN apt install -y \
     cmake \

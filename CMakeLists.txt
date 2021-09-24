@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(july)
@@ -35,14 +36,17 @@ if (OPENMP_FOUND)
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR})
-add_executable(components
-        main/main_components.cpp 
-        components/c2_symmetrizer.cpp
-        common/LexicographicIndexWorker.cpp
-        common/LexicographicIndexWorker.h
-        components/tz_sorter.cpp 
-        entities/Space.cpp
+
+add_subdirectory(groups)
+add_subdirectory(common)
+add_subdirectory(entities)
+add_subdirectory(components)
+
+add_executable(main_components
+        main/main_components.cpp
         )
+
+target_link_libraries(main_components components groups space)
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
 
