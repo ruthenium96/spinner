@@ -1,17 +1,23 @@
 #ifndef JULY_SPACE_H
 #define JULY_SPACE_H
 
-#include "Entity.h"
 #include "Subspace.h"
 #include "common/LexicographicIndexConverter.h"
 #include <deque>
 #include <iostream>
 #include <map>
 
-struct Space : public entities::Entity {
+struct Space {
+
+    struct History {
+        bool isTzSorted = false;
+        bool isC2Symmetrized = false;
+    };
+    History history;
+
 
     explicit Space(uint32_t total_space_size);
-    explicit Space(std::vector<Subspace>&& m, entities::Entity::History h);
+    explicit Space(std::vector<Subspace>&& m, History h);
 
     std::vector<Subspace> blocks;
 };

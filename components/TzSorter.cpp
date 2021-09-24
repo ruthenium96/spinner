@@ -10,7 +10,7 @@ Space TzSorter::apply(Space& space) const {
 
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * (max_ntz_proj + 1));
-    entities::Entity::History history_result = space.history;
+    Space::History history_result = space.history;
 
 #pragma omp parallel for shared(space, vector_result) default(none)
     for (size_t i = 0; i < space.blocks.size(); ++i) {

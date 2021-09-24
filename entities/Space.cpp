@@ -3,9 +3,7 @@
 
 #include "Space.h"
 
-using namespace entities;
-
-Space::Space(uint32_t total_space_size): Entity(Entity::SPACE) {
+Space::Space(uint32_t total_space_size) {
     blocks.emplace_back();
     Subspace& lex_block = blocks[0];
     lex_block.basis.resize(total_space_size);
@@ -14,7 +12,7 @@ Space::Space(uint32_t total_space_size): Entity(Entity::SPACE) {
     }
 }
 
-Space::Space(std::vector<Subspace>&& v, entities::Entity::History h): Entity(Entity::SPACE) {
+Space::Space(std::vector<Subspace>&& v, Space::History h) {
 
     for (auto& subspace : v) {
         if (!subspace.basis.empty()) {
