@@ -1,0 +1,28 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . -t july
+      - name: Run the Docker image
+        run: docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
+      - name: Execute the Docker image
+        run: docker exec --interactive --tty july /bin/bash
+      - name: Create build directory
+        run: mkdir -p project/build
+      - name: cmake it
+        run: cmake ..
+      - name: build it
+        run: cmake --build .
