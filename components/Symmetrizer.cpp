@@ -2,14 +2,40 @@
 
 #include <utility>
 
+namespace {
+bool SizeOfPermutationsEqualsNumberOfSpins (const spaces::LexicographicIndexConverter& converter,
+                                            const Group& group) {
+    return converter.mults_.size() == group.elements_[0].size();
+}
+
+bool OrbitOfCentersHasTheSameValueOfMultiplicity (const spaces::LexicographicIndexConverter& converter,
+                                                const Group& group) {
+    for (const auto& el : group.elements_) {
+        std::vector<int> permutated_mults(converter.mults_);
+        for (size_t i = 0; i < group.elements_[0].size(); ++i) {
+            permutated_mults[i] = converter.mults_[el[i]];
+        }
+        if (permutated_mults != converter.mults_) {
+            return false;
+        }
+    }
+    return true;
+}
+}
+
 Symmetrizer::Symmetrizer(spaces::LexicographicIndexConverter converter, Group group)
 : converter_(std::move(converter)), group_(std::move(group)) {
+    if (!SizeOfPermutationsEqualsNumberOfSpins(converter_, group_)) {
+        throw std::length_error("The size of group elements does not equal to the number of spins.");
+    }
+    if (!OrbitOfCentersHasTheSameValueOfMultiplicity(converter_, group_)) {
+        throw std::invalid_argument("Group permutes centers with different multiplicities.");
+    }
 }
 
 Space Symmetrizer::apply(Space& space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * group_.info.number_of_representations);
-    Space::History history_result = space.history;
 
 #pragma omp parallel for shared(space, vector_result) default(none)
     for (size_t i = 0; i < space.blocks.size(); ++i) {
@@ -51,7 +77,7 @@ Space Symmetrizer::apply(Space& space) const {
         subspace_parent.basis.clear();
     }
 
-    return Space(std::move(vector_result), history_result);
+    return Space(std::move(vector_result));
 }
 
 std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projected_decompositions(DecompositionMap & m) const {

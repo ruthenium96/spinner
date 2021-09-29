@@ -9,15 +9,8 @@
 
 struct Space {
 
-    struct History {
-        bool isTzSorted = false;
-        bool isC2Symmetrized = false;
-    };
-    History history;
-
-
     explicit Space(uint32_t total_space_size);
-    explicit Space(std::vector<Subspace>&& m, History h);
+    explicit Space(std::vector<Subspace>&& m);
 
     std::vector<Subspace> blocks;
 };
