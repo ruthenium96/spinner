@@ -4,12 +4,12 @@
 
 Symmetrizer::Symmetrizer(spaces::LexicographicIndexConverter converter, Group group)
 : converter_(std::move(converter)), group_(std::move(group)) {
+    // TODO: check that number of spins equals size of group.elements[0].size()
 }
 
 Space Symmetrizer::apply(Space& space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * group_.info.number_of_representations);
-    Space::History history_result = space.history;
 
 #pragma omp parallel for shared(space, vector_result) default(none)
     for (size_t i = 0; i < space.blocks.size(); ++i) {
@@ -51,7 +51,7 @@ Space Symmetrizer::apply(Space& space) const {
         subspace_parent.basis.clear();
     }
 
-    return Space(std::move(vector_result), history_result);
+    return Space(std::move(vector_result));
 }
 
 std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projected_decompositions(DecompositionMap & m) const {

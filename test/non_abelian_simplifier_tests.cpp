@@ -1,8 +1,5 @@
 #include "gtest/gtest.h"
-#include "entities/Space.h"
-#include "components/Symmetrizer.h"
-#include "components/TzSorter.h"
-#include "components/NonAbelianSimplifier.h"
+#include "common/Runner.h"
 #include "common/Logger.h"
 
 void compare_two_spaces(const Space& one, const Space& two) {
@@ -54,242 +51,175 @@ void compare_two_spaces(const Space& one, const Space& two) {
 TEST(nonAbelianSimplifier, 333_S3) {
     std::vector<int> mults = {3, 3, 3};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-    Group group(group::S3, {{1, 2, 0}, {0, 2, 1}});
-    Symmetrizer symmetrizer(converter, group);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.NonAbelianSimplify();
 
-    space_full = symmetrizer.apply(space_full);
-    space_simplified = symmetrizer.apply(space_simplified);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 333_doubleS3) {
+
     std::vector<int> mults = {3, 3, 3};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_full.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-    Group group(group::S3, {{1, 2, 0}, {0, 2, 1}});
-    Symmetrizer symmetrizer(converter, group);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.NonAbelianSimplify();
 
-    space_full = symmetrizer.apply(space_full);
-    space_full = symmetrizer.apply(space_full);
-    space_simplified = symmetrizer.apply(space_simplified);
-    space_simplified = symmetrizer.apply(space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
+}
 
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
+TEST(nonAbelianSimplifier, 333_doubleS3_tricky) {
 
-    compare_two_spaces(space_full, space_simplified);
+    std::vector<int> mults = {3, 3, 3};
+
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
+
+    runner_full.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_full.Symmetrize(group::S3, {{2, 0, 1}, {1, 0, 2}});
+
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.Symmetrize(group::S3, {{2, 0, 1}, {1, 0, 2}});
+    runner_simplified.NonAbelianSimplify();
+
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 333333_S3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
 
-    Group group(group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-    Symmetrizer symmetrizer(converter, group);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_simplified.NonAbelianSimplify();
 
-    space_full = symmetrizer.apply(space_full);
-    space_simplified = symmetrizer.apply(space_simplified);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 333333_S3xS2) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_full.Symmetrize(group::S2, {{3, 4, 5, 0, 1, 2}});
 
-    Group group_S3(group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-    Symmetrizer symmetrizer_S3(converter, group_S3);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_simplified.Symmetrize(group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_simplified.NonAbelianSimplify();
 
-    Group group_S2(group::S2, {{3, 4, 5, 0, 1, 2}});
-    Symmetrizer symmetrizer_S2(converter, group_S2);
-
-    space_full = symmetrizer_S3.apply(space_full);
-    space_full = symmetrizer_S2.apply(space_full);
-    space_simplified = symmetrizer_S3.apply(space_simplified);
-    space_simplified = symmetrizer_S2.apply(space_simplified);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 222222222_after_second_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_first(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    Symmetrizer symmetrizer_S3_first(converter, group_S3_first);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_simplified.NonAbelianSimplify();
 
-    Group group_S3_second(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    Symmetrizer symmetrizer_S3_second(converter, group_S3_second);
-
-    space_full = symmetrizer_S3_first.apply(space_full);
-    space_full = symmetrizer_S3_second.apply(space_full);
-    space_simplified = symmetrizer_S3_first.apply(space_simplified);
-    space_simplified = symmetrizer_S3_second.apply(space_simplified);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 222222222_after_first_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_first(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    Symmetrizer symmetrizer_S3_first(converter, group_S3_first);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_simplified.NonAbelianSimplify();
+    runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_second(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    Symmetrizer symmetrizer_S3_second(converter, group_S3_second);
-
-    space_full = symmetrizer_S3_first.apply(space_full);
-    space_full = symmetrizer_S3_second.apply(space_full);
-    space_simplified = symmetrizer_S3_first.apply(space_simplified);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    space_simplified = symmetrizer_S3_second.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 222222222_after_both_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_first(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    Symmetrizer symmetrizer_S3_first(converter, group_S3_first);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_simplified.NonAbelianSimplify();
+    runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_simplified.NonAbelianSimplify();
 
-    Group group_S3_second(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    Symmetrizer symmetrizer_S3_second(converter, group_S3_second);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-
-    space_full = symmetrizer_S3_first.apply(space_full);
-    space_full = symmetrizer_S3_second.apply(space_full);
-
-    space_simplified = symmetrizer_S3_first.apply(space_simplified);
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-    space_simplified = symmetrizer_S3_second.apply(space_simplified);
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 333333333_after_second_S3xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_first(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    Symmetrizer symmetrizer_S3_first(converter, group_S3_first);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_simplified.NonAbelianSimplify();
 
-    Group group_S3_second(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    Symmetrizer symmetrizer_S3_second(converter, group_S3_second);
-
-    space_full = symmetrizer_S3_first.apply(space_full);
-    space_full = symmetrizer_S3_second.apply(space_full);
-    space_simplified = symmetrizer_S3_first.apply(space_simplified);
-    space_simplified = symmetrizer_S3_second.apply(space_simplified);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 333333333_after_first_S3xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3,};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_first(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    Symmetrizer symmetrizer_S3_first(converter, group_S3_first);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_simplified.NonAbelianSimplify();
+    runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_second(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    Symmetrizer symmetrizer_S3_second(converter, group_S3_second);
-
-    space_full = symmetrizer_S3_first.apply(space_full);
-    space_full = symmetrizer_S3_second.apply(space_full);
-    space_simplified = symmetrizer_S3_first.apply(space_simplified);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    space_simplified = symmetrizer_S3_second.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 333333333_after_both_S3xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3,};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
 
-    Space space_full(converter.total_space_size);
-    Space space_simplified(converter.total_space_size);
+    runner_full.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
-    Group group_S3_first(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    Symmetrizer symmetrizer_S3_first(converter, group_S3_first);
+    runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_simplified.NonAbelianSimplify();
+    runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_simplified.NonAbelianSimplify();
 
-    Group group_S3_second(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    Symmetrizer symmetrizer_S3_second(converter, group_S3_second);
-
-    NonAbelianSimplifier nonAbelianSimplifier;
-
-    space_full = symmetrizer_S3_first.apply(space_full);
-    space_full = symmetrizer_S3_second.apply(space_full);
-
-    space_simplified = symmetrizer_S3_first.apply(space_simplified);
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-    space_simplified = symmetrizer_S3_second.apply(space_simplified);
-    space_simplified = nonAbelianSimplifier.apply(space_simplified);
-
-    compare_two_spaces(space_full, space_simplified);
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }

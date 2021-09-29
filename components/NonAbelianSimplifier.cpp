@@ -3,7 +3,6 @@
 Space NonAbelianSimplifier::apply(Space &space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size());
-    Space::History history_result = space.history;
 
 #pragma omp parallel for shared(space, vector_result) default(none)
     for (size_t i = 0; i < space.blocks.size(); ++i) {
@@ -25,5 +24,5 @@ Space NonAbelianSimplifier::apply(Space &space) const {
         }
         subspace_parent.basis.clear();
     }
-    return Space(std::move(vector_result), history_result);
+    return Space(std::move(vector_result));
 }

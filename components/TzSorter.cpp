@@ -10,7 +10,6 @@ Space TzSorter::apply(Space& space) const {
 
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * (max_ntz_proj + 1));
-    Space::History history_result = space.history;
 
 #pragma omp parallel for shared(space, vector_result) default(none)
     for (size_t i = 0; i < space.blocks.size(); ++i) {
@@ -34,8 +33,7 @@ Space TzSorter::apply(Space& space) const {
         subspace_parent.basis.clear();
     }
 
-    history_result.isTzSorted = true;
-    return Space(std::move(vector_result), history_result);
+    return Space(std::move(vector_result));
 }
 
 TzSorter::TzSorter(spaces::LexicographicIndexConverter indexes) : converter_(std::move(indexes)) {
