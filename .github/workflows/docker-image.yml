@@ -18,11 +18,11 @@ jobs:
         run: docker build . -t july
       - name: Run the Docker image
         run: docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
-      - name: Execute the Docker image
-        run: docker exec --interactive --tty july /bin/bash
+#      - name: Execute the Docker image
+#        run: docker exec --interactive --tty july /bin/bash
       - name: Create build directory
-        run: mkdir -p project/build
+        run: docker exec -d july mkdir -p project/build
       - name: cmake it
-        run: cmake ..
+        run: docker exec -d july cmake ..
       - name: build it
-        run: cmake --build .
+        run: docker exec -d july cmake --build .
