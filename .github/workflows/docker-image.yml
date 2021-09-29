@@ -19,7 +19,7 @@ jobs:
       - name: Run the Docker image
         run: |
           docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
-          docker exec --interactive --tty july /bin/bash
+          docker exec july --interactive july /bin/bash
           mkdir -p project/build
           cmake ..
           cmake --build .
