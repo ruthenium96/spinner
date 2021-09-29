@@ -2,9 +2,35 @@
 
 #include <utility>
 
+namespace {
+bool SizeOfPermutationsEqualsNumberOfSpins (const spaces::LexicographicIndexConverter& converter,
+                                            const Group& group) {
+    return converter.mults_.size() == group.elements_[0].size();
+}
+
+bool OrbitOfCentersHasTheSameValueOfMultiplicity (const spaces::LexicographicIndexConverter& converter,
+                                                const Group& group) {
+    for (const auto& el : group.elements_) {
+        std::vector<int> permutated_mults(converter.mults_);
+        for (size_t n = 0; n < group.elements_[0].size(); ++n) {
+            permutated_mults[n] = converter.mults_[el[n]];
+        }
+        if (permutated_mults != converter.mults_) {
+            return false;
+        }
+    }
+    return true;
+}
+}
+
 Symmetrizer::Symmetrizer(spaces::LexicographicIndexConverter converter, Group group)
 : converter_(std::move(converter)), group_(std::move(group)) {
-    // TODO: check that number of spins equals size of group.elements[0].size()
+    if (!SizeOfPermutationsEqualsNumberOfSpins(converter_, group_)) {
+        throw std::length_error("The size of group elements does not equal to the number of spins.");
+    }
+    if (!OrbitOfCentersHasTheSameValueOfMultiplicity(converter_, group_)) {
+        throw std::invalid_argument("Group permutes centers with different multiplicities.");
+    }
 }
 
 Space Symmetrizer::apply(Space& space) const {

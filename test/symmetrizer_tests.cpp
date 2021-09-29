@@ -31,6 +31,20 @@ bool orthogonality_of_basis(const Space& space) {
     return true;
 }
 
+TEST(symmetrizer, throw_wrong_size_of_pemutation) {
+    std::vector<int> mults = {4, 4, 4};
+
+    runner::Runner runner(mults);
+    EXPECT_THROW(runner.Symmetrize(group::S2, {{1, 0, 3, 2}}), std::length_error);
+}
+
+TEST(symmetrizer, throw_permutes_different_multiplicities) {
+    std::vector<int> mults = {4, 4, 4, 3};
+
+    runner::Runner runner(mults);
+    EXPECT_THROW(runner.Symmetrize(group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
+}
+
 TEST(symmetrizer, 4444_S2) {
     std::vector<int> mults = {4, 4, 4, 4};
 
