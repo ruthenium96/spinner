@@ -1,4 +1,8 @@
 #include "Runner.h"
+#include "components/NonAbelianSimplifier.h"
+#include "components/Symmetrizer.h"
+#include "components/TzSorter.h"
+
 
 runner::Runner::Runner(std::vector<int> mults) : converter_(std::move(mults)), space_(converter_.total_space_size)
 {}

@@ -2,10 +2,8 @@
 
 #include <utility>
 
-#include "components/NonAbelianSimplifier.h"
-#include "components/Symmetrizer.h"
-#include "components/TzSorter.h"
 #include "entities/Space.h"
+#include "groups/Group.h"
 
 namespace runner {
 class Runner {

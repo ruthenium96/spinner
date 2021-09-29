@@ -12,8 +12,8 @@ bool OrbitOfCentersHasTheSameValueOfMultiplicity (const spaces::LexicographicInd
                                                 const Group& group) {
     for (const auto& el : group.elements_) {
         std::vector<int> permutated_mults(converter.mults_);
-        for (size_t n = 0; n < group.elements_[0].size(); ++n) {
-            permutated_mults[n] = converter.mults_[el[n]];
+        for (size_t i = 0; i < group.elements_[0].size(); ++i) {
+            permutated_mults[i] = converter.mults_[el[i]];
         }
         if (permutated_mults != converter.mults_) {
             return false;
