@@ -12,6 +12,7 @@ void runner::Runner::NonAbelianSimplify() {
 }
 
 void runner::Runner::Symmetrize(Group new_group) {
+    // check if user trying to use the same Group for a second time:
     if (std::count(history_.applied_groups.begin(), history_.applied_groups.end(), new_group)) {
         return;
     }

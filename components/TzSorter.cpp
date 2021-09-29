@@ -3,11 +3,6 @@
 #include <utility>
 
 Space TzSorter::apply(Space& space) const {
-    // It does not make any sense to use tz_sorter twice.
-    if (space.history.isTzSorted) {
-        return std::move(space);
-    }
-
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * (max_ntz_proj + 1));
 
