@@ -17,18 +17,9 @@ jobs:
       - name: Build the Docker image
         run: docker build . -t july
       - name: Run the Docker image
-        run: docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
-
-  run:
-
-    runs-on: ubuntu-latest
-
-    container:
-      image: july
-      
-    steps:
-      - name: Build the project
         run: |
+          docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
+          docker exec --interactive --tty july /bin/bash
           mkdir -p project/build
           cmake ..
           cmake --build .
