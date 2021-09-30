@@ -19,10 +19,7 @@ jobs:
         run: |
           docker build . -t july
           docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
-      - name: Biuld project
-        run: |
-          docker exec -d july cd project
-          docker exec -d july mkdir build
-          docker exec -d july cd build
+          docker exec -d july mkdir -p project/build
+          docker exec -d july cd project/build
           docker exec -d july cmake ..
           docker exec -d july cmake --build .
