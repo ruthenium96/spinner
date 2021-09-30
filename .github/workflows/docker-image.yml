@@ -19,8 +19,8 @@ jobs:
       - name: Build Cmake
         run: |
           docker run --name july --env CXX=clang++-17 -v $PWD:/project -d july
-          docker exec -d july \
-            mkdir -p project/build \
-            cd project/build \
-            cmake .. \
-            cmake --build . \
+          docker exec july \
+            mkdir -p project/build && \
+            cd project/build && \
+            cmake .. && \
+            cmake --build .
