@@ -25,7 +25,11 @@ class Runner {
     struct SpaceHistory {
         bool isTzSorted = false;
         std::vector<Group> applied_groups;
+        uint32_t number_of_non_simplified_abelian_groups = 0;
     };
+
+    // TODO: should we implement it as method of Group_Info?
+    bool IsItAbelianGroup(const Group& group) const;
 
     const spaces::LexicographicIndexConverter converter_;
     Space space_;
