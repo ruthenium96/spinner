@@ -14,14 +14,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - name: Build Docker
         run: |
-        docker build . -t july
-        docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
+          docker build . -t july
+          docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
       - name: Biuld project
         run: |
-        docker exec -d july cd project
-        docker exec -d july mkdir build
-        docker exec -d july cd build
-        docker exec -d july cmake ..
-        docker exec -d july cmake --build .
+          docker exec -d july cd project
+          docker exec -d july mkdir build
+          docker exec -d july cd build
+          docker exec -d july cmake ..
+          docker exec -d july cmake --build .
