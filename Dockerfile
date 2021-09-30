@@ -46,7 +46,7 @@ RUN update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/cl
 
 RUN rm -rf /var/lib/apt/lists/*
 
-COPY entrypoint.sh /entrypoint.sh
+#COPY entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
-#ENTRYPOINT ["tail", "-f", "/dev/null"]
+#ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
