@@ -19,7 +19,7 @@ function shell_restart(){
     docker exec --interactive --tty july /bin/bash
 }
 
-if [ $1 != "init" -a $1 != "clean" -a $1 != "shell" -a $1 != "shell_restart" ]
+if [ $1 != "init" ] && [ $1 != "clean" ] && [ $1 != "shell" ] && [ $1 != "shell_restart" ]
     then
         echo "no such command" $1
         exit 1
