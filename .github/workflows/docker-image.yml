@@ -15,12 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build Docker
-        run: docker build . -t july
+        run: |
+          docker build . -t july
+          docker run --name july --env CXX=clang++-17 -v $PWD:/project -d july
       - name: Build Cmake
         run: |
-          docker run --name july --env CXX=clang++-17 -v $PWD:/project -d july
-          docker exec july \
-            mkdir -p project/build && \
-            cd project/build && \
-            cmake .. && \
-            cmake --build .
+          docker exec july mkdir -p /project/build
+          docker exec -w /project/build july cmake ..
+          docker exec -w /project/build cmake --build .
+      - name: Google Tests
+        run: docker exec -w /project/build/test ./julytest
