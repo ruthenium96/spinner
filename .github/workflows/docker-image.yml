@@ -14,10 +14,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Build the Docker image
-        id: uname
-        uses: ruthenium96/july@workflows
-        with:
-          command: 'cd project'
-      - name: Print it
-        run: echo "${{ steps.uname.outputs.output }}"
+      - name: Build Docker
+        run: |
+        docker build . -t july
+        docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
+      - name: Biuld project
+        run: |
+        docker exec -d july cd project
+        docker exec -d july mkdir build
+        docker exec -d july cd build
+        docker exec -d july cmake ..
+        docker exec -d july cmake --build .
