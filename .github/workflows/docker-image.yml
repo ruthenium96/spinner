@@ -22,6 +22,6 @@ jobs:
         run: |
           docker exec july mkdir -p /project/build
           docker exec -w /project/build july cmake ..
-          docker exec -w /project/build cmake --build .
+          docker exec -w /project/build july cmake --build .
       - name: Google Tests
-        run: docker exec -w /project/build/test ./julytest
+        run: docker exec -w /project/build/test july ./julytest
