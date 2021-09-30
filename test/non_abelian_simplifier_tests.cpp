@@ -8,10 +8,10 @@ void compare_two_spaces(const Space& one, const Space& two) {
     EXPECT_EQ(one.blocks.size(), two.blocks.size())
     << "Sizes of spaces does not equal";
     for (size_t i = 0; i < one.blocks.size(); ++i) {
-        int one_dimensionality = one.blocks[i].properties.dimensionality;
-        int two_dimensionality = two.blocks[i].properties.dimensionality;
-        int one_degeneracy = one.blocks[i].properties.degeneracy;
-        int two_degeneracy = two.blocks[i].properties.degeneracy;
+        uint32_t one_dimensionality = one.blocks[i].properties.dimensionality;
+        uint32_t two_dimensionality = two.blocks[i].properties.dimensionality;
+        uint32_t one_degeneracy = one.blocks[i].properties.degeneracy;
+        uint32_t two_degeneracy = two.blocks[i].properties.degeneracy;
 
         EXPECT_EQ(one_dimensionality * one_degeneracy,
                   two_dimensionality * two_degeneracy)
@@ -139,9 +139,9 @@ TEST(nonAbelianSimplifier, 222222222_after_second_S3xS3) {
 
     runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    runner_simplified.NonAbelianSimplify();
+    EXPECT_THROW(runner_simplified.NonAbelianSimplify(), std::invalid_argument);
 
-    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
+//    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 222222222_after_first_S3xS3) {
@@ -188,9 +188,9 @@ TEST(nonAbelianSimplifier, 333333333_after_second_S3xS3) {
 
     runner_simplified.Symmetrize(group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.Symmetrize(group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-    runner_simplified.NonAbelianSimplify();
+    EXPECT_THROW(runner_simplified.NonAbelianSimplify(), std::invalid_argument);
 
-    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
+//    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
 TEST(nonAbelianSimplifier, 333333333_after_first_S3xS3) {
