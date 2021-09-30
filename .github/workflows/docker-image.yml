@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ master ]
 
+
 jobs:
 
   build:
@@ -13,13 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . -t july
-      - name: Run the Docker image
-        run: |
-          docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
-          docker exec july --interactive july /bin/bash
-          mkdir -p project/build
-          cmake ..
-          cmake --build .
+        id: uname
+        uses: ruthenium96/july@workflows
+        with:
+          command: 'cd project'
+      - name: Print it
+        run: echo "${{ steps.uname.outputs.output }}"

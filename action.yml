@@ -1,0 +1,14 @@
+name: 'Run in Docker'
+description: 'Run the command in Docker'
+inputs:
+  command:
+    description: 'Command to run'
+    required: true
+outputs:
+  output:
+    description: 'Output of the program'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.command }}
