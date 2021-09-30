@@ -1,0 +1,27 @@
+name: Google Tests in Docker
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+
+  google-tests:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker build
+        run: |
+          docker build . -t july
+          docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
+      - name: Cmake build
+        run: |
+          docker exec july mkdir -p /project/build
+          docker exec -w /project/build july cmake ..
+          docker exec -w /project/build july cmake --build .
+      - name: Google Tests
+        run: docker exec -w /project/build/test july ./julytest
