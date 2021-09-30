@@ -1,3 +1,4 @@
+#include <cmath>
 #include "gtest/gtest.h"
 #include "common/Runner.h"
 #include "common/Logger.h"
