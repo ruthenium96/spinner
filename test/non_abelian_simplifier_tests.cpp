@@ -2,6 +2,8 @@
 #include "common/Runner.h"
 #include "common/Logger.h"
 
+#include <cmath>
+
 void compare_two_spaces(const Space& one, const Space& two) {
     EXPECT_EQ(one.blocks.size(), two.blocks.size())
     << "Sizes of spaces does not equal";
