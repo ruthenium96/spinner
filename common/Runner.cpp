@@ -11,7 +11,7 @@ void runner::Runner::NonAbelianSimplify() {
     if (history_.number_of_non_simplified_abelian_groups == 0) {
         return;
     }
-    if (history_.number_of_non_simplified_abelian_groups > 1) {
+    if (history_.number_of_non_simplified_abelian_groups != 1) {
         throw std::invalid_argument("Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
                                     "currently is not allowed. Use Non-Abelian simplification twice.");
     }
@@ -28,11 +28,11 @@ void runner::Runner::Symmetrize(Group new_group) {
 
     Symmetrizer symmetrizer(converter_, new_group);
     space_ = symmetrizer.apply(space_);
-    history_.applied_groups.emplace_back(std::move(new_group));
 
-    if (!IsItAbelianGroup(new_group)) {
+    if (!IsAbelianGroup(new_group)) {
         ++history_.number_of_non_simplified_abelian_groups;
     }
+    history_.applied_groups.emplace_back(std::move(new_group));
 }
 
 void runner::Runner::Symmetrize(group::GroupNames group_name, std::vector<Permutation> generators) {
@@ -58,6 +58,6 @@ uint32_t runner::Runner::getTotalSpaceSize() const {
     return converter_.total_space_size;
 }
 
-bool runner::Runner::IsItAbelianGroup(const Group &group) const {
+bool runner::Runner::IsAbelianGroup(const Group &group) const noexcept {
     return group.info.group_size == group.info.number_of_representations;
 }

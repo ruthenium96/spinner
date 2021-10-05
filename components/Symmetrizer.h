@@ -18,7 +18,7 @@ class Symmetrizer {
 
     // TODO: these functions are not about symmetrization.
     //  Should we refactor them and create a new class?
-    static void increment_visited(DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
+    static void increment_visited(const DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
 
     static void erase_if_zero(std::vector<std::vector<DecompositionMap>>& projections);
 

@@ -106,7 +106,7 @@ std::vector<std::vector<DecompositionMap>> Symmetrizer::get_symmetrical_projecte
     return projections;
 }
 
-void Symmetrizer::increment_visited(DecompositionMap & m,
+void Symmetrizer::increment_visited(const DecompositionMap & m,
                                     std::unordered_map<uint32_t , uint8_t>& hs) {
     for (const auto p : m) {
         if (hs.find(p.first) == hs.end()) {

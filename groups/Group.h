@@ -11,7 +11,7 @@ class Group {
 public:
     explicit Group(group::GroupNames group_name, std::vector<Permutation> generators);
 
-    std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
+    [[nodiscard]] std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
 
     bool operator==(const Group &rhs) const;
 

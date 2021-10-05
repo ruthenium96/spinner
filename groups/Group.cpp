@@ -42,7 +42,7 @@ Permutation ElementInPower(const Permutation& element, size_t power) {
         result = tmp_result;
     }
     return std::move(result);
-};
+}
 
 bool ElementsInPowerOfItsOrderIsIdentity(const std::vector<Permutation>& elements,
                                          const std::vector<size_t>& order_of_elements) {
