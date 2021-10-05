@@ -1,4 +1,5 @@
-#pragma once
+#ifndef JULY_RUNNER_H
+#define JULY_RUNNER_H
 
 #include <utility>
 
@@ -17,22 +18,24 @@ class Runner {
 
     void TzSort();
 
-    const Space& getSpace() const;
+    [[nodiscard]] const Space& getSpace() const;
 
-    uint32_t getTotalSpaceSize() const;
+    [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
   private:
     struct SpaceHistory {
-        bool isTzSorted = false;
         std::vector<Group> applied_groups;
         uint32_t number_of_non_simplified_abelian_groups = 0;
+        bool isTzSorted = false;
     };
 
     // TODO: should we implement it as method of Group_Info?
-    bool IsItAbelianGroup(const Group& group) const;
+    [[nodiscard]] bool IsAbelianGroup(const Group& group) const noexcept;
 
     const spaces::LexicographicIndexConverter converter_;
     Space space_;
     SpaceHistory history_;
 };
 } // namespace runner
+
+#endif //JULY_RUNNER_H

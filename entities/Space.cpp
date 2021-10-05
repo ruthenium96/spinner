@@ -1,6 +1,3 @@
-
-#include <entities/Space.h>
-
 #include "Space.h"
 
 Space::Space(uint32_t total_space_size) {
