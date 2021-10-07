@@ -53,7 +53,7 @@ Space Symmetrizer::apply(Space& space) const {
         // It is also an auxiliary hash table. It helps to do not check orthogonality over and over.
         std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> added (group_.info.number_of_representations);
 
-        for (auto & basi : subspace_parent.basis) {
+        for (auto & basi : subspace_parent) {
             uint8_t dimension_of_parent = subspace_parent.properties.dimensionality;
             // when we work with basi, we actually do all work for the orbit of basi,
             // so we add basi and its orbits to visited,
@@ -68,13 +68,13 @@ Space Symmetrizer::apply(Space& space) const {
                             continue;
                         }
                         size_t j = group_.info.number_of_representations * i + repr;
-                        add_vector_if_orthogonal_to_others(projected_basi[repr][k], added[repr], vector_result[j].basis);
+                        add_vector_if_orthogonal_to_others(projected_basi[repr][k], added[repr], vector_result[j]);
                     }
                 }
             }
         }
 
-        subspace_parent.basis.clear();
+        subspace_parent.clear();
     }
 
     return Space(std::move(vector_result));
@@ -144,7 +144,7 @@ uint8_t Symmetrizer::count_how_many_orbit_was_visited(const DecompositionMap & m
 
 void Symmetrizer::add_vector_if_orthogonal_to_others(DecompositionMap &m,
                                                      std::unordered_map<uint32_t, std::vector<size_t>> &hs,
-                                                     std::vector<DecompositionMap> &basis) {
+                                                     Subspace &subspace) {
     // TODO: should we check this only once per orbit?
     std::unordered_set<size_t> us;
     // we want to check orthogonality only with vectors, including the same lex-vectors:
@@ -157,8 +157,8 @@ void Symmetrizer::add_vector_if_orthogonal_to_others(DecompositionMap &m,
             }
             double accumulator = 0;
             for (const auto pp : m) {
-                if (basis[lex].find(pp.first) != basis[lex].end()) {
-                    accumulator += pp.second * basis[lex][pp.first];
+                if (!subspace.is_zero(lex, pp.first)) {
+                    accumulator += pp.second * subspace(lex, pp.first);
                 }
             }
             if (accumulator != 0) {
@@ -168,8 +168,8 @@ void Symmetrizer::add_vector_if_orthogonal_to_others(DecompositionMap &m,
         }
     }
     // if we reach this line -- DecompositionMap is okay, we can add it
-    basis.emplace_back(std::move(m));
-    for (auto p : basis.back()) {
-        hs[p.first].emplace_back(basis.size() - 1);
+    subspace.add_new_vector(std::move(m));
+    for (auto p : subspace.back()) {
+        hs[p.first].emplace_back(subspace.size() - 1);
     }
 }

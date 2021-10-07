@@ -16,16 +16,16 @@ Space TzSorter::apply(Space& space) const {
             vector_result[(max_ntz_proj + 1) * i + ntz_proj].properties = block_properties;
         }
 
-        for (auto & basi : subspace_parent.basis) {
+        for (auto & basi : subspace_parent) {
             // Value of total projection is calculated from the first index of map.
             // NB: there is no validation of the fact, that all indexes of decomposition
             // correspond to the same projection value, user should check it yourself.
             uint8_t ntz_proj = converter_.convert_lex_index_to_tz_projection(basi.begin()->first);
             size_t j = (max_ntz_proj + 1) * i + ntz_proj;
-            vector_result[j].basis.emplace_back(std::move(basi));
+            vector_result[j].add_new_vector(std::move(basi));
         }
 
-        subspace_parent.basis.clear();
+        subspace_parent.clear();
     }
 
     return Space(std::move(vector_result));

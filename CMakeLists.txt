@@ -48,6 +48,4 @@ add_executable(main_components
 
 target_link_libraries(main_components components groups space)
 
-set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
-
 add_subdirectory(test)

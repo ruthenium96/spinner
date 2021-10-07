@@ -5,7 +5,7 @@
 size_t number_of_vectors(const Space& space) {
     size_t acc = 0;
     for (const auto& subspace : space.blocks) {
-        acc += subspace.basis.size();
+        acc += subspace.size();
     }
     return acc;
 }
@@ -13,7 +13,7 @@ size_t number_of_vectors(const Space& space) {
 bool orthogonality_of_basis(const Space& space) {
     std::vector<DecompositionMap> unitary_matrix;
     for (const auto& subspace : space.blocks) {
-        unitary_matrix.insert(unitary_matrix.end(), subspace.basis.begin(), subspace.basis.end());
+        unitary_matrix.insert(unitary_matrix.end(), subspace.begin(), subspace.end());
     }
     for (size_t i = 0; i < unitary_matrix.size(); ++i) {
         for (size_t j = i + 1; j < unitary_matrix.size(); ++j) {
