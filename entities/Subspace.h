@@ -8,33 +8,35 @@
 #include <ostream>
 #include "BlockProperties.h"
 
-using DecompositionSparse = arma::SpSubview_col<double>;
-using DecompositionMap = std::map<uint32_t, double>;
 
 struct Subspace {
-    using Decomposition = DecompositionMap;
     BlockProperties properties;
 
     [[nodiscard]] uint32_t size() const;
     [[nodiscard]] bool empty() const;
-    void add_new_vector(Decomposition);
+    [[nodiscard]] bool vempty(uint32_t index_of_vector) const;
     void clear();
+
+    void erase_if_zero();
+
     bool is_zero(uint32_t i, uint32_t j);
     void move_vector_from(uint32_t i, Subspace& subspace_from);
+    void move_all_from(Subspace& subspace_from);
+    void copy_vector_from(uint32_t i, const Subspace& subspace_from);
+    void copy_all_from(const Subspace& subspace_from);
     void resize(uint32_t new_size);
 
-    Decomposition& back();
     double& operator()(uint32_t i, uint32_t j);
 
-    using iterator = typename std::vector<Decomposition>::iterator;
-    iterator begin();
-    iterator end();
-    using const_iterator = typename std::vector<DecompositionMap>::const_iterator;
-    [[nodiscard]] const_iterator begin() const;
-    [[nodiscard]] const_iterator end() const;
+    using in_col_iterator = typename std::map<uint32_t, double>::iterator;
+    in_col_iterator vbegin(uint32_t index_of_vector);
+    in_col_iterator vend(uint32_t index_of_vector);
+    using const_in_col_iterator = typename std::map<uint32_t, double>::const_iterator;
+    [[nodiscard]] const_in_col_iterator vbegin(uint32_t index_of_vector) const;
+    [[nodiscard]] const_in_col_iterator vend(uint32_t index_of_vector) const;
 
 private:
-    std::vector<DecompositionMap> basis;
+    std::vector<std::map<uint32_t, double>> basis;
     arma::sp_mat sparse_basis;
 };
 

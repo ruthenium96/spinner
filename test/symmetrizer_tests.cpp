@@ -11,16 +11,16 @@ size_t number_of_vectors(const Space& space) {
 }
 
 bool orthogonality_of_basis(const Space& space) {
-    std::vector<DecompositionMap> unitary_matrix;
+    Subspace unitary_matrix;
     for (const auto& subspace : space.blocks) {
-        unitary_matrix.insert(unitary_matrix.end(), subspace.begin(), subspace.end());
+        unitary_matrix.copy_all_from(subspace);
     }
     for (size_t i = 0; i < unitary_matrix.size(); ++i) {
         for (size_t j = i + 1; j < unitary_matrix.size(); ++j) {
             double accumulator = 0;
-            for (const auto& p : unitary_matrix[i]) {
-                if (unitary_matrix[j].find(p.first) != unitary_matrix[j].end()) {
-                    accumulator += p.second * unitary_matrix[j][p.first];
+            for (auto p = unitary_matrix.vbegin(i); p != unitary_matrix.vend(i); ++p) {
+                if (!unitary_matrix.is_zero(j, p->first)) {
+                    accumulator += p->second * unitary_matrix(j, p->first);
                 }
             }
             if (accumulator != 0) {

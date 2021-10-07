@@ -22,14 +22,14 @@ void compare_two_spaces(const Space& one, const Space& two) {
         std::unordered_map<uint32_t, uint32_t> two_met;
 
         // counting:
-        for (const auto& m : one.blocks[i]) {
-            for (const auto p : m) {
-                one_met[p.first] += 1;
+        for (uint32_t l = 0; l < one.blocks[i].size(); ++l) {
+            for (auto p = one.blocks[i].vbegin(l); p != one.blocks[i].vend(l); ++p) {
+                one_met[p->first] += 1;
             }
         }
-        for (const auto& m : two.blocks[i]) {
-            for (const auto p : m) {
-                two_met[p.first] += 1;
+        for (uint32_t l = 0; l < two.blocks[i].size(); ++l) {
+            for (auto p = two.blocks[i].vbegin(l); p != two.blocks[i].vend(l); ++p) {
+                two_met[p->first] += 1;
             }
         }
 
