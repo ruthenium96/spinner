@@ -16,7 +16,7 @@ void runner::Runner::NonAbelianSimplify() {
                                     "currently is not allowed. Use Non-Abelian simplification twice.");
     }
     NonAbelianSimplifier nonAbelianSimplifier;
-    space_ = nonAbelianSimplifier.apply(space_);
+    space_ = nonAbelianSimplifier.apply(std::move(space_));
     history_.number_of_non_simplified_abelian_groups = 0;
 }
 
@@ -27,7 +27,7 @@ void runner::Runner::Symmetrize(Group new_group) {
     }
 
     Symmetrizer symmetrizer(converter_, new_group);
-    space_ = symmetrizer.apply(space_);
+    space_ = symmetrizer.apply(std::move(space_));
 
     if (!IsAbelianGroup(new_group)) {
         ++history_.number_of_non_simplified_abelian_groups;
@@ -46,7 +46,7 @@ void runner::Runner::TzSort() {
         return;
     }
     TzSorter tz_sorter(converter_);
-    space_ = tz_sorter.apply(space_);
+    space_ = tz_sorter.apply(std::move(space_));
     history_.isTzSorted = true;
 }
 

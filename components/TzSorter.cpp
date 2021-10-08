@@ -2,7 +2,7 @@
 
 #include <utility>
 
-Space TzSorter::apply(Space& space) const {
+Space TzSorter::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * (max_ntz_proj + 1));
 

@@ -5,7 +5,7 @@
 
 class NonAbelianSimplifier {
 public:
-    Space apply(Space& space) const;
+    Space apply(Space&& space) const;
 };
 
 

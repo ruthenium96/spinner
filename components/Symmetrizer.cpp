@@ -33,7 +33,7 @@ Symmetrizer::Symmetrizer(spaces::LexicographicIndexConverter converter, Group gr
     }
 }
 
-Space Symmetrizer::apply(Space& space) const {
+Space Symmetrizer::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * group_.info.number_of_representations);
 

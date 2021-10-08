@@ -12,7 +12,7 @@
 class Symmetrizer {
   public:
     Symmetrizer(spaces::LexicographicIndexConverter converter, Group group);
-    Space apply(Space& space) const;
+    Space apply(Space&& space) const;
 
     std::vector<Subspace> get_symmetrical_projected_decompositions(Subspace& subspace, uint32_t index_of_vector) const;
 
