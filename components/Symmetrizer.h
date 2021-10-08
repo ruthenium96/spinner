@@ -22,8 +22,12 @@ class Symmetrizer {
 
     static uint8_t count_how_many_orbit_was_visited(const Subspace& subspace, uint32_t index_of_vector, std::unordered_map<uint32_t , uint8_t>& hs);
 
-    static void add_vector_if_orthogonal_to_others(Subspace& subspace_from, uint32_t index_of_vector, std::unordered_map<uint32_t, std::vector<size_t>>& hs,
-                                                    Subspace& subspace_to);
+    static bool is_orthogonal_to_others(const Subspace& subspace_from, uint32_t index_of_vector,
+                                        std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+                                        const Subspace& subspace_to);
+    static void move_vector_and_remember_it(Subspace& subspace_from, uint32_t index_of_vector,
+                                            std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+                                            Subspace& subspace_to);
 
 
   private:

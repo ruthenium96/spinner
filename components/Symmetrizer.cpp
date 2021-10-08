@@ -46,6 +46,8 @@ Space Symmetrizer::apply(Space& space) const {
             block_properties.representation.emplace_back(repr);
             block_properties.dimensionality *= group_.info.dimension_of_representation[repr];
             vector_result[group_.info.number_of_representations * i + repr].properties = block_properties;
+            // TODO: still bad idea
+            vector_result[group_.info.number_of_representations * i + repr].tensor_size = subspace_parent.tensor_size;
         }
 
         // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
@@ -68,7 +70,9 @@ Space Symmetrizer::apply(Space& space) const {
                             continue;
                         }
                         size_t j = group_.info.number_of_representations * i + repr;
-                        add_vector_if_orthogonal_to_others(projected_basi[repr], k, added[repr], vector_result[j]);
+                        if (is_orthogonal_to_others(projected_basi[repr], k, added[repr], vector_result[j])) {
+                            move_vector_and_remember_it(projected_basi[repr], k, added[repr], vector_result[j]);
+                        }
                     }
                 }
             }
@@ -85,18 +89,20 @@ std::vector<Subspace> Symmetrizer::get_symmetrical_projected_decompositions(Subs
     // it is a set (partitioned by representations) of all projected decompositions:
     std::vector<Subspace> projections(group_.info.number_of_representations);
     for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
+        projections[repr].tensor_size = subspace.tensor_size;
         projections[repr].resize(group_.info.number_of_projectors_of_representation[repr]);
     }
 
     for (auto p = subspace.vbegin(index_of_vector); p != subspace.vend(index_of_vector); ++p) {
-        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_sz_projections(p->first);
+        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_sz_projections(INDEX(p));
         std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
 
         for (uint8_t g = 0; g < group_.info.group_size; ++g) {
             uint32_t permutated_lex = converter_.convert_sz_projections_to_lex_index(permutated_vectors[g]);
             for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
                 for (uint8_t projector = 0; projector < group_.info.number_of_projectors_of_representation[repr]; ++projector) {
-                    projections[repr](projector, permutated_lex) += group_.info.coefficients_of_projectors[repr][projector][g] * p->second;
+                    projections[repr].add_to_position(group_.info.coefficients_of_projectors[repr][projector][g] * VALUE(p),
+                                                      projector, permutated_lex);
                 }
             }
         }
@@ -113,10 +119,10 @@ void Symmetrizer::increment_visited(const Subspace& subspace,
                                     uint32_t index_of_vector,
                                     std::unordered_map<uint32_t , uint8_t>& hs) {
     for (auto p = subspace.vbegin(index_of_vector); p != subspace.vend(index_of_vector); ++p) {
-        if (hs.find(p->first) == hs.end()) {
-            hs[p->first] = 1;
+        if (hs.find(INDEX(p)) == hs.end()) {
+            hs[INDEX(p)] = 1;
         } else {
-            ++hs[p->first];
+            ++hs[INDEX(p)];
         }
     }
 }
@@ -126,41 +132,48 @@ uint8_t Symmetrizer::count_how_many_orbit_was_visited(const Subspace& subspace,
                                                       std::unordered_map<uint32_t , uint8_t>& hs) {
     uint8_t maximum = 0;
     for (auto p = subspace.vbegin(index_of_vector); p != subspace.vend(index_of_vector); ++p) {
-        if (hs.find(p->first) != hs.end()) {
-            maximum = std::max(maximum, hs[p->first]);
+        if (hs.find(INDEX(p)) != hs.end()) {
+            maximum = std::max(maximum, hs[INDEX(p)]);
         }
+
     }
     return maximum;
 }
 
-void Symmetrizer::add_vector_if_orthogonal_to_others(Subspace& subspace_from, uint32_t index_of_vector,
-                                                     std::unordered_map<uint32_t, std::vector<size_t>> &hs,
-                                                     Subspace &subspace_to) {
+bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_t index_of_vector,
+                                          std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+                                          const Subspace& subspace_to) {
     // TODO: should we check this only once per orbit?
     std::unordered_set<size_t> us;
     // we want to check orthogonality only with vectors, including the same lex-vectors:
     for (auto p = subspace_from.vbegin(index_of_vector); p != subspace_from.vend(index_of_vector); ++p) {
         // hs[p.first] -- all vectors, including p.first lex-vector:
-        for (const auto& lex : hs[p->first]) {
+        for (const auto& lex : hs[INDEX(p)]) {
             // we do not want to check vector twice (or more):
             if (us.count(lex) > 0) {
                 continue;
             }
             double accumulator = 0;
             for (auto pp = subspace_from.vbegin(index_of_vector); pp != subspace_from.vend(index_of_vector); ++pp) {
-                if (!subspace_to.is_zero(lex, pp->first)) {
-                    accumulator += pp->second * subspace_to(lex, pp->first);
+                if (!subspace_to.is_zero(lex, INDEX(pp))) {
+                    accumulator += VALUE(pp) * subspace_to(lex, INDEX(pp));
                 }
             }
             if (accumulator != 0) {
-                return;
+                return false;
             }
             us.insert(lex);
         }
     }
+    return true;
+}
+
+void Symmetrizer::move_vector_and_remember_it(Subspace& subspace_from, uint32_t index_of_vector,
+                                              std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+                                              Subspace& subspace_to) {
     // if we reach this line -- DecompositionMap is okay, we can add it
     subspace_to.move_vector_from(index_of_vector, subspace_from);
     for (auto p = subspace_to.vbegin(subspace_to.size() - 1); p != subspace_to.vend(subspace_to.size() - 1); ++p) {
-        hs[p->first].emplace_back(subspace_to.size() - 1);
+        hs[INDEX(p)].emplace_back(subspace_to.size() - 1);
     }
 }

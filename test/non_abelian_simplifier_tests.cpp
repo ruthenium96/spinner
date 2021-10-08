@@ -24,12 +24,12 @@ void compare_two_spaces(const Space& one, const Space& two) {
         // counting:
         for (uint32_t l = 0; l < one.blocks[i].size(); ++l) {
             for (auto p = one.blocks[i].vbegin(l); p != one.blocks[i].vend(l); ++p) {
-                one_met[p->first] += 1;
+                one_met[INDEX(p)] += 1;
             }
         }
         for (uint32_t l = 0; l < two.blocks[i].size(); ++l) {
             for (auto p = two.blocks[i].vbegin(l); p != two.blocks[i].vend(l); ++p) {
-                two_met[p->first] += 1;
+                two_met[INDEX(p)] += 1;
             }
         }
 

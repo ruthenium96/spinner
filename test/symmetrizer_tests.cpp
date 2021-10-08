@@ -19,8 +19,8 @@ bool orthogonality_of_basis(const Space& space) {
         for (size_t j = i + 1; j < unitary_matrix.size(); ++j) {
             double accumulator = 0;
             for (auto p = unitary_matrix.vbegin(i); p != unitary_matrix.vend(i); ++p) {
-                if (!unitary_matrix.is_zero(j, p->first)) {
-                    accumulator += p->second * unitary_matrix(j, p->first);
+                if (!unitary_matrix.is_zero(j, INDEX(p))) {
+                    accumulator += VALUE(p) * unitary_matrix(j, INDEX(p));
                 }
             }
             if (accumulator != 0) {

@@ -20,7 +20,7 @@ Space TzSorter::apply(Space& space) const {
             // Value of total projection is calculated from the first index of map.
             // NB: there is no validation of the fact, that all indexes of decomposition
             // correspond to the same projection value, user should check it yourself.
-            uint8_t ntz_proj = converter_.convert_lex_index_to_tz_projection(subspace_parent.vbegin(l)->first);
+            uint8_t ntz_proj = converter_.convert_lex_index_to_tz_projection(INDEX(subspace_parent.vbegin(l)));
             size_t j = (max_ntz_proj + 1) * i + ntz_proj;
             vector_result[j].move_vector_from(l, subspace_parent);
         }
