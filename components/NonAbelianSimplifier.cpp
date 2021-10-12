@@ -18,6 +18,7 @@ Space NonAbelianSimplifier::apply(Space &&space) const {
         block_properties.dimensionality = 1;
         block_properties.degeneracy *= old_dimensionality;
         vector_result[i].properties = block_properties;
+        vector_result[i].tensor_size = subspace_parent.tensor_size;
 
         for (size_t j = 0; j < subspace_parent.size(); j = j + old_dimensionality) {
 //            vector_result[i].add_new_vector(std::move(subspace_parent[j]));
