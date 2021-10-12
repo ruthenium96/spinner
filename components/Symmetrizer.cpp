@@ -146,25 +146,39 @@ bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_
     // TODO: should we check this only once per orbit?
     std::unordered_set<size_t> us;
     // we want to check orthogonality only with vectors, including the same lex-vectors:
-    for (auto p = subspace_from.vbegin(index_of_vector); p != subspace_from.vend(index_of_vector); ++p) {
-        // hs[p.first] -- all vectors, including p.first lex-vector:
-        for (const auto& lex : hs[INDEX(p)]) {
+    auto outer_iterator = subspace_from.GetNewIterator();
+    while(outer_iterator->hasNext()){
+        IndexValueItem item = outer_iterator->getNext();
+        uint32_t index = item.index;
+        double value = item.value;
+        for (const auto& lex : hs[index]) {
             // we do not want to check vector twice (or more):
             if (us.count(lex) > 0) {
                 continue;
             }
             double accumulator = 0;
-            for (auto pp = subspace_from.vbegin(index_of_vector); pp != subspace_from.vend(index_of_vector); ++pp) {
-                if (!subspace_to.is_zero(lex, INDEX(pp))) {
-                    accumulator += VALUE(pp) * subspace_to(lex, INDEX(pp));
+            auto inner_iterator = subspace_from.GetNewIterator();
+            while(inner_iterator->hasNext()){
+                IndexValueItem inner_item = outer_iterator->getNext();
+                uint32_t inner_index = inner_item.index;
+                double inner_value = inner_item.value;
+                if (!subspace_to.is_zero(lex, inner_index)) {
+                    accumulator += inner_value * subspace_to(lex, inner_index);
                 }
             }
+            // for (auto pp = subspace_from.vbegin(index_of_vector); pp != subspace_from.vend(index_of_vector); ++pp) {
+            // }
             if (accumulator != 0) {
                 return false;
             }
             us.insert(lex);
         }
+
     }
+    // for (auto p = subspace_from.vbegin(index_of_vector); p != subspace_from.vend(index_of_vector); ++p) {
+    //     // hs[p.first] -- all vectors, including p.first lex-vector:
+       
+    // }
     return true;
 }
 

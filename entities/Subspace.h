@@ -8,30 +8,37 @@
 #include <ostream>
 #include "BlockProperties.h"
 
+#include <memory>
+
 //#define VECTOR_OF_MAPS
-#define VECTOR_OF_SPARSE_VECTORS
+// #define VECTOR_OF_SPARSE_VECTORS
 //#define SPARSE_MATRIX
 
-#if defined(VECTOR_OF_MAPS)
 
-#define INDEX(p) p->first
-#define VALUE(p) p->second
-using in_col_iterator = typename std::map<uint32_t, double>::iterator;
-using const_in_col_iterator = typename std::map<uint32_t, double>::const_iterator;
+// #define INDEX(p) p->first
+// #define VALUE(p) p->second
+// using in_col_iterator = typename std::map<uint32_t, double>::iterator;
+// using const_in_col_iterator = typename std::map<uint32_t, double>::const_iterator;
 
-#elif defined(VECTOR_OF_SPARSE_VECTORS) || defined(SPARSE_MATRIX)
-
-#define INDEX(p) p.row()
-#define VALUE(p) *p
-using in_col_iterator = typename arma::SpMat<double>::col_iterator;
-using const_in_col_iterator = typename arma::SpMat<double>::const_col_iterator;
-
-#endif
 
 
 // TODO: create class Decomposition, move all methods to it
 
 struct Subspace {
+
+    struct SubspaceIterator{
+        struct IndexValueItem{
+            uint32_t index;
+            double value;
+        };
+        virtual void setIndexValue(IndexValueItem) = 0;
+        virtual bool hasNext() const = 0;
+        virtual IndexValueItem getNext() = 0;
+        virtual ~SubspaceIterator() = 0;
+    };
+
+    std::unique_ptr<SubspaceIterator> GetNewIterator();
+
     BlockProperties properties;
     uint32_t tensor_size = 0;
 
@@ -52,21 +59,12 @@ struct Subspace {
     void add_to_position(double value, uint32_t i, uint32_t j);
     double operator()(uint32_t i, uint32_t j) const;
 
-    in_col_iterator vbegin(uint32_t index_of_vector);
-    in_col_iterator vend(uint32_t index_of_vector);
-    [[nodiscard]] const_in_col_iterator vbegin(uint32_t index_of_vector) const;
-    [[nodiscard]] const_in_col_iterator vend(uint32_t index_of_vector) const;
 
     friend std::ostream &operator<<(std::ostream &os, const Subspace &subspace);
 
 private:
-#if defined(VECTOR_OF_MAPS)
-    std::vector<std::map<uint32_t, double>> basis;
-#elif defined(VECTOR_OF_SPARSE_VECTORS)
-    std::vector<arma::sp_vec> sparse_vectors;
-#elif defined(SPARSE_MATRIX)
-    arma::sp_mat sparse_basis;
-#endif
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // JULY_SUBSPACE_H
