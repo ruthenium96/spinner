@@ -1,0 +1,38 @@
+name: Google Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+
+  google-tests:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          apt update
+          apt install -y \
+            libboost-all-dev
+            libopenblas-dev \
+            liblapack-dev \
+            libarpack2-dev \
+            libsuperlu-dev \
+            libarmadillo-dev \
+            gfortran \
+            libomp-dev \
+            cmake
+          bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+      - name: Build project
+        run: |
+          mkdir ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          cmake ..
+          cmake --build .
+      - name: Run google Tests
+        run: ./test/julytest
