@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include "groups/Group_Info.h"
 
-std::vector<group::GroupNames> group_names = {group::S2, group::S3};
+std::vector<group::GroupEnum> group_names = {group::S2, group::S3};
 
 TEST(group_info_tests, size_of_group_in_form_of_generators_equals_group_size) {
     for (auto& group_name : group_names) {

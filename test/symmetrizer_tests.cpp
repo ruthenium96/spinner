@@ -5,15 +5,15 @@
 size_t number_of_vectors(const Space& space) {
     size_t acc = 0;
     for (const auto& subspace : space.blocks) {
-        acc += subspace.size();
+        acc += subspace.decomposition.size();
     }
     return acc;
 }
 
 bool orthogonality_of_basis(const Space& space) {
-    Subspace unitary_matrix;
+    NewBasisDecomposition unitary_matrix;
     for (const auto& subspace : space.blocks) {
-        unitary_matrix.copy_all_from(subspace);
+        unitary_matrix.copy_all_from(subspace.decomposition);
     }
     for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix.size(); ++index_of_vector_i) {
         for (size_t index_of_vector_j = index_of_vector_i + 1; index_of_vector_j < unitary_matrix.size(); ++index_of_vector_j) {

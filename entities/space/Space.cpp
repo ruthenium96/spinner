@@ -1,20 +1,20 @@
 #include "Space.h"
 
 Space::Space(uint32_t total_space_size) {
-    Subspace lex_block;
+    NewBasisDecomposition identity_decomposition;
     // TODO: do it better
-    lex_block.tensor_size = total_space_size;
-    lex_block.resize(total_space_size);
+    identity_decomposition.tensor_size = total_space_size;
+    identity_decomposition.resize(total_space_size);
     for (uint32_t lex = 0; lex < total_space_size; ++lex) {
-        lex_block.add_to_position(1.0, lex, lex);
+        identity_decomposition.add_to_position(1.0, lex, lex);
     }
-    blocks.emplace_back(std::move(lex_block));
+    blocks.emplace_back(std::move(identity_decomposition));
 }
 
 Space::Space(std::vector<Subspace>&& v) {
 
     for (auto& subspace : v) {
-        if (!subspace.empty()) {
+        if (!subspace.decomposition.empty()) {
             blocks.emplace_back(std::move(subspace));
         }
     }

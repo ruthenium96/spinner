@@ -14,7 +14,7 @@ class Runner {
     void NonAbelianSimplify();
 
     void Symmetrize(Group new_group);
-    void Symmetrize(group::GroupNames group_name, std::vector<Permutation> generators);
+    void Symmetrize(group::GroupEnum group_name, std::vector<Permutation> generators);
 
     void TzSort();
 

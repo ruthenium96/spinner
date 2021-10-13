@@ -14,20 +14,21 @@ Space TzSorter::apply(Space&& space) const {
             BlockProperties block_properties = subspace_parent.properties;
             block_properties.n_proj = ntz_proj;
             vector_result[(max_ntz_proj + 1) * i + ntz_proj].properties = block_properties;
-            vector_result[(max_ntz_proj + 1) * i + ntz_proj].tensor_size = subspace_parent.tensor_size;
+            // TODO: fix it
+            vector_result[(max_ntz_proj + 1) * i + ntz_proj].decomposition.tensor_size = subspace_parent.decomposition.tensor_size;
         }
 
-        for (uint32_t l = 0; l < subspace_parent.size(); ++l) {
+        for (uint32_t l = 0; l < subspace_parent.decomposition.size(); ++l) {
             // Value of total projection is calculated from the first index of map.
             // NB: there is no validation of the fact, that all indexes of decomposition
             // correspond to the same projection value, user should check it yourself.
-            uint32_t index = subspace_parent.GetNewIterator(l)->getNext().index;
+            uint32_t index = subspace_parent.decomposition.GetNewIterator(l)->getNext().index;
             uint8_t ntz_proj = converter_.convert_lex_index_to_tz_projection(index);
             size_t j = (max_ntz_proj + 1) * i + ntz_proj;
-            vector_result[j].move_vector_from(l, subspace_parent);
+            vector_result[j].decomposition.move_vector_from(l, subspace_parent.decomposition);
         }
 
-        subspace_parent.clear();
+        subspace_parent.decomposition.clear();
     }
 
     return Space(std::move(vector_result));

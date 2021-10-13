@@ -47,7 +47,7 @@ Space Symmetrizer::apply(Space&& space) const {
             block_properties.dimensionality *= group_.info.dimension_of_representation[repr];
             vector_result[group_.info.number_of_representations * i + repr].properties = block_properties;
             // TODO: still bad idea
-            vector_result[group_.info.number_of_representations * i + repr].tensor_size = subspace_parent.tensor_size;
+            vector_result[group_.info.number_of_representations * i + repr].decomposition.tensor_size = subspace_parent.decomposition.tensor_size;
         }
 
         // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
@@ -55,13 +55,13 @@ Space Symmetrizer::apply(Space&& space) const {
         // It is also an auxiliary hash table. It helps to do not check orthogonality over and over.
         std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> added (group_.info.number_of_representations);
 
-        for (uint32_t l = 0; l < subspace_parent.size(); ++l) {
+        for (uint32_t l = 0; l < subspace_parent.decomposition.size(); ++l) {
             uint8_t dimension_of_parent = subspace_parent.properties.dimensionality;
             // when we work with basi, we actually do all work for the orbit of basi,
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
-            if (count_how_many_orbit_was_visited(subspace_parent, l, visited) < dimension_of_parent) {
-                std::vector<Subspace> projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
+            if (count_how_many_orbit_was_visited(subspace_parent.decomposition, l, visited) < dimension_of_parent) {
+                std::vector<NewBasisDecomposition> projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
                 increment_visited(projected_basi[0], 0, visited);
                 for (size_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
                     for (size_t k = 0; k < group_.info.number_of_projectors_of_representation[repr]; ++k) {
@@ -78,22 +78,22 @@ Space Symmetrizer::apply(Space&& space) const {
             }
         }
 
-        subspace_parent.clear();
+        subspace_parent.decomposition.clear();
     }
 
     return Space(std::move(vector_result));
 }
 
-std::vector<Subspace> Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace,
-                                                                            uint32_t index_of_vector) const {
+std::vector<NewBasisDecomposition> Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace,
+                                                                                         uint32_t index_of_vector) const {
     // it is a set (partitioned by representations) of all projected decompositions:
-    std::vector<Subspace> projections(group_.info.number_of_representations);
+    std::vector<NewBasisDecomposition> projections(group_.info.number_of_representations);
     for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
-        projections[repr].tensor_size = subspace.tensor_size;
+        projections[repr].tensor_size = subspace.decomposition.tensor_size;
         projections[repr].resize(group_.info.number_of_projectors_of_representation[repr]);
     }
 
-    auto iterator = subspace.GetNewIterator(index_of_vector);
+    auto iterator = subspace.decomposition.GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
         std::vector<uint8_t> nzs = converter_.convert_lex_index_to_sz_projections(item.index);
@@ -117,10 +117,10 @@ std::vector<Subspace> Symmetrizer::get_symmetrical_projected_decompositions(Subs
     return projections;
 }
 
-void Symmetrizer::increment_visited(const Subspace& subspace,
+void Symmetrizer::increment_visited(const NewBasisDecomposition& decomposition,
                                     uint32_t index_of_vector,
                                     std::unordered_map<uint32_t , uint8_t>& hs) {
-    auto iterator = subspace.GetNewIterator(index_of_vector);
+    auto iterator = decomposition.GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
         if (hs.find(item.index) == hs.end()) {
@@ -131,11 +131,11 @@ void Symmetrizer::increment_visited(const Subspace& subspace,
     }
 }
 
-uint8_t Symmetrizer::count_how_many_orbit_was_visited(const Subspace& subspace,
+uint8_t Symmetrizer::count_how_many_orbit_was_visited(const NewBasisDecomposition& decomposition,
                                                       uint32_t index_of_vector,
                                                       std::unordered_map<uint32_t , uint8_t>& hs) {
     uint8_t maximum = 0;
-    auto iterator = subspace.GetNewIterator(index_of_vector);
+    auto iterator = decomposition.GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
         if (hs.find(item.index) != hs.end()) {
@@ -145,13 +145,13 @@ uint8_t Symmetrizer::count_how_many_orbit_was_visited(const Subspace& subspace,
     return maximum;
 }
 
-bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_t index_of_vector,
+bool Symmetrizer::is_orthogonal_to_others(const NewBasisDecomposition& decomposition_from, uint32_t index_of_vector,
                                           std::unordered_map<uint32_t, std::vector<size_t>>& hs,
                                           const Subspace& subspace_to) {
     // TODO: should we check this only once per orbit?
     std::unordered_set<size_t> us;
     // we want to check orthogonality only with vectors, including the same lex-vectors:
-    auto outer_iterator = subspace_from.GetNewIterator(index_of_vector);
+    auto outer_iterator = decomposition_from.GetNewIterator(index_of_vector);
     while(outer_iterator->hasNext()){
         auto item = outer_iterator->getNext();
         uint32_t index = item.index;
@@ -162,13 +162,13 @@ bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_
                 continue;
             }
             double accumulator = 0;
-            auto inner_iterator = subspace_from.GetNewIterator(index_of_vector);
+            auto inner_iterator = decomposition_from.GetNewIterator(index_of_vector);
             while(inner_iterator->hasNext()){
                 auto inner_item = inner_iterator->getNext();
                 uint32_t inner_index = inner_item.index;
                 double inner_value = inner_item.value;
-                if (!subspace_to.is_zero(lex, inner_index)) {
-                    accumulator += inner_value * subspace_to(lex, inner_index);
+                if (!subspace_to.decomposition.is_zero(lex, inner_index)) {
+                    accumulator += inner_value * subspace_to.decomposition(lex, inner_index);
                 }
             }
             if (accumulator != 0) {
@@ -181,14 +181,14 @@ bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_
     return true;
 }
 
-void Symmetrizer::move_vector_and_remember_it(Subspace& subspace_from, uint32_t index_of_vector,
+void Symmetrizer::move_vector_and_remember_it(NewBasisDecomposition& decomposition_from, uint32_t index_of_vector,
                                               std::unordered_map<uint32_t, std::vector<size_t>>& hs,
                                               Subspace& subspace_to) {
     // if we reach this line -- DecompositionMap is okay, we can add it
-    subspace_to.move_vector_from(index_of_vector, subspace_from);
-    auto iterator = subspace_to.GetNewIterator(subspace_to.size() - 1);
+    subspace_to.decomposition.move_vector_from(index_of_vector, decomposition_from);
+    auto iterator = subspace_to.decomposition.GetNewIterator(subspace_to.decomposition.size() - 1);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
-        hs[item.index].emplace_back(subspace_to.size() - 1);
+        hs[item.index].emplace_back(subspace_to.decomposition.size() - 1);
     }
 }
