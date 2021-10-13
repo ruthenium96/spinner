@@ -1,4 +1,4 @@
-#include "entities/Space/Space.h"
+#include "entities/space/Space.h"
 #include "components/Symmetrizer.h"
 #include "components/TzSorter.h"
 #include <chrono>
