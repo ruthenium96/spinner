@@ -2,7 +2,7 @@
 #define JULY_SYMMETRIZER_H
 
 #include "cmath"
-#include "entities/Space.h"
+#include "entities/space/Space.h"
 #include "unordered_map"
 #include "unordered_set"
 #include <boost/functional/hash.hpp>

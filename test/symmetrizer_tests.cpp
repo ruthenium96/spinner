@@ -15,12 +15,14 @@ bool orthogonality_of_basis(const Space& space) {
     for (const auto& subspace : space.blocks) {
         unitary_matrix.copy_all_from(subspace);
     }
-    for (size_t i = 0; i < unitary_matrix.size(); ++i) {
-        for (size_t j = i + 1; j < unitary_matrix.size(); ++j) {
+    for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix.size(); ++index_of_vector_i) {
+        for (size_t index_of_vector_j = index_of_vector_i + 1; index_of_vector_j < unitary_matrix.size(); ++index_of_vector_j) {
             double accumulator = 0;
-            for (auto p = unitary_matrix.vbegin(i); p != unitary_matrix.vend(i); ++p) {
-                if (!unitary_matrix.is_zero(j, INDEX(p))) {
-                    accumulator += VALUE(p) * unitary_matrix(j, INDEX(p));
+            auto iterator = unitary_matrix.GetNewIterator(index_of_vector_i);
+            while (iterator->hasNext()) {
+                auto item = iterator->getNext();
+                if (!unitary_matrix.is_zero(index_of_vector_j, item.index)) {
+                    accumulator += item.value * unitary_matrix(index_of_vector_j, item.index);
                 }
             }
             if (accumulator != 0) {

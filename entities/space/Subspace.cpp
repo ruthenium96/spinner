@@ -3,15 +3,17 @@
 
 struct Subspace::Impl {
     std::vector<std::map<uint32_t, double>> basis;
-    
-    Impl(){}
+public:
+    Impl() = default;
 };
 
 Subspace::Subspace() : pImpl{std::make_unique<Impl>()} {}
 Subspace::~Subspace() = default;
+Subspace::Subspace(Subspace&&) noexcept = default;
+Subspace& Subspace::operator=(Subspace&&) noexcept = default;
 
 
-struct SubspaceIteratorImpl : public SubspaceIterator {
+struct SubspaceIteratorImpl : public Subspace::SubspaceIterator {
 
     std::map<uint32_t, double>::iterator iter;
     const std::map<uint32_t, double>::iterator end;
@@ -20,34 +22,30 @@ struct SubspaceIteratorImpl : public SubspaceIterator {
         std::map<uint32_t, double>::iterator iter2): iter(iter1), end(iter2){
     }
 
-    void setIndexValue(IndexValueItem iv_item) {
-        iter->first = iv_item.index;
-        iter->second = iv_item.value;
-    }
-
-    bool hasNext() const {
+    [[nodiscard]] bool hasNext() const override {
         return iter != end;
     }
 
-    IndexValueItem getNext() {
+    IndexValueItem getNext() override {
         auto pair = *iter;
+        ++iter;
         return {pair.first, pair.second};
     }
 
-    ~SubspaceIterator(){
-    }
-}
+    ~SubspaceIteratorImpl() = default;
+};
 
-std::unique_ptr<SubspaceIterator> GetNewIterator(){
-    return std::make_unique<SubspaceIteratorImpl>(pImpl->basis);
+
+std::unique_ptr<Subspace::SubspaceIterator> Subspace::GetNewIterator(size_t index_of_vector) const {
+    return std::make_unique<SubspaceIteratorImpl>(pImpl->basis[index_of_vector].begin(), pImpl->basis[index_of_vector].end());
 }
 
 
 std::ostream &operator<<(std::ostream &os, const Subspace &subspace) {
     os << subspace.properties;
     for (uint32_t i = 0; i < subspace.size(); ++i) {
-        for (auto p = subspace.vbegin(i); p != subspace.vend(i); ++p) {
-            os << p->second << "*[" << p->first << "] ";
+        for (const auto& p : subspace.pImpl->basis[i]) {
+            os << p.second << "*[" << p.first << "] ";
         }
         os << std::endl;
     }
@@ -69,22 +67,6 @@ bool Subspace::vempty(uint32_t index_of_vector) const {
 
 void Subspace::clear() {
     pImpl->basis.clear();
-}
-
-in_col_iterator Subspace::vbegin(uint32_t index_of_vector) {
-    return pImpl->basis[index_of_vector].begin();
-}
-
-in_col_iterator Subspace::vend(uint32_t index_of_vector) {
-    return pImpl->basis[index_of_vector].end();
-}
-
-const_in_col_iterator Subspace::vbegin(uint32_t index_of_vector) const {
-    return pImpl->basis[index_of_vector].cbegin();
-}
-
-const_in_col_iterator Subspace::vend(uint32_t index_of_vector) const {
-    return pImpl->basis[index_of_vector].cend();
 }
 
 void Subspace::move_vector_from(uint32_t i, Subspace& subspace_from) {
@@ -134,5 +116,4 @@ void Subspace::erase_if_zero() {
         }
     }
 }
-
 

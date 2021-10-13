@@ -93,15 +93,17 @@ std::vector<Subspace> Symmetrizer::get_symmetrical_projected_decompositions(Subs
         projections[repr].resize(group_.info.number_of_projectors_of_representation[repr]);
     }
 
-    for (auto p = subspace.vbegin(index_of_vector); p != subspace.vend(index_of_vector); ++p) {
-        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_sz_projections(INDEX(p));
+    auto iterator = subspace.GetNewIterator(index_of_vector);
+    while (iterator->hasNext()) {
+        auto item = iterator->getNext();
+        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_sz_projections(item.index);
         std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
 
         for (uint8_t g = 0; g < group_.info.group_size; ++g) {
             uint32_t permutated_lex = converter_.convert_sz_projections_to_lex_index(permutated_vectors[g]);
             for (uint8_t repr = 0; repr < group_.info.number_of_representations; ++repr) {
                 for (uint8_t projector = 0; projector < group_.info.number_of_projectors_of_representation[repr]; ++projector) {
-                    projections[repr].add_to_position(group_.info.coefficients_of_projectors[repr][projector][g] * VALUE(p),
+                    projections[repr].add_to_position(group_.info.coefficients_of_projectors[repr][projector][g] * item.value,
                                                       projector, permutated_lex);
                 }
             }
@@ -118,11 +120,13 @@ std::vector<Subspace> Symmetrizer::get_symmetrical_projected_decompositions(Subs
 void Symmetrizer::increment_visited(const Subspace& subspace,
                                     uint32_t index_of_vector,
                                     std::unordered_map<uint32_t , uint8_t>& hs) {
-    for (auto p = subspace.vbegin(index_of_vector); p != subspace.vend(index_of_vector); ++p) {
-        if (hs.find(INDEX(p)) == hs.end()) {
-            hs[INDEX(p)] = 1;
+    auto iterator = subspace.GetNewIterator(index_of_vector);
+    while (iterator->hasNext()) {
+        auto item = iterator->getNext();
+        if (hs.find(item.index) == hs.end()) {
+            hs[item.index] = 1;
         } else {
-            ++hs[INDEX(p)];
+            ++hs[item.index];
         }
     }
 }
@@ -131,11 +135,12 @@ uint8_t Symmetrizer::count_how_many_orbit_was_visited(const Subspace& subspace,
                                                       uint32_t index_of_vector,
                                                       std::unordered_map<uint32_t , uint8_t>& hs) {
     uint8_t maximum = 0;
-    for (auto p = subspace.vbegin(index_of_vector); p != subspace.vend(index_of_vector); ++p) {
-        if (hs.find(INDEX(p)) != hs.end()) {
-            maximum = std::max(maximum, hs[INDEX(p)]);
+    auto iterator = subspace.GetNewIterator(index_of_vector);
+    while (iterator->hasNext()) {
+        auto item = iterator->getNext();
+        if (hs.find(item.index) != hs.end()) {
+            maximum = std::max(maximum, hs[item.index]);
         }
-
     }
     return maximum;
 }
@@ -146,9 +151,9 @@ bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_
     // TODO: should we check this only once per orbit?
     std::unordered_set<size_t> us;
     // we want to check orthogonality only with vectors, including the same lex-vectors:
-    auto outer_iterator = subspace_from.GetNewIterator();
+    auto outer_iterator = subspace_from.GetNewIterator(index_of_vector);
     while(outer_iterator->hasNext()){
-        IndexValueItem item = outer_iterator->getNext();
+        auto item = outer_iterator->getNext();
         uint32_t index = item.index;
         double value = item.value;
         for (const auto& lex : hs[index]) {
@@ -157,17 +162,15 @@ bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_
                 continue;
             }
             double accumulator = 0;
-            auto inner_iterator = subspace_from.GetNewIterator();
+            auto inner_iterator = subspace_from.GetNewIterator(index_of_vector);
             while(inner_iterator->hasNext()){
-                IndexValueItem inner_item = outer_iterator->getNext();
+                auto inner_item = inner_iterator->getNext();
                 uint32_t inner_index = inner_item.index;
                 double inner_value = inner_item.value;
                 if (!subspace_to.is_zero(lex, inner_index)) {
                     accumulator += inner_value * subspace_to(lex, inner_index);
                 }
             }
-            // for (auto pp = subspace_from.vbegin(index_of_vector); pp != subspace_from.vend(index_of_vector); ++pp) {
-            // }
             if (accumulator != 0) {
                 return false;
             }
@@ -175,10 +178,6 @@ bool Symmetrizer::is_orthogonal_to_others(const Subspace& subspace_from, uint32_
         }
 
     }
-    // for (auto p = subspace_from.vbegin(index_of_vector); p != subspace_from.vend(index_of_vector); ++p) {
-    //     // hs[p.first] -- all vectors, including p.first lex-vector:
-       
-    // }
     return true;
 }
 
@@ -187,7 +186,9 @@ void Symmetrizer::move_vector_and_remember_it(Subspace& subspace_from, uint32_t 
                                               Subspace& subspace_to) {
     // if we reach this line -- DecompositionMap is okay, we can add it
     subspace_to.move_vector_from(index_of_vector, subspace_from);
-    for (auto p = subspace_to.vbegin(subspace_to.size() - 1); p != subspace_to.vend(subspace_to.size() - 1); ++p) {
-        hs[INDEX(p)].emplace_back(subspace_to.size() - 1);
+    auto iterator = subspace_to.GetNewIterator(subspace_to.size() - 1);
+    while (iterator->hasNext()) {
+        auto item = iterator->getNext();
+        hs[item.index].emplace_back(subspace_to.size() - 1);
     }
 }

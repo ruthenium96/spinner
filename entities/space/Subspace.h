@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 #include <ostream>
-#include "BlockProperties.h"
+#include "entities/BlockProperties.h"
 
 #include <memory>
 
@@ -26,18 +26,23 @@
 
 struct Subspace {
 
-    struct SubspaceIterator{
+    struct SubspaceIterator {
         struct IndexValueItem{
             uint32_t index;
             double value;
         };
-        virtual void setIndexValue(IndexValueItem) = 0;
-        virtual bool hasNext() const = 0;
+        [[nodiscard]] virtual bool hasNext() const = 0;
         virtual IndexValueItem getNext() = 0;
-        virtual ~SubspaceIterator() = 0;
     };
 
-    std::unique_ptr<SubspaceIterator> GetNewIterator();
+    Subspace();
+    Subspace(const Subspace&) = delete;
+    Subspace& operator=(const Subspace&) = delete;
+    Subspace(Subspace&&) noexcept;
+    Subspace& operator=(Subspace&&) noexcept;
+    ~Subspace();
+
+    std::unique_ptr<Subspace::SubspaceIterator> GetNewIterator(size_t index_of_vector) const;
 
     BlockProperties properties;
     uint32_t tensor_size = 0;

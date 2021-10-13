@@ -1,7 +1,7 @@
 #ifndef JULY_TZSORTER_H
 #define JULY_TZSORTER_H
 
-#include "entities/Space.h"
+#include "entities/space/Space.h"
 #include <numeric>
 #include <utility>
 

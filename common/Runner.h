@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#include "entities/Space.h"
+#include "entities/space/Space.h"
 #include "groups/Group.h"
 
 namespace runner {

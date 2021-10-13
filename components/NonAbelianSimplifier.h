@@ -1,7 +1,7 @@
 #ifndef JULY_NON_ABELIAN_SIMPLIFIER_H
 #define JULY_NON_ABELIAN_SIMPLIFIER_H
 
-#include "entities/Space.h"
+#include "entities/space/Space.h"
 
 class NonAbelianSimplifier {
 public:
