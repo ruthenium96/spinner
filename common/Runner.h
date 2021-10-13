@@ -14,7 +14,7 @@ class Runner {
     void NonAbelianSimplify();
 
     void Symmetrize(Group new_group);
-    void Symmetrize(group::GroupEnum group_name, std::vector<Permutation> generators);
+    void Symmetrize(Group::GroupTypeEnum group_name, std::vector<Permutation> generators);
 
     void TzSort();
 
@@ -28,9 +28,6 @@ class Runner {
         uint32_t number_of_non_simplified_abelian_groups = 0;
         bool isTzSorted = false;
     };
-
-    // TODO: should we implement it as method of Group_Info?
-    [[nodiscard]] bool IsAbelianGroup(const Group& group) const noexcept;
 
     const spaces::LexicographicIndexConverter converter_;
     Space space_;

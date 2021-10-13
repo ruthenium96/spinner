@@ -29,13 +29,13 @@ void runner::Runner::Symmetrize(Group new_group) {
     Symmetrizer symmetrizer(converter_, new_group);
     space_ = symmetrizer.apply(std::move(space_));
 
-    if (!IsAbelianGroup(new_group)) {
+    if (!new_group.properties.is_abelian) {
         ++history_.number_of_non_simplified_abelian_groups;
     }
     history_.applied_groups.emplace_back(std::move(new_group));
 }
 
-void runner::Runner::Symmetrize(group::GroupEnum group_name, std::vector<Permutation> generators) {
+void runner::Runner::Symmetrize(Group::GroupTypeEnum group_name, std::vector<Permutation> generators) {
     Group new_group(group_name, std::move(generators));
     Symmetrize(new_group);
 }
@@ -56,8 +56,4 @@ const Space &runner::Runner::getSpace() const {
 
 uint32_t runner::Runner::getTotalSpaceSize() const {
     return converter_.total_space_size;
-}
-
-bool runner::Runner::IsAbelianGroup(const Group &group) const noexcept {
-    return group.info.group_size == group.info.number_of_representations;
 }

@@ -6,11 +6,11 @@
 namespace {
 
 bool NumberOfGeneratorsConsistent(std::vector<Permutation> const& generators,
-                             group::GroupInfo const& info) {
+                             Group::AlgebraicProperties const& info) {
     return generators.size() == info.number_of_generators;
 }
 
-bool SizesAreEqual(std::vector<Permutation> const& generators, group::GroupInfo const& info) {
+bool SizesAreEqual(std::vector<Permutation> const& generators, Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         if (generators[0].size() != generators[i].size()) {
             return false;
@@ -19,7 +19,7 @@ bool SizesAreEqual(std::vector<Permutation> const& generators, group::GroupInfo 
     return true;
 }
 
-bool GeneratorIsValid(std::vector<Permutation> const& generators, group::GroupInfo const& info) {
+bool GeneratorIsValid(std::vector<Permutation> const& generators, Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         Permutation generator_sorted = generators[i];
         std::sort(generator_sorted.begin(), generator_sorted.end());
@@ -60,23 +60,23 @@ bool ElementsInPowerOfItsOrderIsIdentity(const std::vector<Permutation>& element
 
 } // namespace
 
-Group::Group(group::GroupNames group_name, std::vector<Permutation> generators)
-    : generators_(std::move(generators)), info(group::return_group_info_by_group_name(group_name)) {
+Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> generators)
+    : generators_(std::move(generators)), properties(Group::return_group_info_by_group_name(group_name)) {
 
-    if (!NumberOfGeneratorsConsistent(generators_, info)) {
+    if (!NumberOfGeneratorsConsistent(generators_, properties)) {
         throw std::length_error(
             "The number of generators does not equal to the number of group number_of_generators.");
     }
 
-    if (!SizesAreEqual(generators_, info)) {
+    if (!SizesAreEqual(generators_, properties)) {
         throw std::length_error("The sizes of generators are different.");
     }
 
-    if (!GeneratorIsValid(generators_, info)) {
+    if (!GeneratorIsValid(generators_, properties)) {
         throw std::invalid_argument("Generator is invalid.");
     }
 
-    if (!ElementsInPowerOfItsOrderIsIdentity(generators_, info.orders_of_generators)) {
+    if (!ElementsInPowerOfItsOrderIsIdentity(generators_, properties.orders_of_generators)) {
         throw std::invalid_argument("Generator in power of its order does not equal identity.");
     }
 
@@ -84,14 +84,14 @@ Group::Group(group::GroupNames group_name, std::vector<Permutation> generators)
     for (size_t i = 0; i < generators_[0].size(); ++i) {
         identity[i] = i;
     }
-    elements_.resize(info.group_size);
+    elements_.resize(properties.group_size);
     // over group elements
-    for (uint32_t i = 0; i < info.group_size; ++i) {
+    for (uint32_t i = 0; i < properties.group_size; ++i) {
         Permutation element = identity;
         // over group generators
-        for (uint32_t j = 0; j < info.number_of_generators; ++j) {
+        for (uint32_t j = 0; j < properties.number_of_generators; ++j) {
             // over generator's power
-            for (uint32_t k = 0; k < info.group_in_form_of_generators[i][j]; ++k) {
+            for (uint32_t k = 0; k < properties.group_in_form_of_generators[i][j]; ++k) {
                 Permutation result_element(element.size());
                 // over spin centers
                 for (uint32_t l = 0; l < generators_[0].size(); ++l) {
@@ -103,14 +103,14 @@ Group::Group(group::GroupNames group_name, std::vector<Permutation> generators)
         elements_[i] = element;
     }
 
-    if (!ElementsInPowerOfItsOrderIsIdentity(elements_, info.orders_of_elements)) {
+    if (!ElementsInPowerOfItsOrderIsIdentity(elements_, properties.orders_of_elements)) {
         throw std::invalid_argument("Element in power of its order does not equal identity.");
     }
 }
 
 std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& initial) const {
-    std::vector<std::vector<uint8_t>> permutated_vectors(info.group_size);
-    for (size_t i = 0; i < info.group_size; ++i) {
+    std::vector<std::vector<uint8_t>> permutated_vectors(properties.group_size);
+    for (size_t i = 0; i < properties.group_size; ++i) {
         permutated_vectors[i].resize(initial.size());
         for (size_t j = 0; j < initial.size(); ++j) {
             size_t position = elements_[i][j];
@@ -136,4 +136,13 @@ bool Group::operator==(const Group& rhs) const {
 
 bool Group::operator!=(const Group& rhs) const {
     return !(rhs == *this);
+}
+
+const Group::AlgebraicProperties &Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
+    if (group_name == S2) {
+        return GroupInfoS2;
+    }
+    if (group_name == S3) {
+        return GroupInfoS3;
+    }
 }
