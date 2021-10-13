@@ -18,7 +18,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y \
-            libboost-all-dev
+            libboost-all-dev \
             libopenblas-dev \
             liblapack-dev \
             libarpack2-dev \
