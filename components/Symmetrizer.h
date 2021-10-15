@@ -2,7 +2,7 @@
 #define JULY_SYMMETRIZER_H
 
 #include "cmath"
-#include "entities/Space.h"
+#include "entities/space/Space.h"
 #include "unordered_map"
 #include "unordered_set"
 #include <boost/functional/hash.hpp>
@@ -12,20 +12,22 @@
 class Symmetrizer {
   public:
     Symmetrizer(spaces::LexicographicIndexConverter converter, Group group);
-    Space apply(Space& space) const;
+    Space apply(Space&& space) const;
 
-    std::vector<std::vector<DecompositionMap>> get_symmetrical_projected_decompositions(DecompositionMap& m) const;
+    std::vector<NewBasisDecomposition> get_symmetrical_projected_decompositions(Subspace& subspace, uint32_t index_of_vector) const;
 
     // TODO: these functions are not about symmetrization.
     //  Should we refactor them and create a new class?
-    static void increment_visited(const DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
+    static void increment_visited(const NewBasisDecomposition& decomposition, uint32_t index_of_vector, std::unordered_map<uint32_t , uint8_t>& hs);
 
-    static void erase_if_zero(std::vector<std::vector<DecompositionMap>>& projections);
+    static uint8_t count_how_many_orbit_was_visited(const NewBasisDecomposition& decomposition, uint32_t index_of_vector, std::unordered_map<uint32_t , uint8_t>& hs);
 
-    static uint8_t count_how_many_orbit_was_visited(const DecompositionMap& m, std::unordered_map<uint32_t , uint8_t>& hs);
-
-    static void add_vector_if_orthogonal_to_others(DecompositionMap& m, std::unordered_map<uint32_t, std::vector<size_t>>& hs,
-                                                    std::vector<DecompositionMap>& basis);
+    static bool is_orthogonal_to_others(const NewBasisDecomposition& decomposition_from, uint32_t index_of_vector,
+                                        std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+                                        const Subspace& subspace_to);
+    static void move_vector_and_remember_it(NewBasisDecomposition& decomposition_from, uint32_t index_of_vector,
+                                            std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+                                            Subspace& subspace_to);
 
 
   private:

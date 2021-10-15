@@ -5,7 +5,7 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/common/LexicographicIndexConverter.cpp
         ${CMAKE_SOURCE_DIR}/common/LexicographicIndexConverter.h
 #        ${CMAKE_SOURCE_DIR}/components/tz_sorter.cpp
-        ${CMAKE_SOURCE_DIR}/entities/Space.cpp
+        ${CMAKE_SOURCE_DIR}/entities/space/Space.cpp
         ${CMAKE_SOURCE_DIR}/test/group_test.cpp
         ${CMAKE_SOURCE_DIR}/test/symmetrizer_tests.cpp
         ${CMAKE_SOURCE_DIR}/test/non_abelian_simplifier_tests.cpp)

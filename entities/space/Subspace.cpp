@@ -2,12 +2,11 @@
 
 std::ostream &operator<<(std::ostream &os, const Subspace &subspace) {
     os << subspace.properties;
-    for (auto& m: subspace.basis) {
-        for (auto& d: m) {
-            os << d.second << "*[" << d.first << "] ";
-        }
-        os << std::endl;
-    }
+    os << subspace.decomposition;
     os << std::endl;
     return os;
+}
+
+Subspace::Subspace(NewBasisDecomposition && new_basis_decomposition):
+decomposition(std::move(new_basis_decomposition)){
 }
