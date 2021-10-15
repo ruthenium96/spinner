@@ -2,7 +2,6 @@
 
 Space::Space(uint32_t total_space_size) {
     NewBasisDecomposition identity_decomposition;
-    // TODO: do it better
     identity_decomposition.tensor_size = total_space_size;
     identity_decomposition.resize(total_space_size);
     for (uint32_t lex = 0; lex < total_space_size; ++lex) {

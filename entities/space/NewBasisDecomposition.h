@@ -7,6 +7,13 @@
 
 class NewBasisDecomposition {
 public:
+    /*
+     This Iterator iterates over vectors.
+     I do not know any possibilities to pass
+     index_of_vector to range-base loop,
+     so currently it is the best solution.
+     TODO: can we pass index_of_vector to range-base loop?
+     */
     struct Iterator {
         struct IndexValueItem{
             uint32_t index;
@@ -25,6 +32,11 @@ public:
 
     [[nodiscard]] std::unique_ptr<NewBasisDecomposition::Iterator> GetNewIterator(size_t index_of_vector) const;
 
+    /*
+     Some implementations want to know the maximum size of vector.
+     I pass the tensor_size to an object after all constructions, it is inconvenient.
+     TODO: refactor it.
+     */
     uint32_t tensor_size = 0;
 
     [[nodiscard]] uint32_t size() const;

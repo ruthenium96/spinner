@@ -46,7 +46,6 @@ Space Symmetrizer::apply(Space&& space) const {
             block_properties.representation.emplace_back(repr);
             block_properties.dimensionality *= group_.properties.dimension_of_representation[repr];
             vector_result[group_.properties.number_of_representations * i + repr].properties = block_properties;
-            // TODO: still bad idea
             vector_result[group_.properties.number_of_representations * i + repr].decomposition.tensor_size = subspace_parent.decomposition.tensor_size;
         }
 
