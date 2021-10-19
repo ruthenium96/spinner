@@ -57,6 +57,7 @@ public:
     void add_to_position(double value, uint32_t i, uint32_t j);
     double operator()(uint32_t i, uint32_t j) const;
 
+    void normalize();
 
     friend std::ostream &operator<<(std::ostream &os, const NewBasisDecomposition &decomposition);
 

@@ -1,5 +1,6 @@
 #include "NewBasisDecomposition.h"
 
+#include <cmath>
 #include <map>
 #include <vector>
 
@@ -114,6 +115,19 @@ void NewBasisDecomposition::erase_if_zero() {
             } else {
                 ++i;
             }
+        }
+    }
+}
+
+void NewBasisDecomposition::normalize() {
+    for (auto& v : pImpl->basis) {
+        double sum_of_squares = 0;
+        for (const auto p : v) {
+            sum_of_squares += p.second * p.second;
+        }
+        double sqrt_of_sum_of_squares = sqrt(sum_of_squares);
+        for (auto& p : v) {
+            p.second /= sqrt_of_sum_of_squares;
         }
     }
 }
