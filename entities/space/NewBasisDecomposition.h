@@ -21,6 +21,7 @@ public:
         };
         [[nodiscard]] virtual bool hasNext() const = 0;
         virtual IndexValueItem getNext() = 0;
+        virtual ~Iterator() = default;
     };
 
     NewBasisDecomposition();

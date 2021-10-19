@@ -5,17 +5,17 @@
 namespace {
 bool SizeOfPermutationsEqualsNumberOfSpins (const spaces::LexicographicIndexConverter& converter,
                                             const Group& group) {
-    return converter.mults_.size() == group.elements_[0].size();
+    return converter.get_mults().size() == group.elements_[0].size();
 }
 
 bool OrbitOfCentersHasTheSameValueOfMultiplicity (const spaces::LexicographicIndexConverter& converter,
                                                 const Group& group) {
     for (const auto& el : group.elements_) {
-        std::vector<int> permutated_mults(converter.mults_);
+        std::vector<int> permutated_mults(converter.get_mults());
         for (size_t i = 0; i < group.elements_[0].size(); ++i) {
-            permutated_mults[i] = converter.mults_[el[i]];
+            permutated_mults[i] = converter.get_mults()[el[i]];
         }
-        if (permutated_mults != converter.mults_) {
+        if (permutated_mults != converter.get_mults()) {
             return false;
         }
     }
@@ -95,7 +95,7 @@ std::vector<NewBasisDecomposition> Symmetrizer::get_symmetrical_projected_decomp
     auto iterator = subspace.decomposition.GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
-        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_sz_projections(item.index);
+        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_all_sz_projections(item.index);
         std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
 
         for (uint8_t g = 0; g < group_.properties.group_size; ++g) {

@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
 #include "groups/Group.h"
 
@@ -32,6 +33,7 @@ class Runner {
     const spaces::LexicographicIndexConverter converter_;
     Space space_;
     SpaceHistory history_;
+    Operator operator_;
 };
 } // namespace runner
 

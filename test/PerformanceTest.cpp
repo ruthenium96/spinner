@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "entities/space/Space.h"
-#include "components/Symmetrizer.h"
-#include "components/TzSorter.h"
+#include "components/space/Symmetrizer.h"
+#include "components/space/TzSorter.h"
 #include "common/Logger.h"
 #include <chrono>
 #include "common/Runner.h"
