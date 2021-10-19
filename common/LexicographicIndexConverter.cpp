@@ -9,6 +9,12 @@ spaces::LexicographicIndexConverter::LexicographicIndexConverter(std::vector<int
 
     // It is the size of our projection-based space.
     total_space_size = cumulative_product[0];
+
+    // mult = 2 * spin + 1
+    spins_.resize(mults_.size());
+    for (int i = 0; i < mults.size(); ++i) {
+        spins_[i] = (mults_[i] - 1) / 2.0;
+    }
 }
 
 uint8_t spaces::LexicographicIndexConverter::convert_lex_index_to_tz_projection(uint32_t lex) const {
@@ -19,12 +25,16 @@ uint8_t spaces::LexicographicIndexConverter::convert_lex_index_to_tz_projection(
     return ntz_proj;
 }
 
-std::vector<uint8_t> spaces::LexicographicIndexConverter::convert_lex_index_to_sz_projections(uint32_t lex) const {
+std::vector<uint8_t> spaces::LexicographicIndexConverter::convert_lex_index_to_all_sz_projections(uint32_t lex) const {
     std::vector<uint8_t> nzs(mults_.size());
     for (int i = 0; i < mults_.size(); ++i) {
         nzs[i] = (lex % cumulative_product[i]) / cumulative_product[i + 1];
     }
     return(std::move(nzs));
+}
+
+uint8_t spaces::LexicographicIndexConverter::convert_lex_index_to_one_sz_projection(uint32_t lex, uint32_t center) const {
+    return (lex % cumulative_product[center]) / cumulative_product[center + 1];
 }
 
 uint32_t spaces::LexicographicIndexConverter::convert_sz_projections_to_lex_index(const std::vector<uint8_t> &nzs) const {
@@ -33,4 +43,16 @@ uint32_t spaces::LexicographicIndexConverter::convert_sz_projections_to_lex_inde
         lex += nzs[i] * cumulative_product[i + 1];
     }
     return lex;
+}
+
+uint32_t spaces::LexicographicIndexConverter::ladder_projection(uint32_t lex, uint32_t center, int ladder) const {
+    return lex + ladder * cumulative_product[center + 1];
+}
+
+const std::vector<int> &spaces::LexicographicIndexConverter::get_mults() const {
+    return mults_;
+}
+
+const std::vector<double> &spaces::LexicographicIndexConverter::get_spins() const {
+    return spins_;
 }

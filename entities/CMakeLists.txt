@@ -6,4 +6,7 @@ add_library(space
 #        space/NewBasisDecomposition_sparse_matrix.cpp
         space/NewBasisDecomposition.h )
 
+add_library(operator
+        operator/Operator.cpp operator/Operator.h)
+
 target_link_libraries(space ${ARMADILLO_LIBRARIES})
