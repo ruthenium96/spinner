@@ -12,6 +12,7 @@ class Runner {
   public:
     explicit Runner(std::vector<int> mults);
 
+    // SPACE OPERATIONS
     void NonAbelianSimplify();
 
     void Symmetrize(Group new_group);
@@ -19,21 +20,35 @@ class Runner {
 
     void TzSort();
 
+    // OPERATOR OPERATIONS
+    void AddIsotropicExchange(arma::dmat isotropic_exchange_parameters);
+
+    // MATRIX OPERATIONS
+    void BuildMatrix();
+
     [[nodiscard]] const Space& getSpace() const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
   private:
+    struct HamiltonianHistory {
+        bool has_isotropic_exchange_interactions = false;
+    };
     struct SpaceHistory {
         std::vector<Group> applied_groups;
         uint32_t number_of_non_simplified_abelian_groups = 0;
         bool isTzSorted = false;
+        bool isNormalized = false; // actually true, if we do not use Symmetrizer
     };
 
+
     const spaces::LexicographicIndexConverter converter_;
+
     Space space_;
-    SpaceHistory history_;
-    Operator operator_;
+    SpaceHistory space_history_;
+
+    Operator hamiltonian_;
+    HamiltonianHistory hamiltonian_history_;
 };
 } // namespace runner
 

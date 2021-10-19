@@ -1,4 +1,6 @@
 #include "Runner.h"
+#include <components/matrix/MatrixBuilder.h>
+#include "components/operator/IsotropicExchangeHamiltonian.h"
 #include "components/space/NonAbelianSimplifier.h"
 #include "components/space/Symmetrizer.h"
 #include "components/space/TzSorter.h"
@@ -8,21 +10,21 @@ runner::Runner::Runner(std::vector<int> mults) : converter_(std::move(mults)), s
 {}
 
 void runner::Runner::NonAbelianSimplify() {
-    if (history_.number_of_non_simplified_abelian_groups == 0) {
+    if (space_history_.number_of_non_simplified_abelian_groups == 0) {
         return;
     }
-    if (history_.number_of_non_simplified_abelian_groups != 1) {
+    if (space_history_.number_of_non_simplified_abelian_groups != 1) {
         throw std::invalid_argument("Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
                                     "currently is not allowed. Use Non-Abelian simplification twice.");
     }
     NonAbelianSimplifier nonAbelianSimplifier;
     space_ = nonAbelianSimplifier.apply(std::move(space_));
-    history_.number_of_non_simplified_abelian_groups = 0;
+    space_history_.number_of_non_simplified_abelian_groups = 0;
 }
 
 void runner::Runner::Symmetrize(Group new_group) {
     // check if user trying to use the same Group for a second time:
-    if (std::count(history_.applied_groups.begin(), history_.applied_groups.end(), new_group)) {
+    if (std::count(space_history_.applied_groups.begin(), space_history_.applied_groups.end(), new_group)) {
         return;
     }
 
@@ -30,9 +32,9 @@ void runner::Runner::Symmetrize(Group new_group) {
     space_ = symmetrizer.apply(std::move(space_));
 
     if (!new_group.properties.is_abelian) {
-        ++history_.number_of_non_simplified_abelian_groups;
+        ++space_history_.number_of_non_simplified_abelian_groups;
     }
-    history_.applied_groups.emplace_back(std::move(new_group));
+    space_history_.applied_groups.emplace_back(std::move(new_group));
 }
 
 void runner::Runner::Symmetrize(Group::GroupTypeEnum group_name, std::vector<Permutation> generators) {
@@ -42,12 +44,12 @@ void runner::Runner::Symmetrize(Group::GroupTypeEnum group_name, std::vector<Per
 
 void runner::Runner::TzSort() {
     // It does not make any sense to use tz_sorter twice.
-    if (history_.isTzSorted) {
+    if (space_history_.isTzSorted) {
         return;
     }
     TzSorter tz_sorter(converter_);
     space_ = tz_sorter.apply(std::move(space_));
-    history_.isTzSorted = true;
+    space_history_.isTzSorted = true;
 }
 
 const Space &runner::Runner::getSpace() const {
@@ -56,4 +58,27 @@ const Space &runner::Runner::getSpace() const {
 
 uint32_t runner::Runner::getTotalSpaceSize() const {
     return converter_.total_space_size;
+}
+
+void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_parameters) {
+    if (hamiltonian_history_.has_isotropic_exchange_interactions) {
+        throw std::invalid_argument("Trying to add isotropic exchange twice");
+    }
+
+    hamiltonian_.two_center_terms.emplace_back(new IsotropicExchangeHamiltonian(std::move(isotropic_exchange_parameters)));
+
+    hamiltonian_history_.has_isotropic_exchange_interactions = true;
+}
+
+void runner::Runner::BuildMatrix() {
+    if (!space_history_.isNormalized) {
+        for (auto& subspace : space_.blocks) {
+            // TODO: maybe, we can implement normalize as Space method
+            subspace.decomposition.normalize();
+        }
+        space_history_.isNormalized = true;
+    }
+
+    MatrixBuilder matrix_builder(converter_);
+    matrix_builder.apply(space_, hamiltonian_);
 }

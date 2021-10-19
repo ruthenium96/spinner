@@ -1,6 +1,7 @@
 #ifndef JULY_OPERATOR_H
 #define JULY_OPERATOR_H
 
+#include <memory>
 #include <vector>
 
 #include "components/operator/Interaction.h"
