@@ -6,3 +6,4 @@ add_library(components
         operator/Interaction.h operator/ScalarProduct.h matrix/MatrixBuilder.cpp matrix/MatrixBuilder.h)
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(components groups space common operator matrix)

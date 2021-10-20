@@ -5,19 +5,24 @@
 MatrixBuilder::MatrixBuilder(spaces::LexicographicIndexConverter converter) : converter_(std::move(converter)) {
 }
 
-void MatrixBuilder::apply(const Space &space, const Operator &new_operator) {
+Matrix MatrixBuilder::apply(const Space &space, const Operator &new_operator) {
 
     // TODO: do normalization in runner.
 
     // TODO: check if Space and Operator are consistent.
 
+    std::vector<Submatrix> vector_result;
+    vector_result.resize(space.blocks.size());
+
     for (size_t i = 0; i < space.blocks.size(); ++i) {
         const Subspace& subspace = space.blocks[i];
-        apply_to_subentity(subspace, new_operator);
+        vector_result[i].properties = subspace.properties;
+        vector_result[i].submatrix = apply_to_subentity(subspace, new_operator);
     }
+    return Matrix(std::move(vector_result));
 }
 
-void MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Operator &new_operator) {
+arma::dmat MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Operator &new_operator) {
     arma::sp_dmat matrix_in_lexicografical_basis(converter_.total_space_size, converter_.total_space_size);
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 
@@ -61,5 +66,6 @@ void MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Operator 
             }
         }
     }
-    std::cout << submatrix_in_space_basis << std::endl;
+//    std::cout << submatrix_in_space_basis << std::endl;
+    return std::move(submatrix_in_space_basis);
 }

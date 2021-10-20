@@ -9,6 +9,7 @@ TEST(matrix_bulder, 22) {
     runner::Runner runner(mults);
 
     runner.TzSort();
+    runner.Symmetrize(Group::S2, {{1, 0}});
 
     arma::dmat js(mults.size(), mults.size());
     for (int i = 0; i < mults.size(); ++i) {
@@ -24,8 +25,6 @@ TEST(matrix_bulder, 22) {
     runner.AddIsotropicExchange(js);
 
     runner.BuildMatrix();
-
-    std::cout << runner.getSpace() << std::endl;
 }
 
 TEST(matrix_bulder, 2222_S2_S2) {
