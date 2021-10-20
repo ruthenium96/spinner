@@ -52,6 +52,7 @@ class Group {
     enum GroupTypeEnum {
         S2,
         S3,
+        D4,
     };
 
     explicit Group(GroupTypeEnum group_name, std::vector<Permutation> generators);
@@ -87,5 +88,6 @@ struct InitializationError: public std::logic_error {
 
 extern const group::Group::AlgebraicProperties GroupInfoS2;
 extern const group::Group::AlgebraicProperties GroupInfoS3;
+extern const group::Group::AlgebraicProperties GroupInfoD4;
 
 #endif  //SPINNER_GROUP_H

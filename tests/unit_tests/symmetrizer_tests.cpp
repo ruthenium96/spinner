@@ -328,6 +328,22 @@ TEST(symmetrizer, 333333) {
     }
 }
 
+TEST(symmetrizer, 3333_D4) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize(group::Group::D4, {{1, 2, 3, 0}, {1, 0, 3, 2}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+
+}
+
 TEST(symmetrizer, 222222222_S3xS3) {
     std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
     model::ModelInput model(mults);

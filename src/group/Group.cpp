@@ -174,6 +174,9 @@ Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
     if (group_name == S3) {
         return GroupInfoS3;
     }
+    if (group_name == D4) {
+        return GroupInfoD4;
+    }
 }
 
 const std::vector<Permutation>& Group::getElements() const {

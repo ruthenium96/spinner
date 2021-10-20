@@ -2,8 +2,9 @@
 #include <algorithm>
 
 #include "gtest/gtest.h"
+#include "magic_enum.hpp"
 
-std::vector<group::Group::GroupTypeEnum> group_names = {group::Group::S2, group::Group::S3};
+auto group_names = magic_enum::enum_values<group::Group::GroupTypeEnum>();
 
 TEST(group_info_tests, size_of_group_in_form_of_generators_equals_group_size) {
     for (auto& group_name : group_names) {
