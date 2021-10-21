@@ -1,9 +1,9 @@
 #include "RawSubmatrixData.h"
 
-#include <armadillo>
+#include <Eigen/Dense>
 
 struct RawSubmatrixData::Impl {
-    arma::dmat RawData;
+    Eigen::MatrixXd RawData;
 public:
     Impl() = default;
 };
@@ -28,5 +28,12 @@ std::ostream &operator<<(std::ostream &os, const RawSubmatrixData &decomposition
 void RawSubmatrixData::resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) {
     // TODO: is it the fastest way to initialize pImpl->RawData?
     pImpl->RawData.resize(matrix_in_space_basis_size_i, matrix_in_space_basis_size_j);
-    pImpl->RawData.fill(arma::fill::zeros);
+    pImpl->RawData.fill(0);
+}
+
+void RawSubmatrixData::diagonalize() {
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es;
+    es.compute(pImpl->RawData, Eigen::ComputeEigenvectors);
+    std::cout << es.eigenvalues() << std::endl;
+    std::cout << es.eigenvectors() << std::endl;
 }

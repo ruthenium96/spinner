@@ -27,7 +27,6 @@ Submatrix MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Oper
     Submatrix submatrix;
     submatrix.properties = subspace.properties;
     submatrix.raw_data.resize(matrix_in_space_basis_size, matrix_in_space_basis_size);
-//    arma::dmat submatrix_in_space_basis(matrix_in_space_basis_size, matrix_in_space_basis_size, arma::fill::zeros);
 
     for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size; ++index_of_space_vector_i) {
         auto outer_iterator = subspace.decomposition.GetNewIterator(index_of_space_vector_i);
@@ -66,6 +65,5 @@ Submatrix MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Oper
             }
         }
     }
-//    std::cout << submatrix_in_space_basis << std::endl;
     return std::move(submatrix);
 }

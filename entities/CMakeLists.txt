@@ -9,8 +9,16 @@ add_library(space
 add_library(operator
         operator/Operator.cpp operator/Operator.h)
 
+#find_package(Eigen3 3.3 REQUIRED)
+
 add_library(matrix
-        matrix/Matrix.cpp matrix/Matrix.h matrix/Submatrix.cpp matrix/Submatrix.h matrix/RawSubmatrixData.cpp matrix/RawSubmatrixData.h)
+        matrix/Matrix.cpp matrix/Matrix.h
+        matrix/Submatrix.cpp matrix/Submatrix.h
+        matrix/RawSubmatrixData_armadillo.cpp
+#        matrix/RawMatrixData_eigen3.cpp
+        matrix/RawSubmatrixData.h)
 
 target_link_libraries(space ${ARMADILLO_LIBRARIES})
-target_link_libraries(matrix ${ARMADILLO_LIBRARIES})
+target_link_libraries(matrix ${ARMADILLO_LIBRARIES}
+#        Eigen3::Eigen
+        )

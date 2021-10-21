@@ -1,12 +1,15 @@
 #ifndef JULY_RAWSUBMATRIXDATA_H
 #define JULY_RAWSUBMATRIXDATA_H
 
+#include <iostream>
 #include <memory>
 
 class RawSubmatrixData {
 public:
     void add_to_position(double value, uint32_t i, uint32_t j);
     void resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j);
+    // TODO: is it possible to implement diagonalize() in the other place?
+    void diagonalize();
 
     RawSubmatrixData();
     RawSubmatrixData(const RawSubmatrixData&) = delete;
@@ -21,6 +24,5 @@ private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
 };
-
 
 #endif //JULY_RAWSUBMATRIXDATA_H
