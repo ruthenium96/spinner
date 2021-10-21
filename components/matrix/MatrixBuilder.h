@@ -14,6 +14,6 @@ public:
     Matrix apply(const Space& space, const Operator& new_operator);
 private:
     const spaces::LexicographicIndexConverter converter_;
-    arma::dmat apply_to_subentity(const Subspace& subspace, const Operator& new_operator);
+    Submatrix apply_to_subentity(const Subspace& subspace, const Operator& new_operator);
 };
 #endif //JULY_MATRIXBUILDER_H

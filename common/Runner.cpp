@@ -80,5 +80,5 @@ void runner::Runner::BuildMatrix() {
     }
 
     MatrixBuilder matrix_builder(converter_);
-    matrix_builder.apply(space_, hamiltonian_);
+    std::cout << matrix_builder.apply(space_, hamiltonian_);
 }

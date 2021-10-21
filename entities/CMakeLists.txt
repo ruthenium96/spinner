@@ -10,7 +10,7 @@ add_library(operator
         operator/Operator.cpp operator/Operator.h)
 
 add_library(matrix
-        matrix/Matrix.cpp matrix/Matrix.h matrix/Submatrix.cpp matrix/Submatrix.h)
+        matrix/Matrix.cpp matrix/Matrix.h matrix/Submatrix.cpp matrix/Submatrix.h matrix/RawSubmatrixData.cpp matrix/RawSubmatrixData.h)
 
 target_link_libraries(space ${ARMADILLO_LIBRARIES})
 target_link_libraries(matrix ${ARMADILLO_LIBRARIES})

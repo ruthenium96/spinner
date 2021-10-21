@@ -8,5 +8,5 @@ std::ostream &operator<<(std::ostream &os, const Matrix &matrix) {
     return os;
 }
 
-Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(m) {
+Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {
 }

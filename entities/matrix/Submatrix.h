@@ -2,14 +2,13 @@
 #define JULY_SUBMATRIX_H
 
 #include "entities/BlockProperties.h"
+#include "RawSubmatrixData.h"
 
 #include <armadillo>
 
 struct Submatrix {
     BlockProperties properties;
-    // TODO: create an abstraction
-    arma::dmat submatrix;
-
+    RawSubmatrixData raw_data;
 
     friend std::ostream &operator<<(std::ostream &os, const Submatrix &submatrix);
 };
