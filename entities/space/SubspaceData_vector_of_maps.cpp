@@ -1,22 +1,22 @@
-#include "NewBasisDecomposition.h"
+#include "SubspaceData.h"
 
 #include <cmath>
 #include <map>
 #include <vector>
 
-struct NewBasisDecomposition::Impl {
+struct SubspaceData::Impl {
     std::vector<std::map<uint32_t, double>> basis;
 public:
     Impl() = default;
 };
 
-NewBasisDecomposition::NewBasisDecomposition() : pImpl{std::make_unique<Impl>()} {}
-NewBasisDecomposition::~NewBasisDecomposition() = default;
-NewBasisDecomposition::NewBasisDecomposition(NewBasisDecomposition&&) noexcept = default;
-NewBasisDecomposition& NewBasisDecomposition::operator=(NewBasisDecomposition&&) noexcept = default;
+SubspaceData::SubspaceData() : pImpl{std::make_unique<Impl>()} {}
+SubspaceData::~SubspaceData() = default;
+SubspaceData::SubspaceData(SubspaceData&&) noexcept = default;
+SubspaceData& SubspaceData::operator=(SubspaceData&&) noexcept = default;
 
 
-struct IteratorImpl : public NewBasisDecomposition::Iterator {
+struct IteratorImpl : public SubspaceData::Iterator {
 
     std::map<uint32_t, double>::iterator iter;
     const std::map<uint32_t, double>::iterator end;
@@ -39,12 +39,12 @@ struct IteratorImpl : public NewBasisDecomposition::Iterator {
 };
 
 
-std::unique_ptr<NewBasisDecomposition::Iterator> NewBasisDecomposition::GetNewIterator(size_t index_of_vector) const {
+std::unique_ptr<SubspaceData::Iterator> SubspaceData::GetNewIterator(size_t index_of_vector) const {
     return std::make_unique<IteratorImpl>(pImpl->basis[index_of_vector].begin(), pImpl->basis[index_of_vector].end());
 }
 
 
-std::ostream &operator<<(std::ostream &os, const NewBasisDecomposition &decomposition) {
+std::ostream &operator<<(std::ostream &os, const SubspaceData &decomposition) {
     for (uint32_t i = 0; i < decomposition.size(); ++i) {
         for (const auto& p : decomposition.pImpl->basis[i]) {
             os << p.second << "*[" << p.first << "] ";
@@ -55,59 +55,59 @@ std::ostream &operator<<(std::ostream &os, const NewBasisDecomposition &decompos
     return os;
 }
 
-uint32_t NewBasisDecomposition::size() const {
+uint32_t SubspaceData::size() const {
     return pImpl->basis.size();
 }
 
-bool NewBasisDecomposition::empty() const {
+bool SubspaceData::empty() const {
     return pImpl->basis.empty();
 }
 
-bool NewBasisDecomposition::vempty(uint32_t index_of_vector) const {
+bool SubspaceData::vempty(uint32_t index_of_vector) const {
     return pImpl->basis[index_of_vector].empty();
 }
 
-void NewBasisDecomposition::clear() {
+void SubspaceData::clear() {
     pImpl->basis.clear();
 }
 
-void NewBasisDecomposition::move_vector_from(uint32_t i, NewBasisDecomposition& subspace_from) {
+void SubspaceData::move_vector_from(uint32_t i, SubspaceData& subspace_from) {
     pImpl->basis.emplace_back(std::move(subspace_from.pImpl->basis[i]));
 }
 
-void NewBasisDecomposition::move_all_from(NewBasisDecomposition& subspace_from) {
+void SubspaceData::move_all_from(SubspaceData& subspace_from) {
     for (uint32_t i = 0; i < subspace_from.size(); ++i) {
         move_vector_from(i, subspace_from);
     }
 }
 
-void NewBasisDecomposition::copy_vector_from(uint32_t i, const NewBasisDecomposition& subspace_from) {
+void SubspaceData::copy_vector_from(uint32_t i, const SubspaceData& subspace_from) {
     pImpl->basis.emplace_back(subspace_from.pImpl->basis[i]);
 }
 
-void NewBasisDecomposition::copy_all_from(const NewBasisDecomposition& subspace_from) {
+void SubspaceData::copy_all_from(const SubspaceData& subspace_from) {
     for (uint32_t i = 0; i < subspace_from.size(); ++i) {
         copy_vector_from(i, subspace_from);
     }
 }
 
-void NewBasisDecomposition::add_to_position(double value, uint32_t i, uint32_t j) {
+void SubspaceData::add_to_position(double value, uint32_t i, uint32_t j) {
     pImpl->basis[i][j] += value;
 }
 
-double NewBasisDecomposition::operator()(uint32_t i, uint32_t j) const {
+double SubspaceData::operator()(uint32_t i, uint32_t j) const {
     return pImpl->basis[i].at(j);
 }
 
-void NewBasisDecomposition::resize(uint32_t new_size) {
+void SubspaceData::resize(uint32_t new_size) {
     pImpl->basis.resize(new_size);
 }
 
-bool NewBasisDecomposition::is_zero(uint32_t i, uint32_t j) const {
+bool SubspaceData::is_zero(uint32_t i, uint32_t j) const {
     return pImpl->basis[i].find(j) == pImpl->basis[i].end();
 }
 
-void NewBasisDecomposition::erase_if_zero() {
+void SubspaceData::erase_if_zero() {
     for (std::map<uint32_t, double>& mm : pImpl->basis) {
         for (auto i = mm.begin(), last = mm.end(); i != last;) {
             if (std::abs(i->second) < 0.001) {
@@ -119,7 +119,7 @@ void NewBasisDecomposition::erase_if_zero() {
     }
 }
 
-void NewBasisDecomposition::normalize() {
+void SubspaceData::normalize() {
     for (auto& v : pImpl->basis) {
         double sum_of_squares = 0;
         for (const auto p : v) {

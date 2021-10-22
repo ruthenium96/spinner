@@ -7,6 +7,6 @@ std::ostream &operator<<(std::ostream &os, const Subspace &subspace) {
     return os;
 }
 
-Subspace::Subspace(NewBasisDecomposition && new_basis_decomposition):
+Subspace::Subspace(SubspaceData && new_basis_decomposition):
 decomposition(std::move(new_basis_decomposition)){
 }

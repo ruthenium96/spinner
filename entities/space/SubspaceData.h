@@ -1,11 +1,11 @@
-#ifndef JULY_NEWBASISDECOMPOSITION_H
-#define JULY_NEWBASISDECOMPOSITION_H
+#ifndef JULY_SUBSPACEDATA_H
+#define JULY_SUBSPACEDATA_H
 
 #include <cstdint>
 #include <memory>
 #include <ostream>
 
-class NewBasisDecomposition {
+class SubspaceData {
 public:
     /*
      This Iterator iterates over vectors.
@@ -24,14 +24,14 @@ public:
         virtual ~Iterator() = default;
     };
 
-    NewBasisDecomposition();
-    NewBasisDecomposition(const NewBasisDecomposition&) = delete;
-    NewBasisDecomposition& operator=(const NewBasisDecomposition&) = delete;
-    NewBasisDecomposition(NewBasisDecomposition&&) noexcept;
-    NewBasisDecomposition& operator=(NewBasisDecomposition&&) noexcept;
-    ~NewBasisDecomposition();
+    SubspaceData();
+    SubspaceData(const SubspaceData&) = delete;
+    SubspaceData& operator=(const SubspaceData&) = delete;
+    SubspaceData(SubspaceData&&) noexcept;
+    SubspaceData& operator=(SubspaceData&&) noexcept;
+    ~SubspaceData();
 
-    [[nodiscard]] std::unique_ptr<NewBasisDecomposition::Iterator> GetNewIterator(size_t index_of_vector) const;
+    [[nodiscard]] std::unique_ptr<SubspaceData::Iterator> GetNewIterator(size_t index_of_vector) const;
 
     /*
      Some implementations want to know the maximum size of vector.
@@ -48,10 +48,10 @@ public:
     void erase_if_zero();
 
     [[nodiscard]] bool is_zero(uint32_t i, uint32_t j) const;
-    void move_vector_from(uint32_t i, NewBasisDecomposition& subspace_from);
-    void move_all_from(NewBasisDecomposition& subspace_from);
-    void copy_vector_from(uint32_t i, const NewBasisDecomposition& subspace_from);
-    void copy_all_from(const NewBasisDecomposition& subspace_from);
+    void move_vector_from(uint32_t i, SubspaceData& subspace_from);
+    void move_all_from(SubspaceData& subspace_from);
+    void copy_vector_from(uint32_t i, const SubspaceData& subspace_from);
+    void copy_all_from(const SubspaceData& subspace_from);
     void resize(uint32_t new_size);
 
     void add_to_position(double value, uint32_t i, uint32_t j);
@@ -59,7 +59,7 @@ public:
 
     void normalize();
 
-    friend std::ostream &operator<<(std::ostream &os, const NewBasisDecomposition &decomposition);
+    friend std::ostream &operator<<(std::ostream &os, const SubspaceData &decomposition);
 
 private:
     class Impl;
@@ -67,4 +67,4 @@ private:
 };
 
 
-#endif //JULY_NEWBASISDECOMPOSITION_H
+#endif //JULY_SUBSPACEDATA_H

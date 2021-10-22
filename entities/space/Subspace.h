@@ -3,14 +3,14 @@
 
 #include <ostream>
 #include "entities/BlockProperties.h"
-#include "entities/space/NewBasisDecomposition.h"
+#include "entities/space/SubspaceData.h"
 
 struct Subspace {
 
     BlockProperties properties;
-    NewBasisDecomposition decomposition;
+    SubspaceData decomposition;
 
-    explicit Subspace(NewBasisDecomposition&&);
+    explicit Subspace(SubspaceData&&);
     Subspace() = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Subspace &subspace);

@@ -60,7 +60,7 @@ Space Symmetrizer::apply(Space&& space) const {
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
             if (count_how_many_orbit_was_visited(subspace_parent.decomposition, l, visited) < dimension_of_parent) {
-                std::vector<NewBasisDecomposition> projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
+                std::vector<SubspaceData> projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
                 increment_visited(projected_basi[0], 0, visited);
                 for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
                     for (size_t k = 0; k < group_.properties.number_of_projectors_of_representation[repr]; ++k) {
@@ -83,10 +83,10 @@ Space Symmetrizer::apply(Space&& space) const {
     return Space(std::move(vector_result));
 }
 
-std::vector<NewBasisDecomposition> Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace,
+std::vector<SubspaceData> Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace,
                                                                                          uint32_t index_of_vector) const {
     // it is a set (partitioned by representations) of all projected decompositions:
-    std::vector<NewBasisDecomposition> projections(group_.properties.number_of_representations);
+    std::vector<SubspaceData> projections(group_.properties.number_of_representations);
     for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
         projections[repr].tensor_size = subspace.decomposition.tensor_size;
         projections[repr].resize(group_.properties.number_of_projectors_of_representation[repr]);
@@ -116,7 +116,7 @@ std::vector<NewBasisDecomposition> Symmetrizer::get_symmetrical_projected_decomp
     return projections;
 }
 
-void Symmetrizer::increment_visited(const NewBasisDecomposition& decomposition,
+void Symmetrizer::increment_visited(const SubspaceData& decomposition,
                                     uint32_t index_of_vector,
                                     std::unordered_map<uint32_t , uint8_t>& hs) {
     auto iterator = decomposition.GetNewIterator(index_of_vector);
@@ -130,7 +130,7 @@ void Symmetrizer::increment_visited(const NewBasisDecomposition& decomposition,
     }
 }
 
-uint8_t Symmetrizer::count_how_many_orbit_was_visited(const NewBasisDecomposition& decomposition,
+uint8_t Symmetrizer::count_how_many_orbit_was_visited(const SubspaceData& decomposition,
                                                       uint32_t index_of_vector,
                                                       std::unordered_map<uint32_t , uint8_t>& hs) {
     uint8_t maximum = 0;
@@ -144,7 +144,7 @@ uint8_t Symmetrizer::count_how_many_orbit_was_visited(const NewBasisDecompositio
     return maximum;
 }
 
-bool Symmetrizer::is_orthogonal_to_others(const NewBasisDecomposition& decomposition_from, uint32_t index_of_vector,
+bool Symmetrizer::is_orthogonal_to_others(const SubspaceData& decomposition_from, uint32_t index_of_vector,
                                           std::unordered_map<uint32_t, std::vector<size_t>>& hs,
                                           const Subspace& subspace_to) {
     // TODO: should we check this only once per orbit?
@@ -180,7 +180,7 @@ bool Symmetrizer::is_orthogonal_to_others(const NewBasisDecomposition& decomposi
     return true;
 }
 
-void Symmetrizer::move_vector_and_remember_it(NewBasisDecomposition& decomposition_from, uint32_t index_of_vector,
+void Symmetrizer::move_vector_and_remember_it(SubspaceData& decomposition_from, uint32_t index_of_vector,
                                               std::unordered_map<uint32_t, std::vector<size_t>>& hs,
                                               Subspace& subspace_to) {
     // if we reach this line -- DecompositionMap is okay, we can add it

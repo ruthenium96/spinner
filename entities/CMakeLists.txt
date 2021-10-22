@@ -1,10 +1,10 @@
 add_library(space
         BlockProperties.h BlockProperties.cpp
         space/Space.h space/Space.cpp space/Subspace.h space/Subspace.cpp
-        space/NewBasisDecomposition_vector_of_maps.cpp
-#        space/NewBasisDecomposition_vector_of_sparse_vectors.cpp
-#        space/NewBasisDecomposition_sparse_matrix.cpp
-        space/NewBasisDecomposition.h )
+        space/SubspaceData_vector_of_maps.cpp
+#        space/SubspaceData_vector_of_sparse_vectors.cpp
+#        space/SubspaceData_sparse_matrix.cpp
+        space/SubspaceData.h)
 
 add_library(operator
         operator/Operator.cpp operator/Operator.h)
@@ -14,9 +14,9 @@ add_library(operator
 add_library(matrix
         matrix/Matrix.cpp matrix/Matrix.h
         matrix/Submatrix.cpp matrix/Submatrix.h
-        matrix/RawSubmatrixData_armadillo.cpp
-#        matrix/RawMatrixData_eigen3.cpp
-        matrix/RawSubmatrixData.h)
+        matrix/SubmatrixData_armadillo.cpp
+#        matrix/SubmatrixData_eigen3.cpp
+        matrix/SubmatrixData.h)
 
 target_link_libraries(space ${ARMADILLO_LIBRARIES})
 target_link_libraries(matrix ${ARMADILLO_LIBRARIES}

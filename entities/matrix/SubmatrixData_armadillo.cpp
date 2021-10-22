@@ -1,37 +1,37 @@
-#include "RawSubmatrixData.h"
+#include "SubmatrixData.h"
 
 #include <armadillo>
 
-struct RawSubmatrixData::Impl {
+struct SubmatrixData::Impl {
     arma::dmat RawData;
 public:
     Impl() = default;
 };
 
-RawSubmatrixData::RawSubmatrixData()
+SubmatrixData::SubmatrixData()
 : pImpl{std::make_unique<Impl>()} {
 }
 
-RawSubmatrixData::~RawSubmatrixData() = default;
-RawSubmatrixData::RawSubmatrixData(RawSubmatrixData&&) noexcept = default;
-RawSubmatrixData& RawSubmatrixData::operator=(RawSubmatrixData&&) noexcept = default;
+SubmatrixData::~SubmatrixData() = default;
+SubmatrixData::SubmatrixData(SubmatrixData&&) noexcept = default;
+SubmatrixData& SubmatrixData::operator=(SubmatrixData&&) noexcept = default;
 
-void RawSubmatrixData::add_to_position(double value, uint32_t i, uint32_t j) {
+void SubmatrixData::add_to_position(double value, uint32_t i, uint32_t j) {
     pImpl->RawData(i, j) += value;
 }
 
-std::ostream &operator<<(std::ostream &os, const RawSubmatrixData &decomposition) {
+std::ostream &operator<<(std::ostream &os, const SubmatrixData &decomposition) {
     os << decomposition.pImpl->RawData << std::endl;
     return os;
 }
 
-void RawSubmatrixData::resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) {
+void SubmatrixData::resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) {
     // TODO: is it the fastest way to initialize pImpl->RawData?
     pImpl->RawData.resize(matrix_in_space_basis_size_i, matrix_in_space_basis_size_j);
     pImpl->RawData.fill(arma::fill::zeros);
 }
 
-void RawSubmatrixData::diagonalize() {
+void SubmatrixData::diagonalize() {
     arma::vec eigenvalues;
     arma::dmat eigenvectors;
     arma::eig_sym(eigenvalues, eigenvectors, pImpl->RawData);
