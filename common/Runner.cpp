@@ -5,6 +5,30 @@
 #include "components/space/Symmetrizer.h"
 #include "components/space/TzSorter.h"
 
+namespace {
+    // TODO: It requires three allocation instead of two. Rewrite it.
+    bool OperatorParametersMatchSymmetries(const std::vector<Group>& applied_groups, const arma::dmat initial_parameters) {
+        for (const auto& group : applied_groups) {
+            for (const auto& element : group.elements_) {
+                arma::dmat parameters_rows_swaped;
+                parameters_rows_swaped.resize(arma::size(initial_parameters));
+                for (size_t i = 0; i < element.size(); ++i) {
+                    parameters_rows_swaped.row(i) = initial_parameters.row(element[i]);
+                }
+                arma::dmat parameters_all_swaped;
+                parameters_all_swaped.resize(arma::size(initial_parameters));
+                for (size_t i = 0; i < element.size(); ++i) {
+                    parameters_all_swaped.col(i) = parameters_rows_swaped.col(element[i]);
+                }
+                // TODO: EPSILON
+                if (!arma::approx_equal(parameters_all_swaped, initial_parameters, "absdiff", 0.0000001)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
 
 runner::Runner::Runner(std::vector<int> mults) : converter_(std::move(mults)), space_(converter_.total_space_size)
 {}
@@ -71,6 +95,14 @@ void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_paramete
 }
 
 void runner::Runner::BuildMatrix() {
+
+    for (const auto& ptr_to_term : hamiltonian_.two_center_terms) {
+        if (!OperatorParametersMatchSymmetries(space_history_.applied_groups,
+                                               ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
+            throw std::invalid_argument("Operator parameters does not match applied symmetries");
+        }
+    }
+
     if (!space_history_.isNormalized) {
         for (auto& subspace : space_.blocks) {
             // TODO: maybe, we can implement normalize as Space method

@@ -27,6 +27,7 @@ class TwoCenterTerm {
 public:
     virtual void construct(LexicograficalMatrix& matrix_in_lexicografical_basis, const spaces::LexicographicIndexConverter& converter,
                            uint32_t index_of_vector, uint32_t center_a, uint32_t center_b) const = 0;
+    [[nodiscard]] virtual arma::dmat get_parameters() const = 0;
     virtual ~TwoCenterTerm(){};
 
 };

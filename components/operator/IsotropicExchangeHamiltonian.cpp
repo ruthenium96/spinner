@@ -13,4 +13,6 @@ void IsotropicExchangeHamiltonian::construct(LexicograficalMatrix& matrix_in_lex
     }
 }
 
-
+arma::dmat IsotropicExchangeHamiltonian::get_parameters() const {
+    return isotropic_exchange_parameters;
+}

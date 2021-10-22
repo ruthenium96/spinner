@@ -113,7 +113,7 @@ void NewBasisDecomposition::erase_if_zero() {
     }
 }
 
-// TODO: test if it is really work
+// TODO: test if it is really works
 void NewBasisDecomposition::normalize() {
     for (auto& v : pImpl->sparse_vectors) {
         double norm = arma::norm(v);

@@ -1,7 +1,7 @@
 #ifndef JULY_SCALARPRODUCT_H
 #define JULY_SCALARPRODUCT_H
 
-    // TODO: This function is also required for S^2 matrix building
+    // This function is also required for S^2 matrix building
 void scalar_product_total(LexicograficalMatrix& matrix_in_lexicografical_basis, const spaces::LexicographicIndexConverter& converter,
                           uint32_t index_of_vector, uint32_t center_a, uint32_t center_b, double factor);
 

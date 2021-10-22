@@ -7,8 +7,6 @@ MatrixBuilder::MatrixBuilder(spaces::LexicographicIndexConverter converter) : co
 
 Matrix MatrixBuilder::apply(const Space &space, const Operator &new_operator) {
 
-    // TODO: check if Space and Operator are consistent.
-
     std::vector<Submatrix> vector_result;
     vector_result.resize(space.blocks.size());
 
