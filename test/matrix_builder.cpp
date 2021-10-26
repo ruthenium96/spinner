@@ -52,6 +52,8 @@ TEST(matrix_bulder, 22) {
 
     runner.AddIsotropicExchange(js);
 
+    runner.InitializeSSquared();
+
     runner.BuildMatrix();
 }
 
@@ -80,6 +82,8 @@ TEST(matrix_bulder, 2222_S2_S2) {
     js(3, 0) = J; js(0, 3) = J;
 
     runner.AddIsotropicExchange(js);
+
+    runner.InitializeSSquared();
 
     runner.BuildMatrix();
 }

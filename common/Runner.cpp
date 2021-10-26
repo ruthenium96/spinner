@@ -1,6 +1,7 @@
 #include "Runner.h"
 #include <components/matrix/MatrixBuilder.h>
-#include "components/operator/IsotropicExchangeHamiltonian.h"
+#include "components/operator/ConstantOperator.h"
+#include "components/operator/ScalarProduct.h"
 #include "components/space/NonAbelianSimplifier.h"
 #include "components/space/Symmetrizer.h"
 #include "components/space/TzSorter.h"
@@ -89,14 +90,14 @@ void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_paramete
         throw std::invalid_argument("Trying to add isotropic exchange twice");
     }
 
-    hamiltonian_.two_center_terms.emplace_back(new IsotropicExchangeHamiltonian(std::move(isotropic_exchange_parameters)));
+    hamiltonian_operator_.two_center_terms.emplace_back(new ScalarProduct(std::move(isotropic_exchange_parameters)));
 
     hamiltonian_history_.has_isotropic_exchange_interactions = true;
 }
 
 void runner::Runner::BuildMatrix() {
 
-    for (const auto& ptr_to_term : hamiltonian_.two_center_terms) {
+    for (const auto& ptr_to_term : hamiltonian_operator_.two_center_terms) {
         if (!OperatorParametersMatchSymmetries(space_history_.applied_groups,
                                                ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
             throw std::invalid_argument("Operator parameters does not match applied symmetries");
@@ -112,5 +113,21 @@ void runner::Runner::BuildMatrix() {
     }
 
     MatrixBuilder matrix_builder(converter_);
-    std::cout << matrix_builder.apply(space_, hamiltonian_);
+    Matrix hamiltonian_matrix = matrix_builder.apply(space_, hamiltonian_operator_);
+    std::cout << hamiltonian_matrix << std::endl;
+    Matrix s_squared_matrix;
+    if (s_squared_operator_.has_value()) {
+        s_squared_matrix = matrix_builder.apply(space_, s_squared_operator_.value());
+        std::cout << s_squared_matrix << std::endl;
+    }
+}
+
+void runner::Runner::InitializeSSquared() {
+    s_squared_operator_ = Operator();
+    double sum_of_s_squared = 0;
+    for (double spin : converter_.get_spins()) {
+        sum_of_s_squared += spin * (spin + 1);
+    }
+    s_squared_operator_->zero_center_terms.emplace_back(new ConstantOperator(sum_of_s_squared));
+    s_squared_operator_->two_center_terms.emplace_back(new ScalarProduct(converter_.get_spins().size()));
 }

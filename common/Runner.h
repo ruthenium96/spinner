@@ -22,6 +22,7 @@ class Runner {
 
     // OPERATOR OPERATIONS
     void AddIsotropicExchange(arma::dmat isotropic_exchange_parameters);
+    void InitializeSSquared();
 
     // MATRIX OPERATIONS
     void BuildMatrix();
@@ -47,8 +48,10 @@ class Runner {
     Space space_;
     SpaceHistory space_history_;
 
-    Operator hamiltonian_;
+    Operator hamiltonian_operator_;
     HamiltonianHistory hamiltonian_history_;
+
+    std::optional<Operator> s_squared_operator_;
 };
 } // namespace runner
 

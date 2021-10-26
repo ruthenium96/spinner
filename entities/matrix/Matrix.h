@@ -8,6 +8,8 @@
 
 
 struct Matrix {
+    Matrix() = default;
+
     std::vector<Submatrix> blocks;
     explicit Matrix(std::vector<Submatrix>&& m);
 };
