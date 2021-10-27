@@ -86,4 +86,13 @@ TEST(matrix_bulder, 2222_S2_S2) {
     runner.InitializeSSquared();
 
     runner.BuildMatrix();
+
+    std::cout << runner.getHamiltonianMatrix() << std::endl;
+    for (const auto& non_hamiltonian_matrix : runner.getNonHamiltonianMatrices()) {
+        std::cout << non_hamiltonian_matrix << std::endl;
+    }
+
+    runner.BuildSpectrum();
+
+    std::cout << runner.getSpectrum() << std::endl;
 }

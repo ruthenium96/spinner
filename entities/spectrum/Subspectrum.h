@@ -1,8 +1,9 @@
 #ifndef JULY_SUBSPECTRUM_H
 #define JULY_SUBSPECTRUM_H
 
+#include <entities/data_structures/DenseMatrix.h>
 #include "entities/BlockProperties.h"
-#include "entities/data_structures/DenseVector.h"
+//#include "entities/data_structures/DenseVector.h"
 
 struct Subspectrum {
     BlockProperties properties;

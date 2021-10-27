@@ -6,6 +6,8 @@
 #include <iostream>
 #include <memory>
 
+class DenseVector;
+
 class DenseMatrix {
     friend DenseVector;
 public:
@@ -28,6 +30,22 @@ public:
 private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
+};
+
+class DenseVector {
+    friend DenseMatrix;
+public:
+    DenseVector();
+    DenseVector(const DenseVector&) = delete;
+    DenseVector& operator=(const DenseVector&) = delete;
+    DenseVector(DenseVector&&) noexcept;
+    DenseVector& operator=(DenseVector&&) noexcept;
+    ~DenseVector();
+
+    friend std::ostream &operator<<(std::ostream &os, const DenseVector &raw_data);
+private:
+    class SubspectrumDataImpl;
+    std::unique_ptr<SubspectrumDataImpl> pImpl;
 };
 
 #endif //JULY_DENSEMATRIX_H

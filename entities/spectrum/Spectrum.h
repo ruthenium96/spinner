@@ -7,6 +7,9 @@
 
 
 struct Spectrum {
+
+    Spectrum() = default;
+
     std::vector<Subspectrum> blocks;
     explicit Spectrum(std::vector<Subspectrum>&& m);
 };

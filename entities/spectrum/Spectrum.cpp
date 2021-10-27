@@ -7,3 +7,6 @@ std::ostream &operator<<(std::ostream &os, const Spectrum &spectrum) {
     os << "------" << std::endl;
     return os;
 }
+
+Spectrum::Spectrum(std::vector<Subspectrum> &&m) : blocks(std::move(m)) {
+}

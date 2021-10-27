@@ -8,13 +8,26 @@ public:
     Impl() = default;
 };
 
+struct DenseVector::SubspectrumDataImpl {
+    arma::dvec eigenvalues;
+public:
+    SubspectrumDataImpl() = default;
+};
+
 DenseMatrix::DenseMatrix()
 : pImpl{std::make_unique<DenseMatrix::Impl>()} {
+}
+
+DenseVector::DenseVector()
+: pImpl{std::make_unique<DenseVector::SubspectrumDataImpl>()} {
 }
 
 DenseMatrix::~DenseMatrix() = default;
 DenseMatrix::DenseMatrix(DenseMatrix&&) noexcept = default;
 DenseMatrix& DenseMatrix::operator=(DenseMatrix&&) noexcept = default;
+DenseVector::~DenseVector() = default;
+DenseVector::DenseVector(DenseVector&&) noexcept = default;
+DenseVector& DenseVector::operator=(DenseVector&&) noexcept = default;
 
 void DenseMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     pImpl->RawData(i, j) += value;
@@ -22,6 +35,11 @@ void DenseMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
 
 std::ostream &operator<<(std::ostream &os, const DenseMatrix &decomposition) {
     os << decomposition.pImpl->RawData << std::endl;
+    return os;
+}
+
+std::ostream &operator<<(std::ostream &os, const DenseVector &raw_data) {
+    os << raw_data.pImpl->eigenvalues << std::endl;
     return os;
 }
 

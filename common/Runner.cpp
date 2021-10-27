@@ -5,6 +5,7 @@
 #include "components/space/NonAbelianSimplifier.h"
 #include "components/space/Symmetrizer.h"
 #include "components/space/TzSorter.h"
+#include "components/spectrum/SpectrumBuilder.h"
 
 namespace {
     // TODO: It requires three allocation instead of two. Rewrite it.
@@ -113,21 +114,39 @@ void runner::Runner::BuildMatrix() {
     }
 
     MatrixBuilder matrix_builder(converter_);
-    Matrix hamiltonian_matrix = matrix_builder.apply(space_, hamiltonian_operator_);
-    std::cout << hamiltonian_matrix << std::endl;
-    Matrix s_squared_matrix;
-    if (s_squared_operator_.has_value()) {
-        s_squared_matrix = matrix_builder.apply(space_, s_squared_operator_.value());
-        std::cout << s_squared_matrix << std::endl;
+    hamiltonian_matrix_ = matrix_builder.apply(space_, hamiltonian_operator_);
+    for (const Operator& non_hamiltonian_operator : non_hamiltonian_operators) {
+        non_hamiltonian_matrices.emplace_back(
+                matrix_builder.apply(space_, non_hamiltonian_operator)
+                );
     }
 }
 
 void runner::Runner::InitializeSSquared() {
-    s_squared_operator_ = Operator();
+    Operator s_squared_operator_;
     double sum_of_s_squared = 0;
     for (double spin : converter_.get_spins()) {
         sum_of_s_squared += spin * (spin + 1);
     }
-    s_squared_operator_->zero_center_terms.emplace_back(new ConstantOperator(sum_of_s_squared));
-    s_squared_operator_->two_center_terms.emplace_back(new ScalarProduct(converter_.get_spins().size()));
+    s_squared_operator_.zero_center_terms.emplace_back(new ConstantOperator(sum_of_s_squared));
+    s_squared_operator_.two_center_terms.emplace_back(new ScalarProduct(converter_.get_spins().size()));
+
+    non_hamiltonian_operators.emplace_back(std::move(s_squared_operator_));
+}
+
+void runner::Runner::BuildSpectrum() {
+    SpectrumBuilder spectrumBuilder;
+    spectrum_ = spectrumBuilder.apply(hamiltonian_matrix_, non_hamiltonian_matrices);
+}
+
+const Matrix &runner::Runner::getHamiltonianMatrix() const {
+    return hamiltonian_matrix_;
+}
+
+const std::vector<Matrix>& runner::Runner::getNonHamiltonianMatrices() const {
+    return non_hamiltonian_matrices;
+}
+
+const Spectrum &runner::Runner::getSpectrum() const {
+    return spectrum_;
 }

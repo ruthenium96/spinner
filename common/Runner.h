@@ -3,8 +3,10 @@
 
 #include <utility>
 
+#include "entities/matrix/Matrix.h"
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
+#include "entities/spectrum/Spectrum.h"
 #include "groups/Group.h"
 
 namespace runner {
@@ -27,7 +29,13 @@ class Runner {
     // MATRIX OPERATIONS
     void BuildMatrix();
 
+    // SPECTRUM OPERATIONS
+    void BuildSpectrum();
+
     [[nodiscard]] const Space& getSpace() const;
+    [[nodiscard]] const Matrix& getHamiltonianMatrix() const;
+    [[nodiscard]] const std::vector<Matrix>& getNonHamiltonianMatrices() const;
+    [[nodiscard]] const Spectrum& getSpectrum() const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
@@ -42,7 +50,6 @@ class Runner {
         bool isNormalized = false; // actually true, if we do not use Symmetrizer
     };
 
-
     const spaces::LexicographicIndexConverter converter_;
 
     Space space_;
@@ -50,8 +57,12 @@ class Runner {
 
     Operator hamiltonian_operator_;
     HamiltonianHistory hamiltonian_history_;
+    Matrix hamiltonian_matrix_;
 
-    std::optional<Operator> s_squared_operator_;
+    std::vector<Operator> non_hamiltonian_operators;
+    std::vector<Matrix> non_hamiltonian_matrices;
+
+    Spectrum spectrum_;
 };
 } // namespace runner
 
