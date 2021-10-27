@@ -1,4 +1,4 @@
-#include "SubspaceData.h"
+#include "UnitarySpaseMatrix.h"
 #include <armadillo>
 
 struct NewBasisDecomposition::Impl {

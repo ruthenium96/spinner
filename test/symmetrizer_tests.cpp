@@ -11,7 +11,7 @@ size_t number_of_vectors(const Space& space) {
 }
 
 bool orthogonality_of_basis(const Space& space) {
-    SubspaceData unitary_matrix;
+    UnitarySpaseMatrix unitary_matrix;
     for (const auto& subspace : space.blocks) {
         unitary_matrix.copy_all_from(subspace.decomposition);
     }

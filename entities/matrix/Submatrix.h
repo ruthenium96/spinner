@@ -2,13 +2,11 @@
 #define JULY_SUBMATRIX_H
 
 #include "entities/BlockProperties.h"
-#include "SubmatrixData.h"
-
-#include <armadillo>
+#include "entities/data_structures/DenseMatrix.h"
 
 struct Submatrix {
     BlockProperties properties;
-    SubmatrixData raw_data;
+    DenseMatrix raw_data;
 
     friend std::ostream &operator<<(std::ostream &os, const Submatrix &submatrix);
 };

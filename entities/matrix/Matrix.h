@@ -14,7 +14,7 @@ struct Matrix {
     explicit Matrix(std::vector<Submatrix>&& m);
 };
 
-std::ostream &operator<<(std::ostream &os, const Matrix &space);
+std::ostream &operator<<(std::ostream &os, const Matrix &matrix);
 
 
 #endif //JULY_MATRIX_H

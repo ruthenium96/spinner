@@ -1,4 +1,4 @@
-#include "SubmatrixData.h"
+#include "DenseMatrix.h"
 
 #include <Eigen/Dense>
 
