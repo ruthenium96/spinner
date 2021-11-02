@@ -28,7 +28,7 @@ TEST(matrix_bulder, throw_2222_inconsistent_symmetry) {
 
     runner.AddIsotropicExchange(js);
 
-    EXPECT_THROW(runner.BuildMatrix(), std::invalid_argument);
+    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
 
 TEST(matrix_bulder, 22) {
@@ -54,7 +54,7 @@ TEST(matrix_bulder, 22) {
 
     runner.InitializeSSquared();
 
-    runner.BuildMatrix();
+    runner.BuildMatrices();
 }
 
 TEST(matrix_bulder, 2222_S2_S2) {
@@ -85,14 +85,14 @@ TEST(matrix_bulder, 2222_S2_S2) {
 
     runner.InitializeSSquared();
 
-    runner.BuildMatrix();
+    runner.BuildMatrices();
 
-    std::cout << runner.getHamiltonianMatrix() << std::endl;
-    for (const auto& non_hamiltonian_matrix : runner.getNonHamiltonianMatrices()) {
-        std::cout << non_hamiltonian_matrix << std::endl;
-    }
+    std::cout << runner.getMatrix(QuantityEnum::Energy) << std::endl;
+    std::cout << runner.getMatrix(QuantityEnum::S_total_squared) << std::endl;
 
-    runner.BuildSpectrum();
+    runner.BuildSpectra();
 
-    std::cout << runner.getSpectrum() << std::endl;
+    std::cout << runner.getSpectrum(QuantityEnum::Energy) << std::endl;
+    std::cout << runner.getSpectrum(QuantityEnum::S_total_squared) << std::endl;
+
 }

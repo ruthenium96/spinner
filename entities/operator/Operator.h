@@ -6,12 +6,10 @@
 
 #include "components/operator/Interaction.h"
 
-class Operator {
-public:
+struct Operator {
     std::vector<std::unique_ptr<const ZeroCenterTerm>> zero_center_terms;
     std::vector<std::unique_ptr<const OneCenterTerm>> one_center_terms;
     std::vector<std::unique_ptr<const TwoCenterTerm>> two_center_terms;
-private:
 };
 
 

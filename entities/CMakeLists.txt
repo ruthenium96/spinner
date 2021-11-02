@@ -1,7 +1,7 @@
 add_library(space
         BlockProperties.h BlockProperties.cpp
         space/Space.h space/Space.cpp
-        space/Subspace.h space/Subspace.cpp)
+        space/Subspace.h space/Subspace.cpp quantities_container/Quantity.cpp)
 
 add_library(operator
         operator/Operator.cpp operator/Operator.h)

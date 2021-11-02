@@ -91,14 +91,22 @@ void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_paramete
         throw std::invalid_argument("Trying to add isotropic exchange twice");
     }
 
-    hamiltonian_operator_.two_center_terms.emplace_back(new ScalarProduct(std::move(isotropic_exchange_parameters)));
+    if (!operators_.contains_quantity(QuantityEnum::Energy)) {
+        operators_.emplace_back(QuantityEnum::Energy);
+    }
+
+    operators_.get_unique_quantity_object(QuantityEnum::Energy)
+    .two_center_terms
+    .emplace_back(new ScalarProduct(std::move(isotropic_exchange_parameters)));
+
+//    hamiltonian_operator_.two_center_terms.emplace_back(new ScalarProduct(std::move(isotropic_exchange_parameters)));
 
     hamiltonian_history_.has_isotropic_exchange_interactions = true;
 }
 
-void runner::Runner::BuildMatrix() {
+void runner::Runner::BuildMatrices() {
 
-    for (const auto& ptr_to_term : hamiltonian_operator_.two_center_terms) {
+    for (const auto& ptr_to_term : operators_.get_unique_quantity_object(QuantityEnum::Energy).two_center_terms) {
         if (!OperatorParametersMatchSymmetries(space_history_.applied_groups,
                                                ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
             throw std::invalid_argument("Operator parameters does not match applied symmetries");
@@ -114,10 +122,10 @@ void runner::Runner::BuildMatrix() {
     }
 
     MatrixBuilder matrix_builder(converter_);
-    hamiltonian_matrix_ = matrix_builder.apply(space_, hamiltonian_operator_);
-    for (const Operator& non_hamiltonian_operator : non_hamiltonian_operators) {
-        non_hamiltonian_matrices.emplace_back(
-                matrix_builder.apply(space_, non_hamiltonian_operator)
+    for (auto pair : operators_) {
+        matrices_.emplace_back(
+                matrix_builder.apply(space_, operators_.get_unique_quantity_object(pair.first)),
+                pair.first
                 );
     }
 }
@@ -131,22 +139,32 @@ void runner::Runner::InitializeSSquared() {
     s_squared_operator_.zero_center_terms.emplace_back(new ConstantOperator(sum_of_s_squared));
     s_squared_operator_.two_center_terms.emplace_back(new ScalarProduct(converter_.get_spins().size()));
 
-    non_hamiltonian_operators.emplace_back(std::move(s_squared_operator_));
+    operators_.emplace_back(std::move(s_squared_operator_), QuantityEnum::S_total_squared);
+
+//    non_hamiltonian_operators.emplace_back();
 }
 
-void runner::Runner::BuildSpectrum() {
+void runner::Runner::BuildSpectra() {
     SpectrumBuilder spectrumBuilder;
-    spectrum_ = spectrumBuilder.apply(hamiltonian_matrix_, non_hamiltonian_matrices);
+
+    spectra_.emplace_back(
+            spectrumBuilder.apply_to_energy(matrices_.get_unique_quantity_object(QuantityEnum::Energy)),
+            QuantityEnum::Energy
+            );
+    for (auto pair : matrices_) {
+        if (pair.first != QuantityEnum::Energy) {
+            spectra_.emplace_back(
+                    spectrumBuilder.apply_to_non_energy(matrices_.get_unique_quantity_object(pair.first)),
+                    pair.first
+                    );
+        }
+    }
 }
 
-const Matrix &runner::Runner::getHamiltonianMatrix() const {
-    return hamiltonian_matrix_;
+const Matrix &runner::Runner::getMatrix(QuantityEnum quantity_enum) const {
+    return matrices_.get_unique_quantity_object(quantity_enum);
 }
 
-const std::vector<Matrix>& runner::Runner::getNonHamiltonianMatrices() const {
-    return non_hamiltonian_matrices;
-}
-
-const Spectrum &runner::Runner::getSpectrum() const {
-    return spectrum_;
+const Spectrum &runner::Runner::getSpectrum(QuantityEnum quantity_enum) const {
+    return spectra_.get_unique_quantity_object(quantity_enum);
 }

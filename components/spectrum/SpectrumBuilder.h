@@ -6,7 +6,10 @@
 
 class SpectrumBuilder {
 public:
-    Spectrum apply(const Matrix& hamiltonian_matrix, const std::vector<Matrix>& non_hamiltonian_matrices);
+    Spectrum apply_to_energy(const Matrix& hamiltonian_matrix);
+    Spectrum apply_to_non_energy(const Matrix& non_hamiltonian_matrix);
+private:
+    std::vector<DenseMatrix> unitary_transformation_matrices;
 };
 
 

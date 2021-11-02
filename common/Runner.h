@@ -7,6 +7,7 @@
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
 #include "entities/spectrum/Spectrum.h"
+#include "entities/quantities_container/QuantitiesContainer.h"
 #include "groups/Group.h"
 
 namespace runner {
@@ -27,15 +28,14 @@ class Runner {
     void InitializeSSquared();
 
     // MATRIX OPERATIONS
-    void BuildMatrix();
+    void BuildMatrices();
 
     // SPECTRUM OPERATIONS
-    void BuildSpectrum();
+    void BuildSpectra();
 
     [[nodiscard]] const Space& getSpace() const;
-    [[nodiscard]] const Matrix& getHamiltonianMatrix() const;
-    [[nodiscard]] const std::vector<Matrix>& getNonHamiltonianMatrices() const;
-    [[nodiscard]] const Spectrum& getSpectrum() const;
+    [[nodiscard]] const Matrix& getMatrix(QuantityEnum) const;
+    [[nodiscard]] const Spectrum& getSpectrum(QuantityEnum) const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
@@ -55,14 +55,11 @@ class Runner {
     Space space_;
     SpaceHistory space_history_;
 
-    Operator hamiltonian_operator_;
+    QuantitiesContainer<Operator> operators_;
+    QuantitiesContainer<Matrix> matrices_;
+    QuantitiesContainer<Spectrum> spectra_;
+
     HamiltonianHistory hamiltonian_history_;
-    Matrix hamiltonian_matrix_;
-
-    std::vector<Operator> non_hamiltonian_operators;
-    std::vector<Matrix> non_hamiltonian_matrices;
-
-    Spectrum spectrum_;
 };
 } // namespace runner
 
