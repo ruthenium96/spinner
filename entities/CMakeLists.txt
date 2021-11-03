@@ -1,7 +1,7 @@
 add_library(space
         BlockProperties.h BlockProperties.cpp
         space/Space.h space/Space.cpp
-        space/Subspace.h space/Subspace.cpp quantities_container/Quantity.cpp)
+        space/Subspace.h space/Subspace.cpp)
 
 add_library(operator
         operator/Operator.cpp operator/Operator.h)
@@ -23,8 +23,6 @@ add_library(data_structures
         data_structures/DenseMatrix_arma-dmat.cpp
         #        matrix/SubmatrixData_eigen3.cpp
         data_structures/DenseMatrix.h
-        data_structures/DenseVector_arma-dvec.cpp
-        data_structures/DenseVector.h
         )
 
 target_link_libraries(data_structures ${ARMADILLO_LIBRARIES}

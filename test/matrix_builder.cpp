@@ -85,10 +85,10 @@ TEST(matrix_bulder, 2222_S2_S2) {
 
     runner.InitializeSSquared();
 
-    runner.BuildMatrices();
-
-    std::cout << runner.getMatrix(QuantityEnum::Energy) << std::endl;
-    std::cout << runner.getMatrix(QuantityEnum::S_total_squared) << std::endl;
+//    runner.BuildMatrices();
+//
+//    std::cout << runner.getMatrix(QuantityEnum::Energy) << std::endl;
+//    std::cout << runner.getMatrix(QuantityEnum::S_total_squared) << std::endl;
 
     runner.BuildSpectra();
 

@@ -3,8 +3,6 @@
 
 #include <entities/data_structures/DenseMatrix.h>
 #include "entities/BlockProperties.h"
-#include "entities/quantities_container/Quantity.h"
-//#include "entities/data_structures/DenseVector.h"
 
 struct Subspectrum {
     BlockProperties properties;

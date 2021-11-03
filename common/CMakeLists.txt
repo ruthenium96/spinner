@@ -1,6 +1,7 @@
 add_library(common
         LexicographicIndexConverter.cpp LexicographicIndexConverter.h
         Logger.h
-        Runner.cpp)
+        Runner.cpp
+        Quantity.cpp)
 
 target_link_libraries(common components)

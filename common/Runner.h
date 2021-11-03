@@ -3,11 +3,11 @@
 
 #include <utility>
 
+#include "common/Quantity.h"
 #include "entities/matrix/Matrix.h"
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
 #include "entities/spectrum/Spectrum.h"
-#include "entities/quantities_container/QuantitiesContainer.h"
 #include "groups/Group.h"
 
 namespace runner {
@@ -40,7 +40,10 @@ class Runner {
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
   private:
-    struct HamiltonianHistory {
+    struct MatrixHistory {
+        bool matrices_was_built = false;
+    };
+    struct HamiltonianOperatorHistory {
         bool has_isotropic_exchange_interactions = false;
     };
     struct SpaceHistory {
@@ -53,13 +56,17 @@ class Runner {
     const spaces::LexicographicIndexConverter converter_;
 
     Space space_;
+
+    std::map<QuantityEnum, Operator> operators_;
+    std::map<QuantityEnum, Matrix> matrices_;
+    std::map<QuantityEnum, Spectrum> spectra_;
+
+    void BuildSpectraUsingMatrices();
+    void BuildSpectraWithoutMatrices();
+
+    MatrixHistory matrix_history_;
+    HamiltonianOperatorHistory hamiltonian_history_;
     SpaceHistory space_history_;
-
-    QuantitiesContainer<Operator> operators_;
-    QuantitiesContainer<Matrix> matrices_;
-    QuantitiesContainer<Spectrum> spectra_;
-
-    HamiltonianHistory hamiltonian_history_;
 };
 } // namespace runner
 
