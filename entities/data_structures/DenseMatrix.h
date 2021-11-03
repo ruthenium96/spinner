@@ -16,6 +16,9 @@ public:
     [[nodiscard]] DenseVector return_main_diagonal() const;
     [[nodiscard]] DenseMatrix unitary_transform(const DenseMatrix& matrix_to_transform) const;
 
+    [[nodiscard]] uint32_t size() const;
+    double operator()(uint32_t i, uint32_t j) const;
+
     DenseMatrix();
     DenseMatrix(const DenseMatrix&) = delete;
     DenseMatrix& operator=(const DenseMatrix&) = delete;

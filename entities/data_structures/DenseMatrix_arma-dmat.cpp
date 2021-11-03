@@ -64,3 +64,11 @@ DenseVector DenseMatrix::return_main_diagonal() const {
     main_diagonal.pImpl->eigenvalues = pImpl->RawData.diag();
     return std::move(main_diagonal);
 }
+
+double DenseMatrix::operator()(uint32_t i, uint32_t j) const {
+    return pImpl->RawData(i, j);
+}
+
+uint32_t DenseMatrix::size() const {
+    return pImpl->RawData.n_rows;
+}
