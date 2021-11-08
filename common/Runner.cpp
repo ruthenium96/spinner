@@ -91,6 +91,7 @@ void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_paramete
         throw std::invalid_argument("Trying to add isotropic exchange twice");
     }
 
+    // TODO: Should we move it to constructor?
     if (operators_.count(QuantityEnum::Energy) == 0) {
         operators_[QuantityEnum::Energy] = Operator();
     }
