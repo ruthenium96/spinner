@@ -235,3 +235,7 @@ const Matrix &runner::Runner::getMatrix(QuantityEnum quantity_enum) const {
 const Spectrum &runner::Runner::getSpectrum(QuantityEnum quantity_enum) const {
     return spectra_.at(quantity_enum);
 }
+
+const Operator &runner::Runner::getOperator(QuantityEnum quantity_enum) const {
+    return operators_.at(quantity_enum);
+}

@@ -33,9 +33,10 @@ class Runner {
     // SPECTRUM OPERATIONS
     void BuildSpectra();
 
+    [[nodiscard]] const Operator& getOperator(QuantityEnum) const;
     [[nodiscard]] const Space& getSpace() const;
-    [[nodiscard]] const Matrix& getMatrix(QuantityEnum) const;
     [[nodiscard]] const Spectrum& getSpectrum(QuantityEnum) const;
+    [[nodiscard]] const Matrix& getMatrix(QuantityEnum) const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 

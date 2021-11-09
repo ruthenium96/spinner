@@ -53,6 +53,10 @@ void DenseMatrix::diagonalize(DenseVector& values, DenseMatrix& vectors) const {
     arma::eig_sym(values.pImpl->eigenvalues, vectors.pImpl->RawData, pImpl->RawData);
 }
 
+void DenseMatrix::diagonalize(DenseVector& values) const {
+    arma::eig_sym(values.pImpl->eigenvalues, pImpl->RawData);
+}
+
 DenseMatrix DenseMatrix::unitary_transform(const DenseMatrix& matrix_to_transform) const {
     DenseMatrix transformed_matrix;
     transformed_matrix.pImpl->RawData = pImpl->RawData.t() * matrix_to_transform.pImpl->RawData * pImpl->RawData;
@@ -71,4 +75,21 @@ double DenseMatrix::operator()(uint32_t i, uint32_t j) const {
 
 uint32_t DenseMatrix::size() const {
     return pImpl->RawData.n_rows;
+}
+
+uint32_t DenseVector::size() const {
+    return pImpl->eigenvalues.size();
+}
+
+std::vector<double> concatenate(const std::vector<DenseVector>& dense_vectors) {
+    size_t size = 0;
+    for (const auto& dense_vector : dense_vectors) {
+        size += dense_vector.size();
+    }
+    std::vector<double> result_vector;
+    result_vector.reserve(size);
+    for (const auto& dense_vector : dense_vectors) {
+        result_vector.insert(result_vector.end(), dense_vector.pImpl->eigenvalues.begin(), dense_vector.pImpl->eigenvalues.end());
+    }
+    return std::move(result_vector);
 }

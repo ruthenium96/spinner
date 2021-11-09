@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
 
 class DenseVector;
 
@@ -13,6 +14,7 @@ public:
     void resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j);
     // TODO: is it possible to implement diagonalize() in the other place?
     void diagonalize(DenseVector& values, DenseMatrix& vectors) const;
+    void diagonalize(DenseVector& values) const;
     [[nodiscard]] DenseVector return_main_diagonal() const;
     [[nodiscard]] DenseMatrix unitary_transform(const DenseMatrix& matrix_to_transform) const;
 
@@ -43,7 +45,12 @@ public:
     DenseVector& operator=(DenseVector&&) noexcept;
     ~DenseVector();
 
+    [[nodiscard]] uint32_t size() const;
+
     friend std::ostream &operator<<(std::ostream &os, const DenseVector &raw_data);
+
+    // TODO: it is a temporary solution, fix it
+    friend std::vector<double> concatenate(const std::vector<DenseVector>&);
 private:
     class SubspectrumDataImpl;
     std::unique_ptr<SubspectrumDataImpl> pImpl;
