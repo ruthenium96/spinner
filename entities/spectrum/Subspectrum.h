@@ -3,12 +3,10 @@
 
 #include <entities/data_structures/DenseMatrix.h>
 #include "entities/BlockProperties.h"
-//#include "entities/data_structures/DenseVector.h"
 
 struct Subspectrum {
     BlockProperties properties;
-    DenseVector energy_raw_data;
-    std::vector<DenseVector> non_energy_raw_data;
+    DenseVector raw_data;
 
     friend std::ostream &operator<<(std::ostream &os, const Subspectrum &subspectrum);
 };

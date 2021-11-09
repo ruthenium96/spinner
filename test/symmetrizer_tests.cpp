@@ -134,6 +134,17 @@ TEST(symmetrizer, 333333_S2xS3) {
     << "Vectors are not orthogonal";
 }
 
+TEST(symmetrizer, 222222222_S3xS3) {
+    std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+
+    runner::Runner runner(mults);
+    runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
+    << "Vectors are not orthogonal";
+}
+
 TEST(symmetrizer, 333333333_S3xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
 

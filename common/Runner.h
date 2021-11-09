@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#include "common/Quantity.h"
 #include "entities/matrix/Matrix.h"
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
@@ -27,20 +28,22 @@ class Runner {
     void InitializeSSquared();
 
     // MATRIX OPERATIONS
-    void BuildMatrix();
+    void BuildMatrices();
 
     // SPECTRUM OPERATIONS
-    void BuildSpectrum();
+    void BuildSpectra();
 
     [[nodiscard]] const Space& getSpace() const;
-    [[nodiscard]] const Matrix& getHamiltonianMatrix() const;
-    [[nodiscard]] const std::vector<Matrix>& getNonHamiltonianMatrices() const;
-    [[nodiscard]] const Spectrum& getSpectrum() const;
+    [[nodiscard]] const Matrix& getMatrix(QuantityEnum) const;
+    [[nodiscard]] const Spectrum& getSpectrum(QuantityEnum) const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
   private:
-    struct HamiltonianHistory {
+    struct MatrixHistory {
+        bool matrices_was_built = false;
+    };
+    struct HamiltonianOperatorHistory {
         bool has_isotropic_exchange_interactions = false;
     };
     struct SpaceHistory {
@@ -48,21 +51,23 @@ class Runner {
         uint32_t number_of_non_simplified_abelian_groups = 0;
         bool isTzSorted = false;
         bool isNormalized = false; // actually true, if we do not use Symmetrizer
+        bool isNonAbelianSimplified = false;
     };
 
     const spaces::LexicographicIndexConverter converter_;
 
     Space space_;
+
+    std::map<QuantityEnum, Operator> operators_;
+    std::map<QuantityEnum, Matrix> matrices_;
+    std::map<QuantityEnum, Spectrum> spectra_;
+
+    void BuildSpectraUsingMatrices();
+    void BuildSpectraWithoutMatrices();
+
+    MatrixHistory matrix_history_;
+    HamiltonianOperatorHistory hamiltonian_history_;
     SpaceHistory space_history_;
-
-    Operator hamiltonian_operator_;
-    HamiltonianHistory hamiltonian_history_;
-    Matrix hamiltonian_matrix_;
-
-    std::vector<Operator> non_hamiltonian_operators;
-    std::vector<Matrix> non_hamiltonian_matrices;
-
-    Spectrum spectrum_;
 };
 } // namespace runner
 

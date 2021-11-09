@@ -1,8 +1,6 @@
 #ifndef JULY_DENSEMATRIX_H
 #define JULY_DENSEMATRIX_H
 
-#include "DenseVector.h"
-
 #include <iostream>
 #include <memory>
 
@@ -15,8 +13,11 @@ public:
     void resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j);
     // TODO: is it possible to implement diagonalize() in the other place?
     void diagonalize(DenseVector& values, DenseMatrix& vectors) const;
-    DenseVector return_main_diagonal();
-    DenseMatrix unitary_transform(const DenseMatrix& matrix_to_transform);
+    [[nodiscard]] DenseVector return_main_diagonal() const;
+    [[nodiscard]] DenseMatrix unitary_transform(const DenseMatrix& matrix_to_transform) const;
+
+    [[nodiscard]] uint32_t size() const;
+    double operator()(uint32_t i, uint32_t j) const;
 
     DenseMatrix();
     DenseMatrix(const DenseMatrix&) = delete;

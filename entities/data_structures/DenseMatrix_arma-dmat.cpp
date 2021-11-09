@@ -53,14 +53,22 @@ void DenseMatrix::diagonalize(DenseVector& values, DenseMatrix& vectors) const {
     arma::eig_sym(values.pImpl->eigenvalues, vectors.pImpl->RawData, pImpl->RawData);
 }
 
-DenseMatrix DenseMatrix::unitary_transform(const DenseMatrix& matrix_to_transform) {
+DenseMatrix DenseMatrix::unitary_transform(const DenseMatrix& matrix_to_transform) const {
     DenseMatrix transformed_matrix;
     transformed_matrix.pImpl->RawData = pImpl->RawData.t() * matrix_to_transform.pImpl->RawData * pImpl->RawData;
     return std::move(transformed_matrix);
 }
 
-DenseVector DenseMatrix::return_main_diagonal() {
+DenseVector DenseMatrix::return_main_diagonal() const {
     DenseVector main_diagonal;
     main_diagonal.pImpl->eigenvalues = pImpl->RawData.diag();
     return std::move(main_diagonal);
+}
+
+double DenseMatrix::operator()(uint32_t i, uint32_t j) const {
+    return pImpl->RawData(i, j);
+}
+
+uint32_t DenseMatrix::size() const {
+    return pImpl->RawData.n_rows;
 }
