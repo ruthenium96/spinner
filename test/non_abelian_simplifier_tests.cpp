@@ -120,7 +120,7 @@ TEST(nonAbelianSimplifier, 333333_S3) {
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
 
-TEST(nonAbelianSimplifier, 333333_S3xS2) {
+TEST(nonAbelianSimplifier, 333333_S3xS2_after_both) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
 
     runner::Runner runner_full(mults);
@@ -132,6 +132,22 @@ TEST(nonAbelianSimplifier, 333333_S3xS2) {
     runner_simplified.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     runner_simplified.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
     runner_simplified.NonAbelianSimplify();
+
+    compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
+}
+
+TEST(nonAbelianSimplifier, 333333_S3xS2_after_first) {
+    std::vector<int> mults = {3, 3, 3, 3, 3, 3};
+
+    runner::Runner runner_full(mults);
+    runner::Runner runner_simplified(mults);
+
+    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_full.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+
+    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_simplified.NonAbelianSimplify();
+    runner_simplified.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
 
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
