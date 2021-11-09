@@ -46,12 +46,17 @@ void runner::Runner::NonAbelianSimplify() {
     NonAbelianSimplifier nonAbelianSimplifier;
     space_ = nonAbelianSimplifier.apply(std::move(space_));
     space_history_.number_of_non_simplified_abelian_groups = 0;
+    space_history_.isNonAbelianSimplified = true;
 }
 
 void runner::Runner::Symmetrize(Group new_group) {
     // check if user trying to use the same Group for a second time:
     if (std::count(space_history_.applied_groups.begin(), space_history_.applied_groups.end(), new_group)) {
         return;
+    }
+    // TODO: symmetrizer does not work correct after non-Abelian simplifier. Fix it.
+    if (space_history_.isNonAbelianSimplified && !new_group.properties.is_abelian) {
+        throw std::invalid_argument("Symmetrization after using of non-Abelian simplifier causes bugs.");
     }
 
     Symmetrizer symmetrizer(converter_, new_group);

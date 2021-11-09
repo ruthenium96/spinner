@@ -51,6 +51,7 @@ class Runner {
         uint32_t number_of_non_simplified_abelian_groups = 0;
         bool isTzSorted = false;
         bool isNormalized = false; // actually true, if we do not use Symmetrizer
+        bool isNonAbelianSimplified = false;
     };
 
     const spaces::LexicographicIndexConverter converter_;
