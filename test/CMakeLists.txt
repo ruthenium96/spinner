@@ -9,6 +9,7 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/test/non_abelian_simplifier_tests.cpp
         ${CMAKE_SOURCE_DIR}/test/matrix_builder.cpp
         ${CMAKE_SOURCE_DIR}/test/interactions_test.cpp
-        ${CMAKE_SOURCE_DIR}/test/non_hamiltonian_operators_tests.cpp)
+        ${CMAKE_SOURCE_DIR}/test/non_hamiltonian_operators_tests.cpp
+        ${CMAKE_SOURCE_DIR}/test/hamiltonian_operator_tests.cpp)
 
 target_link_libraries(julytest gtest gtest_main groups components space common operator matrix)
