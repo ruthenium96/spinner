@@ -35,7 +35,7 @@ size_t size_of_spectrum_with_degeneracy(const Matrix& matrix) {
     return accumulator;
 }
 
-TEST(matrix_bulder, throw_2222_inconsistent_symmetry) {
+TEST(matrix_and_spectrum_bulders, throw_2222_inconsistent_symmetry) {
     std::vector<int> mults = {2, 2, 2, 2};
 
     runner::Runner runner(mults);
@@ -63,7 +63,7 @@ TEST(matrix_bulder, throw_2222_inconsistent_symmetry) {
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
 
-TEST(matrix_bulder, size_consistence_22_333_4444_23456) {
+TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2},
                                                      {3, 3, 3},
                                                      {4, 4, 4, 4},
@@ -101,7 +101,7 @@ TEST(matrix_bulder, size_consistence_22_333_4444_23456) {
     }
 }
 
-TEST(matrix_bulder, size_consistence_22_333_4444_23456_tzsort) {
+TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456_tzsort) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2},
                                                      {3, 3, 3},
                                                      {4, 4, 4, 4},
@@ -141,7 +141,7 @@ TEST(matrix_bulder, size_consistence_22_333_4444_23456_tzsort) {
     }
 }
 
-TEST(matrix_bulder, size_consistence_2222_3333_4444_S2_S2_symmetrize) {
+TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_S2_S2_symmetrize) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2, 2},
                                                      {3, 3, 3, 3},
                                                      {4, 4, 4, 4}};
@@ -184,7 +184,7 @@ TEST(matrix_bulder, size_consistence_2222_3333_4444_S2_S2_symmetrize) {
     }
 }
 
-TEST(matrix_bulder, size_consistence_2222_3333_4444_tzsort_S2_S2_symmetrize) {
+TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_tzsort_S2_S2_symmetrize) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2, 2},
                                                      {3, 3, 3, 3},
                                                      {4, 4, 4, 4}};
@@ -228,7 +228,7 @@ TEST(matrix_bulder, size_consistence_2222_3333_4444_tzsort_S2_S2_symmetrize) {
     }
 }
 
-TEST(matrix_bulder, size_consistence_222_333_444_S3_symmetrize) {
+TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2},
                                                      {3, 3, 3},
                                                      {4, 4, 4}};
@@ -269,7 +269,7 @@ TEST(matrix_bulder, size_consistence_222_333_444_S3_symmetrize) {
     }
 }
 
-TEST(matrix_bulder, size_consistence_222_333_444_tzsort_S3_symmetrize) {
+TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetrize) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2},
                                                      {3, 3, 3},
                                                      {4, 4, 4}};
@@ -311,7 +311,7 @@ TEST(matrix_bulder, size_consistence_222_333_444_tzsort_S3_symmetrize) {
     }
 }
 
-TEST(matrix_bulder, size_consistence_222_333_444_S3_symmetrize_nonabeliansimplify) {
+TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize_nonabeliansimplify) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2},
                                                      {3, 3, 3},
                                                      {4, 4, 4}};
@@ -353,7 +353,7 @@ TEST(matrix_bulder, size_consistence_222_333_444_S3_symmetrize_nonabeliansimplif
     }
 }
 
-TEST(matrix_bulder, size_consistence_222_333_444_tzsort_S3_symmetrize_nonabeliansimplify) {
+TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetrize_nonabeliansimplify) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2},
                                                      {3, 3, 3},
                                                      {4, 4, 4}};
@@ -396,7 +396,7 @@ TEST(matrix_bulder, size_consistence_222_333_444_tzsort_S3_symmetrize_nonabelian
     }
 }
 
-//TEST(matrix_bulder, size_consistence_222222222_tzsort_S3_S3_symmetrize_nonabeliansimplify) {
+//TEST(matrix_and_spectrum_bulders, size_consistence_222222222_tzsort_S3_S3_symmetrize_nonabeliansimplify) {
 //    std::vector<int> mults = {2, 2, 2,
 //                              2, 2, 2,
 //                              2, 2, 2};
