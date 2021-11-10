@@ -93,3 +93,11 @@ std::vector<double> concatenate(const std::vector<DenseVector>& dense_vectors) {
     }
     return std::move(result_vector);
 }
+
+bool DenseVector::operator==(const DenseVector &rhs) const {
+    return arma::approx_equal(pImpl->eigenvalues, rhs.pImpl->eigenvalues, "absdiff", 0);
+}
+
+bool DenseVector::operator!=(const DenseVector &rhs) const {
+    return !(rhs == *this);
+}

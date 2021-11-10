@@ -47,10 +47,16 @@ public:
 
     [[nodiscard]] uint32_t size() const;
 
+
     friend std::ostream &operator<<(std::ostream &os, const DenseVector &raw_data);
 
     // TODO: it is a temporary solution, fix it
     friend std::vector<double> concatenate(const std::vector<DenseVector>&);
+
+    bool operator==(const DenseVector &rhs) const;
+
+    bool operator!=(const DenseVector &rhs) const;
+
 private:
     class SubspectrumDataImpl;
     std::unique_ptr<SubspectrumDataImpl> pImpl;
