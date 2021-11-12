@@ -1,5 +1,6 @@
 #include "UnitarySpaseMatrix.h"
 
+#include <algorithm>
 #include <cmath>
 #include <map>
 #include <vector>
@@ -132,3 +133,12 @@ void UnitarySpaseMatrix::normalize() {
     }
 }
 
+bool UnitarySpaseMatrix::is_equal_up_to_vector_order(const UnitarySpaseMatrix& rhs) const {
+    std::vector<std::map<uint32_t, double>> sorted_lhs_basis = pImpl->basis;
+    std::sort(sorted_lhs_basis.begin(), sorted_lhs_basis.end());
+
+    std::vector<std::map<uint32_t, double>> sorted_rhs_basis = rhs.pImpl->basis;
+    std::sort(sorted_rhs_basis.begin(), sorted_rhs_basis.end());
+
+    return (sorted_lhs_basis == sorted_rhs_basis);
+}

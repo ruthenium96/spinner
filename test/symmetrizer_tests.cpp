@@ -134,6 +134,28 @@ TEST(symmetrizer, 333333_S2xS3) {
     << "Vectors are not orthogonal";
 }
 
+TEST(symmetrizer, 333333_S2xS3_S3xS2_direct_product_commutativity) {
+    std::vector<int> mults = {3, 3, 3, 3, 3, 3};
+
+    runner::Runner runner_first(mults);
+    runner_first.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_first.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+
+    runner::Runner runner_second(mults);
+    runner_second.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_second.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+
+    for (const auto& subspace_first : runner_first.getSpace().blocks) {
+        for (const auto& subspace_second : runner_second.getSpace().blocks) {
+            if (subspace_first.properties.representation[0] == subspace_second.properties.representation[1] &&
+            subspace_first.properties.representation[1] == subspace_second.properties.representation[0]) {
+                EXPECT_TRUE(subspace_first.decomposition.is_equal_up_to_vector_order(subspace_second.decomposition));
+            }
+        }
+    }
+}
+
+
 TEST(symmetrizer, 222222222_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
 

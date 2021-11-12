@@ -59,6 +59,8 @@ public:
 
     void normalize();
 
+    bool is_equal_up_to_vector_order(const UnitarySpaseMatrix& rhs) const;
+
     friend std::ostream &operator<<(std::ostream &os, const UnitarySpaseMatrix &decomposition);
 
 private:
