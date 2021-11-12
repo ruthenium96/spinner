@@ -9,4 +9,4 @@ add_library(components
         spectrum/SpectrumBuilder.cpp spectrum/SpectrumBuilder.h)
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(components groups space common operator matrix data_structures spectrum)
+target_link_libraries(components groups space common matrix data_structures spectrum)
