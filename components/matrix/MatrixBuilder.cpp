@@ -12,6 +12,7 @@ Matrix MatrixBuilder::apply(const Space &space, const Operator &new_operator) {
 
     for (size_t i = 0; i < space.blocks.size(); ++i) {
         const Subspace& subspace = space.blocks[i];
+        // TODO: should we implement matrixbuilder as method of operator?
         vector_result[i] = apply_to_subentity(subspace, new_operator);
     }
     return Matrix(std::move(vector_result));

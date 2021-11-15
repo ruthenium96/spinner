@@ -15,7 +15,7 @@ std::deque<int> spin_addition(const std::vector<int>& mults) {
         size_t old_size = total_multiplicities.size();
         for (size_t i = 0; i < old_size; ++i) {
             int current_multiplicity = total_multiplicities.front();
-            for (int new_multiplicity = std::abs(current_multiplicity - mult_of_center) + 1; new_multiplicity < current_multiplicity + mult_of_center; ++++new_multiplicity) {
+            for (int new_multiplicity = std::abs(current_multiplicity - mult_of_center) + 1; new_multiplicity < current_multiplicity + mult_of_center; new_multiplicity += 2) {
                 total_multiplicities.push_back(new_multiplicity);
             }
             total_multiplicities.pop_front();
@@ -80,7 +80,7 @@ TEST(initialize_s_squared, eigenvalues_of_s_squared_matrix_correspond_to_spin_ad
         runner.InitializeSSquared();
 
         MatrixBuilder matrix_builder(converter);
-        Matrix s_squared_matrix = matrix_builder.apply(runner.getSpace(), runner.getOperator(QuantityEnum::S_total_squared));
+        Matrix s_squared_matrix = matrix_builder.apply(runner.getSpace(), runner.getOperator(common::QuantityEnum::S_total_squared));
 
         std::vector<DenseVector> s_squared_values(s_squared_matrix.blocks.size());
         for (size_t i = 0; i < s_squared_values.size(); ++i) {

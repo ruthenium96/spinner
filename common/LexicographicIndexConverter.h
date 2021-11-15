@@ -10,6 +10,7 @@ namespace spaces {
     class LexicographicIndexConverter {
     public:
         explicit LexicographicIndexConverter(std::vector<int> mults);
+        // TODO: "declarations", clang-format
         [[nodiscard]] uint8_t convert_lex_index_to_tz_projection (uint32_t lex) const;
         [[nodiscard]] std::vector<uint8_t> convert_lex_index_to_all_sz_projections(uint32_t lex) const;
         [[nodiscard]] uint8_t convert_lex_index_to_one_sz_projection(uint32_t lex, uint32_t center) const;
