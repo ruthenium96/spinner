@@ -64,5 +64,5 @@ Submatrix MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Oper
             }
         }
     }
-    return std::move(submatrix);
+    return submatrix;
 }

@@ -30,7 +30,7 @@ std::vector<uint8_t> spaces::LexicographicIndexConverter::convert_lex_index_to_a
     for (size_t i = 0; i < mults_.size(); ++i) {
         nzs[i] = (lex % cumulative_product[i]) / cumulative_product[i + 1];
     }
-    return(std::move(nzs));
+    return nzs;
 }
 
 uint8_t spaces::LexicographicIndexConverter::convert_lex_index_to_one_sz_projection(uint32_t lex, uint32_t center) const {

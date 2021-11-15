@@ -41,7 +41,7 @@ Permutation ElementInPower(const Permutation& element, size_t power) {
         }
         result = tmp_result;
     }
-    return std::move(result);
+    return result;
 }
 
 bool ElementsInPowerOfItsOrderIsIdentity(const std::vector<Permutation>& elements,
@@ -117,7 +117,7 @@ std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& i
             permutated_vectors[i][position] = initial[j];
         }
     }
-    return std::move(permutated_vectors);
+    return permutated_vectors;
 }
 
 /*

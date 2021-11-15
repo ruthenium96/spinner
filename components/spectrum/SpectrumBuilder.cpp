@@ -31,7 +31,7 @@ Subspectrum SpectrumBuilder::apply_to_subentity_energy(const Submatrix &hamilton
     Subspectrum energy_subspectrum;
     hamiltonian_submatrix.raw_data.diagonalize(energy_subspectrum.raw_data, unitary_transformation_matrix);
     energy_subspectrum.properties = hamiltonian_submatrix.properties;
-    return std::move(energy_subspectrum);
+    return energy_subspectrum;
 }
 
 Subspectrum SpectrumBuilder::apply_to_subentity_non_energy(const Submatrix &non_hamiltonian_submatrix,
@@ -43,5 +43,5 @@ Subspectrum SpectrumBuilder::apply_to_subentity_non_energy(const Submatrix &non_
     non_energy_subspectrum.raw_data = unitary_transformation_matrix
             .unitary_transform(non_hamiltonian_submatrix.raw_data).return_main_diagonal();
     non_energy_subspectrum.properties = non_hamiltonian_submatrix.properties;
-    return std::move(non_energy_subspectrum);
+    return non_energy_subspectrum;
 }

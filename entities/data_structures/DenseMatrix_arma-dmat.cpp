@@ -91,7 +91,7 @@ std::vector<double> concatenate(const std::vector<DenseVector>& dense_vectors) {
     for (const auto& dense_vector : dense_vectors) {
         result_vector.insert(result_vector.end(), dense_vector.pImpl->eigenvalues.begin(), dense_vector.pImpl->eigenvalues.end());
     }
-    return std::move(result_vector);
+    return result_vector;
 }
 
 bool DenseVector::operator==(const DenseVector &rhs) const {

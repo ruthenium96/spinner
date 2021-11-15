@@ -22,7 +22,7 @@ std::deque<int> spin_addition(const std::vector<int>& mults) {
         }
     }
     std::stable_sort(total_multiplicities.begin(), total_multiplicities.end());
-    return std::move(total_multiplicities);
+    return total_multiplicities;
 }
 
 std::vector<int> duplicate_multiplicity_multiplicity_times(const std::deque<int>& multiplicities) {
@@ -33,7 +33,7 @@ std::vector<int> duplicate_multiplicity_multiplicity_times(const std::deque<int>
         }
     }
     std::stable_sort(duplicated_multiplicities.begin(), duplicated_multiplicities.end());
-    return std::move(duplicated_multiplicities);
+    return duplicated_multiplicities;
 }
 
 TEST(spin_addition, 22) {

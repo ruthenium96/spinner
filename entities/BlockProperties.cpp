@@ -8,7 +8,7 @@ std::string BlockProperties::get_representation_name() const {
     for (auto repr : representation) {
         s += (std::to_string(repr));
     }
-    return std::move(s);
+    return s;
 }
 
 std::ostream &operator<<(std::ostream &os, const BlockProperties &properties) {
