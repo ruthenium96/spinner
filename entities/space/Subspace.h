@@ -3,14 +3,14 @@
 
 #include <ostream>
 #include "entities/BlockProperties.h"
-#include "entities/data_structures/UnitarySpaseMatrix.h"
+#include "entities/data_structures/UnitarySparseMatrix.h"
 
 struct Subspace {
 
     BlockProperties properties;
-    UnitarySpaseMatrix decomposition;
+    UnitarySparseMatrix decomposition;
 
-    explicit Subspace(UnitarySpaseMatrix&&);
+    explicit Subspace(UnitarySparseMatrix&&);
     Subspace() = default;
 
     friend std::ostream &operator<<(std::ostream &os, const Subspace &subspace);

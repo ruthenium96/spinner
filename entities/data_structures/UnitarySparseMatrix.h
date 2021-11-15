@@ -1,11 +1,11 @@
-#ifndef JULY_UNITARYSPASEMATRIX_H
-#define JULY_UNITARYSPASEMATRIX_H
+#ifndef JULY_UNITARYSPARSEMATRIX_H
+#define JULY_UNITARYSPARSEMATRIX_H
 
 #include <cstdint>
 #include <memory>
 #include <ostream>
 
-class UnitarySpaseMatrix {
+class UnitarySparseMatrix {
 public:
     /*
      This Iterator iterates over vectors.
@@ -24,14 +24,14 @@ public:
         virtual ~Iterator() = default;
     };
 
-    UnitarySpaseMatrix();
-    UnitarySpaseMatrix(const UnitarySpaseMatrix&) = delete;
-    UnitarySpaseMatrix& operator=(const UnitarySpaseMatrix&) = delete;
-    UnitarySpaseMatrix(UnitarySpaseMatrix&&) noexcept;
-    UnitarySpaseMatrix& operator=(UnitarySpaseMatrix&&) noexcept;
-    ~UnitarySpaseMatrix();
+    UnitarySparseMatrix();
+    UnitarySparseMatrix(const UnitarySparseMatrix&) = delete;
+    UnitarySparseMatrix& operator=(const UnitarySparseMatrix&) = delete;
+    UnitarySparseMatrix(UnitarySparseMatrix&&) noexcept;
+    UnitarySparseMatrix& operator=(UnitarySparseMatrix&&) noexcept;
+    ~UnitarySparseMatrix();
 
-    [[nodiscard]] std::unique_ptr<UnitarySpaseMatrix::Iterator> GetNewIterator(size_t index_of_vector) const;
+    [[nodiscard]] std::unique_ptr<UnitarySparseMatrix::Iterator> GetNewIterator(size_t index_of_vector) const;
 
     /*
      Some implementations want to know the maximum size of vector.
@@ -48,10 +48,10 @@ public:
     void erase_if_zero();
 
     [[nodiscard]] bool is_zero(uint32_t i, uint32_t j) const;
-    void move_vector_from(uint32_t i, UnitarySpaseMatrix& subspace_from);
-    void move_all_from(UnitarySpaseMatrix& subspace_from);
-    void copy_vector_from(uint32_t i, const UnitarySpaseMatrix& subspace_from);
-    void copy_all_from(const UnitarySpaseMatrix& subspace_from);
+    void move_vector_from(uint32_t i, UnitarySparseMatrix& subspace_from);
+    void move_all_from(UnitarySparseMatrix& subspace_from);
+    void copy_vector_from(uint32_t i, const UnitarySparseMatrix& subspace_from);
+    void copy_all_from(const UnitarySparseMatrix& subspace_from);
     void resize(uint32_t new_size);
 
     void add_to_position(double value, uint32_t i, uint32_t j);
@@ -59,9 +59,9 @@ public:
 
     void normalize();
 
-    bool is_equal_up_to_vector_order(const UnitarySpaseMatrix& rhs) const;
+    bool is_equal_up_to_vector_order(const UnitarySparseMatrix& rhs) const;
 
-    friend std::ostream &operator<<(std::ostream &os, const UnitarySpaseMatrix &decomposition);
+    friend std::ostream &operator<<(std::ostream &os, const UnitarySparseMatrix &decomposition);
 
 private:
     class Impl;
@@ -69,4 +69,4 @@ private:
 };
 
 
-#endif //JULY_UNITARYSPASEMATRIX_H
+#endif //JULY_UNITARYSPARSEMATRIX_H
