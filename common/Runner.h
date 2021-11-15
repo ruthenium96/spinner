@@ -33,10 +33,10 @@ class Runner {
     // SPECTRUM OPERATIONS
     void BuildSpectra();
 
-    [[nodiscard]] const Operator& getOperator(QuantityEnum) const;
+    [[nodiscard]] const Operator& getOperator(common::QuantityEnum) const;
     [[nodiscard]] const Space& getSpace() const;
-    [[nodiscard]] const Spectrum& getSpectrum(QuantityEnum) const;
-    [[nodiscard]] const Matrix& getMatrix(QuantityEnum) const;
+    [[nodiscard]] const Spectrum& getSpectrum(common::QuantityEnum) const;
+    [[nodiscard]] const Matrix& getMatrix(common::QuantityEnum) const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
@@ -59,9 +59,10 @@ class Runner {
 
     Space space_;
 
-    std::map<QuantityEnum, Operator> operators_;
-    std::map<QuantityEnum, Matrix> matrices_;
-    std::map<QuantityEnum, Spectrum> spectra_;
+    // TODO: should we split these containers?
+    std::map<common::QuantityEnum, Operator> operators_;
+    std::map<common::QuantityEnum, Matrix> matrices_;
+    std::map<common::QuantityEnum, Spectrum> spectra_;
 
     void BuildSpectraUsingMatrices();
     void BuildSpectraWithoutMatrices();

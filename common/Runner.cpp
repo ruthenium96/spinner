@@ -9,7 +9,7 @@
 
 namespace {
     // TODO: It requires three allocation instead of two. Rewrite it.
-    bool OperatorParametersMatchSymmetries(const std::vector<Group>& applied_groups, const arma::dmat initial_parameters) {
+    bool OperatorParametersMatchSymmetries(const std::vector<Group>& applied_groups, const arma::dmat& initial_parameters) {
         for (const auto& group : applied_groups) {
             for (const auto& element : group.elements_) {
                 arma::dmat parameters_rows_swaped;
@@ -41,7 +41,7 @@ void runner::Runner::NonAbelianSimplify() {
     }
     if (space_history_.number_of_non_simplified_abelian_groups != 1) {
         throw std::invalid_argument("Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
-                                    "currently is not allowed. Use Non-Abelian simplification twice.");
+                                    "currently is not allowed.");
     }
     NonAbelianSimplifier nonAbelianSimplifier;
     space_ = nonAbelianSimplifier.apply(std::move(space_));
@@ -97,21 +97,22 @@ void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_paramete
     }
 
     // TODO: Should we move it to constructor?
-    if (operators_.count(QuantityEnum::Energy) == 0) {
-        operators_[QuantityEnum::Energy] = Operator();
+    if (operators_.count(common::QuantityEnum::Energy) == 0) {
+        operators_[common::QuantityEnum::Energy] = Operator();
     }
 
-    operators_.at(QuantityEnum::Energy).two_center_terms
-    .emplace_back(new ScalarProduct(std::move(isotropic_exchange_parameters)));
+    operators_.at(common::QuantityEnum::Energy).two_center_terms
+    .emplace_back(std::make_unique<const ScalarProduct>(std::move(isotropic_exchange_parameters)));
 
     hamiltonian_history_.has_isotropic_exchange_interactions = true;
 }
 
 void runner::Runner::BuildMatrices() {
 
-    for (const auto& ptr_to_term : operators_.at(QuantityEnum::Energy).two_center_terms) {
+    for (const auto& ptr_to_term : operators_.at(common::QuantityEnum::Energy).two_center_terms) {
         if (!OperatorParametersMatchSymmetries(space_history_.applied_groups,
                                                ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
+            // TODO: should we rename this exception?
             throw std::invalid_argument("Operator parameters does not match applied symmetries");
         }
     }
@@ -126,7 +127,9 @@ void runner::Runner::BuildMatrices() {
 
     MatrixBuilder matrix_builder(converter_);
     for (const auto& pair : operators_) {
-        matrices_[pair.first] = matrix_builder.apply(space_, pair.second);
+        common::QuantityEnum quantity_enum = pair.first;
+        const Operator& current_operator = pair.second;
+        matrices_[quantity_enum] = matrix_builder.apply(space_, current_operator);
     }
 
     matrix_history_.matrices_was_built = true;
@@ -138,10 +141,10 @@ void runner::Runner::InitializeSSquared() {
     for (double spin : converter_.get_spins()) {
         sum_of_s_squared += spin * (spin + 1);
     }
-    s_squared_operator_.zero_center_terms.emplace_back(new ConstantOperator(sum_of_s_squared));
-    s_squared_operator_.two_center_terms.emplace_back(new ScalarProduct(converter_.get_spins().size()));
+    s_squared_operator_.zero_center_terms.emplace_back(std::make_unique<const ConstantOperator>(sum_of_s_squared));
+    s_squared_operator_.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
 
-    operators_[QuantityEnum::S_total_squared] = std::move(s_squared_operator_);
+    operators_[common::QuantityEnum::S_total_squared] = std::move(s_squared_operator_);
 }
 
 
@@ -165,14 +168,14 @@ void runner::Runner::BuildSpectraUsingMatrices() {
 
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
-        spectra_.at(QuantityEnum::Energy).blocks[block] =
+        spectra_.at(common::QuantityEnum::Energy).blocks[block] =
                 spectrumBuilder.apply_to_subentity_energy(
-                        matrices_.at(QuantityEnum::Energy).blocks[block],
+                        matrices_.at(common::QuantityEnum::Energy).blocks[block],
                         unitary_transformation_matrix
                 );
 
         for (const auto& pair : matrices_) {
-            if (pair.first != QuantityEnum::Energy) {
+            if (pair.first != common::QuantityEnum::Energy) {
                 spectra_.at(pair.first).blocks[block] =
                         spectrumBuilder.apply_to_subentity_non_energy(
                                 pair.second.blocks[block],
@@ -209,14 +212,14 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
         {
             Submatrix hamiltonian_submatrix = matrixBuilder
                     .apply_to_subentity(space_.blocks[block],
-                                        operators_.at(QuantityEnum::Energy));
-            spectra_.at(QuantityEnum::Energy).blocks[block] =
+                                        operators_.at(common::QuantityEnum::Energy));
+            spectra_.at(common::QuantityEnum::Energy).blocks[block] =
                     spectrumBuilder.apply_to_subentity_energy(hamiltonian_submatrix,
                                                               unitary_transformation_matrix);
         }
 
         for (const auto& pair : operators_) {
-            if (pair.first != QuantityEnum::Energy) {
+            if (pair.first != common::QuantityEnum::Energy) {
                 Submatrix non_hamiltonian_submatrix =
                         matrixBuilder.apply_to_subentity(space_.blocks[block],
                                                          pair.second);
@@ -228,14 +231,14 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
     }
 }
 
-const Matrix &runner::Runner::getMatrix(QuantityEnum quantity_enum) const {
+const Matrix &runner::Runner::getMatrix(common::QuantityEnum quantity_enum) const {
     return matrices_.at(quantity_enum);
 }
 
-const Spectrum &runner::Runner::getSpectrum(QuantityEnum quantity_enum) const {
+const Spectrum &runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
     return spectra_.at(quantity_enum);
 }
 
-const Operator &runner::Runner::getOperator(QuantityEnum quantity_enum) const {
+const Operator &runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
     return operators_.at(quantity_enum);
 }

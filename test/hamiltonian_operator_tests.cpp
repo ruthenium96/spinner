@@ -20,6 +20,6 @@ TEST(add_isotropic_exchange, actually_added_new_term_22_333_4444_23456) {
 
         runner.AddIsotropicExchange(js);
 
-        EXPECT_EQ(runner.getOperator(QuantityEnum::Energy).two_center_terms.size(), 1);
+        EXPECT_EQ(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 1);
     }
 }

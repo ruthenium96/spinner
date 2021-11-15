@@ -93,17 +93,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -133,17 +133,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456_tzsort) {
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -176,17 +176,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_S2_S2_symmetri
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -220,17 +220,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_tzsort_S2_S2_s
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -261,17 +261,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize) {
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -303,17 +303,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetr
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -345,17 +345,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize_non
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -388,17 +388,17 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetr
 
         runner.BuildMatrices();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_matrix_with_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_matrix_without_degeneracy(runner.getMatrix(common::QuantityEnum::S_total_squared)));
 
         runner.BuildSpectra();
 
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_NE(runner.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     }
 }
 
@@ -460,13 +460,13 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.BuildSpectra();
         runner_using_matrices.BuildSpectra();
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -502,13 +502,13 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.BuildSpectra();
         runner_using_matrices.BuildSpectra();
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -548,13 +548,13 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.BuildSpectra();
         runner_using_matrices.BuildSpectra();
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -594,13 +594,13 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.BuildSpectra();
         runner_using_matrices.BuildSpectra();
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -639,13 +639,13 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_using_matrices.BuildSpectra();
 
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -684,13 +684,13 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_using_matrices.BuildSpectra();
 
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -730,13 +730,13 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_using_matrices.BuildSpectra();
 
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -776,12 +776,12 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.BuildSpectra();
         runner_using_matrices.BuildSpectra();
 
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::Energy)));
-        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
-        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy)));
+        EXPECT_EQ(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_with_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
+        EXPECT_NE(runner_without_matrices.getTotalSpaceSize(), size_of_spectrum_without_degeneracy(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared)));
 
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::Energy), runner_without_matrices.getSpectrum(QuantityEnum::Energy));
-        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(QuantityEnum::S_total_squared));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::Energy), runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+        expect_spectrum_equivalence(runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared), runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
