@@ -51,8 +51,8 @@ TEST(matrix_and_spectrum_bulders, throw_2222_inconsistent_symmetry) {
     runner.Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
     arma::dmat js(mults.size(), mults.size());
-    for (int i = 0; i < mults.size(); ++i) {
-        for (int j = 0; j < mults.size(); ++j) {
+    for (size_t i = 0; i < mults.size(); ++i) {
+        for (size_t j = 0; j < mults.size(); ++j) {
             js(i, j) = NAN;
         }
     }
@@ -79,8 +79,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
         runner::Runner runner(mults);
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -119,8 +119,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456_tzsort) {
         runner.TzSort();
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -159,8 +159,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_S2_S2_symmetri
         runner.Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -203,8 +203,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_tzsort_S2_S2_s
         runner.Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -245,8 +245,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize) {
         runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -287,8 +287,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetr
         runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -329,8 +329,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize_non
         runner.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -372,8 +372,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetr
         runner.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -416,8 +416,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetr
 //    runner.NonAbelianSimplify();
 //
 //    arma::dmat js(mults.size(), mults.size());
-//    for (int i = 0; i < mults.size(); ++i) {
-//        for (int j = 0; j < mults.size(); ++j) {
+//    for (size_t i = 0; i < mults.size(); ++i) {
+//        for (size_t j = 0; j < mults.size(); ++j) {
 //            js(i, j) = NAN;
 //        }
 //    }
@@ -441,8 +441,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner::Runner runner_using_matrices(mults);
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -483,8 +483,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.TzSort();
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -526,8 +526,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -572,8 +572,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -617,8 +617,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -662,8 +662,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -708,8 +708,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }
@@ -755,8 +755,8 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner_without_matrices.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());
-        for (int i = 0; i < mults.size(); ++i) {
-            for (int j = 0; j < mults.size(); ++j) {
+        for (size_t i = 0; i < mults.size(); ++i) {
+            for (size_t j = 0; j < mults.size(); ++j) {
                 js(i, j) = NAN;
             }
         }

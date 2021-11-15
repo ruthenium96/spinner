@@ -3,8 +3,8 @@
 
 ScalarProduct::ScalarProduct(size_t number_of_spins) {
     coefficients.resize(number_of_spins, number_of_spins);
-    for (int i = 0; i < number_of_spins; ++i) {
-        for (int j = i + 1; j < number_of_spins; ++j) {
+    for (size_t i = 0; i < number_of_spins; ++i) {
+        for (size_t j = i + 1; j < number_of_spins; ++j) {
             // TODO: it does not looks good
             coefficients(i, j) = -1;
             coefficients(j, i) = -1;
@@ -57,7 +57,7 @@ void ScalarProduct::scalar_product_nondiagonal_part(LexicograficalMatrix& matrix
     if (projection_of_plus_center == converter.get_mults()[plus_center] - 1 || projection_of_minus_center == 0) {
         return;
     }
-    unsigned long index_of_new_vector = converter.ladder_projection(
+    uint32_t index_of_new_vector = converter.ladder_projection(
             converter.ladder_projection(
                     index_of_vector, plus_center, +1), minus_center, -1
                     );

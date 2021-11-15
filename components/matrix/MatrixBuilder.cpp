@@ -21,7 +21,7 @@ Submatrix MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Oper
     arma::sp_dmat matrix_in_lexicografical_basis(converter_.total_space_size, converter_.total_space_size);
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 
-    uint32_t matrix_in_space_basis_size = subspace.decomposition.size();
+    size_t matrix_in_space_basis_size = subspace.decomposition.size();
     Submatrix submatrix;
     submatrix.properties = subspace.properties;
     submatrix.raw_data.resize(matrix_in_space_basis_size, matrix_in_space_basis_size);
