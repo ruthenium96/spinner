@@ -242,3 +242,7 @@ const Spectrum &runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) 
 const Operator &runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
     return operators_.at(quantity_enum);
 }
+
+const lexicographic::IndexConverter &runner::Runner::getIndexConverter() const {
+    return converter_;
+}

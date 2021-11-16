@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "common/Runner.h"
+#include "common/runner/Runner.h"
 #include "components/matrix/MatrixBuilder.h"
 
 #include <deque>
@@ -75,11 +75,11 @@ TEST(initialize_s_squared, eigenvalues_of_s_squared_matrix_correspond_to_spin_ad
 
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
-        spaces::LexicographicIndexConverter converter(mults);
+        lexicographic::IndexConverter converter(mults);
 
         runner.InitializeSSquared();
 
-        MatrixBuilder matrix_builder(converter);
+        MatrixBuilder matrix_builder(runner.getIndexConverter());
         Matrix s_squared_matrix = matrix_builder.apply(runner.getSpace(), runner.getOperator(common::QuantityEnum::S_total_squared));
 
         std::vector<DenseVector> s_squared_values(s_squared_matrix.blocks.size());

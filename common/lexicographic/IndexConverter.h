@@ -6,10 +6,10 @@
 #include <vector>
 #include <cstdint>
 
-namespace spaces {
-    class LexicographicIndexConverter {
+namespace lexicographic {
+    class IndexConverter {
     public:
-        explicit LexicographicIndexConverter(std::vector<int> mults);
+        explicit IndexConverter(std::vector<int> mults);
         // TODO: "declarations", clang-format
         [[nodiscard]] uint8_t convert_lex_index_to_tz_projection (uint32_t lex) const;
         [[nodiscard]] std::vector<uint8_t> convert_lex_index_to_all_sz_projections(uint32_t lex) const;

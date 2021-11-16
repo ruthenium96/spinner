@@ -9,7 +9,7 @@ public:
     explicit ScalarProduct(size_t number_of_spins);
     explicit ScalarProduct(arma::dmat isotropic_exchange_parameters);
 
-    void construct(LexicographicSparseMatrix& matrix_in_lexicografical_basis, uint32_t index_of_vector, uint32_t center_a, uint32_t center_b) const override;
+    void construct(lexicographic::SparseMatrix& matrix_in_lexicografical_basis, uint32_t index_of_vector, uint32_t center_a, uint32_t center_b) const override;
 
     [[nodiscard]] arma::dmat get_parameters() const override;
 

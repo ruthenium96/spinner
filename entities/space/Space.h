@@ -2,7 +2,7 @@
 #define JULY_SPACE_H
 
 #include "Subspace.h"
-#include "common/LexicographicIndexConverter.h"
+#include "common/lexicographic/IndexConverter.h"
 #include <deque>
 #include <iostream>
 #include <map>

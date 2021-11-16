@@ -11,7 +11,7 @@
 
 class Symmetrizer {
   public:
-    Symmetrizer(spaces::LexicographicIndexConverter converter, Group group);
+    Symmetrizer(lexicographic::IndexConverter converter, Group group);
     Space apply(Space&& space) const;
 
     std::vector<UnitarySparseMatrix> get_symmetrical_projected_decompositions(Subspace& subspace, uint32_t index_of_vector) const;
@@ -31,7 +31,7 @@ class Symmetrizer {
 
 
   private:
-    const spaces::LexicographicIndexConverter converter_;
+    const lexicographic::IndexConverter converter_;
     const Group group_;
 };
 

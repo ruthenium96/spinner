@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "common/Runner.h"
+#include "common/runner/Runner.h"
 
 TEST(add_isotropic_exchange, actually_added_new_term_22_333_4444_23456) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2},
@@ -9,7 +9,7 @@ TEST(add_isotropic_exchange, actually_added_new_term_22_333_4444_23456) {
 
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
-        spaces::LexicographicIndexConverter converter(mults);
+        lexicographic::IndexConverter converter(mults);
 
         arma::dmat js(mults.size(), mults.size());
         for (int i = 0; i < mults.size(); ++i) {

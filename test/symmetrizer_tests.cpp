@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "common/Runner.h"
+#include "common/runner/Runner.h"
 #include "common/Logger.h"
 
 size_t number_of_vectors(const Space& space) {

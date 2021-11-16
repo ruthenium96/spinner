@@ -1,6 +1,6 @@
-#include "LexicographicIndexConverter.h"
+#include "IndexConverter.h"
 
-spaces::LexicographicIndexConverter::LexicographicIndexConverter(std::vector<int> mults) : mults_(mults) {
+lexicographic::IndexConverter::IndexConverter(std::vector<int> mults) : mults_(mults) {
     // auxiliary vector for uint32_t <-> std::vector<uint8_t> transformation
     cumulative_product.resize(mults.size() + 1);
     cumulative_product.back() = 1;
@@ -17,7 +17,7 @@ spaces::LexicographicIndexConverter::LexicographicIndexConverter(std::vector<int
     }
 }
 
-uint8_t spaces::LexicographicIndexConverter::convert_lex_index_to_tz_projection(uint32_t lex) const {
+uint8_t lexicographic::IndexConverter::convert_lex_index_to_tz_projection(uint32_t lex) const {
     uint8_t ntz_proj = 0;
     for (size_t i = 0; i < mults_.size(); ++i) {
         ntz_proj += (lex % cumulative_product[i]) / cumulative_product[i + 1];
@@ -25,7 +25,7 @@ uint8_t spaces::LexicographicIndexConverter::convert_lex_index_to_tz_projection(
     return ntz_proj;
 }
 
-std::vector<uint8_t> spaces::LexicographicIndexConverter::convert_lex_index_to_all_sz_projections(uint32_t lex) const {
+std::vector<uint8_t> lexicographic::IndexConverter::convert_lex_index_to_all_sz_projections(uint32_t lex) const {
     std::vector<uint8_t> nzs(mults_.size());
     for (size_t i = 0; i < mults_.size(); ++i) {
         nzs[i] = (lex % cumulative_product[i]) / cumulative_product[i + 1];
@@ -33,11 +33,11 @@ std::vector<uint8_t> spaces::LexicographicIndexConverter::convert_lex_index_to_a
     return nzs;
 }
 
-uint8_t spaces::LexicographicIndexConverter::convert_lex_index_to_one_sz_projection(uint32_t lex, uint32_t center) const {
+uint8_t lexicographic::IndexConverter::convert_lex_index_to_one_sz_projection(uint32_t lex, uint32_t center) const {
     return (lex % cumulative_product[center]) / cumulative_product[center + 1];
 }
 
-uint32_t spaces::LexicographicIndexConverter::convert_sz_projections_to_lex_index(const std::vector<uint8_t> &nzs) const {
+uint32_t lexicographic::IndexConverter::convert_sz_projections_to_lex_index(const std::vector<uint8_t> &nzs) const {
     uint32_t lex = 0;
     for (size_t i = 0; i < mults_.size(); ++i) {
         lex += nzs[i] * cumulative_product[i + 1];
@@ -45,14 +45,14 @@ uint32_t spaces::LexicographicIndexConverter::convert_sz_projections_to_lex_inde
     return lex;
 }
 
-uint32_t spaces::LexicographicIndexConverter::ladder_projection(uint32_t lex, uint32_t center, int ladder) const {
+uint32_t lexicographic::IndexConverter::ladder_projection(uint32_t lex, uint32_t center, int ladder) const {
     return lex + ladder * cumulative_product[center + 1];
 }
 
-const std::vector<int> &spaces::LexicographicIndexConverter::get_mults() const {
+const std::vector<int> &lexicographic::IndexConverter::get_mults() const {
     return mults_;
 }
 
-const std::vector<double> &spaces::LexicographicIndexConverter::get_spins() const {
+const std::vector<double> &lexicographic::IndexConverter::get_spins() const {
     return spins_;
 }

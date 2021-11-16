@@ -33,6 +33,7 @@ class Runner {
     // SPECTRUM OPERATIONS
     void BuildSpectra();
 
+    [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
     [[nodiscard]] const Operator& getOperator(common::QuantityEnum) const;
     [[nodiscard]] const Space& getSpace() const;
     [[nodiscard]] const Spectrum& getSpectrum(common::QuantityEnum) const;
@@ -55,7 +56,7 @@ class Runner {
         bool isNonAbelianSimplified = false;
     };
 
-    const spaces::LexicographicIndexConverter converter_;
+    const lexicographic::IndexConverter converter_;
 
     Space space_;
 

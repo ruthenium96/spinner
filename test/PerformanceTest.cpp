@@ -4,7 +4,7 @@
 #include "components/space/TzSorter.h"
 #include "common/Logger.h"
 #include <chrono>
-#include "common/Runner.h"
+#include "common/runner/Runner.h"
 
 void PerformanceTest(std::function<void(void)> f, int cycles = 1) {
     auto start = std::chrono::high_resolution_clock::now();
@@ -20,7 +20,7 @@ TEST(performanceTest, simple2ComponentSchema) {
 
     std::vector<int> mults = {4, 4, 4, 4, 4, 4, 4, 4, 4,};
 
-    spaces::LexicographicIndexConverter converter(mults);
+    lexicographic::IndexConverter converter(mults);
 
     PerformanceTest([&mults]() {
         runner::Runner runner(mults);

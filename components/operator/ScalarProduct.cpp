@@ -15,7 +15,7 @@ ScalarProduct::ScalarProduct(size_t number_of_spins) {
 ScalarProduct::ScalarProduct(arma::dmat parameters) : coefficients(std::move(parameters)) {
 }
 
-void ScalarProduct::construct(LexicographicSparseMatrix& matrix_in_lexicografical_basis, uint32_t index_of_vector, uint32_t center_a, uint32_t center_b) const {
+void ScalarProduct::construct(lexicographic::SparseMatrix& matrix_in_lexicografical_basis, uint32_t index_of_vector, uint32_t center_a, uint32_t center_b) const {
     if (!std::isnan(coefficients(center_a, center_b))) {
         double factor = -2 * coefficients(center_a, center_b);
         matrix_in_lexicografical_basis.add_scalar_product(index_of_vector, center_a, center_b, factor);

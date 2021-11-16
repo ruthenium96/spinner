@@ -1,10 +1,10 @@
 #include "MatrixBuilder.h"
 
-#include "common/LexicographicSparseMatrix.h"
+#include "common/lexicographic/SparseMatrix.h"
 
 #include <unordered_set>
 
-MatrixBuilder::MatrixBuilder(spaces::LexicographicIndexConverter converter) : converter_(std::move(converter)) {
+MatrixBuilder::MatrixBuilder(lexicographic::IndexConverter converter) : converter_(std::move(converter)) {
 }
 
 Matrix MatrixBuilder::apply(const Space &space, const Operator &new_operator) {
@@ -21,7 +21,7 @@ Matrix MatrixBuilder::apply(const Space &space, const Operator &new_operator) {
 }
 
 Submatrix MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Operator &new_operator) {
-    LexicographicSparseMatrix matrix_in_lexicografical_basis(converter_);
+    lexicographic::SparseMatrix matrix_in_lexicografical_basis(converter_);
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 
     size_t matrix_in_space_basis_size = subspace.decomposition.size();

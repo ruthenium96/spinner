@@ -1,42 +1,44 @@
-#include "LexicographicSparseMatrix.h"
+#include "SparseMatrix.h"
 #include <armadillo>
 
-struct LexicographicSparseMatrix::Impl {
+namespace lexicographic {
+
+struct SparseMatrix::Impl {
     arma::sp_mat sparse_matrix;
 public:
     Impl() = default;
 };
 
-LexicographicSparseMatrix::LexicographicSparseMatrix(spaces::LexicographicIndexConverter converter) :
+SparseMatrix::SparseMatrix(lexicographic::IndexConverter converter) :
 pImpl{std::make_unique<Impl>()}, converter_(std::move(converter)) {
     resize(converter_.total_space_size);
 }
-LexicographicSparseMatrix::~LexicographicSparseMatrix() = default;
-LexicographicSparseMatrix::LexicographicSparseMatrix(LexicographicSparseMatrix&&) noexcept = default;
-LexicographicSparseMatrix& LexicographicSparseMatrix::operator=(LexicographicSparseMatrix&&) noexcept = default;
+SparseMatrix::~SparseMatrix() = default;
+SparseMatrix::SparseMatrix(SparseMatrix&&) noexcept = default;
+SparseMatrix& SparseMatrix::operator=(SparseMatrix&&) noexcept = default;
 
-std::ostream &operator<<(std::ostream &os, const LexicographicSparseMatrix &data) {
+std::ostream &operator<<(std::ostream &os, const SparseMatrix &data) {
     os << data.pImpl->sparse_matrix << std::endl;
     return os;
 }
 
-uint32_t LexicographicSparseMatrix::size() const {
+uint32_t SparseMatrix::size() const {
     return pImpl->sparse_matrix.n_cols;
 }
 
-void LexicographicSparseMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
+void SparseMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     pImpl->sparse_matrix(i, j) += value;
 }
 
-double LexicographicSparseMatrix::operator()(uint32_t i, uint32_t j) const {
+double SparseMatrix::operator()(uint32_t i, uint32_t j) const {
     return pImpl->sparse_matrix(i, j);
 }
 
-void LexicographicSparseMatrix::resize(uint32_t new_size) {
+void SparseMatrix::resize(uint32_t new_size) {
     pImpl->sparse_matrix.resize(new_size, new_size);
 }
 
-void LexicographicSparseMatrix::add_scalar_product(uint32_t index_of_vector, uint32_t center_a, uint32_t center_b, double factor) {
+void SparseMatrix::add_scalar_product(uint32_t index_of_vector, uint32_t center_a, uint32_t center_b, double factor) {
     uint32_t projection_of_center_a = converter_.convert_lex_index_to_one_sz_projection(index_of_vector, center_a);
     uint32_t projection_of_center_b = converter_.convert_lex_index_to_one_sz_projection(index_of_vector, center_b);
 
@@ -56,7 +58,7 @@ void LexicographicSparseMatrix::add_scalar_product(uint32_t index_of_vector, uin
 
 }
 
-void LexicographicSparseMatrix::add_scalar_product_nondiagonal_part(uint32_t index_of_vector, uint32_t plus_center, uint32_t minus_center,
+void SparseMatrix::add_scalar_product_nondiagonal_part(uint32_t index_of_vector, uint32_t plus_center, uint32_t minus_center,
                                                                 uint32_t projection_of_plus_center, uint32_t projection_of_minus_center,
                                                                 double factor) {
     if (projection_of_plus_center == converter_.get_mults()[plus_center] - 1 || projection_of_minus_center == 0) {
@@ -76,4 +78,5 @@ void LexicographicSparseMatrix::add_scalar_product_nondiagonal_part(uint32_t ind
 
     // TODO: fix plus-minus
     add_to_position(0.5 * sqrt(factor_a * factor_b) * factor, index_of_vector, index_of_new_vector);
+}
 }

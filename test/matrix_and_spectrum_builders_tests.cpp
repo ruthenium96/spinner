@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "common/Runner.h"
+#include "common/runner/Runner.h"
 
 #include <armadillo>
 

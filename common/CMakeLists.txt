@@ -1,9 +1,9 @@
 add_library(common
-        LexicographicIndexConverter.cpp LexicographicIndexConverter.h
-        LexicographicSparseMatrix.h
-        LexicographicSparseMatrix-arma-sp-mat.cpp
+        lexicographic/IndexConverter.cpp lexicographic/IndexConverter.h
+        lexicographic/SparseMatrix.h
+        lexicographic/SparseMatrix-arma-sp-mat.cpp
         Logger.h
-        Runner.cpp
+        runner/Runner.cpp
         Quantity.cpp)
 
 target_link_libraries(common components)

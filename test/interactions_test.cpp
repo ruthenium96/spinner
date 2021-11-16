@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "common/LexicographicIndexConverter.h"
+#include "common/lexicographic/IndexConverter.h"
 #include "components/matrix/MatrixBuilder.h"
 #include "components/operator/ConstantOperator.h"
 #include "components/operator/ScalarProduct.h"
@@ -14,7 +14,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
                                                      {4, 4, 4, 4, 4}};
     for (const auto& mults : vector_of_mults) {
         // Construct Converter
-        spaces::LexicographicIndexConverter converter = spaces::LexicographicIndexConverter(mults);
+        lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
         // Construct Space
         Space space_(converter.total_space_size);
@@ -61,7 +61,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
                                                      {6}};
     for (const auto& mults : vector_of_mults) {
         // Construct Converter
-        spaces::LexicographicIndexConverter converter = spaces::LexicographicIndexConverter(mults);
+        lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
         // Construct Space
         Space space_(converter.total_space_size);
@@ -109,7 +109,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         js(0, 1) = J; js(1, 0) = J;
 
         // Construct Converter
-        spaces::LexicographicIndexConverter converter = spaces::LexicographicIndexConverter(mults);
+        lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
         // Construct Space
         Space space_(converter.total_space_size);
