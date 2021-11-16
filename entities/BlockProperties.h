@@ -15,6 +15,7 @@ struct BlockProperties {
     std::vector<uint32_t> representation;
 };
 
-std::ostream &operator<<(std::ostream &os, const BlockProperties &properties);
+// TODO: consider moving all the printing code out of the domain classes
+std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 
-#endif //JULY_BLOCKPROPERTIES_H
+#endif  //JULY_BLOCKPROPERTIES_H

@@ -2,18 +2,18 @@
 #define JULY_SUBSPACE_H
 
 #include <ostream>
+
 #include "entities/BlockProperties.h"
-#include "entities/space/NewBasisDecomposition.h"
+#include "entities/data_structures/UnitarySparseMatrix.h"
 
 struct Subspace {
-
     BlockProperties properties;
-    NewBasisDecomposition decomposition;
+    UnitarySparseMatrix decomposition;
 
-    explicit Subspace(NewBasisDecomposition&&);
+    explicit Subspace(UnitarySparseMatrix&&);
     Subspace() = default;
 
-    friend std::ostream &operator<<(std::ostream &os, const Subspace &subspace);
+    friend std::ostream& operator<<(std::ostream& os, const Subspace& subspace);
 };
 
-#endif // JULY_SUBSPACE_H
+#endif  // JULY_SUBSPACE_H
