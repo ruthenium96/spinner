@@ -4,29 +4,24 @@
 #include <armadillo>
 #include <cstdint>
 #include "common/LexicographicIndexConverter.h"
-
-// TODO: fix it
-typedef arma::sp_mat LexicograficalMatrix;
+#include "common/LexicographicSparseMatrix.h"
 
 class ZeroCenterTerm {
 public:
-    virtual void construct(LexicograficalMatrix& matrix_in_lexicografical_basis, const spaces::LexicographicIndexConverter& converter,
-                           uint32_t index_of_vector) const = 0;
+    virtual void construct(LexicographicSparseMatrix& matrix_in_lexicografical_basis, uint32_t index_of_vector) const = 0;
     virtual ~ZeroCenterTerm(){};
 };
 
 class OneCenterTerm {
 public:
-    virtual void construct(LexicograficalMatrix& matrix_in_lexicografical_basis, const spaces::LexicographicIndexConverter& converter,
-                           uint32_t index_of_vector, uint32_t center_a) const = 0;
+    virtual void construct(LexicographicSparseMatrix& matrix_in_lexicografical_basis, uint32_t index_of_vector, uint32_t center_a) const = 0;
     virtual ~OneCenterTerm(){};
 
 };
 
 class TwoCenterTerm {
 public:
-    virtual void construct(LexicograficalMatrix& matrix_in_lexicografical_basis, const spaces::LexicographicIndexConverter& converter,
-                           uint32_t index_of_vector, uint32_t center_a, uint32_t center_b) const = 0;
+    virtual void construct(LexicographicSparseMatrix& matrix_in_lexicografical_basis, uint32_t index_of_vector, uint32_t center_a, uint32_t center_b) const = 0;
     [[nodiscard]] virtual arma::dmat get_parameters() const = 0;
     virtual ~TwoCenterTerm(){};
 

@@ -25,7 +25,7 @@ namespace spaces {
 
     private:
         std::vector<uint32_t> cumulative_product;
-        const std::vector<int> mults_;
+        std::vector<int> mults_;
         std::vector<double> spins_;
     };
 }

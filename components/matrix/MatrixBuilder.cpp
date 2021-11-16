@@ -1,5 +1,7 @@
 #include "MatrixBuilder.h"
 
+#include "common/LexicographicSparseMatrix.h"
+
 #include <unordered_set>
 
 MatrixBuilder::MatrixBuilder(spaces::LexicographicIndexConverter converter) : converter_(std::move(converter)) {
@@ -19,7 +21,7 @@ Matrix MatrixBuilder::apply(const Space &space, const Operator &new_operator) {
 }
 
 Submatrix MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Operator &new_operator) {
-    arma::sp_dmat matrix_in_lexicografical_basis(converter_.total_space_size, converter_.total_space_size);
+    LexicographicSparseMatrix matrix_in_lexicografical_basis(converter_);
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 
     size_t matrix_in_space_basis_size = subspace.decomposition.size();
@@ -35,15 +37,15 @@ Submatrix MatrixBuilder::apply_to_subentity(const Subspace &subspace, const Oper
             // BUILDING k-th ROW OF INITIAL_MATRIX
             if (built_lexicografical_vectors.count(index_of_lexicographic_vector_k) == 0) {
                 for (auto& term : new_operator.zero_center_terms) {
-                    term->construct(matrix_in_lexicografical_basis, converter_, index_of_lexicographic_vector_k);
+                    term->construct(matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
                 }
                 for (int center_a = 0; center_a < converter_.get_mults().size(); ++center_a) {
                     for (auto& term : new_operator.one_center_terms) {
-                        term->construct(matrix_in_lexicografical_basis, converter_, index_of_lexicographic_vector_k, center_a);
+                        term->construct(matrix_in_lexicografical_basis, index_of_lexicographic_vector_k, center_a);
                     }
                     for (int center_b = center_a + 1; center_b < converter_.get_mults().size(); ++center_b) {
                         for (auto& term : new_operator.two_center_terms) {
-                            term->construct(matrix_in_lexicografical_basis, converter_, index_of_lexicographic_vector_k, center_a, center_b);
+                            term->construct(matrix_in_lexicografical_basis, index_of_lexicographic_vector_k, center_a, center_b);
                         }
                     }
                 }
