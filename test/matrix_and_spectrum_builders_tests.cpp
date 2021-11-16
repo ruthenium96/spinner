@@ -47,8 +47,8 @@ TEST(matrix_and_spectrum_bulders, throw_2222_inconsistent_symmetry) {
     runner::Runner runner(mults);
 
     runner.TzSort();
-    runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-    runner.Symmetrize(Group::S2, {{3, 2, 1, 0}});
+    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
     arma::dmat js(mults.size(), mults.size());
     for (size_t i = 0; i < mults.size(); ++i) {
@@ -195,8 +195,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_S2_S2_symmetri
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-        runner.Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -261,8 +261,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_tzsort_S2_S2_s
         runner::Runner runner(mults);
 
         runner.TzSort();
-        runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-        runner.Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -326,7 +326,7 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize) {
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -389,7 +389,7 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetr
         runner::Runner runner(mults);
 
         runner.TzSort();
-        runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -451,7 +451,7 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize_non
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());
@@ -517,7 +517,7 @@ TEST(
         runner::Runner runner(mults);
 
         runner.TzSort();
-        runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());
@@ -725,8 +725,8 @@ TEST(
         runner::Runner runner_without_matrices(mults);
         runner::Runner runner_using_matrices(mults);
 
-        runner_without_matrices.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-        runner_without_matrices.Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        runner_without_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        runner_without_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -791,8 +791,8 @@ TEST(
         runner::Runner runner_using_matrices(mults);
 
         runner_without_matrices.TzSort();
-        runner_without_matrices.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-        runner_without_matrices.Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        runner_without_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        runner_without_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -856,7 +856,7 @@ TEST(
         runner::Runner runner_without_matrices(mults);
         runner::Runner runner_using_matrices(mults);
 
-        runner_without_matrices.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -919,7 +919,7 @@ TEST(
         runner::Runner runner_using_matrices(mults);
 
         runner_without_matrices.TzSort();
-        runner_without_matrices.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         arma::dmat js(mults.size(), mults.size());
         for (size_t i = 0; i < mults.size(); ++i) {
@@ -981,7 +981,7 @@ TEST(
         runner::Runner runner_without_matrices(mults);
         runner::Runner runner_using_matrices(mults);
 
-        runner_without_matrices.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner_without_matrices.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());
@@ -1045,7 +1045,7 @@ TEST(
         runner::Runner runner_using_matrices(mults);
 
         runner_without_matrices.TzSort();
-        runner_without_matrices.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner_without_matrices.NonAbelianSimplify();
 
         arma::dmat js(mults.size(), mults.size());

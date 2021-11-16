@@ -40,21 +40,21 @@ TEST(symmetrizer, throw_wrong_size_of_pemutation) {
     std::vector<int> mults = {4, 4, 4};
 
     runner::Runner runner(mults);
-    EXPECT_THROW(runner.Symmetrize(Group::S2, {{1, 0, 3, 2}}), std::length_error);
+    EXPECT_THROW(runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}}), std::length_error);
 }
 
 TEST(symmetrizer, throw_permutes_different_multiplicities) {
     std::vector<int> mults = {4, 4, 4, 3};
 
     runner::Runner runner(mults);
-    EXPECT_THROW(runner.Symmetrize(Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
+    EXPECT_THROW(runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
 }
 
 TEST(symmetrizer, 4444_S2) {
     std::vector<int> mults = {4, 4, 4, 4};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
+    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
@@ -63,8 +63,8 @@ TEST(symmetrizer, 4444_doubleS2) {
     std::vector<int> mults = {4, 4, 4, 4};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-    runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
+    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
@@ -73,7 +73,7 @@ TEST(symmetrizer, 333_S3) {
     std::vector<int> mults = {3, 3, 3};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
@@ -82,8 +82,8 @@ TEST(symmetrizer, 333_doubleS3) {
     std::vector<int> mults = {3, 3, 3};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
-    runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
@@ -92,8 +92,8 @@ TEST(symmetrizer, 333_doubleS3_tricky) {
     std::vector<int> mults = {3, 3, 3};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
-    runner.Symmetrize(Group::S3, {{2, 0, 1}, {1, 0, 2}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner.Symmetrize(group::Group::S3, {{2, 0, 1}, {1, 0, 2}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
@@ -102,7 +102,7 @@ TEST(symmetrizer, 333333_S3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
@@ -111,8 +111,8 @@ TEST(symmetrizer, 333333_S3xS2) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-    runner.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
 
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
@@ -122,8 +122,8 @@ TEST(symmetrizer, 333333_S2xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
-    runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
 
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
@@ -133,12 +133,12 @@ TEST(symmetrizer, 333333_S2xS3_S3xS2_direct_product_commutativity) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
 
     runner::Runner runner_first(mults);
-    runner_first.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
-    runner_first.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_first.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_first.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
 
     runner::Runner runner_second(mults);
-    runner_second.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-    runner_second.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_second.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_second.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
 
     for (const auto& subspace_first : runner_first.getSpace().blocks) {
         for (const auto& subspace_second : runner_second.getSpace().blocks) {
@@ -157,8 +157,8 @@ TEST(symmetrizer, 222222222_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner.Symmetrize(group::Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
@@ -167,8 +167,8 @@ TEST(symmetrizer, 333333333_S3xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
 
     runner::Runner runner(mults);
-    runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner.Symmetrize(group::Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
     EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }

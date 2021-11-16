@@ -66,9 +66,9 @@ TEST(nonAbelianSimplifier, 333_S3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
     runner_simplified.NonAbelianSimplify();
 
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
@@ -80,11 +80,11 @@ TEST(nonAbelianSimplifier, 333_doubleS3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
-    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
     runner_simplified.NonAbelianSimplify();
 
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
@@ -96,11 +96,11 @@ TEST(nonAbelianSimplifier, 333_doubleS3_tricky) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
-    runner_full.Symmetrize(Group::S3, {{2, 0, 1}, {1, 0, 2}});
+    runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_full.Symmetrize(group::Group::S3, {{2, 0, 1}, {1, 0, 2}});
 
-    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
-    runner_simplified.Symmetrize(Group::S3, {{2, 0, 1}, {1, 0, 2}});
+    runner_simplified.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+    runner_simplified.Symmetrize(group::Group::S3, {{2, 0, 1}, {1, 0, 2}});
     runner_simplified.NonAbelianSimplify();
 
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
@@ -112,9 +112,9 @@ TEST(nonAbelianSimplifier, 333333_S3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_full.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
 
-    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_simplified.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     runner_simplified.NonAbelianSimplify();
 
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
@@ -126,11 +126,11 @@ TEST(nonAbelianSimplifier, 333333_S3xS2_after_both) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-    runner_full.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_full.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_full.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
 
-    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-    runner_simplified.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_simplified.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_simplified.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
     runner_simplified.NonAbelianSimplify();
 
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
@@ -142,12 +142,12 @@ TEST(nonAbelianSimplifier, 333333_S3xS2_after_first) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-    runner_full.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_full.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_full.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
 
-    runner_simplified.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+    runner_simplified.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     runner_simplified.NonAbelianSimplify();
-    runner_simplified.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+    runner_simplified.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
 
     compare_two_spaces(runner_full.getSpace(), runner_simplified.getSpace());
 }
@@ -158,14 +158,18 @@ TEST(nonAbelianSimplifier, 222222222_after_second_S3xS3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner_full.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     EXPECT_THROW(runner_simplified.NonAbelianSimplify(), std::invalid_argument);
 
@@ -178,16 +182,20 @@ TEST(nonAbelianSimplifier, 222222222_after_first_S3xS3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner_full.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.NonAbelianSimplify();
     EXPECT_THROW(
         runner_simplified.Symmetrize(
-            Group::S3,
+            group::Group::S3,
             {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}}),
         std::invalid_argument);
 
@@ -200,16 +208,20 @@ TEST(nonAbelianSimplifier, 222222222_after_both_S3xS3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner_full.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.NonAbelianSimplify();
     EXPECT_THROW(
         runner_simplified.Symmetrize(
-            Group::S3,
+            group::Group::S3,
             {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}}),
         std::invalid_argument);
     //    runner_simplified.NonAbelianSimplify();
@@ -223,14 +235,18 @@ TEST(nonAbelianSimplifier, 333333333_after_second_S3xS3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner_full.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     EXPECT_THROW(runner_simplified.NonAbelianSimplify(), std::invalid_argument);
 
@@ -253,16 +269,20 @@ TEST(nonAbelianSimplifier, 333333333_after_first_S3xS3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner_full.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.NonAbelianSimplify();
     EXPECT_THROW(
         runner_simplified.Symmetrize(
-            Group::S3,
+            group::Group::S3,
             {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}}),
         std::invalid_argument);
 
@@ -285,16 +305,20 @@ TEST(nonAbelianSimplifier, 333333333_after_both_S3xS3) {
     runner::Runner runner_full(mults);
     runner::Runner runner_simplified(mults);
 
-    runner_full.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-    runner_full.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+    runner_full.Symmetrize(
+        group::Group::S3,
+        {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
 
     runner_simplified.Symmetrize(
-        Group::S3,
+        group::Group::S3,
         {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner_simplified.NonAbelianSimplify();
     EXPECT_THROW(
         runner_simplified.Symmetrize(
-            Group::S3,
+            group::Group::S3,
             {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}}),
         std::invalid_argument);
     //    runner_simplified.NonAbelianSimplify();

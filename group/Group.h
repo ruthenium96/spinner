@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+namespace group {
+
 using Permutation = std::vector<uint8_t>;
 
 class Group {
@@ -64,8 +66,9 @@ class Group {
     // Length of Permutation vectors -- number of spins.
     std::vector<Permutation> generators_;
 };
+}  // namespace group
 
-extern const Group::AlgebraicProperties GroupInfoS2;
-extern const Group::AlgebraicProperties GroupInfoS3;
+extern const group::Group::AlgebraicProperties GroupInfoS2;
+extern const group::Group::AlgebraicProperties GroupInfoS3;
 
 #endif  //JULY_GROUP_H

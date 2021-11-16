@@ -5,13 +5,13 @@
 namespace {
 bool SizeOfPermutationsEqualsNumberOfSpins(
     const lexicographic::IndexConverter& converter,
-    const Group& group) {
+    const group::Group& group) {
     return converter.get_mults().size() == group.elements_[0].size();
 }
 
 bool OrbitOfCentersHasTheSameValueOfMultiplicity(
     const lexicographic::IndexConverter& converter,
-    const Group& group) {
+    const group::Group& group) {
     for (const auto& el : group.elements_) {
         std::vector<int> permutated_mults(converter.get_mults());
         for (size_t i = 0; i < group.elements_[0].size(); ++i) {
@@ -25,7 +25,7 @@ bool OrbitOfCentersHasTheSameValueOfMultiplicity(
 }
 }  // namespace
 
-Symmetrizer::Symmetrizer(lexicographic::IndexConverter converter, Group group) :
+Symmetrizer::Symmetrizer(lexicographic::IndexConverter converter, group::Group group) :
     converter_(std::move(converter)),
     group_(std::move(group)) {
     if (!SizeOfPermutationsEqualsNumberOfSpins(converter_, group_)) {

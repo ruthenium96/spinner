@@ -7,14 +7,14 @@
 namespace {
 
 bool NumberOfGeneratorsConsistent(
-    std::vector<Permutation> const& generators,
-    Group::AlgebraicProperties const& info) {
+    std::vector<group::Permutation> const& generators,
+    group::Group::AlgebraicProperties const& info) {
     return generators.size() == info.number_of_generators;
 }
 
 bool SizesAreEqual(
-    std::vector<Permutation> const& generators,
-    Group::AlgebraicProperties const& info) {
+    std::vector<group::Permutation> const& generators,
+    group::Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         if (generators[0].size() != generators[i].size()) {
             return false;
@@ -24,10 +24,10 @@ bool SizesAreEqual(
 }
 
 bool GeneratorIsValid(
-    std::vector<Permutation> const& generators,
-    Group::AlgebraicProperties const& info) {
+    std::vector<group::Permutation> const& generators,
+    group::Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
-        Permutation generator_sorted = generators[i];
+        group::Permutation generator_sorted = generators[i];
         std::sort(generator_sorted.begin(), generator_sorted.end());
         for (size_t j = 0; j < generator_sorted.size(); ++j) {
             if (generator_sorted[j] != j) {
@@ -38,10 +38,10 @@ bool GeneratorIsValid(
     return true;
 }
 
-Permutation ElementInPower(const Permutation& element, size_t power) {
-    Permutation result = element;
+group::Permutation ElementInPower(const group::Permutation& element, size_t power) {
+    group::Permutation result = element;
     for (size_t i = 1; i < power; ++i) {
-        Permutation tmp_result(result.size());
+        group::Permutation tmp_result(result.size());
         for (size_t n = 0; n < tmp_result.size(); ++n) {
             tmp_result[n] = result[element[n]];
         }
@@ -51,9 +51,9 @@ Permutation ElementInPower(const Permutation& element, size_t power) {
 }
 
 bool ElementsInPowerOfItsOrderIsIdentity(
-    const std::vector<Permutation>& elements,
+    const std::vector<group::Permutation>& elements,
     const std::vector<size_t>& order_of_elements) {
-    Permutation identity(elements[0].size());
+    group::Permutation identity(elements[0].size());
     for (size_t i = 0; i < elements[0].size(); ++i) {
         identity[i] = i;
     }
@@ -67,7 +67,7 @@ bool ElementsInPowerOfItsOrderIsIdentity(
 
 }  // namespace
 
-Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> generators) :
+group::Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> generators) :
     generators_(std::move(generators)),
     properties(Group::return_group_info_by_group_name(group_name)) {
     if (!NumberOfGeneratorsConsistent(generators_, properties)) {
@@ -115,7 +115,8 @@ Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> generator
     }
 }
 
-std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& initial) const {
+std::vector<std::vector<uint8_t>>
+group::Group::permutate(const std::vector<uint8_t>& initial) const {
     std::vector<std::vector<uint8_t>> permutated_vectors(properties.group_size);
     for (size_t i = 0; i < properties.group_size; ++i) {
         permutated_vectors[i].resize(initial.size());
@@ -133,7 +134,7 @@ std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& i
  The isomorphic groups in our case differ only in elements order,
  thus sorting will help to unify them.
  */
-bool Group::operator==(const Group& rhs) const {
+bool group::Group::operator==(const Group& rhs) const {
     std::vector<Permutation> left_elements_copy = elements_;
     std::vector<Permutation> right_elements_copy = rhs.elements_;
     std::sort(left_elements_copy.begin(), left_elements_copy.end());
@@ -141,12 +142,12 @@ bool Group::operator==(const Group& rhs) const {
     return left_elements_copy == right_elements_copy;
 }
 
-bool Group::operator!=(const Group& rhs) const {
+bool group::Group::operator!=(const Group& rhs) const {
     return !(rhs == *this);
 }
 
-const Group::AlgebraicProperties&
-Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
+const group::Group::AlgebraicProperties&
+group::Group::return_group_info_by_group_name(group::Group::GroupTypeEnum group_name) {
     if (group_name == S2) {
         return GroupInfoS2;
     }

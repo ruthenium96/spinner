@@ -1,13 +1,13 @@
-#include <groups/Group.h>
+#include "group/Group.h"
 
 #include "gtest/gtest.h"
 
-std::vector<Group::GroupTypeEnum> group_names = {Group::S2, Group::S3};
+std::vector<group::Group::GroupTypeEnum> group_names = {group::Group::S2, group::Group::S3};
 
 TEST(group_info_tests, size_of_group_in_form_of_generators_equals_group_size) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(group_info.group_in_form_of_generators.size(), group_info.group_size)
             << "The size of group '" << group_name
             << "' does not equal the size of group_in_form_of_generators";
@@ -16,8 +16,8 @@ TEST(group_info_tests, size_of_group_in_form_of_generators_equals_group_size) {
 
 TEST(group_info_tests, size_of_element_of_group_in_form_of_generators_equals_number_of_generators) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         for (uint32_t i = 0; i < group_info.group_in_form_of_generators.size(); ++i) {
             EXPECT_EQ(
                 group_info.group_in_form_of_generators[i].size(),
@@ -30,8 +30,8 @@ TEST(group_info_tests, size_of_element_of_group_in_form_of_generators_equals_num
 
 TEST(group_info_tests, size_of_dimension_of_representation_equals_number_of_representations) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(
             group_info.number_of_representations,
             group_info.dimension_of_representation.size())
@@ -42,8 +42,8 @@ TEST(group_info_tests, size_of_dimension_of_representation_equals_number_of_repr
 
 TEST(group_info_tests, size_of_orders_of_generators_equals_number_of_generators) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(group_info.number_of_generators, group_info.orders_of_generators.size())
             << "In the group '" << group_name
             << "' size of orders_of_generators does not equal to number_of_generators";
@@ -52,8 +52,8 @@ TEST(group_info_tests, size_of_orders_of_generators_equals_number_of_generators)
 
 TEST(group_info_tests, size_of_orders_of_elements_equals_group_size) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(group_info.group_size, group_info.orders_of_elements.size())
             << "In the group '" << group_name
             << "' size of orders_of_elements does not equal to group_size";
@@ -64,8 +64,8 @@ TEST(
     group_info_tests,
     size_of_number_of_projectors_of_representation_equals_number_of_representations) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(
             group_info.number_of_representations,
             group_info.number_of_projectors_of_representation.size())
@@ -76,8 +76,8 @@ TEST(
 
 TEST(group_info_tests, sum_of_dimensions_of_representations_equals_group_size) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         uint32_t sum_of_squares = 0;
         for (auto d : group_info.dimension_of_representation) {
             sum_of_squares += d * d;
@@ -90,8 +90,8 @@ TEST(group_info_tests, sum_of_dimensions_of_representations_equals_group_size) {
 
 TEST(group_info_tests, size_of_coefficients_of_projectors_equals_number_of_representations) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(
             group_info.number_of_representations,
             group_info.coefficients_of_projectors.size())
@@ -102,8 +102,8 @@ TEST(group_info_tests, size_of_coefficients_of_projectors_equals_number_of_repre
 
 TEST(group_info_tests, number_of_projectors_of_representation_equals_actual_number_of_projectors) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         for (size_t repr = 0; repr < group_info.number_of_representations; ++repr) {
             EXPECT_EQ(
                 group_info.number_of_projectors_of_representation[repr],
@@ -116,8 +116,8 @@ TEST(group_info_tests, number_of_projectors_of_representation_equals_actual_numb
 
 TEST(group_info_tests, size_of_projectors_equals_group_size) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         for (size_t repr = 0; repr < group_info.number_of_representations; ++repr) {
             for (size_t k = 0; k < group_info.number_of_projectors_of_representation[repr]; ++k) {
                 EXPECT_EQ(
@@ -132,8 +132,8 @@ TEST(group_info_tests, size_of_projectors_equals_group_size) {
 
 TEST(group_info_tests, descending_order_of_generators_order) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         size_t last_order_of_generator = UINT64_MAX;
         for (uint8_t generator = 0; generator < group_info.number_of_generators; ++generator) {
             size_t order_of_generator = 0;
@@ -150,8 +150,8 @@ TEST(group_info_tests, descending_order_of_generators_order) {
 
 TEST(group_info_tests, projectors_orthogonality) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         std::vector<std::vector<double>> projectors;
         for (uint8_t repr = 0; repr < group_info.number_of_representations; ++repr) {
             for (uint8_t k = 0; k < group_info.number_of_projectors_of_representation[repr]; ++k) {
@@ -174,8 +174,8 @@ TEST(group_info_tests, projectors_orthogonality) {
 
 TEST(group_info_tests, 00_corresponds_to_full_symmetric_representation) {
     for (auto& group_name : group_names) {
-        const Group::AlgebraicProperties& group_info =
-            Group::return_group_info_by_group_name(group_name);
+        const group::Group::AlgebraicProperties& group_info =
+            group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(group_info.coefficients_of_projectors[0].size(), 1)
             << "In the group '" << group_name << "' first representation has "
             << group_info.coefficients_of_projectors[0].size()
@@ -190,33 +190,57 @@ TEST(group_info_tests, 00_corresponds_to_full_symmetric_representation) {
 }
 
 TEST(group_tests, throw_wrong_number_of_generators) {
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}), std::length_error);
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0}}), std::length_error);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}),
+        std::length_error);
+    EXPECT_THROW(group::Group group(group::Group::S3, {{1, 2, 0}}), std::length_error);
 }
 
 TEST(group_tests, throw_wrong_size_of_generators) {
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0}, {0, 2, 1, 4}}), std::length_error);
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0}, {0, 2}}), std::length_error);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 1, 4}}),
+        std::length_error);
+    EXPECT_THROW(group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2}}), std::length_error);
 }
 
 TEST(group_tests, throw_duplicate_of_number_in_generator) {
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0}, {0, 2, 2}}), std::invalid_argument);
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0}, {2, 2, 2}}), std::invalid_argument);
-    EXPECT_THROW(Group group(Group::S3, {{1, 0, 0}, {0, 2, 1}}), std::invalid_argument);
-    EXPECT_THROW(Group group(Group::S3, {{0, 0, 0}, {0, 2, 1}}), std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 2}}),
+        std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0}, {2, 2, 2}}),
+        std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 0, 0}, {0, 2, 1}}),
+        std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{0, 0, 0}, {0, 2, 1}}),
+        std::invalid_argument);
 }
 
 TEST(group_tests, throw_contains_wrong_number) {
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0}, {0, 2, 3}}), std::invalid_argument);
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 3}, {0, 2, 1}}), std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 3}}),
+        std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 3}, {0, 2, 1}}),
+        std::invalid_argument);
 }
 
 TEST(group_tests, throw_wrong_order_of_generators) {
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 3, 0}, {0, 2, 1, 3}}), std::invalid_argument);
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0, 3}, {1, 2, 0, 3}}), std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 3, 0}, {0, 2, 1, 3}}),
+        std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0, 3}, {1, 2, 0, 3}}),
+        std::invalid_argument);
 }
 
 TEST(group_tests, throw_wrong_order_of_elements) {
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0, 3}, {0, 1, 3, 2}}), std::invalid_argument);
-    EXPECT_THROW(Group group(Group::S3, {{1, 2, 0, 3}, {3, 1, 2, 0}}), std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0, 3}, {0, 1, 3, 2}}),
+        std::invalid_argument);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0, 3}, {3, 1, 2, 0}}),
+        std::invalid_argument);
 }

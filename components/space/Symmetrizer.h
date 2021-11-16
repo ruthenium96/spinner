@@ -1,19 +1,18 @@
 #ifndef JULY_SYMMETRIZER_H
 #define JULY_SYMMETRIZER_H
 
-#include <groups/Group.h>
-
 #include <boost/functional/hash.hpp>
+#include <cmath>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
-#include "cmath"
 #include "entities/space/Space.h"
-#include "unordered_map"
-#include "unordered_set"
+#include "group/Group.h"
 
 class Symmetrizer {
   public:
-    Symmetrizer(lexicographic::IndexConverter converter, Group group);
+    Symmetrizer(lexicographic::IndexConverter converter, group::Group group);
     Space apply(Space&& space) const;
 
     std::vector<UnitarySparseMatrix>
@@ -44,7 +43,7 @@ class Symmetrizer {
 
   private:
     const lexicographic::IndexConverter converter_;
-    const Group group_;
+    const group::Group group_;
 };
 
 #endif  // JULY_SYMMETRIZER_H

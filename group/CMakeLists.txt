@@ -1,4 +1,4 @@
-add_library(groups
+add_library(group
         Group.h Group.cpp
         AlgebraicProperties.cpp
         )

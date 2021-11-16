@@ -11,7 +11,7 @@
 namespace {
 // TODO: It requires three allocation instead of two. Rewrite it.
 bool OperatorParametersMatchSymmetries(
-    const std::vector<Group>& applied_groups,
+    const std::vector<group::Group>& applied_groups,
     const arma::dmat& initial_parameters) {
     for (const auto& group : applied_groups) {
         for (const auto& element : group.elements_) {
@@ -58,7 +58,7 @@ void runner::Runner::NonAbelianSimplify() {
     space_history_.isNonAbelianSimplified = true;
 }
 
-void runner::Runner::Symmetrize(Group new_group) {
+void runner::Runner::Symmetrize(group::Group new_group) {
     // check if user trying to use the same Group for a second time:
     if (std::count(
             space_history_.applied_groups.begin(),
@@ -82,9 +82,9 @@ void runner::Runner::Symmetrize(Group new_group) {
 }
 
 void runner::Runner::Symmetrize(
-    Group::GroupTypeEnum group_name,
-    std::vector<Permutation> generators) {
-    Group new_group(group_name, std::move(generators));
+    group::Group::GroupTypeEnum group_name,
+    std::vector<group::Permutation> generators) {
+    group::Group new_group(group_name, std::move(generators));
     Symmetrize(new_group);
 }
 

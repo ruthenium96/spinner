@@ -9,4 +9,4 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/test/non_hamiltonian_operators_tests.cpp
         ${CMAKE_SOURCE_DIR}/test/hamiltonian_operator_tests.cpp)
 
-target_link_libraries(julytest gtest gtest_main groups components space common matrix)
+target_link_libraries(julytest gtest gtest_main group components space common matrix)

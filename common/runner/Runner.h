@@ -8,7 +8,7 @@
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
 #include "entities/spectrum/Spectrum.h"
-#include "groups/Group.h"
+#include "group/Group.h"
 
 namespace runner {
 class Runner {
@@ -18,8 +18,9 @@ class Runner {
     // SPACE OPERATIONS
     void NonAbelianSimplify();
 
-    void Symmetrize(Group new_group);
-    void Symmetrize(Group::GroupTypeEnum group_name, std::vector<Permutation> generators);
+    void Symmetrize(group::Group new_group);
+    void
+    Symmetrize(group::Group::GroupTypeEnum group_name, std::vector<group::Permutation> generators);
 
     void TzSort();
 
@@ -49,7 +50,7 @@ class Runner {
         bool has_isotropic_exchange_interactions = false;
     };
     struct SpaceHistory {
-        std::vector<Group> applied_groups;
+        std::vector<group::Group> applied_groups;
         uint32_t number_of_non_simplified_abelian_groups = 0;
         bool isTzSorted = false;
         bool isNormalized = false;  // actually true, if we do not use Symmetrizer
