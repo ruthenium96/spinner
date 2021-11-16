@@ -1,6 +1,6 @@
 #include "Spectrum.h"
 
-std::ostream &operator<<(std::ostream &os, const Spectrum &spectrum) {
+std::ostream& operator<<(std::ostream& os, const Spectrum& spectrum) {
     for (const Subspectrum& subspectrum : spectrum.blocks) {
         os << subspectrum;
     }
@@ -8,5 +8,4 @@ std::ostream &operator<<(std::ostream &os, const Spectrum &spectrum) {
     return os;
 }
 
-Spectrum::Spectrum(std::vector<Subspectrum> &&m) : blocks(std::move(m)) {
-}
+Spectrum::Spectrum(std::vector<Subspectrum>&& m) : blocks(std::move(m)) {}

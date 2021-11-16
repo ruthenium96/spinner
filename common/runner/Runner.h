@@ -52,7 +52,7 @@ class Runner {
         std::vector<Group> applied_groups;
         uint32_t number_of_non_simplified_abelian_groups = 0;
         bool isTzSorted = false;
-        bool isNormalized = false; // actually true, if we do not use Symmetrizer
+        bool isNormalized = false;  // actually true, if we do not use Symmetrizer
         bool isNonAbelianSimplified = false;
     };
 
@@ -72,6 +72,6 @@ class Runner {
     HamiltonianOperatorHistory hamiltonian_history_;
     SpaceHistory space_history_;
 };
-} // namespace runner
+}  // namespace runner
 
-#endif //JULY_RUNNER_H
+#endif  //JULY_RUNNER_H

@@ -1,30 +1,31 @@
-#include "UnitarySparseMatrix.h"
-
 #include <algorithm>
 #include <cmath>
 #include <map>
 #include <vector>
 
+#include "UnitarySparseMatrix.h"
+
 struct UnitarySparseMatrix::Impl {
     std::vector<std::map<uint32_t, double>> basis;
-public:
+
+  public:
     Impl() = default;
 };
 
-UnitarySparseMatrix::UnitarySparseMatrix() : pImpl{std::make_unique<Impl>()} {}
+UnitarySparseMatrix::UnitarySparseMatrix() : pImpl {std::make_unique<Impl>()} {}
 UnitarySparseMatrix::~UnitarySparseMatrix() = default;
 UnitarySparseMatrix::UnitarySparseMatrix(UnitarySparseMatrix&&) noexcept = default;
 UnitarySparseMatrix& UnitarySparseMatrix::operator=(UnitarySparseMatrix&&) noexcept = default;
 
-
-struct IteratorImpl : public UnitarySparseMatrix::Iterator {
-
+struct IteratorImpl: public UnitarySparseMatrix::Iterator {
     std::map<uint32_t, double>::iterator iter;
     const std::map<uint32_t, double>::iterator end;
 
-    IteratorImpl(std::map<uint32_t, double>::iterator iter1,
-                 std::map<uint32_t, double>::iterator iter2): iter(iter1), end(iter2){
-    }
+    IteratorImpl(
+        std::map<uint32_t, double>::iterator iter1,
+        std::map<uint32_t, double>::iterator iter2) :
+        iter(iter1),
+        end(iter2) {}
 
     [[nodiscard]] bool hasNext() const override {
         return iter != end;
@@ -39,13 +40,14 @@ struct IteratorImpl : public UnitarySparseMatrix::Iterator {
     ~IteratorImpl() = default;
 };
 
-
-std::unique_ptr<UnitarySparseMatrix::Iterator> UnitarySparseMatrix::GetNewIterator(size_t index_of_vector) const {
-    return std::make_unique<IteratorImpl>(pImpl->basis[index_of_vector].begin(), pImpl->basis[index_of_vector].end());
+std::unique_ptr<UnitarySparseMatrix::Iterator>
+UnitarySparseMatrix::GetNewIterator(size_t index_of_vector) const {
+    return std::make_unique<IteratorImpl>(
+        pImpl->basis[index_of_vector].begin(),
+        pImpl->basis[index_of_vector].end());
 }
 
-
-std::ostream &operator<<(std::ostream &os, const UnitarySparseMatrix &decomposition) {
+std::ostream& operator<<(std::ostream& os, const UnitarySparseMatrix& decomposition) {
     for (uint32_t i = 0; i < decomposition.size(); ++i) {
         for (const auto& p : decomposition.pImpl->basis[i]) {
             os << p.second << "*[" << p.first << "] ";

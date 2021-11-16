@@ -9,7 +9,8 @@ class DenseVector;
 
 class DenseMatrix {
     friend DenseVector;
-public:
+
+  public:
     void add_to_position(double value, uint32_t i, uint32_t j);
     void resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j);
     // TODO: is it possible to implement diagonalize() in the other place?
@@ -28,16 +29,17 @@ public:
     DenseMatrix& operator=(DenseMatrix&&) noexcept;
     ~DenseMatrix();
 
-    friend std::ostream &operator<<(std::ostream &os, const DenseMatrix &raw_data);
+    friend std::ostream& operator<<(std::ostream& os, const DenseMatrix& raw_data);
 
-private:
+  private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
 };
 
 class DenseVector {
     friend DenseMatrix;
-public:
+
+  public:
     DenseVector();
     DenseVector(const DenseVector&) = delete;
     DenseVector& operator=(const DenseVector&) = delete;
@@ -47,19 +49,18 @@ public:
 
     [[nodiscard]] uint32_t size() const;
 
-
-    friend std::ostream &operator<<(std::ostream &os, const DenseVector &raw_data);
+    friend std::ostream& operator<<(std::ostream& os, const DenseVector& raw_data);
 
     // TODO: it is a temporary solution, fix it
     friend std::vector<double> concatenate(const std::vector<DenseVector>&);
 
-    bool operator==(const DenseVector &rhs) const;
+    bool operator==(const DenseVector& rhs) const;
 
-    bool operator!=(const DenseVector &rhs) const;
+    bool operator!=(const DenseVector& rhs) const;
 
-private:
+  private:
     class SubspectrumDataImpl;
     std::unique_ptr<SubspectrumDataImpl> pImpl;
 };
 
-#endif //JULY_DENSEMATRIX_H
+#endif  //JULY_DENSEMATRIX_H

@@ -6,7 +6,7 @@
 #include <ostream>
 
 class UnitarySparseMatrix {
-public:
+  public:
     /*
      This Iterator iterates over vectors.
      I do not know any possibilities to pass
@@ -15,7 +15,7 @@ public:
      TODO: can we pass index_of_vector to range-base loop?
      */
     struct Iterator {
-        struct IndexValueItem{
+        struct IndexValueItem {
             uint32_t index;
             double value;
         };
@@ -31,7 +31,8 @@ public:
     UnitarySparseMatrix& operator=(UnitarySparseMatrix&&) noexcept;
     ~UnitarySparseMatrix();
 
-    [[nodiscard]] std::unique_ptr<UnitarySparseMatrix::Iterator> GetNewIterator(size_t index_of_vector) const;
+    [[nodiscard]] std::unique_ptr<UnitarySparseMatrix::Iterator>
+    GetNewIterator(size_t index_of_vector) const;
 
     /*
      Some implementations want to know the maximum size of vector.
@@ -59,14 +60,13 @@ public:
 
     void normalize();
 
-    bool is_equal_up_to_vector_order(const UnitarySparseMatrix& rhs) const;
+    [[nodiscard]] bool is_equal_up_to_vector_order(const UnitarySparseMatrix& rhs) const;
 
-    friend std::ostream &operator<<(std::ostream &os, const UnitarySparseMatrix &decomposition);
+    friend std::ostream& operator<<(std::ostream& os, const UnitarySparseMatrix& decomposition);
 
-private:
+  private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
 };
 
-
-#endif //JULY_UNITARYSPARSEMATRIX_H
+#endif  //JULY_UNITARYSPARSEMATRIX_H

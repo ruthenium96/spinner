@@ -1,16 +1,16 @@
 #ifndef JULY_SPARSEMATRIX_H
 #define JULY_SPARSEMATRIX_H
 
-#include "IndexConverter.h"
-
 #include <cstdint>
 #include <memory>
 #include <ostream>
 
+#include "IndexConverter.h"
+
 namespace lexicographic {
 
 class SparseMatrix {
-public:
+  public:
     explicit SparseMatrix(lexicographic::IndexConverter converter);
     SparseMatrix(const SparseMatrix&) = delete;
     SparseMatrix& operator=(const SparseMatrix&) = delete;
@@ -25,19 +25,27 @@ public:
 
     void resize(uint32_t new_size);
 
-    void add_scalar_product(uint32_t index_of_vector, uint32_t center_a, uint32_t center_b, double factor);
+    void add_scalar_product(
+        uint32_t index_of_vector,
+        uint32_t center_a,
+        uint32_t center_b,
+        double factor);
 
-    friend std::ostream &operator<<(std::ostream &os, const SparseMatrix &data);
+    friend std::ostream& operator<<(std::ostream& os, const SparseMatrix& data);
 
-private:
+  private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
     lexicographic::IndexConverter converter_;
 
-    void add_scalar_product_nondiagonal_part(uint32_t index_of_vector, uint32_t plus_center, uint32_t minus_center,
-                                             uint32_t projection_of_plus_center, uint32_t projection_of_minus_center,
-                                             double factor);
+    void add_scalar_product_nondiagonal_part(
+        uint32_t index_of_vector,
+        uint32_t plus_center,
+        uint32_t minus_center,
+        uint32_t projection_of_plus_center,
+        uint32_t projection_of_minus_center,
+        double factor);
 };
-}
+}  // namespace lexicographic
 
-#endif //JULY_SPARSEMATRIX_H
+#endif  // JULY_SPARSEMATRIX_H

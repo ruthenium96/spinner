@@ -1,4 +1,5 @@
 #include "Runner.h"
+
 #include "components/matrix/MatrixBuilder.h"
 #include "components/operator/ConstantOperator.h"
 #include "components/operator/ScalarProduct.h"
@@ -8,40 +9,48 @@
 #include "components/spectrum/SpectrumBuilder.h"
 
 namespace {
-    // TODO: It requires three allocation instead of two. Rewrite it.
-    bool OperatorParametersMatchSymmetries(const std::vector<Group>& applied_groups, const arma::dmat& initial_parameters) {
-        for (const auto& group : applied_groups) {
-            for (const auto& element : group.elements_) {
-                arma::dmat parameters_rows_swaped;
-                parameters_rows_swaped.resize(arma::size(initial_parameters));
-                for (size_t i = 0; i < element.size(); ++i) {
-                    parameters_rows_swaped.row(i) = initial_parameters.row(element[i]);
-                }
-                arma::dmat parameters_all_swaped;
-                parameters_all_swaped.resize(arma::size(initial_parameters));
-                for (size_t i = 0; i < element.size(); ++i) {
-                    parameters_all_swaped.col(i) = parameters_rows_swaped.col(element[i]);
-                }
-                // TODO: EPSILON
-                if (!arma::approx_equal(parameters_all_swaped, initial_parameters, "absdiff", 0.0000001)) {
-                    return false;
-                }
+// TODO: It requires three allocation instead of two. Rewrite it.
+bool OperatorParametersMatchSymmetries(
+    const std::vector<Group>& applied_groups,
+    const arma::dmat& initial_parameters) {
+    for (const auto& group : applied_groups) {
+        for (const auto& element : group.elements_) {
+            arma::dmat parameters_rows_swaped;
+            parameters_rows_swaped.resize(arma::size(initial_parameters));
+            for (size_t i = 0; i < element.size(); ++i) {
+                parameters_rows_swaped.row(i) = initial_parameters.row(element[i]);
+            }
+            arma::dmat parameters_all_swaped;
+            parameters_all_swaped.resize(arma::size(initial_parameters));
+            for (size_t i = 0; i < element.size(); ++i) {
+                parameters_all_swaped.col(i) = parameters_rows_swaped.col(element[i]);
+            }
+            // TODO: EPSILON
+            if (!arma::approx_equal(
+                    parameters_all_swaped,
+                    initial_parameters,
+                    "absdiff",
+                    0.0000001)) {
+                return false;
             }
         }
-        return true;
     }
+    return true;
 }
+}  // namespace
 
-runner::Runner::Runner(std::vector<int> mults) : converter_(std::move(mults)), space_(converter_.total_space_size)
-{}
+runner::Runner::Runner(std::vector<int> mults) :
+    converter_(std::move(mults)),
+    space_(converter_.total_space_size) {}
 
 void runner::Runner::NonAbelianSimplify() {
     if (space_history_.number_of_non_simplified_abelian_groups == 0) {
         return;
     }
     if (space_history_.number_of_non_simplified_abelian_groups != 1) {
-        throw std::invalid_argument("Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
-                                    "currently is not allowed.");
+        throw std::invalid_argument(
+            "Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
+            "currently is not allowed.");
     }
     NonAbelianSimplifier nonAbelianSimplifier;
     space_ = nonAbelianSimplifier.apply(std::move(space_));
@@ -51,12 +60,16 @@ void runner::Runner::NonAbelianSimplify() {
 
 void runner::Runner::Symmetrize(Group new_group) {
     // check if user trying to use the same Group for a second time:
-    if (std::count(space_history_.applied_groups.begin(), space_history_.applied_groups.end(), new_group)) {
+    if (std::count(
+            space_history_.applied_groups.begin(),
+            space_history_.applied_groups.end(),
+            new_group)) {
         return;
     }
     // TODO: symmetrizer does not work correct after non-Abelian simplifier. Fix it.
     if (space_history_.isNonAbelianSimplified && !new_group.properties.is_abelian) {
-        throw std::invalid_argument("Symmetrization after using of non-Abelian simplifier causes bugs.");
+        throw std::invalid_argument(
+            "Symmetrization after using of non-Abelian simplifier causes bugs.");
     }
 
     Symmetrizer symmetrizer(converter_, new_group);
@@ -68,7 +81,9 @@ void runner::Runner::Symmetrize(Group new_group) {
     space_history_.applied_groups.emplace_back(std::move(new_group));
 }
 
-void runner::Runner::Symmetrize(Group::GroupTypeEnum group_name, std::vector<Permutation> generators) {
+void runner::Runner::Symmetrize(
+    Group::GroupTypeEnum group_name,
+    std::vector<Permutation> generators) {
     Group new_group(group_name, std::move(generators));
     Symmetrize(new_group);
 }
@@ -83,7 +98,7 @@ void runner::Runner::TzSort() {
     space_history_.isTzSorted = true;
 }
 
-const Space &runner::Runner::getSpace() const {
+const Space& runner::Runner::getSpace() const {
     return space_;
 }
 
@@ -101,17 +116,18 @@ void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_paramete
         operators_[common::QuantityEnum::Energy] = Operator();
     }
 
-    operators_.at(common::QuantityEnum::Energy).two_center_terms
-    .emplace_back(std::make_unique<const ScalarProduct>(std::move(isotropic_exchange_parameters)));
+    operators_.at(common::QuantityEnum::Energy)
+        .two_center_terms.emplace_back(
+            std::make_unique<const ScalarProduct>(std::move(isotropic_exchange_parameters)));
 
     hamiltonian_history_.has_isotropic_exchange_interactions = true;
 }
 
 void runner::Runner::BuildMatrices() {
-
     for (const auto& ptr_to_term : operators_.at(common::QuantityEnum::Energy).two_center_terms) {
-        if (!OperatorParametersMatchSymmetries(space_history_.applied_groups,
-                                               ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
+        if (!OperatorParametersMatchSymmetries(
+                space_history_.applied_groups,
+                ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
             // TODO: should we rename this exception?
             throw std::invalid_argument("Operator parameters does not match applied symmetries");
         }
@@ -141,12 +157,13 @@ void runner::Runner::InitializeSSquared() {
     for (double spin : converter_.get_spins()) {
         sum_of_s_squared += spin * (spin + 1);
     }
-    s_squared_operator_.zero_center_terms.emplace_back(std::make_unique<const ConstantOperator>(sum_of_s_squared));
-    s_squared_operator_.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
+    s_squared_operator_.zero_center_terms.emplace_back(
+        std::make_unique<const ConstantOperator>(sum_of_s_squared));
+    s_squared_operator_.two_center_terms.emplace_back(
+        std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
 
     operators_[common::QuantityEnum::S_total_squared] = std::move(s_squared_operator_);
 }
-
 
 void runner::Runner::BuildSpectra() {
     if (matrix_history_.matrices_was_built) {
@@ -169,23 +186,20 @@ void runner::Runner::BuildSpectraUsingMatrices() {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         spectra_.at(common::QuantityEnum::Energy).blocks[block] =
-                spectrumBuilder.apply_to_subentity_energy(
-                        matrices_.at(common::QuantityEnum::Energy).blocks[block],
-                        unitary_transformation_matrix
-                );
+            spectrumBuilder.apply_to_subentity_energy(
+                matrices_.at(common::QuantityEnum::Energy).blocks[block],
+                unitary_transformation_matrix);
 
         for (const auto& pair : matrices_) {
             if (pair.first != common::QuantityEnum::Energy) {
                 spectra_.at(pair.first).blocks[block] =
-                        spectrumBuilder.apply_to_subentity_non_energy(
-                                pair.second.blocks[block],
-                                unitary_transformation_matrix
-                                );
+                    spectrumBuilder.apply_to_subentity_non_energy(
+                        pair.second.blocks[block],
+                        unitary_transformation_matrix);
             }
         }
     }
 }
-
 
 void runner::Runner::BuildSpectraWithoutMatrices() {
     MatrixBuilder matrixBuilder(converter_);
@@ -208,41 +222,41 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
 
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
-
         {
-            Submatrix hamiltonian_submatrix = matrixBuilder
-                    .apply_to_subentity(space_.blocks[block],
-                                        operators_.at(common::QuantityEnum::Energy));
+            Submatrix hamiltonian_submatrix = matrixBuilder.apply_to_subentity(
+                space_.blocks[block],
+                operators_.at(common::QuantityEnum::Energy));
             spectra_.at(common::QuantityEnum::Energy).blocks[block] =
-                    spectrumBuilder.apply_to_subentity_energy(hamiltonian_submatrix,
-                                                              unitary_transformation_matrix);
+                spectrumBuilder.apply_to_subentity_energy(
+                    hamiltonian_submatrix,
+                    unitary_transformation_matrix);
         }
 
         for (const auto& pair : operators_) {
             if (pair.first != common::QuantityEnum::Energy) {
                 Submatrix non_hamiltonian_submatrix =
-                        matrixBuilder.apply_to_subentity(space_.blocks[block],
-                                                         pair.second);
+                    matrixBuilder.apply_to_subentity(space_.blocks[block], pair.second);
                 spectra_.at(pair.first).blocks[block] =
-                        spectrumBuilder.apply_to_subentity_non_energy(non_hamiltonian_submatrix,
-                                                                      unitary_transformation_matrix);
+                    spectrumBuilder.apply_to_subentity_non_energy(
+                        non_hamiltonian_submatrix,
+                        unitary_transformation_matrix);
             }
         }
     }
 }
 
-const Matrix &runner::Runner::getMatrix(common::QuantityEnum quantity_enum) const {
+const Matrix& runner::Runner::getMatrix(common::QuantityEnum quantity_enum) const {
     return matrices_.at(quantity_enum);
 }
 
-const Spectrum &runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
+const Spectrum& runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
     return spectra_.at(quantity_enum);
 }
 
-const Operator &runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
+const Operator& runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
     return operators_.at(quantity_enum);
 }
 
-const lexicographic::IndexConverter &runner::Runner::getIndexConverter() const {
+const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
     return converter_;
 }

@@ -1,6 +1,6 @@
 #include "Matrix.h"
 
-std::ostream &operator<<(std::ostream &os, const Matrix &matrix) {
+std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
     for (const Submatrix& submatrix : matrix.blocks) {
         os << submatrix;
     }
@@ -8,5 +8,4 @@ std::ostream &operator<<(std::ostream &os, const Matrix &matrix) {
     return os;
 }
 
-Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {
-}
+Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {}

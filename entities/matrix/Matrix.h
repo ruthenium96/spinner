@@ -1,11 +1,10 @@
 #ifndef JULY_MATRIX_H
 #define JULY_MATRIX_H
 
-#include "Submatrix.h"
-
 #include <iostream>
 #include <vector>
 
+#include "Submatrix.h"
 
 struct Matrix {
     Matrix() = default;
@@ -14,7 +13,6 @@ struct Matrix {
     explicit Matrix(std::vector<Submatrix>&& m);
 };
 
-std::ostream &operator<<(std::ostream &os, const Matrix &matrix);
+std::ostream& operator<<(std::ostream& os, const Matrix& matrix);
 
-
-#endif //JULY_MATRIX_H
+#endif  //JULY_MATRIX_H

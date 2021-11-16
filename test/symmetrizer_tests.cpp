@@ -1,6 +1,6 @@
-#include "gtest/gtest.h"
-#include "common/runner/Runner.h"
 #include "common/Logger.h"
+#include "common/runner/Runner.h"
+#include "gtest/gtest.h"
 
 size_t number_of_vectors(const Space& space) {
     size_t acc = 0;
@@ -15,8 +15,11 @@ bool orthogonality_of_basis(const Space& space) {
     for (const auto& subspace : space.blocks) {
         unitary_matrix.copy_all_from(subspace.decomposition);
     }
-    for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix.size(); ++index_of_vector_i) {
-        for (size_t index_of_vector_j = index_of_vector_i + 1; index_of_vector_j < unitary_matrix.size(); ++index_of_vector_j) {
+    for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix.size();
+         ++index_of_vector_i) {
+        for (size_t index_of_vector_j = index_of_vector_i + 1;
+             index_of_vector_j < unitary_matrix.size();
+             ++index_of_vector_j) {
             double accumulator = 0;
             auto iterator = unitary_matrix.GetNewIterator(index_of_vector_i);
             while (iterator->hasNext()) {
@@ -53,8 +56,7 @@ TEST(symmetrizer, 4444_S2) {
     runner::Runner runner(mults);
     runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 4444_doubleS2) {
@@ -64,8 +66,7 @@ TEST(symmetrizer, 4444_doubleS2) {
     runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
     runner.Symmetrize(Group::S2, {{1, 0, 3, 2}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333_S3) {
@@ -74,8 +75,7 @@ TEST(symmetrizer, 333_S3) {
     runner::Runner runner(mults);
     runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333_doubleS3) {
@@ -85,8 +85,7 @@ TEST(symmetrizer, 333_doubleS3) {
     runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
     runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333_doubleS3_tricky) {
@@ -96,8 +95,7 @@ TEST(symmetrizer, 333_doubleS3_tricky) {
     runner.Symmetrize(Group::S3, {{1, 2, 0}, {0, 2, 1}});
     runner.Symmetrize(Group::S3, {{2, 0, 1}, {1, 0, 2}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333333_S3) {
@@ -106,8 +104,7 @@ TEST(symmetrizer, 333333_S3) {
     runner::Runner runner(mults);
     runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333333_S3xS2) {
@@ -118,8 +115,7 @@ TEST(symmetrizer, 333333_S3xS2) {
     runner.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
 
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333333_S2xS3) {
@@ -130,8 +126,7 @@ TEST(symmetrizer, 333333_S2xS3) {
     runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
 
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333333_S2xS3_S3xS2_direct_product_commutativity) {
@@ -147,14 +142,16 @@ TEST(symmetrizer, 333333_S2xS3_S3xS2_direct_product_commutativity) {
 
     for (const auto& subspace_first : runner_first.getSpace().blocks) {
         for (const auto& subspace_second : runner_second.getSpace().blocks) {
-            if (subspace_first.properties.representation[0] == subspace_second.properties.representation[1] &&
-            subspace_first.properties.representation[1] == subspace_second.properties.representation[0]) {
-                EXPECT_TRUE(subspace_first.decomposition.is_equal_up_to_vector_order(subspace_second.decomposition));
+            if (subspace_first.properties.representation[0]
+                    == subspace_second.properties.representation[1]
+                && subspace_first.properties.representation[1]
+                    == subspace_second.properties.representation[0]) {
+                EXPECT_TRUE(subspace_first.decomposition.is_equal_up_to_vector_order(
+                    subspace_second.decomposition));
             }
         }
     }
 }
-
 
 TEST(symmetrizer, 222222222_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
@@ -163,8 +160,7 @@ TEST(symmetrizer, 222222222_S3xS3) {
     runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }
 
 TEST(symmetrizer, 333333333_S3xS3) {
@@ -174,6 +170,5 @@ TEST(symmetrizer, 333333333_S3xS3) {
     runner.Symmetrize(Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
     runner.Symmetrize(Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     EXPECT_EQ(runner.getTotalSpaceSize(), number_of_vectors(runner.getSpace()));
-    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace()))
-    << "Vectors are not orthogonal";
+    EXPECT_TRUE(orthogonality_of_basis(runner.getSpace())) << "Vectors are not orthogonal";
 }

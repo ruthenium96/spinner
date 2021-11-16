@@ -1,4 +1,5 @@
 #include "Group.h"
+// clang-format off
 
 /*
  It is symmetric group of order two. It has two group elements, two representations.
@@ -39,3 +40,5 @@ const Group::AlgebraicProperties GroupInfoS3 = {6,
                                                  {0,  0,  0,  2, -1, -1},
                                                  {0,  0,  0,  0,  1, -1}}}  // "e" representation
 };
+
+// clang-format on

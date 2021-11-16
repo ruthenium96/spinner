@@ -8,8 +8,7 @@ struct Submatrix {
     BlockProperties properties;
     DenseMatrix raw_data;
 
-    friend std::ostream &operator<<(std::ostream &os, const Submatrix &submatrix);
+    friend std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 };
 
-
-#endif //JULY_SUBMATRIX_H
+#endif  //JULY_SUBMATRIX_H

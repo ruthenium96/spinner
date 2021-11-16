@@ -14,7 +14,8 @@ Space TzSorter::apply(Space&& space) const {
             BlockProperties block_properties = subspace_parent.properties;
             block_properties.n_proj = ntz_proj;
             vector_result[(max_ntz_proj + 1) * i + ntz_proj].properties = block_properties;
-            vector_result[(max_ntz_proj + 1) * i + ntz_proj].decomposition.tensor_size = subspace_parent.decomposition.tensor_size;
+            vector_result[(max_ntz_proj + 1) * i + ntz_proj].decomposition.tensor_size =
+                subspace_parent.decomposition.tensor_size;
         }
 
         for (uint32_t l = 0; l < subspace_parent.decomposition.size(); ++l) {
@@ -36,7 +37,8 @@ Space TzSorter::apply(Space&& space) const {
 TzSorter::TzSorter(lexicographic::IndexConverter indexes) : converter_(std::move(indexes)) {
     // We want to get 2T + 1 (projections are counted from zero to multiplicity),
     // where T = sum_{1}^{N} S_i. So 2T + 1 = sum_{1}^{N} (2S_i + 1) - N + 1.
-    max_ntz_proj = std::accumulate(converter_.get_mults().begin(),
-                                   converter_.get_mults().end(),
-                                   1 - converter_.get_mults().size());
+    max_ntz_proj = std::accumulate(
+        converter_.get_mults().begin(),
+        converter_.get_mults().end(),
+        1 - converter_.get_mults().size());
 }

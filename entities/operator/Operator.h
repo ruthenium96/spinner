@@ -12,5 +12,4 @@ struct Operator {
     std::vector<std::unique_ptr<const TwoCenterTerm>> two_center_terms;
 };
 
-
-#endif //JULY_OPERATOR_H
+#endif  //JULY_OPERATOR_H

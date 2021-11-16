@@ -1,16 +1,20 @@
 #include "Group.h"
+
 #include <algorithm>
 #include <numeric>
 #include <stdexcept>
 
 namespace {
 
-bool NumberOfGeneratorsConsistent(std::vector<Permutation> const& generators,
-                             Group::AlgebraicProperties const& info) {
+bool NumberOfGeneratorsConsistent(
+    std::vector<Permutation> const& generators,
+    Group::AlgebraicProperties const& info) {
     return generators.size() == info.number_of_generators;
 }
 
-bool SizesAreEqual(std::vector<Permutation> const& generators, Group::AlgebraicProperties const& info) {
+bool SizesAreEqual(
+    std::vector<Permutation> const& generators,
+    Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         if (generators[0].size() != generators[i].size()) {
             return false;
@@ -19,7 +23,9 @@ bool SizesAreEqual(std::vector<Permutation> const& generators, Group::AlgebraicP
     return true;
 }
 
-bool GeneratorIsValid(std::vector<Permutation> const& generators, Group::AlgebraicProperties const& info) {
+bool GeneratorIsValid(
+    std::vector<Permutation> const& generators,
+    Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         Permutation generator_sorted = generators[i];
         std::sort(generator_sorted.begin(), generator_sorted.end());
@@ -44,8 +50,9 @@ Permutation ElementInPower(const Permutation& element, size_t power) {
     return result;
 }
 
-bool ElementsInPowerOfItsOrderIsIdentity(const std::vector<Permutation>& elements,
-                                         const std::vector<size_t>& order_of_elements) {
+bool ElementsInPowerOfItsOrderIsIdentity(
+    const std::vector<Permutation>& elements,
+    const std::vector<size_t>& order_of_elements) {
     Permutation identity(elements[0].size());
     for (size_t i = 0; i < elements[0].size(); ++i) {
         identity[i] = i;
@@ -58,11 +65,11 @@ bool ElementsInPowerOfItsOrderIsIdentity(const std::vector<Permutation>& element
     return true;
 }
 
-} // namespace
+}  // namespace
 
-Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> generators)
-    : generators_(std::move(generators)), properties(Group::return_group_info_by_group_name(group_name)) {
-
+Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> generators) :
+    generators_(std::move(generators)),
+    properties(Group::return_group_info_by_group_name(group_name)) {
     if (!NumberOfGeneratorsConsistent(generators_, properties)) {
         throw std::length_error(
             "The number of generators does not equal to the number of group number_of_generators.");
@@ -138,7 +145,8 @@ bool Group::operator!=(const Group& rhs) const {
     return !(rhs == *this);
 }
 
-const Group::AlgebraicProperties &Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
+const Group::AlgebraicProperties&
+Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
     if (group_name == S2) {
         return GroupInfoS2;
     }

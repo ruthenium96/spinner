@@ -1,6 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include <mutex>
+
 #include "entities/space/Space.h"
 extern std::mutex logMutex;
 // clang-format off

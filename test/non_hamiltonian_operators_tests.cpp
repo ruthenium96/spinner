@@ -1,12 +1,10 @@
-#include "gtest/gtest.h"
-#include "common/runner/Runner.h"
-#include "components/matrix/MatrixBuilder.h"
-
 #include <deque>
 
+#include "common/runner/Runner.h"
+#include "components/matrix/MatrixBuilder.h"
+#include "gtest/gtest.h"
 
 std::deque<int> spin_addition(const std::vector<int>& mults) {
-
     std::deque<int> total_multiplicities;
 
     total_multiplicities.push_back(1);
@@ -15,7 +13,9 @@ std::deque<int> spin_addition(const std::vector<int>& mults) {
         size_t old_size = total_multiplicities.size();
         for (size_t i = 0; i < old_size; ++i) {
             int current_multiplicity = total_multiplicities.front();
-            for (int new_multiplicity = std::abs(current_multiplicity - mult_of_center) + 1; new_multiplicity < current_multiplicity + mult_of_center; new_multiplicity += 2) {
+            for (int new_multiplicity = std::abs(current_multiplicity - mult_of_center) + 1;
+                 new_multiplicity < current_multiplicity + mult_of_center;
+                 new_multiplicity += 2) {
                 total_multiplicities.push_back(new_multiplicity);
             }
             total_multiplicities.pop_front();
@@ -66,12 +66,11 @@ TEST(spin_addition, 44) {
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
-TEST(initialize_s_squared, eigenvalues_of_s_squared_matrix_correspond_to_spin_addition_1_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults = {{1},
-                                                     {2, 2},
-                                                     {3, 3, 3},
-                                                     {4, 4, 4, 4},
-                                                     {2, 3, 4, 5, 6}};
+TEST(
+    initialize_s_squared,
+    eigenvalues_of_s_squared_matrix_correspond_to_spin_addition_1_22_333_4444_23456) {
+    std::vector<std::vector<int>> vector_of_mults =
+        {{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
@@ -80,7 +79,9 @@ TEST(initialize_s_squared, eigenvalues_of_s_squared_matrix_correspond_to_spin_ad
         runner.InitializeSSquared();
 
         MatrixBuilder matrix_builder(runner.getIndexConverter());
-        Matrix s_squared_matrix = matrix_builder.apply(runner.getSpace(), runner.getOperator(common::QuantityEnum::S_total_squared));
+        Matrix s_squared_matrix = matrix_builder.apply(
+            runner.getSpace(),
+            runner.getOperator(common::QuantityEnum::S_total_squared));
 
         std::vector<DenseVector> s_squared_values(s_squared_matrix.blocks.size());
         for (size_t i = 0; i < s_squared_values.size(); ++i) {
@@ -90,10 +91,12 @@ TEST(initialize_s_squared, eigenvalues_of_s_squared_matrix_correspond_to_spin_ad
 
         std::vector<int> total_multiplicities(s_squared_vector.size());
         for (size_t i = 0; i < total_multiplicities.size(); ++i) {
-            total_multiplicities[i] = (int) round(sqrt(1 + 4 * s_squared_vector[i]));
+            total_multiplicities[i] = (int)round(sqrt(1 + 4 * s_squared_vector[i]));
         }
         std::sort(total_multiplicities.begin(), total_multiplicities.end());
 
-        EXPECT_EQ(total_multiplicities, duplicate_multiplicity_multiplicity_times(spin_addition(mults)));
+        EXPECT_EQ(
+            total_multiplicities,
+            duplicate_multiplicity_multiplicity_times(spin_addition(mults)));
     }
 }

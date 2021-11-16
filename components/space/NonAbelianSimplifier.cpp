@@ -1,6 +1,6 @@
 #include "NonAbelianSimplifier.h"
 
-Space NonAbelianSimplifier::apply(Space &&space) const {
+Space NonAbelianSimplifier::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size());
 

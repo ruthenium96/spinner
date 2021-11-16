@@ -4,9 +4,8 @@
 #include "entities/space/Space.h"
 
 class NonAbelianSimplifier {
-public:
+  public:
     Space apply(Space&& space) const;
 };
 
-
-#endif //JULY_NON_ABELIAN_SIMPLIFIER_H
+#endif  //JULY_NON_ABELIAN_SIMPLIFIER_H
