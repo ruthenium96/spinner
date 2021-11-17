@@ -12,7 +12,10 @@ class DenseMatrix {
 
   public:
     void add_to_position(double value, uint32_t i, uint32_t j);
+    void assign_to_position(double value, uint32_t i, uint32_t j);
     void resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j);
+    void
+    resize_with_nans(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j);
     // TODO: is it possible to implement diagonalize() in the other place?
     void diagonalize(DenseVector& values, DenseMatrix& vectors) const;
     void diagonalize(DenseVector& values) const;
@@ -20,6 +23,8 @@ class DenseMatrix {
     [[nodiscard]] DenseMatrix unitary_transform(const DenseMatrix& matrix_to_transform) const;
 
     [[nodiscard]] uint32_t size() const;
+    [[nodiscard]] uint32_t size_rows() const;
+    [[nodiscard]] uint32_t size_cols() const;
     double operator()(uint32_t i, uint32_t j) const;
 
     DenseMatrix();

@@ -31,6 +31,10 @@ void DenseMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     pImpl->RawData(i, j) += value;
 }
 
+void DenseMatrix::assign_to_position(double value, uint32_t i, uint32_t j) {
+    pImpl->RawData(i, j) = value;
+}
+
 std::ostream& operator<<(std::ostream& os, const DenseMatrix& decomposition) {
     os << decomposition.pImpl->RawData << std::endl;
     return os;
@@ -47,6 +51,19 @@ void DenseMatrix::resize(
     // TODO: is it the fastest way to initialize pImpl->RawData?
     pImpl->RawData.resize(matrix_in_space_basis_size_i, matrix_in_space_basis_size_j);
     pImpl->RawData.fill(arma::fill::zeros);
+}
+
+void DenseMatrix::resize_with_nans(
+    uint32_t matrix_in_space_basis_size_i,
+    uint32_t matrix_in_space_basis_size_j) {
+    // TODO: is it the fastest way to initialize pImpl->RawData?
+    pImpl->RawData.resize(matrix_in_space_basis_size_i, matrix_in_space_basis_size_j);
+    pImpl->RawData.fill(arma::datum::nan);
+    //    for (size_t i = 0; i < pImpl->RawData.n_rows; ++i) {
+    //        for (size_t j = 0; j < pImpl->RawData.n_rows; ++j) {
+    //            pImpl->RawData(i, j) = NAN;
+    //        }
+    //    }
 }
 
 void DenseMatrix::diagonalize(DenseVector& values, DenseMatrix& vectors) const {
@@ -75,6 +92,14 @@ double DenseMatrix::operator()(uint32_t i, uint32_t j) const {
 }
 
 uint32_t DenseMatrix::size() const {
+    return pImpl->RawData.n_rows;
+}
+
+uint32_t DenseMatrix::size_rows() const {
+    return pImpl->RawData.n_rows;
+}
+
+uint32_t DenseMatrix::size_cols() const {
     return pImpl->RawData.n_rows;
 }
 
