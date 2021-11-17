@@ -18,7 +18,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
         for (int constant = 0; constant < 100; constant += 11) {
             // Construct Operator
             Operator operator_;
-            operator_.zero_center_terms.emplace_back(new ConstantOperator(constant));
+            operator_.zero_center_terms.emplace_back(std::make_unique<ConstantOperator>(constant));
 
             // Build Matrix
             MatrixBuilder matrixBuilder(converter);
@@ -42,12 +42,9 @@ TEST(constant_operator, 2222_333_2345_44444) {
 
 TEST(scalar_product, one_center_1_2_3_4_5_6) {
     // Construct matrix of interaction parameters
-    arma::dmat js(1, 1);
-    for (size_t i = 0; i < 1; ++i) {
-        for (size_t j = 0; j < 1; ++j) {
-            js(i, j) = NAN;
-        }
-    }
+    DenseMatrix js;
+    js.resize_with_nans(1, 1);
+    auto ptr_to_js = std::make_shared<const DenseMatrix>(std::move(js));
 
     std::vector<std::vector<int>> vector_of_mults = {{1}, {2}, {3}, {4}, {5}, {6}};
     for (const auto& mults : vector_of_mults) {
@@ -59,7 +56,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
 
         // Construct Operator
         Operator operator_;
-        operator_.two_center_terms.emplace_back(new ScalarProduct(js));
+        operator_.two_center_terms.emplace_back(std::make_unique<ScalarProduct>(ptr_to_js));
 
         // Build Matrix
         MatrixBuilder matrixBuilder(converter);
@@ -90,15 +87,11 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         {2, 3, 4, 5, 6}};
     for (const auto& mults : vector_of_mults) {
         // Construct matrix of interaction parameters
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
+        DenseMatrix js;
+        js.resize_with_nans(mults.size(), mults.size());
+        js.assign_to_position(J, 0, 1);
+        auto ptr_to_js = std::make_shared<const DenseMatrix>(std::move(js));
 
         // Construct Converter
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
@@ -108,7 +101,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
 
         // Construct Operator
         Operator operator_;
-        operator_.two_center_terms.emplace_back(new ScalarProduct(js));
+        operator_.two_center_terms.emplace_back(std::make_unique<ScalarProduct>(ptr_to_js));
 
         // Build Matrix
         MatrixBuilder matrixBuilder(converter);

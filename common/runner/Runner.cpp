@@ -39,8 +39,9 @@ bool OperatorParametersMatchSymmetries(
 }
 }  // namespace
 
-runner::Runner::Runner(std::vector<int> mults) :
-    converter_(std::move(mults)),
+runner::Runner::Runner(const std::vector<int>& mults) :
+    symbols_(mults.size()),
+    converter_(mults),
     space_(converter_.total_space_size) {}
 
 void runner::Runner::NonAbelianSimplify() {
@@ -106,32 +107,32 @@ uint32_t runner::Runner::getTotalSpaceSize() const {
     return converter_.total_space_size;
 }
 
-void runner::Runner::AddIsotropicExchange(arma::dmat isotropic_exchange_parameters) {
-    if (hamiltonian_history_.has_isotropic_exchange_interactions) {
-        throw std::invalid_argument("Trying to add isotropic exchange twice");
+void runner::Runner::AddIsotropicExchange(double value, size_t center_a, size_t center_b) {
+    if (hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
+        throw std::invalid_argument("Adding parameters after initialization");
     }
 
-    // TODO: Should we move it to constructor?
-    if (operators_.count(common::QuantityEnum::Energy) == 0) {
-        operators_[common::QuantityEnum::Energy] = Operator();
+    symbols_.addIsotropicExchange(value, center_a, center_b);
+}
+
+void runner::Runner::AddIsotropicExchangeMatrix(DenseMatrix isotropic_exchange_parameters) {
+    if (hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
+        throw std::invalid_argument("Adding parameters after initialization");
     }
 
-    operators_.at(common::QuantityEnum::Energy)
-        .two_center_terms.emplace_back(
-            std::make_unique<const ScalarProduct>(std::move(isotropic_exchange_parameters)));
-
-    hamiltonian_history_.has_isotropic_exchange_interactions = true;
+    symbols_.addIsotropicExchangeMatrix(std::move(isotropic_exchange_parameters));
 }
 
 void runner::Runner::BuildMatrices() {
-    for (const auto& ptr_to_term : operators_.at(common::QuantityEnum::Energy).two_center_terms) {
-        if (!OperatorParametersMatchSymmetries(
-                space_history_.applied_groups,
-                ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
-            // TODO: should we rename this exception?
-            throw std::invalid_argument("Operator parameters does not match applied symmetries");
-        }
-    }
+    // TODO: fix it
+    //    for (const auto& ptr_to_term : operators_.at(common::QuantityEnum::Energy).two_center_terms) {
+    //        if (!OperatorParametersMatchSymmetries(
+    //                space_history_.applied_groups,
+    //                ptr_to_term->get_parameters().replace(arma::datum::nan, 0))) {
+    //            // TODO: should we rename this exception?
+    //            throw std::invalid_argument("Operator parameters does not match applied symmetries");
+    //        }
+    //    }
 
     if (!space_history_.isNormalized) {
         for (auto& subspace : space_.blocks) {
@@ -163,6 +164,19 @@ void runner::Runner::InitializeSSquared() {
         std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
 
     operators_[common::QuantityEnum::S_total_squared] = std::move(s_squared_operator_);
+}
+
+void runner::Runner::FinalizeIsotropicInteraction() {
+    // TODO: Should we move it to constructor?
+    if (operators_.count(common::QuantityEnum::Energy) == 0) {
+        operators_[common::QuantityEnum::Energy] = Operator();
+    }
+
+    operators_.at(common::QuantityEnum::Energy)
+        .two_center_terms.emplace_back(
+            std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
+
+    hamiltonian_history_.has_isotropic_exchange_interactions_initialized = true;
 }
 
 void runner::Runner::BuildSpectra() {

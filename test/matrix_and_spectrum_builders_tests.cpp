@@ -50,25 +50,12 @@ TEST(matrix_and_spectrum_bulders, throw_2222_inconsistent_symmetry) {
     runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
     runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-    arma::dmat js(mults.size(), mults.size());
-    for (size_t i = 0; i < mults.size(); ++i) {
-        for (size_t j = 0; j < mults.size(); ++j) {
-            js(i, j) = NAN;
-        }
-    }
-    // 0 - 2
-    // 3 - 1
     double J = 10;
-    js(0, 1) = 3 * J;
-    js(1, 0) = 3 * J;
-    js(1, 2) = J;
-    js(2, 1) = J;
-    js(2, 3) = 2 * J;
-    js(3, 2) = 2 * J;
-    js(3, 0) = J;
-    js(0, 3) = J;
-
-    runner.AddIsotropicExchange(js);
+    runner.AddIsotropicExchange(3 * J, 0, 1);
+    runner.AddIsotropicExchange(J, 1, 2);
+    runner.AddIsotropicExchange(2 * J, 2, 3);
+    runner.AddIsotropicExchange(J, 3, 0);
+    runner.FinalizeIsotropicInteraction();
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
@@ -80,17 +67,9 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -139,17 +118,9 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456_tzsort) {
 
         runner.TzSort();
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -198,23 +169,12 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_S2_S2_symmetri
         runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
         runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 3) = J;
-        js(3, 2) = J;
-        js(3, 0) = J;
-        js(0, 3) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddIsotropicExchange(J, 1, 2);
+        runner.AddIsotropicExchange(J, 2, 3);
+        runner.AddIsotropicExchange(J, 3, 0);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -264,23 +224,12 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444_tzsort_S2_S2_s
         runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
         runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 3) = J;
-        js(3, 2) = J;
-        js(3, 0) = J;
-        js(0, 3) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddIsotropicExchange(J, 1, 2);
+        runner.AddIsotropicExchange(J, 2, 3);
+        runner.AddIsotropicExchange(J, 3, 0);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -328,21 +277,11 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize) {
 
         runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddIsotropicExchange(J, 1, 2);
+        runner.AddIsotropicExchange(J, 2, 0);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -391,21 +330,11 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_tzsort_S3_symmetr
         runner.TzSort();
         runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddIsotropicExchange(J, 1, 2);
+        runner.AddIsotropicExchange(J, 2, 0);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -454,21 +383,11 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444_S3_symmetrize_non
         runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner.NonAbelianSimplify();
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddIsotropicExchange(J, 1, 2);
+        runner.AddIsotropicExchange(J, 2, 0);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -520,21 +439,11 @@ TEST(
         runner.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner.NonAbelianSimplify();
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner.AddIsotropicExchange(js);
+        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddIsotropicExchange(J, 1, 2);
+        runner.AddIsotropicExchange(J, 2, 0);
+        runner.FinalizeIsotropicInteraction();
 
         runner.InitializeSSquared();
 
@@ -610,18 +519,11 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         runner::Runner runner_without_matrices(mults);
         runner::Runner runner_using_matrices(mults);
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();
@@ -669,18 +571,11 @@ TEST(
 
         runner_without_matrices.TzSort();
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();
@@ -728,24 +623,17 @@ TEST(
         runner_without_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
         runner_without_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 3) = J;
-        js(3, 2) = J;
-        js(3, 0) = J;
-        js(0, 3) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_without_matrices.AddIsotropicExchange(J, 2, 3);
+        runner_without_matrices.AddIsotropicExchange(J, 3, 0);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_using_matrices.AddIsotropicExchange(J, 2, 3);
+        runner_using_matrices.AddIsotropicExchange(J, 3, 0);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();
@@ -794,24 +682,17 @@ TEST(
         runner_without_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
         runner_without_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 3) = J;
-        js(3, 2) = J;
-        js(3, 0) = J;
-        js(0, 3) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_without_matrices.AddIsotropicExchange(J, 2, 3);
+        runner_without_matrices.AddIsotropicExchange(J, 3, 0);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_using_matrices.AddIsotropicExchange(J, 2, 3);
+        runner_using_matrices.AddIsotropicExchange(J, 3, 0);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();
@@ -858,22 +739,15 @@ TEST(
 
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_without_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_using_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();
@@ -921,22 +795,15 @@ TEST(
         runner_without_matrices.TzSort();
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_without_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_using_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();
@@ -984,22 +851,15 @@ TEST(
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner_without_matrices.NonAbelianSimplify();
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_without_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_using_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();
@@ -1048,22 +908,15 @@ TEST(
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner_without_matrices.NonAbelianSimplify();
 
-        arma::dmat js(mults.size(), mults.size());
-        for (size_t i = 0; i < mults.size(); ++i) {
-            for (size_t j = 0; j < mults.size(); ++j) {
-                js(i, j) = NAN;
-            }
-        }
         double J = 10;
-        js(0, 1) = J;
-        js(1, 0) = J;
-        js(1, 2) = J;
-        js(2, 1) = J;
-        js(2, 0) = J;
-        js(0, 2) = J;
-
-        runner_without_matrices.AddIsotropicExchange(js);
-        runner_using_matrices.AddIsotropicExchange(js);
+        runner_without_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_without_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_without_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_using_matrices.AddIsotropicExchange(J, 0, 1);
+        runner_using_matrices.AddIsotropicExchange(J, 1, 2);
+        runner_using_matrices.AddIsotropicExchange(J, 2, 0);
+        runner_using_matrices.FinalizeIsotropicInteraction();
 
         runner_without_matrices.InitializeSSquared();
         runner_using_matrices.InitializeSSquared();

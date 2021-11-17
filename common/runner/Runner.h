@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "common/Quantity.h"
+#include "common/symbols/Symbols.h"
 #include "entities/matrix/Matrix.h"
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
@@ -13,7 +14,7 @@
 namespace runner {
 class Runner {
   public:
-    explicit Runner(std::vector<int> mults);
+    explicit Runner(const std::vector<int>& mults);
 
     // SPACE OPERATIONS
     void NonAbelianSimplify();
@@ -24,9 +25,13 @@ class Runner {
 
     void TzSort();
 
+    // SYMBOLS OPERATIONS
+    void AddIsotropicExchange(double value, size_t center_a, size_t center_b);
+    void AddIsotropicExchangeMatrix(DenseMatrix isotropic_exchange_parameters);
+
     // OPERATOR OPERATIONS
-    void AddIsotropicExchange(arma::dmat isotropic_exchange_parameters);
     void InitializeSSquared();
+    void FinalizeIsotropicInteraction();
 
     // MATRIX OPERATIONS
     void BuildMatrices();
@@ -47,7 +52,7 @@ class Runner {
         bool matrices_was_built = false;
     };
     struct HamiltonianOperatorHistory {
-        bool has_isotropic_exchange_interactions = false;
+        bool has_isotropic_exchange_interactions_initialized = false;
     };
     struct SpaceHistory {
         std::vector<group::Group> applied_groups;
@@ -58,6 +63,7 @@ class Runner {
     };
 
     const lexicographic::IndexConverter converter_;
+    symbols::Symbols symbols_;
 
     Space space_;
 
