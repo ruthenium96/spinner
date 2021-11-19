@@ -107,20 +107,12 @@ uint32_t runner::Runner::getTotalSpaceSize() const {
     return converter_.total_space_size;
 }
 
-void runner::Runner::AddIsotropicExchange(double value, size_t center_a, size_t center_b) {
+void runner::Runner::AddIsotropicExchange(double initial_value, size_t center_a, size_t center_b) {
     if (hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
         throw std::invalid_argument("Adding parameters after initialization");
     }
 
-    symbols_.addIsotropicExchange(value, center_a, center_b);
-}
-
-void runner::Runner::AddIsotropicExchangeMatrix(DenseMatrix isotropic_exchange_parameters) {
-    if (hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
-        throw std::invalid_argument("Adding parameters after initialization");
-    }
-
-    symbols_.addIsotropicExchangeMatrix(std::move(isotropic_exchange_parameters));
+    symbols_.addIsotropicExchange(initial_value, center_a, center_b);
 }
 
 void runner::Runner::BuildMatrices() {

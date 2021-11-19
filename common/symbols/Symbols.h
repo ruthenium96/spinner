@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <unordered_map>
 
 #include "entities/data_structures/DenseMatrix.h"
 
@@ -16,7 +17,6 @@ class Symbols {
     [[nodiscard]] std::shared_ptr<const DenseMatrix> getIsotropicExchangeParameters() const;
 
     void addIsotropicExchange(double value, size_t center_a, size_t center_b);
-    void addIsotropicExchangeMatrix(DenseMatrix);
 
     //    enum SymbolTypeEnum {
     //        g,

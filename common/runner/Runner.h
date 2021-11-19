@@ -26,8 +26,7 @@ class Runner {
     void TzSort();
 
     // SYMBOLS OPERATIONS
-    void AddIsotropicExchange(double value, size_t center_a, size_t center_b);
-    void AddIsotropicExchangeMatrix(DenseMatrix isotropic_exchange_parameters);
+    void AddIsotropicExchange(double initial_value, size_t center_a, size_t center_b);
 
     // OPERATOR OPERATIONS
     void InitializeSSquared();
