@@ -53,7 +53,7 @@ class Runner {
         bool matrices_was_built = false;
     };
     struct HamiltonianOperatorHistory {
-        bool has_isotropic_exchange_interactions_initialized = false;
+        bool has_isotropic_exchange_interactions_finalized = false;
     };
     struct SpaceHistory {
         std::vector<group::Group> applied_groups;

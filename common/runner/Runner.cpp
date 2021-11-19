@@ -113,7 +113,7 @@ void runner::Runner::AddIsotropicExchange(
     const std::string& symbol_name,
     size_t center_a,
     size_t center_b) {
-    if (hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
+    if (hamiltonian_history_.has_isotropic_exchange_interactions_finalized) {
         throw std::invalid_argument("Adding parameters after initialization");
     }
     if (center_b == center_a) {
@@ -172,7 +172,7 @@ void runner::Runner::FinalizeIsotropicInteraction() {
         .two_center_terms.emplace_back(
             std::make_unique<const ScalarProduct>(symbols_.constructIsotropicExchangeParameters()));
 
-    hamiltonian_history_.has_isotropic_exchange_interactions_initialized = true;
+    hamiltonian_history_.has_isotropic_exchange_interactions_finalized = true;
 }
 
 void runner::Runner::BuildSpectra() {

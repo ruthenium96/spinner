@@ -7,6 +7,10 @@ namespace symbols {
 Symbols::Symbols(size_t number_of_spins) : number_of_spins_(number_of_spins) {}
 
 std::shared_ptr<const DenseMatrix> symbols::Symbols::constructIsotropicExchangeParameters() {
+    if (isotropic_exchange_parameters_symbols_.empty()) {
+        throw std::length_error("Isotropic exchange parameters has not been initialized");
+    }
+
     if (isotropic_exchange_parameters_values_ == nullptr) {
         isotropic_exchange_parameters_values_ = std::make_shared<DenseMatrix>();
         isotropic_exchange_parameters_values_->resize_with_nans(number_of_spins_, number_of_spins_);

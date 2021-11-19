@@ -1,3 +1,5 @@
+#include <components/spectrum/SpectrumBuilder.h>
+
 #include <armadillo>
 
 #include "common/runner/Runner.h"
@@ -41,27 +43,28 @@ void expect_spectrum_equivalence(const Spectrum& first, const Spectrum& second) 
     }
 }
 
-TEST(matrix_and_spectrum_bulders, throw_2222_inconsistent_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
-
-    runner::Runner runner(mults);
-
-    runner.TzSort();
-    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
-
-    double J = 10;
-    runner.AddSymbol("3J", 3 * J);
-    runner.AddSymbol("J", J);
-    runner.AddSymbol("2J", 2 * J);
-    runner.AddIsotropicExchange("3J", 0, 1);
-    runner.AddIsotropicExchange("J", 1, 2);
-    runner.AddIsotropicExchange("2J", 2, 3);
-    runner.AddIsotropicExchange("J", 3, 0);
-    runner.FinalizeIsotropicInteraction();
-
-    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
-}
+// TODO: implement symbol-group checks
+//TEST(matrix_and_spectrum_bulders, throw_2222_inconsistent_symmetry) {
+//    std::vector<int> mults = {2, 2, 2, 2};
+//
+//    runner::Runner runner(mults);
+//
+//    runner.TzSort();
+//    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+//    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+//
+//    double J = 10;
+//    runner.AddSymbol("3J", 3 * J);
+//    runner.AddSymbol("J", J);
+//    runner.AddSymbol("2J", 2 * J);
+//    runner.AddIsotropicExchange("3J", 0, 1);
+//    runner.AddIsotropicExchange("J", 1, 2);
+//    runner.AddIsotropicExchange("2J", 2, 3);
+//    runner.AddIsotropicExchange("J", 3, 0);
+//    runner.FinalizeIsotropicInteraction();
+//
+//    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
+//}
 
 TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
     std::vector<std::vector<int>> vector_of_mults =
@@ -565,10 +568,10 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -583,6 +586,7 @@ TEST(
         runner::Runner runner_using_matrices(mults);
 
         runner_without_matrices.TzSort();
+        runner_using_matrices.TzSort();
 
         double J = 10;
         runner_without_matrices.AddSymbol("J", J);
@@ -619,10 +623,10 @@ TEST(
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -637,6 +641,8 @@ TEST(
 
         runner_without_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
         runner_without_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        runner_using_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        runner_using_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
         double J = 10;
         runner_without_matrices.AddSymbol("J", J);
@@ -679,10 +685,10 @@ TEST(
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -698,6 +704,9 @@ TEST(
         runner_without_matrices.TzSort();
         runner_without_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
         runner_without_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        runner_using_matrices.TzSort();
+        runner_using_matrices.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        runner_using_matrices.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
         double J = 10;
         runner_without_matrices.AddSymbol("J", J);
@@ -740,10 +749,10 @@ TEST(
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -757,6 +766,7 @@ TEST(
         runner::Runner runner_using_matrices(mults);
 
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_using_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         double J = 10;
         runner_without_matrices.AddSymbol("J", J);
@@ -797,10 +807,10 @@ TEST(
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -815,6 +825,8 @@ TEST(
 
         runner_without_matrices.TzSort();
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_using_matrices.TzSort();
+        runner_using_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
         double J = 10;
         runner_without_matrices.AddSymbol("J", J);
@@ -855,10 +867,10 @@ TEST(
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -873,6 +885,8 @@ TEST(
 
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner_without_matrices.NonAbelianSimplify();
+        runner_using_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_using_matrices.NonAbelianSimplify();
 
         double J = 10;
         runner_without_matrices.AddSymbol("J", J);
@@ -913,10 +927,10 @@ TEST(
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
     }
 }
 
@@ -932,6 +946,9 @@ TEST(
         runner_without_matrices.TzSort();
         runner_without_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
         runner_without_matrices.NonAbelianSimplify();
+        runner_using_matrices.TzSort();
+        runner_using_matrices.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        runner_using_matrices.NonAbelianSimplify();
 
         double J = 10;
         runner_without_matrices.AddSymbol("J", J);
@@ -972,9 +989,87 @@ TEST(
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::Energy));
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
-            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+            runner_using_matrices.getSpectrum(common::QuantityEnum::S_total_squared));
+    }
+}
+
+TEST(spectrum_builder_apply_to_entity, spectra_equivalence_22_333_4444_23456) {
+    std::vector<std::vector<int>> vector_of_mults =
+        {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
+
+    for (const auto& mults : vector_of_mults) {
+        runner::Runner runner_without_matrices(mults);
+        runner::Runner runner_to_manually_call_apply_to_entity(mults);
+
+        double J = 10;
+        runner_without_matrices.AddSymbol("J", J);
+        runner_without_matrices.AddIsotropicExchange("J", 0, 1);
+        runner_without_matrices.FinalizeIsotropicInteraction();
+        runner_to_manually_call_apply_to_entity.AddSymbol("J", J);
+        runner_to_manually_call_apply_to_entity.AddIsotropicExchange("J", 0, 1);
+        runner_to_manually_call_apply_to_entity.FinalizeIsotropicInteraction();
+
+        runner_without_matrices.InitializeSSquared();
+        runner_to_manually_call_apply_to_entity.InitializeSSquared();
+
+        runner_to_manually_call_apply_to_entity.BuildMatrices();
+
+        runner_without_matrices.BuildSpectra();
+
+        SpectrumBuilder spectrum_builder;
+        Spectrum manually_energy_spectrum = spectrum_builder.apply_to_energy(
+            runner_to_manually_call_apply_to_entity.getMatrix(common::QuantityEnum::Energy));
+        Spectrum manually_s_squared_spectrum =
+            spectrum_builder.apply_to_non_energy(runner_to_manually_call_apply_to_entity.getMatrix(
+                common::QuantityEnum::S_total_squared));
+
+        expect_spectrum_equivalence(
+            runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
+            manually_energy_spectrum);
+        expect_spectrum_equivalence(
+            runner_without_matrices.getSpectrum(common::QuantityEnum::S_total_squared),
+            manually_s_squared_spectrum);
+    }
+}
+
+TEST(
+    spectrum_builder_apply_to_entity,
+    throw_size_inconsistent_non_energy_matrix_22_333_4444_23456) {
+    std::vector<std::vector<int>> vector_of_mults =
+        {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
+
+    for (const auto& mults : vector_of_mults) {
+        runner::Runner runner_tz_sorted(mults);
+        runner::Runner runner_not_tz_sorted_to_manually_call_apply_to_entity(mults);
+
+        runner_tz_sorted.TzSort();
+
+        double J = 10;
+        runner_tz_sorted.AddSymbol("J", J);
+        runner_tz_sorted.AddIsotropicExchange("J", 0, 1);
+        runner_tz_sorted.FinalizeIsotropicInteraction();
+        runner_not_tz_sorted_to_manually_call_apply_to_entity.AddSymbol("J", J);
+        runner_not_tz_sorted_to_manually_call_apply_to_entity.AddIsotropicExchange("J", 0, 1);
+        runner_not_tz_sorted_to_manually_call_apply_to_entity.FinalizeIsotropicInteraction();
+
+        runner_tz_sorted.InitializeSSquared();
+        runner_not_tz_sorted_to_manually_call_apply_to_entity.InitializeSSquared();
+
+        runner_tz_sorted.BuildMatrices();
+        runner_not_tz_sorted_to_manually_call_apply_to_entity.BuildMatrices();
+
+        runner_tz_sorted.BuildSpectra();
+
+        SpectrumBuilder spectrum_builder;
+        Spectrum manually_energy_spectrum = spectrum_builder.apply_to_energy(
+            runner_not_tz_sorted_to_manually_call_apply_to_entity.getMatrix(
+                common::QuantityEnum::Energy));
+        EXPECT_THROW(
+            spectrum_builder.apply_to_non_energy(
+                runner_tz_sorted.getMatrix(common::QuantityEnum::S_total_squared)),
+            std::length_error);
     }
 }
