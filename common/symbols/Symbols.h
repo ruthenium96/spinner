@@ -14,23 +14,20 @@ class Symbols {
     explicit Symbols(size_t number_of_spins);
 
     [[nodiscard]] bool hasIsotropicExchangeParameters() const;
-    [[nodiscard]] std::shared_ptr<const DenseMatrix> getIsotropicExchangeParameters() const;
+    [[nodiscard]] std::shared_ptr<const DenseMatrix> constructIsotropicExchangeParameters();
 
-    void addIsotropicExchange(double value, size_t center_a, size_t center_b);
+    void addIsotropicExchange(const std::string& symbol_name, size_t center_a, size_t center_b);
 
-    //    enum SymbolTypeEnum {
-    //        g,
-    //        J,
-    //    };
-    //
-    //    struct Symbol {
-    //        std::string name;
-    //        SymbolTypeEnum type;
-    //        bool is_changeable;
-    //    };
+    void addSymbol(const std::string& name, double initial_value, bool is_changeable);
+
   private:
     size_t number_of_spins_;
-    std::shared_ptr<DenseMatrix> isotropic_exchange_parameters_;
+
+    std::vector<std::vector<std::string>> isotropic_exchange_parameters_symbols_;
+    std::shared_ptr<DenseMatrix> isotropic_exchange_parameters_values_;
+
+    std::unordered_map<std::string, double> name_to_value_;
+    std::vector<std::string> changeable_symbols_;
 };
 
 }  // namespace symbols

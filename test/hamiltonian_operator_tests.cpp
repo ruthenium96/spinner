@@ -8,13 +8,11 @@ TEST(finalize_isotropic_exchange, forget_to_finalize) {
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        double J = 10;
-        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddSymbol("J", 10);
+        runner.AddIsotropicExchange("J", 0, 1);
         //runner.FinalizeIsotropicInteraction();
 
-        // TODO: fix it
-        //EXPECT_EQ(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 0);
-        EXPECT_ANY_THROW(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size());
+        EXPECT_EQ(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 0);
     }
 }
 
@@ -25,8 +23,8 @@ TEST(finalize_isotropic_exchange, actually_added_new_term_22_333_4444_23456) {
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        double J = 10;
-        runner.AddIsotropicExchange(J, 0, 1);
+        runner.AddSymbol("J", 10);
+        runner.AddIsotropicExchange("J", 0, 1);
         runner.FinalizeIsotropicInteraction();
 
         EXPECT_EQ(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 1);

@@ -26,9 +26,11 @@ class Runner {
     void TzSort();
 
     // SYMBOLS OPERATIONS
-    void AddIsotropicExchange(double initial_value, size_t center_a, size_t center_b);
+    void AddSymbol(const std::string& name, double initial_value, bool is_changeable);
+    void AddSymbol(const std::string& name, double initial_value);
 
     // OPERATOR OPERATIONS
+    void AddIsotropicExchange(const std::string& symbol_name, size_t center_a, size_t center_b);
     void InitializeSSquared();
     void FinalizeIsotropicInteraction();
 

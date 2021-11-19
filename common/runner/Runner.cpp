@@ -42,7 +42,9 @@ bool OperatorParametersMatchSymmetries(
 runner::Runner::Runner(const std::vector<int>& mults) :
     symbols_(mults.size()),
     converter_(mults),
-    space_(converter_.total_space_size) {}
+    space_(converter_.total_space_size) {
+    operators_[common::QuantityEnum::Energy] = Operator();
+}
 
 void runner::Runner::NonAbelianSimplify() {
     if (space_history_.number_of_non_simplified_abelian_groups == 0) {
@@ -107,12 +109,18 @@ uint32_t runner::Runner::getTotalSpaceSize() const {
     return converter_.total_space_size;
 }
 
-void runner::Runner::AddIsotropicExchange(double initial_value, size_t center_a, size_t center_b) {
+void runner::Runner::AddIsotropicExchange(
+    const std::string& symbol_name,
+    size_t center_a,
+    size_t center_b) {
     if (hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
         throw std::invalid_argument("Adding parameters after initialization");
     }
+    if (center_b == center_a) {
+        throw std::invalid_argument("Isotropic exchange takes place between different centers");
+    }
 
-    symbols_.addIsotropicExchange(initial_value, center_a, center_b);
+    symbols_.addIsotropicExchange(symbol_name, center_a, center_b);
 }
 
 void runner::Runner::BuildMatrices() {
@@ -159,14 +167,10 @@ void runner::Runner::InitializeSSquared() {
 }
 
 void runner::Runner::FinalizeIsotropicInteraction() {
-    // TODO: Should we move it to constructor?
-    if (operators_.count(common::QuantityEnum::Energy) == 0) {
-        operators_[common::QuantityEnum::Energy] = Operator();
-    }
 
     operators_.at(common::QuantityEnum::Energy)
         .two_center_terms.emplace_back(
-            std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
+            std::make_unique<const ScalarProduct>(symbols_.constructIsotropicExchangeParameters()));
 
     hamiltonian_history_.has_isotropic_exchange_interactions_initialized = true;
 }
@@ -265,4 +269,12 @@ const Operator& runner::Runner::getOperator(common::QuantityEnum quantity_enum) 
 
 const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
     return converter_;
+}
+
+void runner::Runner::AddSymbol(const std::string& name, double initial_value, bool is_changeable) {
+    symbols_.addSymbol(name, initial_value, is_changeable);
+}
+
+void runner::Runner::AddSymbol(const std::string& name, double initial_value) {
+    AddSymbol(name, initial_value, true);
 }
