@@ -23,5 +23,9 @@ add_library(data_structures
         )
 
 target_link_libraries(data_structures ${ARMADILLO_LIBRARIES}
-#        Eigen3::Eigen
+        #        Eigen3::Eigen
         )
+
+add_library(chiT
+        chiT/ChiT.cpp
+        chiT/ChiT.h)
