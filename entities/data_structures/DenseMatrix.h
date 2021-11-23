@@ -52,6 +52,9 @@ class DenseVector {
     DenseVector& operator=(DenseVector&&) noexcept;
     ~DenseVector();
 
+    void assign_to_position(double value, uint32_t i);
+    void resize(uint32_t new_size);
+
     [[nodiscard]] uint32_t size() const;
 
     friend std::ostream& operator<<(std::ostream& os, const DenseVector& raw_data);

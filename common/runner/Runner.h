@@ -31,6 +31,9 @@ class Runner {
 
     // OPERATOR OPERATIONS
     void AddIsotropicExchange(const std::string& symbol_name, size_t center_a, size_t center_b);
+    void AddGFactor(
+        const std::string& symbol_name,
+        size_t center_a);  // actually, it is not "Operator" operation
     void InitializeSSquared();
     void FinalizeIsotropicInteraction();
 

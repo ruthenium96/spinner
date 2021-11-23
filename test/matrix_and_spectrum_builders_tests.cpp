@@ -43,28 +43,6 @@ void expect_spectrum_equivalence(const Spectrum& first, const Spectrum& second) 
     }
 }
 
-// TODO: implement symbol-group checks
-//TEST(matrix_and_spectrum_bulders, throw_2222_inconsistent_symmetry) {
-//    std::vector<int> mults = {2, 2, 2, 2};
-//
-//    runner::Runner runner(mults);
-//
-//    runner.TzSort();
-//    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-//    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
-//
-//    double J = 10;
-//    runner.AddSymbol("3J", 3 * J);
-//    runner.AddSymbol("J", J);
-//    runner.AddSymbol("2J", 2 * J);
-//    runner.AddIsotropicExchange("3J", 0, 1);
-//    runner.AddIsotropicExchange("J", 1, 2);
-//    runner.AddIsotropicExchange("2J", 2, 3);
-//    runner.AddIsotropicExchange("J", 3, 0);
-//    runner.FinalizeIsotropicInteraction();
-//
-//    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
-//}
 
 TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
     std::vector<std::vector<int>> vector_of_mults =

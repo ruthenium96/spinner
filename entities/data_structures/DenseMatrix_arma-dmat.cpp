@@ -107,6 +107,14 @@ uint32_t DenseVector::size() const {
     return pImpl->eigenvalues.size();
 }
 
+void DenseVector::assign_to_position(double value, uint32_t i) {
+    pImpl->eigenvalues.at(i) = value;
+}
+
+void DenseVector::resize(uint32_t new_size) {
+    pImpl->eigenvalues.resize(new_size);
+}
+
 std::vector<double> concatenate(const std::vector<DenseVector>& dense_vectors) {
     size_t size = 0;
     for (const auto& dense_vector : dense_vectors) {
