@@ -138,3 +138,20 @@ bool DenseVector::operator==(const DenseVector& rhs) const {
 bool DenseVector::operator!=(const DenseVector& rhs) const {
     return !(rhs == *this);
 }
+
+DenseVector DenseVector::divide_and_wise_exp(double denominator) const {
+    DenseVector answer;
+    answer.resize(size());
+    answer.pImpl->eigenvalues = arma::exp(pImpl->eigenvalues / (denominator));
+    return answer;
+}
+
+double DenseVector::dot(const DenseVector& rhs) const {
+    return arma::dot(pImpl->eigenvalues, rhs.pImpl->eigenvalues);
+}
+
+DenseVector DenseVector::element_wise_multiplication(const DenseVector& rhs) const {
+    DenseVector answer;
+    answer.pImpl->eigenvalues = pImpl->eigenvalues % rhs.pImpl->eigenvalues;
+    return answer;
+}

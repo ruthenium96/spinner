@@ -55,6 +55,10 @@ class DenseVector {
     void assign_to_position(double value, uint32_t i);
     void resize(uint32_t new_size);
 
+    DenseVector divide_and_wise_exp(double denominator) const;
+    double dot(const DenseVector&) const;
+    DenseVector element_wise_multiplication(const DenseVector&) const;
+
     [[nodiscard]] uint32_t size() const;
 
     friend std::ostream& operator<<(std::ostream& os, const DenseVector& raw_data);
