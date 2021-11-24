@@ -5,6 +5,7 @@
 
 #include "common/Quantity.h"
 #include "common/symbols/Symbols.h"
+#include "entities/chiT/ChiT.h"
 #include "entities/matrix/Matrix.h"
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
@@ -72,9 +73,13 @@ class Runner {
     Space space_;
 
     // TODO: should we split these containers?
-    std::map<common::QuantityEnum, Operator> operators_;
-    std::map<common::QuantityEnum, Matrix> matrices_;
+    Operator operator_energy;
+    Operator operator_s_squared;
+    Matrix matrix_energy;
+    Matrix matrix_s_squared;
     std::map<common::QuantityEnum, Spectrum> spectra_;
+    Spectrum spectrum_energy;
+    Spectrum spectrum_s_squared;
 
     void BuildSpectraUsingMatrices();
     void BuildSpectraWithoutMatrices();

@@ -12,7 +12,7 @@ runner::Runner::Runner(const std::vector<int>& mults) :
     symbols_(mults.size()),
     converter_(mults),
     space_(converter_.total_space_size) {
-    operators_[common::QuantityEnum::Energy] = Operator();
+    operator_energy = Operator();
 }
 
 void runner::Runner::NonAbelianSimplify() {
@@ -109,10 +109,11 @@ void runner::Runner::BuildMatrices() {
     }
 
     MatrixBuilder matrix_builder(converter_);
-    for (const auto& pair : operators_) {
-        common::QuantityEnum quantity_enum = pair.first;
-        const Operator& current_operator = pair.second;
-        matrices_[quantity_enum] = matrix_builder.apply(space_, current_operator);
+    if (!operator_energy.empty()) {
+        matrix_energy = matrix_builder.apply(space_, operator_energy);
+    }
+    if (!operator_s_squared.empty()) {
+        matrix_s_squared = matrix_builder.apply(space_, operator_s_squared);
     }
 
     matrix_history_.matrices_was_built = true;
@@ -129,13 +130,12 @@ void runner::Runner::InitializeSSquared() {
     s_squared_operator_.two_center_terms.emplace_back(
         std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
 
-    operators_[common::QuantityEnum::S_total_squared] = std::move(s_squared_operator_);
+    operator_s_squared = std::move(s_squared_operator_);
 }
 
 void runner::Runner::FinalizeIsotropicInteraction() {
-    operators_.at(common::QuantityEnum::Energy)
-        .two_center_terms.emplace_back(
-            std::make_unique<const ScalarProduct>(symbols_.constructIsotropicExchangeParameters()));
+    operator_energy.two_center_terms.emplace_back(
+        std::make_unique<const ScalarProduct>(symbols_.constructIsotropicExchangeParameters()));
 
     hamiltonian_history_.has_isotropic_exchange_interactions_finalized = true;
 }
@@ -153,25 +153,23 @@ void runner::Runner::BuildSpectraUsingMatrices() {
 
     size_t number_of_blocks = space_.blocks.size();
 
-    for (const auto& pair : matrices_) {
-        spectra_[pair.first] = Spectrum();
-        spectra_.at(pair.first).blocks.resize(number_of_blocks);
+    if (!operator_energy.empty()) {
+        spectrum_energy.blocks.resize(number_of_blocks);
+    }
+    if (!operator_s_squared.empty()) {
+        spectrum_s_squared.blocks.resize(number_of_blocks);
     }
 
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
-        spectra_.at(common::QuantityEnum::Energy).blocks[block] =
-            spectrumBuilder.apply_to_subentity_energy(
-                matrices_.at(common::QuantityEnum::Energy).blocks[block],
-                unitary_transformation_matrix);
+        spectrum_energy.blocks[block] = spectrumBuilder.apply_to_subentity_energy(
+            matrix_energy.blocks[block],
+            unitary_transformation_matrix);
 
-        for (const auto& pair : matrices_) {
-            if (pair.first != common::QuantityEnum::Energy) {
-                spectra_.at(pair.first).blocks[block] =
-                    spectrumBuilder.apply_to_subentity_non_energy(
-                        pair.second.blocks[block],
-                        unitary_transformation_matrix);
-            }
+        if (!operator_s_squared.empty()) {
+            spectrum_s_squared.blocks[block] = spectrumBuilder.apply_to_subentity_non_energy(
+                matrix_s_squared.blocks[block],
+                unitary_transformation_matrix);
         }
     }
 }
@@ -182,9 +180,11 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
 
     size_t number_of_blocks = space_.blocks.size();
 
-    for (const auto& pair : operators_) {
-        spectra_[pair.first] = Spectrum();
-        spectra_.at(pair.first).blocks.resize(number_of_blocks);
+    if (!operator_energy.empty()) {
+        spectrum_energy.blocks.resize(number_of_blocks);
+    }
+    if (!operator_s_squared.empty()) {
+        spectrum_s_squared.blocks.resize(number_of_blocks);
     }
 
     if (!space_history_.isNormalized) {
@@ -198,38 +198,45 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         {
-            Submatrix hamiltonian_submatrix = matrixBuilder.apply_to_subentity(
-                space_.blocks[block],
-                operators_.at(common::QuantityEnum::Energy));
-            spectra_.at(common::QuantityEnum::Energy).blocks[block] =
-                spectrumBuilder.apply_to_subentity_energy(
-                    hamiltonian_submatrix,
-                    unitary_transformation_matrix);
+            Submatrix hamiltonian_submatrix =
+                matrixBuilder.apply_to_subentity(space_.blocks[block], operator_energy);
+            spectrum_energy.blocks[block] = spectrumBuilder.apply_to_subentity_energy(
+                hamiltonian_submatrix,
+                unitary_transformation_matrix);
         }
 
-        for (const auto& pair : operators_) {
-            if (pair.first != common::QuantityEnum::Energy) {
-                Submatrix non_hamiltonian_submatrix =
-                    matrixBuilder.apply_to_subentity(space_.blocks[block], pair.second);
-                spectra_.at(pair.first).blocks[block] =
-                    spectrumBuilder.apply_to_subentity_non_energy(
-                        non_hamiltonian_submatrix,
-                        unitary_transformation_matrix);
-            }
+        if (!operator_s_squared.empty()) {
+            Submatrix non_hamiltonian_submatrix =
+                matrixBuilder.apply_to_subentity(space_.blocks[block], operator_s_squared);
+            spectrum_s_squared.blocks[block] = spectrumBuilder.apply_to_subentity_non_energy(
+                non_hamiltonian_submatrix,
+                unitary_transformation_matrix);
         }
     }
 }
 
 const Matrix& runner::Runner::getMatrix(common::QuantityEnum quantity_enum) const {
-    return matrices_.at(quantity_enum);
+    if (quantity_enum == common::QuantityEnum::Energy) {
+        return matrix_energy;
+    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
+        return matrix_s_squared;
+    }
 }
 
 const Spectrum& runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
-    return spectra_.at(quantity_enum);
+    if (quantity_enum == common::QuantityEnum::Energy) {
+        return spectrum_energy;
+    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
+        return spectrum_s_squared;
+    }
 }
 
 const Operator& runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
-    return operators_.at(quantity_enum);
+    if (quantity_enum == common::QuantityEnum::Energy) {
+        return operator_energy;
+    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
+        return operator_s_squared;
+    }
 }
 
 const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
