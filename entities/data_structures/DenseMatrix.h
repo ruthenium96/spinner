@@ -55,6 +55,10 @@ class DenseVector {
     void assign_to_position(double value, uint32_t i);
     void resize(uint32_t new_size);
 
+    void concatenate_with(const DenseVector&);
+    void add_identical_values(size_t number, double value);
+    void subtract_minimum();
+
     DenseVector divide_and_wise_exp(double denominator) const;
     double dot(const DenseVector&) const;
     DenseVector element_wise_multiplication(const DenseVector&) const;

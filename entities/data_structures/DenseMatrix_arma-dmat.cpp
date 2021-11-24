@@ -155,3 +155,23 @@ DenseVector DenseVector::element_wise_multiplication(const DenseVector& rhs) con
     answer.pImpl->eigenvalues = pImpl->eigenvalues % rhs.pImpl->eigenvalues;
     return answer;
 }
+
+void DenseVector::concatenate_with(const DenseVector& rhs) {
+    arma::dvec tmp = arma::join_cols(pImpl->eigenvalues, rhs.pImpl->eigenvalues);
+    pImpl->eigenvalues.reset();
+    pImpl->eigenvalues = std::move(tmp);
+}
+
+void DenseVector::add_identical_values(size_t number, double value) {
+    arma::dvec tmp;
+    tmp.resize(number);
+    tmp.fill(value);
+    tmp = arma::join_cols(pImpl->eigenvalues, tmp);
+    pImpl->eigenvalues.reset();
+    pImpl->eigenvalues = std::move(tmp);
+}
+
+void DenseVector::subtract_minimum() {
+    double minimum = arma::min(pImpl->eigenvalues);
+    pImpl->eigenvalues -= minimum;
+}
