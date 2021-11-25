@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "common/lexicographic/IndexConverter.h"
 #include "components/matrix/MatrixBuilder.h"
 #include "components/operator/ConstantOperator.h"
