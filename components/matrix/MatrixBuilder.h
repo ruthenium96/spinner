@@ -1,13 +1,10 @@
 #ifndef JULY_MATRIXBUILDER_H
 #define JULY_MATRIXBUILDER_H
 
-#include <common/lexicographic/IndexConverter.h>
-#include <entities/operator/Operator.h>
-#include <entities/space/Space.h>
-
-#include <armadillo>
-
+#include "common/lexicographic/IndexConverter.h"
 #include "entities/matrix/Matrix.h"
+#include "entities/operator/Operator.h"
+#include "entities/space/Space.h"
 
 class MatrixBuilder {
   public:

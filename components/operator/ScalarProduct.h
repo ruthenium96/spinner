@@ -18,8 +18,6 @@ class ScalarProduct: public TwoCenterTerm {
 
   private:
     std::shared_ptr<const DenseMatrix> coefficients;
-    // TODO: abstract from arma::dmat
-    //arma::dmat coefficients;
 };
 
 #endif  //JULY_SCALARPRODUCT_H
