@@ -254,3 +254,34 @@ void runner::Runner::AddSymbol(const std::string& name, double initial_value) {
 void runner::Runner::AddGFactor(const std::string& symbol_name, size_t center_a) {
     symbols_.addGFactor(symbol_name, center_a);
 }
+
+std::vector<double> runner::Runner::constructChiT(const std::vector<double>& temperatures) {
+    // TODO: it is the part of Symbols
+    double g = 2.0;
+    DenseVector energy;
+    DenseVector degeneracy;
+    DenseVector s_squared;
+    for (const auto& subspectrum : spectrum_energy.blocks) {
+        energy.concatenate_with(subspectrum.raw_data);
+        degeneracy.add_identical_values(
+            subspectrum.raw_data.size(),
+            subspectrum.properties.degeneracy);
+    }
+    energy.subtract_minimum();
+
+    for (const auto& subspectrum : spectrum_s_squared.blocks) {
+        s_squared.concatenate_with(subspectrum.raw_data);
+    }
+
+    magnetic_susceptibility::ChiT chi_T_ = magnetic_susceptibility::ChiT(
+        g,
+        std::move(energy),
+        std::move(degeneracy),
+        std::move(s_squared));
+    std::vector<double> chi_Ts(temperatures.size());
+    for (size_t i = 0; i < temperatures.size(); ++i) {
+        chi_Ts[i] = chi_T_.at_temperature(temperatures[i]);
+        std::cout << chi_Ts[i] << std::endl;
+    }
+    return chi_Ts;
+}

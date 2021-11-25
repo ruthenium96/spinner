@@ -10,7 +10,9 @@ ChiT::ChiT(double g_factor, DenseVector energy, DenseVector degeneracy, DenseVec
 double ChiT::at_temperature(double temperature) {
     double s_squared_ensemble_average =
         ensemble_average(temperature, energy_, degeneracy_, s_squared_);
-    return s_squared_ensemble_average * bohr_magneton * bohr_magneton * g_factor_ * g_factor_ / 3;
+    //    return s_squared_ensemble_average * bohr_magneton * bohr_magneton * g_factor_ * g_factor_ / 3;
+    // TODO: actually, it returns \mu_{eff}^2 instead of \chi*T
+    return s_squared_ensemble_average * g_factor_ * g_factor_;
 }
 
 double ChiT::ensemble_average(

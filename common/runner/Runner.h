@@ -44,6 +44,9 @@ class Runner {
     // SPECTRUM OPERATIONS
     void BuildSpectra();
 
+    // CHIT OPERATIONS
+    std::vector<double> constructChiT(const std::vector<double>& temperatures);
+
     [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
     [[nodiscard]] const Operator& getOperator(common::QuantityEnum) const;
     [[nodiscard]] const Space& getSpace() const;
@@ -72,7 +75,6 @@ class Runner {
 
     Space space_;
 
-    // TODO: should we split these containers?
     Operator operator_energy;
     Operator operator_s_squared;
     Matrix matrix_energy;

@@ -8,4 +8,4 @@ add_library(common
         runner/Runner.cpp
         Quantity.cpp)
 
-target_link_libraries(common components)
+target_link_libraries(common components chiT)
