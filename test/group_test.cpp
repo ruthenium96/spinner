@@ -192,55 +192,57 @@ TEST(group_info_tests, 00_corresponds_to_full_symmetric_representation) {
 TEST(group_tests, throw_wrong_number_of_generators) {
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}),
-        std::length_error);
-    EXPECT_THROW(group::Group group(group::Group::S3, {{1, 2, 0}}), std::length_error);
+        group::InitializationError);
+    EXPECT_THROW(group::Group group(group::Group::S3, {{1, 2, 0}}), group::InitializationError);
 }
 
 TEST(group_tests, throw_wrong_size_of_generators) {
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 1, 4}}),
-        std::length_error);
-    EXPECT_THROW(group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2}}), std::length_error);
+        group::InitializationError);
+    EXPECT_THROW(
+        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2}}),
+        group::InitializationError);
 }
 
 TEST(group_tests, throw_duplicate_of_number_in_generator) {
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 2}}),
-        std::invalid_argument);
+        group::InitializationError);
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0}, {2, 2, 2}}),
-        std::invalid_argument);
+        group::InitializationError);
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 0, 0}, {0, 2, 1}}),
-        std::invalid_argument);
+        group::InitializationError);
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{0, 0, 0}, {0, 2, 1}}),
-        std::invalid_argument);
+        group::InitializationError);
 }
 
 TEST(group_tests, throw_contains_wrong_number) {
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 3}}),
-        std::invalid_argument);
+        group::InitializationError);
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 3}, {0, 2, 1}}),
-        std::invalid_argument);
+        group::InitializationError);
 }
 
 TEST(group_tests, throw_wrong_order_of_generators) {
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 3, 0}, {0, 2, 1, 3}}),
-        std::invalid_argument);
+        group::InitializationError);
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0, 3}, {1, 2, 0, 3}}),
-        std::invalid_argument);
+        group::InitializationError);
 }
 
 TEST(group_tests, throw_wrong_order_of_elements) {
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0, 3}, {0, 1, 3, 2}}),
-        std::invalid_argument);
+        group::InitializationError);
     EXPECT_THROW(
         group::Group group(group::Group::S3, {{1, 2, 0, 3}, {3, 1, 2, 0}}),
-        std::invalid_argument);
+        group::InitializationError);
 }

@@ -71,20 +71,20 @@ group::Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> ge
     generators_(std::move(generators)),
     properties(Group::return_group_info_by_group_name(group_name)) {
     if (!NumberOfGeneratorsConsistent(generators_, properties)) {
-        throw std::length_error(
+        throw InitializationError(
             "The number of generators does not equal to the number of group number_of_generators.");
     }
 
     if (!SizesAreEqual(generators_, properties)) {
-        throw std::length_error("The sizes of generators are different.");
+        throw InitializationError("The sizes of generators are different.");
     }
 
     if (!GeneratorIsValid(generators_, properties)) {
-        throw std::invalid_argument("Generator is invalid.");
+        throw InitializationError("Generator is invalid");
     }
 
     if (!ElementsInPowerOfItsOrderIsIdentity(generators_, properties.orders_of_generators)) {
-        throw std::invalid_argument("Generator in power of its order does not equal identity.");
+        throw InitializationError("Generator in power of its order does not equal identity.");
     }
 
     Permutation identity(generators_[0].size());
@@ -111,7 +111,7 @@ group::Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> ge
     }
 
     if (!ElementsInPowerOfItsOrderIsIdentity(elements_, properties.orders_of_elements)) {
-        throw std::invalid_argument("Element in power of its order does not equal identity.");
+        throw InitializationError("Element in power of its order does not equal identity.");
     }
 }
 

@@ -2,6 +2,7 @@
 #define JULY_GROUP_H
 
 #include <cstdint>
+#include <stdexcept>
 #include <vector>
 
 namespace group {
@@ -66,6 +67,11 @@ class Group {
     // Length of Permutation vectors -- number of spins.
     std::vector<Permutation> generators_;
 };
+
+struct InitializationError: public std::logic_error {
+    explicit InitializationError(const std::string& arg) : logic_error(arg) {}
+};
+
 }  // namespace group
 
 extern const group::Group::AlgebraicProperties GroupInfoS2;
