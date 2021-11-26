@@ -107,6 +107,10 @@ uint32_t DenseVector::size() const {
     return pImpl->eigenvalues.size();
 }
 
+double DenseVector::operator()(uint32_t i) const {
+    return pImpl->eigenvalues(i);
+}
+
 void DenseVector::assign_to_position(double value, uint32_t i) {
     pImpl->eigenvalues.at(i) = value;
 }

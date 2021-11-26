@@ -59,11 +59,12 @@ class DenseVector {
     void add_identical_values(size_t number, double value);
     void subtract_minimum();
 
-    DenseVector divide_and_wise_exp(double denominator) const;
-    double dot(const DenseVector&) const;
-    DenseVector element_wise_multiplication(const DenseVector&) const;
+    [[nodiscard]] DenseVector divide_and_wise_exp(double denominator) const;
+    [[nodiscard]] double dot(const DenseVector&) const;
+    [[nodiscard]] DenseVector element_wise_multiplication(const DenseVector&) const;
 
     [[nodiscard]] uint32_t size() const;
+    double operator()(uint32_t i) const;
 
     friend std::ostream& operator<<(std::ostream& os, const DenseVector& raw_data);
 
