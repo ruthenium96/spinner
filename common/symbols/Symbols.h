@@ -1,41 +1,58 @@
 #ifndef JULY_SYMBOLS_H
 #define JULY_SYMBOLS_H
 
+#include <map>
 #include <memory>
 #include <stdexcept>
-#include <unordered_map>
 
 #include "entities/data_structures/DenseMatrix.h"
 #include "group/Group.h"
 
 namespace symbols {
 
+enum SymbolTypeEnum { not_specified, J, g_factor };
+
 class Symbols {
   public:
     explicit Symbols(size_t number_of_spins);
 
     [[nodiscard]] bool hasIsotropicExchangeParameters() const;
+    [[nodiscard]] bool isAllGFactorsEqual() const;
+    [[nodiscard]] bool symmetry_consistence(const group::Group& group) const;
+
+    [[nodiscard]] std::shared_ptr<const DenseMatrix>
+    constructIsotropicExchangeDerivativeParameters(const std::string& symbol_name);
     [[nodiscard]] std::shared_ptr<const DenseMatrix> constructIsotropicExchangeParameters();
     [[nodiscard]] std::shared_ptr<const DenseVector> constructGFactorParameters();
 
     void addIsotropicExchange(const std::string& symbol_name, size_t center_a, size_t center_b);
     void addGFactor(const std::string& symbol_name, size_t center_a);
 
-    void addSymbol(const std::string& name, double initial_value, bool is_changeable);
+    void addSymbol(
+        const std::string& symbol_name,
+        double initial_value,
+        bool is_changeable,
+        SymbolTypeEnum type_enum);
 
-    [[nodiscard]] bool symmetry_consistence(const group::Group& group) const;
+    [[nodiscard]] std::vector<std::string> getChangeableNames(SymbolTypeEnum type_enum) const;
 
   private:
     size_t number_of_spins_;
 
-    std::vector<std::vector<std::string>> isotropic_exchange_parameters_symbols_;
+    struct SymbolData {
+        double value;
+        bool is_changeable;
+        SymbolTypeEnum type_enum;
+    };
+
+    std::vector<std::vector<std::string>> isotropic_exchange_parameters_names_;
+    std::vector<std::string> g_factor_names_;
+
     std::shared_ptr<DenseMatrix> isotropic_exchange_parameters_values_;
-
-    std::vector<std::string> g_factor_symbols_;
     std::shared_ptr<DenseVector> g_factor_values_;
+    std::vector<std::shared_ptr<DenseMatrix>> isotropic_exchange_derivatives_values_;
 
-    std::unordered_map<std::string, double> name_to_value_;
-    std::vector<std::string> changeable_symbols_;
+    std::map<std::string, SymbolData> symbols_;
 };
 
 }  // namespace symbols

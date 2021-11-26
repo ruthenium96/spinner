@@ -27,6 +27,11 @@ class Runner {
     void TzSort();
 
     // SYMBOLS OPERATIONS
+    void AddSymbol(
+        const std::string& name,
+        double initial_value,
+        bool is_changeable,
+        symbols::SymbolTypeEnum type_enum);
     void AddSymbol(const std::string& name, double initial_value, bool is_changeable);
     void AddSymbol(const std::string& name, double initial_value);
 
@@ -35,6 +40,7 @@ class Runner {
     void AddGFactor(
         const std::string& symbol_name,
         size_t center_a);  // actually, it is not "Operator" operation
+    void InitializeIsotropicExchangeDerivatives();
     void InitializeSSquared();
     void FinalizeIsotropicInteraction();
 
@@ -77,11 +83,13 @@ class Runner {
 
     Operator operator_energy;
     Operator operator_s_squared;
+    std::unordered_map<std::string, Operator> operator_derivative_of_energy_wrt_exchange_parameters;
     Matrix matrix_energy;
     Matrix matrix_s_squared;
-    std::map<common::QuantityEnum, Spectrum> spectra_;
+    std::unordered_map<std::string, Matrix> matrix_derivative_of_energy_wrt_exchange_parameters;
     Spectrum spectrum_energy;
     Spectrum spectrum_s_squared;
+    std::unordered_map<std::string, Spectrum> spectrum_derivative_of_energy_wrt_exchange_parameters;
 
     void BuildSpectraUsingMatrices();
     void BuildSpectraWithoutMatrices();

@@ -115,6 +115,12 @@ void runner::Runner::BuildMatrices() {
     if (!operator_s_squared.empty()) {
         matrix_s_squared = matrix_builder.apply(space_, operator_s_squared);
     }
+    for (const auto& pair : operator_derivative_of_energy_wrt_exchange_parameters) {
+        const Operator& operator_derivative = pair.second;
+        const std::string& symbol = pair.first;
+        matrix_derivative_of_energy_wrt_exchange_parameters[symbol] =
+            matrix_builder.apply(space_, operator_derivative);
+    }
 
     matrix_history_.matrices_was_built = true;
 }
@@ -131,6 +137,16 @@ void runner::Runner::InitializeSSquared() {
         std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
 
     operator_s_squared = std::move(s_squared_operator_);
+}
+
+void runner::Runner::InitializeIsotropicExchangeDerivatives() {
+    for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
+        Operator operator_derivative = Operator();
+        operator_derivative.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(
+            symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
+        operator_derivative_of_energy_wrt_exchange_parameters[symbol] =
+            std::move(operator_derivative);
+    }
 }
 
 void runner::Runner::FinalizeIsotropicInteraction() {
@@ -159,6 +175,12 @@ void runner::Runner::BuildSpectraUsingMatrices() {
     if (!operator_s_squared.empty()) {
         spectrum_s_squared.blocks.resize(number_of_blocks);
     }
+    for (const auto& pair : matrix_derivative_of_energy_wrt_exchange_parameters) {
+        const std::string& symbol = pair.first;
+        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol] = Spectrum();
+        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.resize(
+            number_of_blocks);
+    }
 
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
@@ -170,6 +192,15 @@ void runner::Runner::BuildSpectraUsingMatrices() {
             spectrum_s_squared.blocks[block] = spectrumBuilder.apply_to_subentity_non_energy(
                 matrix_s_squared.blocks[block],
                 unitary_transformation_matrix);
+        }
+
+        for (const auto& pair : matrix_derivative_of_energy_wrt_exchange_parameters) {
+            const Matrix& matrix_derivative = pair.second;
+            const std::string& symbol = pair.first;
+            spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks[block] =
+                spectrumBuilder.apply_to_subentity_non_energy(
+                    matrix_derivative.blocks[block],
+                    unitary_transformation_matrix);
         }
     }
 }
@@ -185,6 +216,12 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
     }
     if (!operator_s_squared.empty()) {
         spectrum_s_squared.blocks.resize(number_of_blocks);
+    }
+    for (const auto& pair : operator_derivative_of_energy_wrt_exchange_parameters) {
+        const std::string& symbol = pair.first;
+        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol] = Spectrum();
+        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.resize(
+            number_of_blocks);
     }
 
     if (!space_history_.isNormalized) {
@@ -211,6 +248,17 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
             spectrum_s_squared.blocks[block] = spectrumBuilder.apply_to_subentity_non_energy(
                 non_hamiltonian_submatrix,
                 unitary_transformation_matrix);
+        }
+
+        for (const auto& pair : operator_derivative_of_energy_wrt_exchange_parameters) {
+            const Operator& operator_derivative = pair.second;
+            const std::string& symbol = pair.first;
+            Submatrix derivative_submatrix =
+                matrixBuilder.apply_to_subentity(space_.blocks[block], operator_derivative);
+            spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks[block] =
+                spectrumBuilder.apply_to_subentity_non_energy(
+                    derivative_submatrix,
+                    unitary_transformation_matrix);
         }
     }
 }
@@ -243,8 +291,16 @@ const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
     return converter_;
 }
 
+void runner::Runner::AddSymbol(
+    const std::string& name,
+    double initial_value,
+    bool is_changeable,
+    symbols::SymbolTypeEnum type_enum) {
+    symbols_.addSymbol(name, initial_value, is_changeable, type_enum);
+}
+
 void runner::Runner::AddSymbol(const std::string& name, double initial_value, bool is_changeable) {
-    symbols_.addSymbol(name, initial_value, is_changeable);
+    AddSymbol(name, initial_value, is_changeable, symbols::SymbolTypeEnum::not_specified);
 }
 
 void runner::Runner::AddSymbol(const std::string& name, double initial_value) {
@@ -256,8 +312,13 @@ void runner::Runner::AddGFactor(const std::string& symbol_name, size_t center_a)
 }
 
 std::vector<double> runner::Runner::constructChiT(const std::vector<double>& temperatures) {
-    // TODO: it is the part of Symbols
-    double g = 2.0;
+    // if sum_of_gs_squared and sum_of_gs are not initialized:
+
+    if (!symbols_.isAllGFactorsEqual()) {
+        throw std::invalid_argument("Not all g factors are equal");
+    }
+
+    double g_factor = symbols_.constructGFactorParameters()->operator()(0);
     DenseVector energy;
     DenseVector degeneracy;
     DenseVector s_squared;
@@ -274,7 +335,7 @@ std::vector<double> runner::Runner::constructChiT(const std::vector<double>& tem
     }
 
     magnetic_susceptibility::ChiT chi_T_ = magnetic_susceptibility::ChiT(
-        g,
+        g_factor,
         std::move(energy),
         std::move(degeneracy),
         std::move(s_squared));
