@@ -346,3 +346,36 @@ std::vector<double> runner::Runner::constructChiT(const std::vector<double>& tem
     }
     return chi_Ts;
 }
+
+const Operator& runner::Runner::getOperatorDerivative(
+    common::QuantityEnum quantity_enum,
+    symbols::SymbolTypeEnum symbol_type,
+    const std::string& symbol) const {
+    if (quantity_enum == common::QuantityEnum::Energy) {
+        if (symbol_type == symbols::SymbolTypeEnum::J) {
+            return operator_derivative_of_energy_wrt_exchange_parameters.at(symbol);
+        }
+    }
+}
+
+const Spectrum& runner::Runner::getSpectrumDerivative(
+    common::QuantityEnum quantity_enum,
+    symbols::SymbolTypeEnum symbol_type,
+    const std::string& symbol) const {
+    if (quantity_enum == common::QuantityEnum::Energy) {
+        if (symbol_type == symbols::SymbolTypeEnum::J) {
+            return spectrum_derivative_of_energy_wrt_exchange_parameters.at(symbol);
+        }
+    }
+}
+
+const Matrix& runner::Runner::getMatrixDerivative(
+    common::QuantityEnum quantity_enum,
+    symbols::SymbolTypeEnum symbol_type,
+    const std::string& symbol) const {
+    if (quantity_enum == common::QuantityEnum::Energy) {
+        if (symbol_type == symbols::SymbolTypeEnum::J) {
+            return matrix_derivative_of_energy_wrt_exchange_parameters.at(symbol);
+        }
+    }
+}

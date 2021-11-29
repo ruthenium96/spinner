@@ -58,6 +58,12 @@ class Runner {
     [[nodiscard]] const Space& getSpace() const;
     [[nodiscard]] const Spectrum& getSpectrum(common::QuantityEnum) const;
     [[nodiscard]] const Matrix& getMatrix(common::QuantityEnum) const;
+    [[nodiscard]] const Operator&
+    getOperatorDerivative(common::QuantityEnum, symbols::SymbolTypeEnum, const std::string&) const;
+    [[nodiscard]] const Spectrum&
+    getSpectrumDerivative(common::QuantityEnum, symbols::SymbolTypeEnum, const std::string&) const;
+    [[nodiscard]] const Matrix&
+    getMatrixDerivative(common::QuantityEnum, symbols::SymbolTypeEnum, const std::string&) const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
