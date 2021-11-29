@@ -15,6 +15,8 @@ bool orthogonality_of_basis(const Space& space) {
     for (const auto& subspace : space.blocks) {
         unitary_matrix.copy_all_from(subspace.decomposition);
     }
+    bool answer = true;
+#pragma omp parallel for shared(space, unitary_matrix, answer) default(none)
     for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix.size();
          ++index_of_vector_i) {
         for (size_t index_of_vector_j = index_of_vector_i + 1;
@@ -29,11 +31,12 @@ bool orthogonality_of_basis(const Space& space) {
                 }
             }
             if (accumulator != 0) {
-                return false;
+                answer = false;
+                break;
             }
         }
     }
-    return true;
+    return answer;
 }
 
 TEST(symmetrizer, throw_wrong_size_of_pemutation) {
