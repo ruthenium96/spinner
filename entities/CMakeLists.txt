@@ -26,6 +26,8 @@ target_link_libraries(data_structures ${ARMADILLO_LIBRARIES}
         #        Eigen3::Eigen
         )
 
-add_library(chiT
-        chiT/ChiT.cpp
-        chiT/ChiT.h)
+add_library(magnetic_susceptibility
+        magnetic_susceptibility/ChiT.cpp
+        magnetic_susceptibility/ChiT.h
+        magnetic_susceptibility/EnsembleAverager.cpp
+        magnetic_susceptibility/EnsembleAverager.h)

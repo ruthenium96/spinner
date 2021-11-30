@@ -5,7 +5,7 @@
 
 #include "common/Quantity.h"
 #include "common/symbols/Symbols.h"
-#include "entities/chiT/ChiT.h"
+#include "entities/magnetic_susceptibility/ChiT.h"
 #include "entities/matrix/Matrix.h"
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"

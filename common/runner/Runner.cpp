@@ -330,18 +330,16 @@ std::vector<double> runner::Runner::constructChiT(const std::vector<double>& tem
     }
     energy.subtract_minimum();
 
+    // TODO: check if s_squared has been initialized
     for (const auto& subspectrum : spectrum_s_squared.blocks) {
         s_squared.concatenate_with(subspectrum.raw_data);
     }
 
-    magnetic_susceptibility::ChiT chi_T_ = magnetic_susceptibility::ChiT(
-        g_factor,
-        std::move(energy),
-        std::move(degeneracy),
-        std::move(s_squared));
+    magnetic_susceptibility::EnsembleAverager averager(std::move(energy), std::move(degeneracy));
+
     std::vector<double> chi_Ts(temperatures.size());
     for (size_t i = 0; i < temperatures.size(); ++i) {
-        chi_Ts[i] = chi_T_.at_temperature(temperatures[i]);
+        chi_Ts[i] = averager.ensemble_average(s_squared, temperatures[i]);
         std::cout << chi_Ts[i] << std::endl;
     }
     return chi_Ts;
