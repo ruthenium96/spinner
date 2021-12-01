@@ -6,7 +6,7 @@ EnsembleAverager::EnsembleAverager(DenseVector&& energy, DenseVector&& degenerac
     energy_(std::move(energy)),
     degeneracy_(std::move(degeneracy)) {}
 
-double EnsembleAverager::ensemble_average(const DenseVector& value, double temperature) {
+double EnsembleAverager::ensemble_average(const DenseVector& value, double temperature) const {
     if (last_temperature != temperature) {
         divided_and_wise_exped_energy = energy_.divide_and_wise_exp(-1 * temperature);
         partition_function = divided_and_wise_exped_energy.dot(degeneracy_);

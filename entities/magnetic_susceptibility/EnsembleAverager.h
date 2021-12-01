@@ -8,14 +8,14 @@ namespace magnetic_susceptibility {
 class EnsembleAverager {
   public:
     EnsembleAverager(DenseVector&& energy, DenseVector&& degeneracy);
-    double ensemble_average(const DenseVector& value, double temperature);
+    double ensemble_average(const DenseVector& value, double temperature) const;
 
   private:
     const DenseVector energy_;
     const DenseVector degeneracy_;
-    DenseVector divided_and_wise_exped_energy;
-    double partition_function = NAN;
-    double last_temperature = NAN;
+    mutable DenseVector divided_and_wise_exped_energy;
+    mutable double partition_function = NAN;
+    mutable double last_temperature = NAN;
 };
 }  // namespace magnetic_susceptibility
 

@@ -1,0 +1,6 @@
+#ifndef JULY_MUSQUAREDTHEORETICAL_H
+#define JULY_MUSQUAREDTHEORETICAL_H
+
+class MuSquaredTheoretical {};
+
+#endif  //JULY_MUSQUAREDTHEORETICAL_H

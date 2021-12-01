@@ -144,3 +144,32 @@ TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
 //
 //    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 //}
+
+TEST(symbols, ololo) {
+    std::vector<int> mults = {2, 2, 2, 2};
+
+    runner::Runner runner(mults);
+
+    runner.TzSort();
+    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+
+    double J = 10;
+    runner.AddSymbol("J", J);
+    runner.AddIsotropicExchange("J", 0, 1);
+    runner.AddIsotropicExchange("J", 1, 2);
+    runner.AddIsotropicExchange("J", 2, 3);
+    runner.AddIsotropicExchange("J", 3, 0);
+    runner.FinalizeIsotropicInteraction();
+    double g = 2.0;
+    runner.AddSymbol("g", g);
+    for (size_t i = 0; i < mults.size(); ++i) {
+        runner.AddGFactor("g", i);
+    }
+    runner.InitializeSSquared();
+
+    runner.BuildSpectra();
+
+    std::vector<double> temperatures = {1, 10, 100, 300};
+    runner.constructChiT(temperatures);
+}

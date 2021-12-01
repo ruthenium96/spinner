@@ -1,0 +1,36 @@
+#ifndef JULY_EXPERIMENTALVALUESWORKER_H
+#define JULY_EXPERIMENTALVALUESWORKER_H
+
+#include "vector"
+
+namespace magnetic_susceptibility {
+
+constexpr double mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol =
+    0.125048612;
+
+struct ValueAtTemperature {
+    double temperature;
+    double value;
+};
+
+enum ExperimentalValuesEnum {
+    mu_in_bohr_magnetons,
+    mu_squared_in_bohr_magnetons_squared,
+    chiT_in_cm_cubed_kelvin_per_mol,
+};
+
+class ExperimentalValuesWorker {
+  public:
+    ExperimentalValuesWorker(
+        std::vector<ValueAtTemperature> experimental_values,
+        ExperimentalValuesEnum experimental_values_type,
+        double number_of_centers_ratio);
+    //    double calculateResidualError();
+    //    double calculateDerivative();
+
+  private:
+    std::vector<ValueAtTemperature> experimental_mu_squared;
+    ExperimentalValuesEnum experimental_values_type_;
+};
+}  // namespace magnetic_susceptibility
+#endif  //JULY_EXPERIMENTALVALUESWORKER_H
