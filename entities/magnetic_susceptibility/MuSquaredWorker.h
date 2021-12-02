@@ -1,10 +1,11 @@
-#ifndef JULY_CHIT_H
-#define JULY_CHIT_H
+#ifndef JULY_MUSQUAREDWORKER_H
+#define JULY_MUSQUAREDWORKER_H
 
 #include <optional>
 
 #include "EnsembleAverager.h"
 #include "ExperimentalValuesWorker.h"
+#include "common/symbols/Symbols.h"
 #include "entities/data_structures/DenseMatrix.h"
 
 // TODO: is it true?
@@ -21,16 +22,20 @@ class MuSquaredWorker {
         ExperimentalValuesEnum experimental_quantity_type,
         double number_of_centers_ratio);
 
-    void calculateTheoreticalValues();
+    virtual double theory_at_temperature(double temperature) const = 0;
 
-  private:
-    //    class MuSquaredCalculator {};
-    std::optional<ExperimentalValuesWorker> experimental_values_worker_;
+    double calculateResidualError() const;
+    double calculateTotalDerivative(
+        symbols::SymbolTypeEnum symbol_type,
+        DenseVector&& derivative_value) const;
+
+  protected:
     const EnsembleAverager ensemble_averager_;
-    //    std::vector<ValueAtTemperature> theoretical_mu_squared;
+    virtual std::vector<ValueAtTemperature> calculateDerivative(
+        symbols::SymbolTypeEnum symbol_type,
+        DenseVector&& derivative_value) const = 0;
+    std::optional<ExperimentalValuesWorker> experimental_values_worker_;
 };
 
-// mu^2 = mu_B^2 * g_{iso}^2 * <S^2_{total}>
-
 }  // namespace magnetic_susceptibility
-#endif  //JULY_CHIT_H
+#endif  //JULY_MUSQUAREDWORKER_H

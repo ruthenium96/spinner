@@ -27,11 +27,11 @@ target_link_libraries(data_structures ${ARMADILLO_LIBRARIES}
         )
 
 add_library(magnetic_susceptibility
-        magnetic_susceptibility/ChiT.cpp
-        magnetic_susceptibility/ChiT.h
+        magnetic_susceptibility/MuSquaredWorker.cpp
+        magnetic_susceptibility/MuSquaredWorker.h
         magnetic_susceptibility/EnsembleAverager.cpp
         magnetic_susceptibility/EnsembleAverager.h
         magnetic_susceptibility/ExperimentalValuesWorker.cpp
         magnetic_susceptibility/ExperimentalValuesWorker.h
-        magnetic_susceptibility/MuSquaredTheoretical.cpp
-        magnetic_susceptibility/MuSquaredTheoretical.h)
+        magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.cpp
+        magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h)

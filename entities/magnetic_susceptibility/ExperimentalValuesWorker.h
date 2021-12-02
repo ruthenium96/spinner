@@ -1,7 +1,7 @@
 #ifndef JULY_EXPERIMENTALVALUESWORKER_H
 #define JULY_EXPERIMENTALVALUESWORKER_H
 
-#include "vector"
+#include <vector>
 
 namespace magnetic_susceptibility {
 
@@ -21,15 +21,21 @@ enum ExperimentalValuesEnum {
 
 class ExperimentalValuesWorker {
   public:
+    // TODO: can we also add weight function?
     ExperimentalValuesWorker(
         std::vector<ValueAtTemperature> experimental_values,
         ExperimentalValuesEnum experimental_values_type,
         double number_of_centers_ratio);
-    //    double calculateResidualError();
-    //    double calculateDerivative();
+
+    [[nodiscard]] std::vector<double> getTemperatures() const;
+    void setTheoreticalMuSquared(std::vector<ValueAtTemperature> theoretical_mu_squared);
+
+    [[nodiscard]] double calculateResidualError() const;
+    [[nodiscard]] std::vector<ValueAtTemperature> calculateDerivative() const;
 
   private:
-    std::vector<ValueAtTemperature> experimental_mu_squared;
+    std::vector<ValueAtTemperature> experimental_mu_squared_;
+    std::vector<ValueAtTemperature> theoretical_mu_squared_;
     ExperimentalValuesEnum experimental_values_type_;
 };
 }  // namespace magnetic_susceptibility

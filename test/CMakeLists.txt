@@ -10,4 +10,4 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/test/hamiltonian_operator_tests.cpp
         ${CMAKE_SOURCE_DIR}/test/symbols_tests.cpp)
 
-target_link_libraries(julytest gtest gtest_main group components space common matrix)
+target_link_libraries(julytest gtest gtest_main group components space common matrix magnetic_susceptibility)

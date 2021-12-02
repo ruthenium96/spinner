@@ -5,7 +5,8 @@
 
 #include "common/Quantity.h"
 #include "common/symbols/Symbols.h"
-#include "entities/magnetic_susceptibility/ChiT.h"
+#include "entities/magnetic_susceptibility/MuSquaredWorker.h"
+#include "entities/magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h"
 #include "entities/matrix/Matrix.h"
 #include "entities/operator/Operator.h"
 #include "entities/space/Space.h"
@@ -51,7 +52,8 @@ class Runner {
     void BuildSpectra();
 
     // CHIT OPERATIONS
-    std::vector<double> constructChiT(const std::vector<double>& temperatures);
+    std::vector<double> constructChiT(
+        const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data);
 
     [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
     [[nodiscard]] const Operator& getOperator(common::QuantityEnum) const;
