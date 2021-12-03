@@ -52,8 +52,14 @@ class Runner {
     void BuildSpectra();
 
     // CHIT OPERATIONS
-    std::vector<magnetic_susceptibility::ValueAtTemperature> constructChiT(
-        const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data);
+    void BuildMuSquaredWorker();
+    void initializeExperimentalValues(
+        const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
+        magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
+        double number_of_centers_ratio);
+    double calculateResidualError() const;
+    void printTotalDerivatives();
+    std::vector<magnetic_susceptibility::ValueAtTemperature> getTheoreticalValues();
 
     [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
     [[nodiscard]] const Operator& getOperator(common::QuantityEnum) const;
@@ -98,6 +104,9 @@ class Runner {
     Spectrum spectrum_energy;
     Spectrum spectrum_s_squared;
     std::unordered_map<std::string, Spectrum> spectrum_derivative_of_energy_wrt_exchange_parameters;
+
+    // TODO: can we use std::optional<magnetic_susceptibility::MuSquaredWorker> instead?
+    std::optional<std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>> mu_squared_worker;
 
     void BuildSpectraUsingMatrices();
     void BuildSpectraWithoutMatrices();

@@ -311,69 +311,6 @@ void runner::Runner::AddGFactor(const std::string& symbol_name, size_t center_a)
     symbols_.addGFactor(symbol_name, center_a);
 }
 
-std::vector<magnetic_susceptibility::ValueAtTemperature> runner::Runner::constructChiT(
-    const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data) {
-    // if sum_of_gs_squared and sum_of_gs are not initialized:
-
-    if (!symbols_.isAllGFactorsEqual()) {
-        throw std::invalid_argument("Not all g factors are equal");
-    }
-
-    double g_factor = symbols_.constructGFactorParameters()->operator()(0);
-    DenseVector energy;
-    DenseVector degeneracy;
-    DenseVector s_squared;
-    for (const auto& subspectrum : spectrum_energy.blocks) {
-        energy.concatenate_with(subspectrum.raw_data);
-        degeneracy.add_identical_values(
-            subspectrum.raw_data.size(),
-            subspectrum.properties.degeneracy);
-    }
-    energy.subtract_minimum();
-
-    // TODO: check if s_squared has been initialized
-    for (const auto& subspectrum : spectrum_s_squared.blocks) {
-        s_squared.concatenate_with(subspectrum.raw_data);
-    }
-
-    auto mu_squared_worker = magnetic_susceptibility::UniqueGOnlySSquaredMuSquaredWorker(
-        std::move(energy),
-        std::move(degeneracy),
-        std::move(s_squared),
-        g_factor);
-
-    mu_squared_worker.initializeExperimentalValues(
-        experimental_data,
-        magnetic_susceptibility::chiT_in_cm_cubed_kelvin_per_mol,
-        4);
-
-    std::cout << "Residual error: " << mu_squared_worker.calculateResidualError() << std::endl;
-
-    for (const auto& changeable_symbol : symbols_.getChangeableNames(symbols::J)) {
-        DenseVector derivative;
-        for (const auto& subspectrum :
-             getSpectrumDerivative(common::Energy, symbols::J, changeable_symbol).blocks) {
-            derivative.concatenate_with(subspectrum.raw_data);
-        }
-        double value =
-            mu_squared_worker.calculateTotalDerivative(symbols::J, std::move(derivative));
-        std::cout << "Derivative of residual error with respect to " << changeable_symbol << ": "
-                  << value << std::endl;
-    }
-
-    {
-        double value = mu_squared_worker.calculateTotalDerivative(symbols::g_factor);
-        std::cout << "Derivative of residual error with respect to g: " << value << std::endl;
-    }
-
-    std::vector<double> chi_Ts;
-    //    for (size_t i = 0; i < temperatures.size(); ++i) {
-    //        chi_Ts[i] = averager.ensemble_average(s_squared, temperatures[i]);
-    //        std::cout << chi_Ts[i] << std::endl;
-    //    }
-    return mu_squared_worker.getTheoreticalValues();
-}
-
 const Operator& runner::Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     symbols::SymbolTypeEnum symbol_type,
@@ -405,4 +342,77 @@ const Matrix& runner::Runner::getMatrixDerivative(
             return matrix_derivative_of_energy_wrt_exchange_parameters.at(symbol);
         }
     }
+}
+
+void runner::Runner::BuildMuSquaredWorker() {
+    DenseVector energy;
+    DenseVector degeneracy;
+
+    for (const auto& subspectrum : spectrum_energy.blocks) {
+        energy.concatenate_with(subspectrum.raw_data);
+        degeneracy.add_identical_values(
+            subspectrum.raw_data.size(),
+            subspectrum.properties.degeneracy);
+    }
+    energy.subtract_minimum();
+
+    if (symbols_.isAllGFactorsEqual()) {
+        // and there is no field
+        double g_factor = symbols_.constructGFactorParameters()->operator()(0);
+        DenseVector s_squared;
+
+        // TODO: check if s_squared has been initialized
+        for (const auto& subspectrum : spectrum_s_squared.blocks) {
+            s_squared.concatenate_with(subspectrum.raw_data);
+        }
+
+        mu_squared_worker =
+            std::make_unique<magnetic_susceptibility::UniqueGOnlySSquaredMuSquaredWorker>(
+                std::move(energy),
+                std::move(degeneracy),
+                std::move(s_squared),
+                g_factor);
+    } else {
+        throw std::invalid_argument("Different g factors are not supported now.");
+    }
+}
+
+void runner::Runner::initializeExperimentalValues(
+    const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
+    magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
+    double number_of_centers_ratio) {
+    mu_squared_worker.value()->initializeExperimentalValues(
+        experimental_data,
+        experimental_quantity_type,
+        number_of_centers_ratio);
+}
+
+double runner::Runner::calculateResidualError() const {
+    // TODO: throw if experimental data was not initialized
+    return mu_squared_worker.value()->calculateResidualError();
+}
+
+void runner::Runner::printTotalDerivatives() {
+    // TODO: ony s_squared-based calculation supported
+
+    for (const auto& changeable_symbol : symbols_.getChangeableNames(symbols::J)) {
+        DenseVector derivative;
+        for (const auto& subspectrum :
+             getSpectrumDerivative(common::Energy, symbols::J, changeable_symbol).blocks) {
+            derivative.concatenate_with(subspectrum.raw_data);
+        }
+        double value =
+            mu_squared_worker.value()->calculateTotalDerivative(symbols::J, std::move(derivative));
+        std::cout << "Derivative of residual error with respect to " << changeable_symbol << ": "
+                  << value << std::endl;
+    }
+
+    if (!symbols_.getChangeableNames(symbols::g_factor).empty()) {
+        double value = mu_squared_worker.value()->calculateTotalDerivative(symbols::g_factor);
+        std::cout << "Derivative of residual error with respect to g: " << value << std::endl;
+    }
+}
+
+std::vector<magnetic_susceptibility::ValueAtTemperature> runner::Runner::getTheoreticalValues() {
+    return mu_squared_worker.value()->getTheoreticalValues();
 }
