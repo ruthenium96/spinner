@@ -311,7 +311,7 @@ void runner::Runner::AddGFactor(const std::string& symbol_name, size_t center_a)
     symbols_.addGFactor(symbol_name, center_a);
 }
 
-std::vector<double> runner::Runner::constructChiT(
+std::vector<magnetic_susceptibility::ValueAtTemperature> runner::Runner::constructChiT(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data) {
     // if sum_of_gs_squared and sum_of_gs are not initialized:
 
@@ -347,7 +347,7 @@ std::vector<double> runner::Runner::constructChiT(
         magnetic_susceptibility::chiT_in_cm_cubed_kelvin_per_mol,
         4);
 
-    std::cout << "Невязка: " << mu_squared_worker.calculateResidualError() << std::endl;
+    std::cout << "Residual error: " << mu_squared_worker.calculateResidualError() << std::endl;
 
     for (const auto& changeable_symbol : symbols_.getChangeableNames(symbols::J)) {
         DenseVector derivative;
@@ -357,7 +357,13 @@ std::vector<double> runner::Runner::constructChiT(
         }
         double value =
             mu_squared_worker.calculateTotalDerivative(symbols::J, std::move(derivative));
-        std::cout << "Производная по " << changeable_symbol << ": " << value << std::endl;
+        std::cout << "Derivative of residual error with respect to " << changeable_symbol << ": "
+                  << value << std::endl;
+    }
+
+    {
+        double value = mu_squared_worker.calculateTotalDerivative(symbols::g_factor);
+        std::cout << "Derivative of residual error with respect to g: " << value << std::endl;
     }
 
     std::vector<double> chi_Ts;
@@ -365,7 +371,7 @@ std::vector<double> runner::Runner::constructChiT(
     //        chi_Ts[i] = averager.ensemble_average(s_squared, temperatures[i]);
     //        std::cout << chi_Ts[i] << std::endl;
     //    }
-    return chi_Ts;
+    return mu_squared_worker.getTheoreticalValues();
 }
 
 const Operator& runner::Runner::getOperatorDerivative(

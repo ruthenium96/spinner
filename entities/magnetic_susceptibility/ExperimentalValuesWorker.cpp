@@ -1,5 +1,6 @@
 #include "ExperimentalValuesWorker.h"
 
+#include <cmath>
 #include <stdexcept>
 
 namespace magnetic_susceptibility {
@@ -9,6 +10,7 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
     ExperimentalValuesEnum experimental_values_type,
     double number_of_centers_ratio) {
     experimental_values_type_ = experimental_values_type;
+    number_of_centers_ratio_ = number_of_centers_ratio;
 
     if (experimental_values_type == mu_squared_in_bohr_magnetons_squared) {
         // DO NOTHING
@@ -23,7 +25,7 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
     }
 
     for (ValueAtTemperature& v : experimental_values) {
-        v.value *= number_of_centers_ratio;
+        v.value *= number_of_centers_ratio_;
     }
 
     // TODO: sort by temperature
@@ -62,5 +64,25 @@ void ExperimentalValuesWorker::setTheoreticalMuSquared(
         throw std::invalid_argument("Theoretical values have been already set.");
     }
     theoretical_mu_squared_ = std::move(theoretical_mu_squared);
+}
+std::vector<ValueAtTemperature> ExperimentalValuesWorker::getTheoreticalValues() const {
+    std::vector<ValueAtTemperature> theoretical_values = theoretical_mu_squared_;
+
+    for (ValueAtTemperature& v : theoretical_values) {
+        v.value /= number_of_centers_ratio_;
+    }
+
+    if (experimental_values_type_ == mu_squared_in_bohr_magnetons_squared) {
+        // DO NOTHING
+    } else if (experimental_values_type_ == mu_in_bohr_magnetons) {
+        for (ValueAtTemperature& v : theoretical_values) {
+            v.value = sqrt(v.value);
+        }
+    } else if (experimental_values_type_ == chiT_in_cm_cubed_kelvin_per_mol) {
+        for (ValueAtTemperature& v : theoretical_values) {
+            v.value *= mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol;
+        }
+    }
+    return theoretical_values;
 }
 }  // namespace magnetic_susceptibility

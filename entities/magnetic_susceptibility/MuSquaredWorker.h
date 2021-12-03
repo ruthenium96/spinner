@@ -22,18 +22,27 @@ class MuSquaredWorker {
         ExperimentalValuesEnum experimental_quantity_type,
         double number_of_centers_ratio);
 
+    std::vector<ValueAtTemperature> getTheoreticalValues() const;
+
     virtual double theory_at_temperature(double temperature) const = 0;
 
     double calculateResidualError() const;
     double calculateTotalDerivative(
         symbols::SymbolTypeEnum symbol_type,
         DenseVector&& derivative_value) const;
+    double calculateTotalDerivative(symbols::SymbolTypeEnum symbol_type) const;
 
   protected:
     const EnsembleAverager ensemble_averager_;
     virtual std::vector<ValueAtTemperature> calculateDerivative(
         symbols::SymbolTypeEnum symbol_type,
         DenseVector&& derivative_value) const = 0;
+    virtual std::vector<ValueAtTemperature>
+    calculateDerivative(symbols::SymbolTypeEnum symbol_type) const = 0;
+
+    double multiplyExperimentalAndTheoreticalDerivatives(
+        std::vector<ValueAtTemperature> theoretical_derivative) const;
+
     std::optional<ExperimentalValuesWorker> experimental_values_worker_;
 };
 

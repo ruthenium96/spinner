@@ -30,6 +30,8 @@ class ExperimentalValuesWorker {
     [[nodiscard]] std::vector<double> getTemperatures() const;
     void setTheoreticalMuSquared(std::vector<ValueAtTemperature> theoretical_mu_squared);
 
+    [[nodiscard]] std::vector<ValueAtTemperature> getTheoreticalValues() const;
+
     [[nodiscard]] double calculateResidualError() const;
     [[nodiscard]] std::vector<ValueAtTemperature> calculateDerivative() const;
 
@@ -37,6 +39,7 @@ class ExperimentalValuesWorker {
     std::vector<ValueAtTemperature> experimental_mu_squared_;
     std::vector<ValueAtTemperature> theoretical_mu_squared_;
     ExperimentalValuesEnum experimental_values_type_;
+    double number_of_centers_ratio_;
 };
 }  // namespace magnetic_susceptibility
 #endif  //JULY_EXPERIMENTALVALUESWORKER_H

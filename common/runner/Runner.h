@@ -52,7 +52,7 @@ class Runner {
     void BuildSpectra();
 
     // CHIT OPERATIONS
-    std::vector<double> constructChiT(
+    std::vector<magnetic_susceptibility::ValueAtTemperature> constructChiT(
         const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data);
 
     [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
