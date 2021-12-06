@@ -1,5 +1,7 @@
 #include "Runner.h"
 
+#include <stlbfgs.h>
+
 #include "components/matrix/MatrixBuilder.h"
 #include "components/operator/ConstantOperator.h"
 #include "components/operator/ScalarProduct.h"
@@ -432,11 +434,11 @@ std::vector<magnetic_susceptibility::ValueAtTemperature> runner::Runner::getTheo
 }
 
 void runner::Runner::minimizeResidualError() {
-    std::vector<std::string> changeable_names;
-    changeable_names.insert(
-        changeable_names.cend(),
-        symbols_.getChangeableNames().begin(),
-        symbols_.getChangeableNames().end());
+    std::vector<std::string> changeable_names = symbols_.getChangeableNames();
+    //    changeable_names.insert(
+    //        changeable_names.cend(),
+    //        symbols_.getChangeableNames().begin(),
+    //        symbols_.getChangeableNames().end());
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
     for (const std::string& name : changeable_names) {
@@ -451,7 +453,8 @@ void runner::Runner::minimizeResidualError() {
             for (size_t i = 0; i < changeable_names.size(); ++i) {
                 symbols_.setNewValueToChangeableSymbol(changeable_names[i], changeable_values[i]);
             }
-            symbols_.updateGFactorParameters();
+            // todo: fix it:
+            symbols_.constructGFactorParameters();
             symbols_.updateIsotropicExchangeParameters();
 
             if (matrix_history_.matrices_was_built) {
@@ -470,4 +473,11 @@ void runner::Runner::minimizeResidualError() {
                 gradient[i] = map_gradient[changeable_names[i]];
             }
         };
+
+    STLBFGS::Optimizer opt {func_grad_eval};
+    opt.run(changeable_values);
+
+    for (size_t i = 0; i < changeable_names.size(); ++i) {
+        std::cout << changeable_names[i] << ": " << changeable_values[i] << std::endl;
+    }
 }

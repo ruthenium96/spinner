@@ -60,9 +60,6 @@ std::vector<double> ExperimentalValuesWorker::getTemperatures() const {
 
 void ExperimentalValuesWorker::setTheoreticalMuSquared(
     std::vector<ValueAtTemperature> theoretical_mu_squared) {
-    if (!theoretical_mu_squared_.empty()) {
-        throw std::invalid_argument("Theoretical values have been already set.");
-    }
     theoretical_mu_squared_ = std::move(theoretical_mu_squared);
 }
 std::vector<ValueAtTemperature> ExperimentalValuesWorker::getTheoreticalValues() const {

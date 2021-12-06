@@ -17,10 +17,18 @@ include_directories(${CMAKE_SOURCE_DIR}/libs/googletest/googletest/include)
 FetchContent_Declare(
         wignersymbols
         GIT_REPOSITORY https://github.com/joeydumont/wignerSymbols.git
-        GIT_TAG        "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
+        GIT_TAG "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
 )
 FetchContent_MakeAvailable(wignersymbols)
 include_directories(${wignersymbols_SOURCE_DIR}/include/)
+
+FetchContent_Declare(
+        stlbfgs
+        GIT_REPOSITORY https://github.com/ssloy/stlbfgs.git
+        GIT_TAG "0dedf926faf66cf95fffbdc3ff5c3e0067b70296"
+)
+FetchContent_MakeAvailable(stlbfgs)
+include_directories(${stlbfgs_SOURCE_DIR}/)
 
 find_package(Boost)
 include_directories(${Boost_INCLUDE_DIRS})
@@ -30,7 +38,7 @@ include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
