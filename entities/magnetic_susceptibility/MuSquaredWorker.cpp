@@ -7,31 +7,8 @@ namespace magnetic_susceptibility {
 MuSquaredWorker::MuSquaredWorker(DenseVector&& energy, DenseVector&& degeneracy) :
     ensemble_averager_(std::move(energy), std::move(degeneracy)) {}
 
-void MuSquaredWorker::initializeExperimentalValues(
-    std::vector<ValueAtTemperature> experimental_values,
-    ExperimentalValuesEnum experimental_quantity_type,
-    double number_of_centers_ratio) {
-    if (experimental_values_worker_.has_value()) {
-        throw std::invalid_argument("Experimantal values have been already initialized");
-    }
-
-    experimental_values_worker_ = ExperimentalValuesWorker(
-        std::move(experimental_values),
-        experimental_quantity_type,
-        number_of_centers_ratio);
-
-    std::vector<double> temperatures = experimental_values_worker_->getTemperatures();
-    std::vector<ValueAtTemperature> theoretical_mu_squared_values(temperatures.size());
-    for (size_t i = 0; i < temperatures.size(); ++i) {
-        theoretical_mu_squared_values[i] = {
-            temperatures[i],
-            theory_at_temperature(temperatures[i])};
-    }
-    experimental_values_worker_->setTheoreticalMuSquared(theoretical_mu_squared_values);
-}
-
 double MuSquaredWorker::calculateResidualError() const {
-    return experimental_values_worker_->calculateResidualError();
+    return experimental_values_worker_.value()->calculateResidualError();
 }
 
 double MuSquaredWorker::calculateTotalDerivative(
@@ -50,7 +27,7 @@ double MuSquaredWorker::calculateTotalDerivative(symbols::SymbolTypeEnum symbol_
 double MuSquaredWorker::multiplyExperimentalAndTheoreticalDerivatives(
     std::vector<ValueAtTemperature> theoretical_derivative) const {
     std::vector<ValueAtTemperature> experimental_derivative =
-        experimental_values_worker_->calculateDerivative();
+        experimental_values_worker_.value()->calculateDerivative();
     if (experimental_derivative.size() != theoretical_derivative.size()) {
         throw std::invalid_argument(
             "experimantal_derivative.size() != theoretical_derivative.size()");
@@ -66,7 +43,20 @@ double MuSquaredWorker::multiplyExperimentalAndTheoreticalDerivatives(
     return derivative;
 }
 std::vector<ValueAtTemperature> MuSquaredWorker::getTheoreticalValues() const {
-    return experimental_values_worker_->getTheoreticalValues();
+    return experimental_values_worker_.value()->getTheoreticalValues();
+}
+
+void MuSquaredWorker::initializeExperimentalValues(
+    const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) {
+    experimental_values_worker_ = experimental_values_worker;
+    std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
+    std::vector<ValueAtTemperature> theoretical_mu_squared_values(temperatures.size());
+    for (size_t i = 0; i < temperatures.size(); ++i) {
+        theoretical_mu_squared_values[i] = {
+            temperatures[i],
+            theory_at_temperature(temperatures[i])};
+    }
+    experimental_values_worker_.value()->setTheoreticalMuSquared(theoretical_mu_squared_values);
 }
 
 }  // namespace magnetic_susceptibility

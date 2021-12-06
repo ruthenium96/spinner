@@ -18,9 +18,7 @@ class MuSquaredWorker {
     MuSquaredWorker(DenseVector&& energy, DenseVector&& degeneracy);
 
     void initializeExperimentalValues(
-        std::vector<ValueAtTemperature> experimental_values,
-        ExperimentalValuesEnum experimental_quantity_type,
-        double number_of_centers_ratio);
+        const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker);
 
     std::vector<ValueAtTemperature> getTheoreticalValues() const;
 
@@ -43,7 +41,7 @@ class MuSquaredWorker {
     double multiplyExperimentalAndTheoreticalDerivatives(
         std::vector<ValueAtTemperature> theoretical_derivative) const;
 
-    std::optional<ExperimentalValuesWorker> experimental_values_worker_;
+    std::optional<std::shared_ptr<ExperimentalValuesWorker>> experimental_values_worker_;
 };
 
 }  // namespace magnetic_susceptibility
