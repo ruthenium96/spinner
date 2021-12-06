@@ -107,6 +107,8 @@ class Runner {
 
     // TODO: can we use std::optional<magnetic_susceptibility::MuSquaredWorker> instead?
     std::optional<std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>> mu_squared_worker;
+    std::optional<std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>>
+        experimental_values_worker_;
 
     void BuildSpectraUsingMatrices();
     void BuildSpectraWithoutMatrices();

@@ -377,16 +377,22 @@ void runner::Runner::BuildMuSquaredWorker() {
     } else {
         throw std::invalid_argument("Different g factors are not supported now.");
     }
+
+    if (experimental_values_worker_.has_value()) {
+        mu_squared_worker.value()->initializeExperimentalValues(
+            experimental_values_worker_.value());
+    }
 }
 
 void runner::Runner::initializeExperimentalValues(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
     magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
     double number_of_centers_ratio) {
-    mu_squared_worker.value()->initializeExperimentalValues(
-        experimental_data,
-        experimental_quantity_type,
-        number_of_centers_ratio);
+    experimental_values_worker_ =
+        std::make_shared<magnetic_susceptibility::ExperimentalValuesWorker>(
+            experimental_data,
+            experimental_quantity_type,
+            number_of_centers_ratio);
 }
 
 double runner::Runner::calculateResidualError() const {
