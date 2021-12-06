@@ -58,8 +58,9 @@ class Runner {
         magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
         double number_of_centers_ratio);
     double calculateResidualError() const;
-    void printTotalDerivatives();
+    std::map<std::string, double> calculateTotalDerivatives();
     std::vector<magnetic_susceptibility::ValueAtTemperature> getTheoreticalValues();
+    void minimizeResidualError();
 
     [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
     [[nodiscard]] const Operator& getOperator(common::QuantityEnum) const;

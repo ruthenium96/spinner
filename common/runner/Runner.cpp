@@ -400,8 +400,10 @@ double runner::Runner::calculateResidualError() const {
     return mu_squared_worker.value()->calculateResidualError();
 }
 
-void runner::Runner::printTotalDerivatives() {
+std::map<std::string, double> runner::Runner::calculateTotalDerivatives() {
     // TODO: ony s_squared-based calculation supported
+
+    std::map<std::string, double> answer;
 
     for (const auto& changeable_symbol : symbols_.getChangeableNames(symbols::J)) {
         DenseVector derivative;
@@ -411,16 +413,61 @@ void runner::Runner::printTotalDerivatives() {
         }
         double value =
             mu_squared_worker.value()->calculateTotalDerivative(symbols::J, std::move(derivative));
+        answer[changeable_symbol] = value;
         std::cout << "Derivative of residual error with respect to " << changeable_symbol << ": "
                   << value << std::endl;
     }
 
     if (!symbols_.getChangeableNames(symbols::g_factor).empty()) {
+        std::string g_name = symbols_.getChangeableNames(symbols::g_factor)[0];
         double value = mu_squared_worker.value()->calculateTotalDerivative(symbols::g_factor);
+        answer[g_name] = value;
         std::cout << "Derivative of residual error with respect to g: " << value << std::endl;
     }
+    return answer;
 }
 
 std::vector<magnetic_susceptibility::ValueAtTemperature> runner::Runner::getTheoreticalValues() {
     return mu_squared_worker.value()->getTheoreticalValues();
+}
+
+void runner::Runner::minimizeResidualError() {
+    std::vector<std::string> changeable_names;
+    changeable_names.insert(
+        changeable_names.cend(),
+        symbols_.getChangeableNames().begin(),
+        symbols_.getChangeableNames().end());
+    std::vector<double> changeable_values;
+    changeable_values.reserve(changeable_names.size());
+    for (const std::string& name : changeable_names) {
+        changeable_values.push_back(symbols_.getValueOfName(name));
+    }
+
+    std::function<void(const std::vector<double>&, double&, std::vector<double>&)> func_grad_eval =
+        [this, &changeable_names](
+            const std::vector<double>& changeable_values,
+            double& residual_error,
+            std::vector<double>& gradient) {
+            for (size_t i = 0; i < changeable_names.size(); ++i) {
+                symbols_.setNewValueToChangeableSymbol(changeable_names[i], changeable_values[i]);
+            }
+            symbols_.updateGFactorParameters();
+            symbols_.updateIsotropicExchangeParameters();
+
+            if (matrix_history_.matrices_was_built) {
+                // TODO: here's the problem with future SSquaredTransformer
+                // TODO: or we can use SSquaredTransform() as flag and actually apply it at BuildMatrix?
+                BuildMatrices();
+            }
+            BuildSpectra();
+
+            BuildMuSquaredWorker();
+
+            residual_error = calculateResidualError();
+
+            std::map<std::string, double> map_gradient = calculateTotalDerivatives();
+            for (size_t i = 0; i < changeable_names.size(); ++i) {
+                gradient[i] = map_gradient[changeable_names[i]];
+            }
+        };
 }
