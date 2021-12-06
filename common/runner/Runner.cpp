@@ -110,14 +110,16 @@ void runner::Runner::BuildMatrices() {
 
     MatrixBuilder matrix_builder(converter_);
     if (!operator_energy.empty()) {
+        matrix_energy.blocks.clear();
         matrix_energy = matrix_builder.apply(space_, operator_energy);
     }
     if (!operator_s_squared.empty()) {
+        matrix_s_squared.blocks.clear();
         matrix_s_squared = matrix_builder.apply(space_, operator_s_squared);
     }
-    for (const auto& pair : operator_derivative_of_energy_wrt_exchange_parameters) {
-        const Operator& operator_derivative = pair.second;
-        const std::string& symbol = pair.first;
+    for (const auto& [symbol, operator_derivative] :
+         operator_derivative_of_energy_wrt_exchange_parameters) {
+        matrix_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.clear();
         matrix_derivative_of_energy_wrt_exchange_parameters[symbol] =
             matrix_builder.apply(space_, operator_derivative);
     }
@@ -170,13 +172,14 @@ void runner::Runner::BuildSpectraUsingMatrices() {
     size_t number_of_blocks = space_.blocks.size();
 
     if (!operator_energy.empty()) {
+        spectrum_energy.blocks.clear();
         spectrum_energy.blocks.resize(number_of_blocks);
     }
     if (!operator_s_squared.empty()) {
+        spectrum_s_squared.blocks.clear();
         spectrum_s_squared.blocks.resize(number_of_blocks);
     }
-    for (const auto& pair : matrix_derivative_of_energy_wrt_exchange_parameters) {
-        const std::string& symbol = pair.first;
+    for (const auto& [symbol, _] : matrix_derivative_of_energy_wrt_exchange_parameters) {
         spectrum_derivative_of_energy_wrt_exchange_parameters[symbol] = Spectrum();
         spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.resize(
             number_of_blocks);
@@ -194,9 +197,8 @@ void runner::Runner::BuildSpectraUsingMatrices() {
                 unitary_transformation_matrix);
         }
 
-        for (const auto& pair : matrix_derivative_of_energy_wrt_exchange_parameters) {
-            const Matrix& matrix_derivative = pair.second;
-            const std::string& symbol = pair.first;
+        for (const auto& [symbol, matrix_derivative] :
+             matrix_derivative_of_energy_wrt_exchange_parameters) {
             spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks[block] =
                 spectrumBuilder.apply_to_subentity_non_energy(
                     matrix_derivative.blocks[block],
@@ -212,13 +214,14 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
     size_t number_of_blocks = space_.blocks.size();
 
     if (!operator_energy.empty()) {
+        spectrum_energy.blocks.clear();
         spectrum_energy.blocks.resize(number_of_blocks);
     }
     if (!operator_s_squared.empty()) {
+        spectrum_s_squared.blocks.clear();
         spectrum_s_squared.blocks.resize(number_of_blocks);
     }
-    for (const auto& pair : operator_derivative_of_energy_wrt_exchange_parameters) {
-        const std::string& symbol = pair.first;
+    for (const auto& [symbol, _] : operator_derivative_of_energy_wrt_exchange_parameters) {
         spectrum_derivative_of_energy_wrt_exchange_parameters[symbol] = Spectrum();
         spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.resize(
             number_of_blocks);
@@ -250,9 +253,8 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
                 unitary_transformation_matrix);
         }
 
-        for (const auto& pair : operator_derivative_of_energy_wrt_exchange_parameters) {
-            const Operator& operator_derivative = pair.second;
-            const std::string& symbol = pair.first;
+        for (const auto& [symbol, operator_derivative] :
+             operator_derivative_of_energy_wrt_exchange_parameters) {
             Submatrix derivative_submatrix =
                 matrixBuilder.apply_to_subentity(space_.blocks[block], operator_derivative);
             spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks[block] =
