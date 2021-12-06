@@ -16,17 +16,8 @@ std::shared_ptr<const DenseMatrix> symbols::Symbols::constructIsotropicExchangeP
         isotropic_exchange_parameters_values_->resize_with_nans(number_of_spins_, number_of_spins_);
     }
 
-    for (size_t i = 0; i < number_of_spins_; ++i) {
-        for (size_t j = 0; j < number_of_spins_; ++j) {
-            double value;
-            if (isotropic_exchange_parameters_names_[i][j].empty()) {
-                value = NAN;
-            } else {
-                value = symbols_[isotropic_exchange_parameters_names_[i][j]].value;
-            }
-            isotropic_exchange_parameters_values_->assign_to_position(value, i, j);
-        }
-    }
+    updateIsotropicExchangeParameters();
+
     return isotropic_exchange_parameters_values_;
 }
 
@@ -110,10 +101,7 @@ std::shared_ptr<const DenseVector> Symbols::constructGFactorParameters() {
         g_factor_values_->resize(number_of_spins_);
     }
 
-    for (size_t i = 0; i < number_of_spins_; ++i) {
-        double value = symbols_[g_factor_names_[i]].value;
-        g_factor_values_->assign_to_position(value, i);
-    }
+    updateGFactorParameters();
 
     return g_factor_values_;
 }
@@ -205,5 +193,50 @@ bool Symbols::isAllGFactorsEqual() const {
         }
     }
     return true;
+}
+std::vector<std::string> Symbols::getChangeableNames() const {
+    std::vector<std::string> answer;
+    for (const auto& pair : symbols_) {
+        const std::string name = pair.first;
+        const SymbolData& symbol_data = pair.second;
+        if (symbol_data.is_changeable) {
+            answer.push_back(name);
+        }
+    }
+    return answer;
+}
+
+double Symbols::getValueOfName(const std::string& name) const {
+    return symbols_.at(name).value;
+}
+
+void Symbols::setNewValueToChangeableSymbol(const std::string& name, double new_value) {
+    SymbolData symbol_data = symbols_[name];
+    if (!symbol_data.is_changeable) {
+        throw std::invalid_argument("Cannot change value of unchangeable symbol");
+    }
+    symbol_data.value = new_value;
+    symbols_[name] = symbol_data;
+}
+
+void Symbols::updateIsotropicExchangeParameters() {
+    for (size_t i = 0; i < number_of_spins_; ++i) {
+        for (size_t j = 0; j < number_of_spins_; ++j) {
+            double value;
+            if (isotropic_exchange_parameters_names_[i][j].empty()) {
+                value = NAN;
+            } else {
+                value = symbols_[isotropic_exchange_parameters_names_[i][j]].value;
+            }
+            isotropic_exchange_parameters_values_->assign_to_position(value, i, j);
+        }
+    }
+}
+
+void Symbols::updateGFactorParameters() {
+    for (size_t i = 0; i < number_of_spins_; ++i) {
+        double value = symbols_[g_factor_names_[i]].value;
+        g_factor_values_->assign_to_position(value, i);
+    }
 }
 }  // namespace symbols

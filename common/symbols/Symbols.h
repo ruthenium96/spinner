@@ -33,8 +33,15 @@ class Symbols {
         double initial_value,
         bool is_changeable,
         SymbolTypeEnum type_enum);
+    void setNewValueToChangeableSymbol(const std::string& name, double new_value);
+    void updateIsotropicExchangeParameters();
+    void updateGFactorParameters();
+    // TODO: implement it
+    //    void updateIsotropicExchangeDerivativeParameters(const std::string& symbol_name);
 
     [[nodiscard]] std::vector<std::string> getChangeableNames(SymbolTypeEnum type_enum) const;
+    [[nodiscard]] std::vector<std::string> getChangeableNames() const;
+    [[nodiscard]] double getValueOfName(const std::string& name) const;
 
   private:
     size_t number_of_spins_;
