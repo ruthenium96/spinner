@@ -31,11 +31,14 @@ class ExperimentalValuesWorker {
     void setTheoreticalMuSquared(std::vector<ValueAtTemperature> theoretical_mu_squared);
 
     [[nodiscard]] std::vector<ValueAtTemperature> getTheoreticalValues() const;
+    [[nodiscard]] std::vector<ValueAtTemperature> getExperimentalMuSquared() const;
 
     [[nodiscard]] double calculateResidualError() const;
     [[nodiscard]] std::vector<ValueAtTemperature> calculateDerivative() const;
 
   private:
+    void throw_exception_if_theoretical_mu_squared_was_not_initialized() const;
+
     std::vector<ValueAtTemperature> experimental_mu_squared_;
     std::vector<ValueAtTemperature> theoretical_mu_squared_;
     ExperimentalValuesEnum experimental_values_type_;

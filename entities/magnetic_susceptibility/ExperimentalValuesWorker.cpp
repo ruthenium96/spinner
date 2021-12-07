@@ -9,6 +9,10 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
     std::vector<ValueAtTemperature> experimental_values,
     ExperimentalValuesEnum experimental_values_type,
     double number_of_centers_ratio) {
+    if (experimental_values.empty()) {
+        throw std::length_error("experimental_values cannot be empty");
+    }
+
     experimental_values_type_ = experimental_values_type;
     number_of_centers_ratio_ = number_of_centers_ratio;
 
@@ -33,6 +37,7 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
 }
 
 double ExperimentalValuesWorker::calculateResidualError() const {
+    throw_exception_if_theoretical_mu_squared_was_not_initialized();
     double residual_error = 0;
     for (size_t i = 0; i < theoretical_mu_squared_.size(); ++i) {
         double diff = theoretical_mu_squared_[i].value - experimental_mu_squared_[i].value;
@@ -42,6 +47,7 @@ double ExperimentalValuesWorker::calculateResidualError() const {
 }
 
 std::vector<ValueAtTemperature> ExperimentalValuesWorker::calculateDerivative() const {
+    throw_exception_if_theoretical_mu_squared_was_not_initialized();
     std::vector<ValueAtTemperature> derivative(experimental_mu_squared_.size());
     for (size_t i = 0; i < theoretical_mu_squared_.size(); ++i) {
         double diff = theoretical_mu_squared_[i].value - experimental_mu_squared_[i].value;
@@ -60,9 +66,15 @@ std::vector<double> ExperimentalValuesWorker::getTemperatures() const {
 
 void ExperimentalValuesWorker::setTheoreticalMuSquared(
     std::vector<ValueAtTemperature> theoretical_mu_squared) {
+    if (theoretical_mu_squared.size() != experimental_mu_squared_.size()) {
+        throw std::length_error("theoretical_mu_squared.size() != experimental_mu_squared_.size()");
+    }
     theoretical_mu_squared_ = std::move(theoretical_mu_squared);
 }
+
 std::vector<ValueAtTemperature> ExperimentalValuesWorker::getTheoreticalValues() const {
+    throw_exception_if_theoretical_mu_squared_was_not_initialized();
+
     std::vector<ValueAtTemperature> theoretical_values = theoretical_mu_squared_;
 
     for (ValueAtTemperature& v : theoretical_values) {
@@ -82,4 +94,15 @@ std::vector<ValueAtTemperature> ExperimentalValuesWorker::getTheoreticalValues()
     }
     return theoretical_values;
 }
+
+std::vector<ValueAtTemperature> ExperimentalValuesWorker::getExperimentalMuSquared() const {
+    return experimental_mu_squared_;
+}
+void ExperimentalValuesWorker::throw_exception_if_theoretical_mu_squared_was_not_initialized()
+    const {
+    if (theoretical_mu_squared_.empty()) {
+        throw std::length_error("Theoretical mu-squared was not initialized");
+    }
+}
+
 }  // namespace magnetic_susceptibility

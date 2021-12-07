@@ -8,6 +8,7 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/test/interactions_test.cpp
         ${CMAKE_SOURCE_DIR}/test/non_hamiltonian_operators_tests.cpp
         ${CMAKE_SOURCE_DIR}/test/hamiltonian_operator_tests.cpp
-        ${CMAKE_SOURCE_DIR}/test/symbols_tests.cpp)
+        ${CMAKE_SOURCE_DIR}/test/symbols_tests.cpp
+        ${CMAKE_SOURCE_DIR}/test/magnetic_susceptibility_tests.cpp)
 
 target_link_libraries(julytest gtest gtest_main group components space common matrix magnetic_susceptibility)
