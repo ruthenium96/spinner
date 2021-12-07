@@ -35,6 +35,7 @@ class Runner {
         symbols::SymbolTypeEnum type_enum);
     void AddSymbol(const std::string& name, double initial_value, bool is_changeable);
     void AddSymbol(const std::string& name, double initial_value);
+    double getValueOfName(const std::string& name) const;
 
     // OPERATOR OPERATIONS
     void AddIsotropicExchange(const std::string& symbol_name, size_t center_a, size_t center_b);
@@ -59,6 +60,7 @@ class Runner {
         double number_of_centers_ratio);
     double calculateResidualError() const;
     std::map<std::string, double> calculateTotalDerivatives();
+    double calculateTheoreticalMuSquared(double temperature) const;
     std::vector<magnetic_susceptibility::ValueAtTemperature> getTheoreticalValues();
     void minimizeResidualError();
 

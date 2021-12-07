@@ -42,6 +42,7 @@ double MuSquaredWorker::multiplyExperimentalAndTheoreticalDerivatives(
     }
     return derivative;
 }
+
 std::vector<ValueAtTemperature> MuSquaredWorker::getTheoreticalValues() const {
     return experimental_values_worker_.value()->getTheoreticalValues();
 }
