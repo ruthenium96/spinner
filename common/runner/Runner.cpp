@@ -454,8 +454,9 @@ void runner::Runner::minimizeResidualError() {
             symbols_.updateIsotropicExchangeParameters();
 
             if (matrix_history_.matrices_was_built) {
-                // TODO: here's the problem with future SSquaredTransformer
-                // TODO: or we can use SSquaredTransform() as flag and actually apply it at BuildMatrix?
+                // TODO: 1) it does not work now
+                //       2) here's the problem with future SSquaredTransformer
+                //       or we can use SSquaredTransform() as flag and actually apply it at BuildMatrix?
                 BuildMatrices();
             }
             BuildSpectra();
