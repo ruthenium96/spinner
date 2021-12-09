@@ -14,6 +14,15 @@ enum SymbolTypeEnum { not_specified, J, g_factor };
 
 class Symbols {
   public:
+    struct SymbolName {
+        bool operator<(const SymbolName& rhs) const;
+        bool operator>(const SymbolName& rhs) const;
+        bool operator<=(const SymbolName& rhs) const;
+        bool operator>=(const SymbolName& rhs) const;
+        bool operator==(const SymbolName& rhs) const;
+        bool operator!=(const SymbolName& rhs) const;
+        std::string name;
+    };
     explicit Symbols(size_t number_of_spins);
 
     [[nodiscard]] bool hasIsotropicExchangeParameters() const;
@@ -21,27 +30,27 @@ class Symbols {
     [[nodiscard]] bool symmetry_consistence(const group::Group& group) const;
 
     [[nodiscard]] std::shared_ptr<const DenseMatrix>
-    constructIsotropicExchangeDerivativeParameters(const std::string& symbol_name);
+    constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name);
     [[nodiscard]] std::shared_ptr<const DenseMatrix> constructIsotropicExchangeParameters();
     [[nodiscard]] std::shared_ptr<const DenseVector> constructGFactorParameters();
 
-    void addIsotropicExchange(const std::string& symbol_name, size_t center_a, size_t center_b);
-    void addGFactor(const std::string& symbol_name, size_t center_a);
+    void addIsotropicExchange(const SymbolName& symbol_name, size_t center_a, size_t center_b);
+    void addGFactor(const SymbolName& symbol_name, size_t center_a);
 
-    void addSymbol(
-        const std::string& symbol_name,
+    const SymbolName addSymbol(
+        const std::string& name_string,
         double initial_value,
         bool is_changeable,
         SymbolTypeEnum type_enum);
-    void setNewValueToChangeableSymbol(const std::string& name, double new_value);
+    void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
     void updateIsotropicExchangeParameters();
     void updateGFactorParameters();
     // TODO: implement it
     //    void updateIsotropicExchangeDerivativeParameters(const std::string& symbol_name);
 
-    [[nodiscard]] std::vector<std::string> getChangeableNames(SymbolTypeEnum type_enum) const;
-    [[nodiscard]] std::vector<std::string> getChangeableNames() const;
-    [[nodiscard]] double getValueOfName(const std::string& name) const;
+    [[nodiscard]] std::vector<SymbolName> getChangeableNames(SymbolTypeEnum type_enum) const;
+    [[nodiscard]] std::vector<SymbolName> getChangeableNames() const;
+    [[nodiscard]] double getValueOfName(const SymbolName& symbol_name) const;
 
   private:
     size_t number_of_spins_;
@@ -52,14 +61,14 @@ class Symbols {
         SymbolTypeEnum type_enum;
     };
 
-    std::vector<std::vector<std::string>> isotropic_exchange_parameters_names_;
-    std::vector<std::string> g_factor_names_;
+    std::vector<std::vector<SymbolName>> isotropic_exchange_parameters_names_;
+    std::vector<SymbolName> g_factor_names_;
 
     std::shared_ptr<DenseMatrix> isotropic_exchange_parameters_values_;
     std::shared_ptr<DenseVector> g_factor_values_;
     std::vector<std::shared_ptr<DenseMatrix>> isotropic_exchange_derivatives_values_;
 
-    std::map<std::string, SymbolData> symbols_;
+    std::map<SymbolName, SymbolData> symbols_;
 };
 
 }  // namespace symbols

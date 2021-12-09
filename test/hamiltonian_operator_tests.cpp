@@ -8,8 +8,8 @@ TEST(hamiltonian_operator, throw_isotropic_exchange_same_center_22_333_4444_2345
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        runner.AddSymbol("J", 10);
-        EXPECT_THROW(runner.AddIsotropicExchange("J", 0, 0), std::invalid_argument);
+        auto J = runner.AddSymbol("J", 10);
+        EXPECT_THROW(runner.AddIsotropicExchange(J, 0, 0), std::invalid_argument);
     }
 }
 
@@ -20,8 +20,8 @@ TEST(hamiltonian_operator, exchange_interaction_with_and_without_finalization_22
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        runner.AddSymbol("J", 10);
-        runner.AddIsotropicExchange("J", 0, 1);
+        auto J = runner.AddSymbol("J", 10);
+        runner.AddIsotropicExchange(J, 0, 1);
         EXPECT_EQ(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 0);
         runner.FinalizeIsotropicInteraction();
         EXPECT_EQ(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 1);
@@ -34,10 +34,10 @@ TEST(hamiltonian_operator, throw_adding_isotropic_exchange_after_finalization_33
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        runner.AddSymbol("J", 10);
-        runner.AddIsotropicExchange("J", 0, 1);
+        auto J = runner.AddSymbol("J", 10);
+        runner.AddIsotropicExchange(J, 0, 1);
         runner.FinalizeIsotropicInteraction();
-        EXPECT_THROW(runner.AddIsotropicExchange("J", 1, 2), std::invalid_argument);
+        EXPECT_THROW(runner.AddIsotropicExchange(J, 1, 2), std::invalid_argument);
     }
 }
 

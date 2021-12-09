@@ -81,7 +81,7 @@ uint32_t runner::Runner::getTotalSpaceSize() const {
 }
 
 void runner::Runner::AddIsotropicExchange(
-    const std::string& symbol_name,
+    const symbols::Symbols::SymbolName& symbol_name,
     size_t center_a,
     size_t center_b) {
     if (hamiltonian_history_.has_isotropic_exchange_interactions_finalized) {
@@ -295,30 +295,32 @@ const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
     return converter_;
 }
 
-void runner::Runner::AddSymbol(
+symbols::Symbols::SymbolName runner::Runner::AddSymbol(
     const std::string& name,
     double initial_value,
     bool is_changeable,
     symbols::SymbolTypeEnum type_enum) {
-    symbols_.addSymbol(name, initial_value, is_changeable, type_enum);
+    return symbols_.addSymbol(name, initial_value, is_changeable, type_enum);
 }
 
-void runner::Runner::AddSymbol(const std::string& name, double initial_value, bool is_changeable) {
-    AddSymbol(name, initial_value, is_changeable, symbols::SymbolTypeEnum::not_specified);
+symbols::Symbols::SymbolName
+runner::Runner::AddSymbol(const std::string& name, double initial_value, bool is_changeable) {
+    return AddSymbol(name, initial_value, is_changeable, symbols::SymbolTypeEnum::not_specified);
 }
 
-void runner::Runner::AddSymbol(const std::string& name, double initial_value) {
-    AddSymbol(name, initial_value, true);
+symbols::Symbols::SymbolName
+runner::Runner::AddSymbol(const std::string& name, double initial_value) {
+    return AddSymbol(name, initial_value, true);
 }
 
-void runner::Runner::AddGFactor(const std::string& symbol_name, size_t center_a) {
+void runner::Runner::AddGFactor(const symbols::Symbols::SymbolName& symbol_name, size_t center_a) {
     symbols_.addGFactor(symbol_name, center_a);
 }
 
 const Operator& runner::Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     symbols::SymbolTypeEnum symbol_type,
-    const std::string& symbol) const {
+    const symbols::Symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         if (symbol_type == symbols::SymbolTypeEnum::J) {
             return operator_derivative_of_energy_wrt_exchange_parameters.at(symbol);
@@ -329,7 +331,7 @@ const Operator& runner::Runner::getOperatorDerivative(
 const Spectrum& runner::Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     symbols::SymbolTypeEnum symbol_type,
-    const std::string& symbol) const {
+    const symbols::Symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         if (symbol_type == symbols::SymbolTypeEnum::J) {
             return spectrum_derivative_of_energy_wrt_exchange_parameters.at(symbol);
@@ -340,7 +342,7 @@ const Spectrum& runner::Runner::getSpectrumDerivative(
 const Matrix& runner::Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     symbols::SymbolTypeEnum symbol_type,
-    const std::string& symbol) const {
+    const symbols::Symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         if (symbol_type == symbols::SymbolTypeEnum::J) {
             return matrix_derivative_of_energy_wrt_exchange_parameters.at(symbol);
@@ -402,10 +404,10 @@ double runner::Runner::calculateResidualError() const {
     return mu_squared_worker.value()->calculateResidualError();
 }
 
-std::map<std::string, double> runner::Runner::calculateTotalDerivatives() {
+std::map<symbols::Symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives() {
     // TODO: ony s_squared-based calculation supported
 
-    std::map<std::string, double> answer;
+    std::map<symbols::Symbols::SymbolName, double> answer;
 
     for (const auto& changeable_symbol : symbols_.getChangeableNames(symbols::J)) {
         DenseVector derivative;
@@ -421,7 +423,7 @@ std::map<std::string, double> runner::Runner::calculateTotalDerivatives() {
     }
 
     if (!symbols_.getChangeableNames(symbols::g_factor).empty()) {
-        std::string g_name = symbols_.getChangeableNames(symbols::g_factor)[0];
+        symbols::Symbols::SymbolName g_name = symbols_.getChangeableNames(symbols::g_factor)[0];
         double value = mu_squared_worker.value()->calculateTotalDerivative(symbols::g_factor);
         answer[g_name] = value;
         //        std::cout << "dR^2/d" << g_name << " = " << value << std::endl;
@@ -434,10 +436,10 @@ std::vector<magnetic_susceptibility::ValueAtTemperature> runner::Runner::getTheo
 }
 
 void runner::Runner::minimizeResidualError() {
-    std::vector<std::string> changeable_names = symbols_.getChangeableNames();
+    std::vector<symbols::Symbols::SymbolName> changeable_names = symbols_.getChangeableNames();
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
-    for (const std::string& name : changeable_names) {
+    for (const symbols::Symbols::SymbolName& name : changeable_names) {
         changeable_values.push_back(symbols_.getValueOfName(name));
     }
 
@@ -465,7 +467,8 @@ void runner::Runner::minimizeResidualError() {
 
             residual_error = calculateResidualError();
 
-            std::map<std::string, double> map_gradient = calculateTotalDerivatives();
+            std::map<symbols::Symbols::SymbolName, double> map_gradient =
+                calculateTotalDerivatives();
             for (size_t i = 0; i < changeable_names.size(); ++i) {
                 gradient[i] = map_gradient[changeable_names[i]];
             }
@@ -484,6 +487,6 @@ double runner::Runner::calculateTheoreticalMuSquared(double temperature) const {
     return mu_squared_worker.value()->theory_at_temperature(temperature);
 }
 
-double runner::Runner::getValueOfName(const std::string& name) const {
+double runner::Runner::getValueOfName(const symbols::Symbols::SymbolName& name) const {
     return symbols_.getValueOfName(name);
 }

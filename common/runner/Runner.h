@@ -28,19 +28,23 @@ class Runner {
     void TzSort();
 
     // SYMBOLS OPERATIONS
-    void AddSymbol(
+    symbols::Symbols::SymbolName AddSymbol(
         const std::string& name,
         double initial_value,
         bool is_changeable,
         symbols::SymbolTypeEnum type_enum);
-    void AddSymbol(const std::string& name, double initial_value, bool is_changeable);
-    void AddSymbol(const std::string& name, double initial_value);
-    double getValueOfName(const std::string& name) const;
+    symbols::Symbols::SymbolName
+    AddSymbol(const std::string& name, double initial_value, bool is_changeable);
+    symbols::Symbols::SymbolName AddSymbol(const std::string& name, double initial_value);
+    double getValueOfName(const symbols::Symbols::SymbolName& name) const;
 
     // OPERATOR OPERATIONS
-    void AddIsotropicExchange(const std::string& symbol_name, size_t center_a, size_t center_b);
+    void AddIsotropicExchange(
+        const symbols::Symbols::SymbolName& symbol_name,
+        size_t center_a,
+        size_t center_b);
     void AddGFactor(
-        const std::string& symbol_name,
+        const symbols::Symbols::SymbolName& symbol_name,
         size_t center_a);  // actually, it is not "Operator" operation
     void InitializeIsotropicExchangeDerivatives();
     void InitializeSSquared();
@@ -59,7 +63,7 @@ class Runner {
         magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
         double number_of_centers_ratio);
     double calculateResidualError() const;
-    std::map<std::string, double> calculateTotalDerivatives();
+    std::map<symbols::Symbols::SymbolName, double> calculateTotalDerivatives();
     double calculateTheoreticalMuSquared(double temperature) const;
     std::vector<magnetic_susceptibility::ValueAtTemperature> getTheoreticalValues();
     void minimizeResidualError();
@@ -69,12 +73,18 @@ class Runner {
     [[nodiscard]] const Space& getSpace() const;
     [[nodiscard]] const Spectrum& getSpectrum(common::QuantityEnum) const;
     [[nodiscard]] const Matrix& getMatrix(common::QuantityEnum) const;
-    [[nodiscard]] const Operator&
-    getOperatorDerivative(common::QuantityEnum, symbols::SymbolTypeEnum, const std::string&) const;
-    [[nodiscard]] const Spectrum&
-    getSpectrumDerivative(common::QuantityEnum, symbols::SymbolTypeEnum, const std::string&) const;
-    [[nodiscard]] const Matrix&
-    getMatrixDerivative(common::QuantityEnum, symbols::SymbolTypeEnum, const std::string&) const;
+    [[nodiscard]] const Operator& getOperatorDerivative(
+        common::QuantityEnum,
+        symbols::SymbolTypeEnum,
+        const symbols::Symbols::SymbolName&) const;
+    [[nodiscard]] const Spectrum& getSpectrumDerivative(
+        common::QuantityEnum,
+        symbols::SymbolTypeEnum,
+        const symbols::Symbols::SymbolName&) const;
+    [[nodiscard]] const Matrix& getMatrixDerivative(
+        common::QuantityEnum,
+        symbols::SymbolTypeEnum,
+        const symbols::Symbols::SymbolName&) const;
 
     [[nodiscard]] uint32_t getTotalSpaceSize() const;
 
@@ -100,13 +110,16 @@ class Runner {
 
     Operator operator_energy;
     Operator operator_s_squared;
-    std::unordered_map<std::string, Operator> operator_derivative_of_energy_wrt_exchange_parameters;
+    std::map<symbols::Symbols::SymbolName, Operator>
+        operator_derivative_of_energy_wrt_exchange_parameters;
     Matrix matrix_energy;
     Matrix matrix_s_squared;
-    std::unordered_map<std::string, Matrix> matrix_derivative_of_energy_wrt_exchange_parameters;
+    std::map<symbols::Symbols::SymbolName, Matrix>
+        matrix_derivative_of_energy_wrt_exchange_parameters;
     Spectrum spectrum_energy;
     Spectrum spectrum_s_squared;
-    std::unordered_map<std::string, Spectrum> spectrum_derivative_of_energy_wrt_exchange_parameters;
+    std::map<symbols::Symbols::SymbolName, Spectrum>
+        spectrum_derivative_of_energy_wrt_exchange_parameters;
 
     // TODO: can we use std::optional<magnetic_susceptibility::MuSquaredWorker> instead?
     std::optional<std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>> mu_squared_worker;

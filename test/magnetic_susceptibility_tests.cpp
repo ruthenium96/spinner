@@ -111,18 +111,18 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
 
             runner::Runner runner(mults);
 
-            double J = J_exact;
-            runner.AddSymbol("J", J);
-            runner.AddIsotropicExchange("J", 0, 1);
-            runner.AddIsotropicExchange("J", 1, 2);
-            runner.AddIsotropicExchange("J", 2, 3);
-            runner.AddIsotropicExchange("J", 3, 0);
+            double J_value = J_exact;
+            auto J = runner.AddSymbol("J", J_value);
+            runner.AddIsotropicExchange(J, 0, 1);
+            runner.AddIsotropicExchange(J, 1, 2);
+            runner.AddIsotropicExchange(J, 2, 3);
+            runner.AddIsotropicExchange(J, 3, 0);
             runner.FinalizeIsotropicInteraction();
 
-            double g = g_exact;
-            runner.AddSymbol("g", g);
+            double g_value = g_exact;
+            auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor("g", i);
+                runner.AddGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -144,18 +144,18 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
 
             runner::Runner runner(mults);
 
-            double J = -10.0;
-            runner.AddSymbol("J", J);
-            runner.AddIsotropicExchange("J", 0, 1);
-            runner.AddIsotropicExchange("J", 1, 2);
-            runner.AddIsotropicExchange("J", 2, 3);
-            runner.AddIsotropicExchange("J", 3, 0);
+            double J_value = -10.0;
+            auto J = runner.AddSymbol("J", J_value);
+            runner.AddIsotropicExchange(J, 0, 1);
+            runner.AddIsotropicExchange(J, 1, 2);
+            runner.AddIsotropicExchange(J, 2, 3);
+            runner.AddIsotropicExchange(J, 3, 0);
             runner.FinalizeIsotropicInteraction();
 
-            double g = 2.0;
-            runner.AddSymbol("g", g);
+            double g_value = 2.0;
+            auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor("g", i);
+                runner.AddGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -169,8 +169,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
             runner.minimizeResidualError();
 
             double residual_error = runner.calculateResidualError();
-            double J_fitted = runner.getValueOfName("J");
-            double g_fitted = runner.getValueOfName("g");
+            double J_fitted = runner.getValueOfName(J);
+            double g_fitted = runner.getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
@@ -199,21 +199,21 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
 
             runner::Runner runner(mults);
 
-            double J = J_exact;
-            runner.AddSymbol("J", J);
-            runner.AddIsotropicExchange("J", 0, 1);
-            runner.AddIsotropicExchange("J", 1, 2);
-            runner.AddIsotropicExchange("J", 2, 3);
-            runner.AddIsotropicExchange("J", 3, 4);
-            runner.AddIsotropicExchange("J", 4, 5);
-            runner.AddIsotropicExchange("J", 5, 0);
+            double J_value = J_exact;
+            auto J = runner.AddSymbol("J", J_value);
+            runner.AddIsotropicExchange(J, 0, 1);
+            runner.AddIsotropicExchange(J, 1, 2);
+            runner.AddIsotropicExchange(J, 2, 3);
+            runner.AddIsotropicExchange(J, 3, 4);
+            runner.AddIsotropicExchange(J, 4, 5);
+            runner.AddIsotropicExchange(J, 5, 0);
 
             runner.FinalizeIsotropicInteraction();
 
-            double g = g_exact;
-            runner.AddSymbol("g", g);
+            double g_value = g_exact;
+            auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor("g", i);
+                runner.AddGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -235,20 +235,20 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
 
             runner::Runner runner(mults);
 
-            double J = -10.0;
-            runner.AddSymbol("J", J);
-            runner.AddIsotropicExchange("J", 0, 1);
-            runner.AddIsotropicExchange("J", 1, 2);
-            runner.AddIsotropicExchange("J", 2, 3);
-            runner.AddIsotropicExchange("J", 3, 4);
-            runner.AddIsotropicExchange("J", 4, 5);
-            runner.AddIsotropicExchange("J", 5, 0);
+            double J_value = -10.0;
+            auto J = runner.AddSymbol("J", J_value);
+            runner.AddIsotropicExchange(J, 0, 1);
+            runner.AddIsotropicExchange(J, 1, 2);
+            runner.AddIsotropicExchange(J, 2, 3);
+            runner.AddIsotropicExchange(J, 3, 4);
+            runner.AddIsotropicExchange(J, 4, 5);
+            runner.AddIsotropicExchange(J, 5, 0);
             runner.FinalizeIsotropicInteraction();
 
-            double g = 2.0;
-            runner.AddSymbol("g", g);
+            double g_value = 2.0;
+            auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor("g", i);
+                runner.AddGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -262,8 +262,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
             runner.minimizeResidualError();
 
             double residual_error = runner.calculateResidualError();
-            double J_fitted = runner.getValueOfName("J");
-            double g_fitted = runner.getValueOfName("g");
+            double J_fitted = runner.getValueOfName(J);
+            double g_fitted = runner.getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
