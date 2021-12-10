@@ -4,6 +4,8 @@ add_library(common
         lexicographic/SparseMatrix-arma-sp-mat.cpp
         symbols/Symbols.h
         symbols/Symbols.cpp
+        symbols/SymbolName.cpp
+        symbols/SymbolName.h
         Logger.h
         runner/Runner.cpp
         Quantity.cpp)

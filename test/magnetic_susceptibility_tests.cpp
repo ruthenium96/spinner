@@ -113,16 +113,15 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
 
             double J_value = J_exact;
             auto J = runner.AddSymbol("J", J_value);
-            runner.AddIsotropicExchange(J, 0, 1);
-            runner.AddIsotropicExchange(J, 1, 2);
-            runner.AddIsotropicExchange(J, 2, 3);
-            runner.AddIsotropicExchange(J, 3, 0);
-            runner.FinalizeIsotropicInteraction();
+            runner.AssignSymbolToIsotropicExchange(J, 0, 1);
+            runner.AssignSymbolToIsotropicExchange(J, 1, 2);
+            runner.AssignSymbolToIsotropicExchange(J, 2, 3);
+            runner.AssignSymbolToIsotropicExchange(J, 3, 0);
 
             double g_value = g_exact;
             auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor(g, i);
+                runner.AssignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -146,16 +145,15 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
 
             double J_value = -10.0;
             auto J = runner.AddSymbol("J", J_value);
-            runner.AddIsotropicExchange(J, 0, 1);
-            runner.AddIsotropicExchange(J, 1, 2);
-            runner.AddIsotropicExchange(J, 2, 3);
-            runner.AddIsotropicExchange(J, 3, 0);
-            runner.FinalizeIsotropicInteraction();
+            runner.AssignSymbolToIsotropicExchange(J, 0, 1);
+            runner.AssignSymbolToIsotropicExchange(J, 1, 2);
+            runner.AssignSymbolToIsotropicExchange(J, 2, 3);
+            runner.AssignSymbolToIsotropicExchange(J, 3, 0);
 
             double g_value = 2.0;
             auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor(g, i);
+                runner.AssignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -201,19 +199,17 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
 
             double J_value = J_exact;
             auto J = runner.AddSymbol("J", J_value);
-            runner.AddIsotropicExchange(J, 0, 1);
-            runner.AddIsotropicExchange(J, 1, 2);
-            runner.AddIsotropicExchange(J, 2, 3);
-            runner.AddIsotropicExchange(J, 3, 4);
-            runner.AddIsotropicExchange(J, 4, 5);
-            runner.AddIsotropicExchange(J, 5, 0);
-
-            runner.FinalizeIsotropicInteraction();
+            runner.AssignSymbolToIsotropicExchange(J, 0, 1);
+            runner.AssignSymbolToIsotropicExchange(J, 1, 2);
+            runner.AssignSymbolToIsotropicExchange(J, 2, 3);
+            runner.AssignSymbolToIsotropicExchange(J, 3, 4);
+            runner.AssignSymbolToIsotropicExchange(J, 4, 5);
+            runner.AssignSymbolToIsotropicExchange(J, 5, 0);
 
             double g_value = g_exact;
             auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor(g, i);
+                runner.AssignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -237,18 +233,17 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
 
             double J_value = -10.0;
             auto J = runner.AddSymbol("J", J_value);
-            runner.AddIsotropicExchange(J, 0, 1);
-            runner.AddIsotropicExchange(J, 1, 2);
-            runner.AddIsotropicExchange(J, 2, 3);
-            runner.AddIsotropicExchange(J, 3, 4);
-            runner.AddIsotropicExchange(J, 4, 5);
-            runner.AddIsotropicExchange(J, 5, 0);
-            runner.FinalizeIsotropicInteraction();
+            runner.AssignSymbolToIsotropicExchange(J, 0, 1);
+            runner.AssignSymbolToIsotropicExchange(J, 1, 2);
+            runner.AssignSymbolToIsotropicExchange(J, 2, 3);
+            runner.AssignSymbolToIsotropicExchange(J, 3, 4);
+            runner.AssignSymbolToIsotropicExchange(J, 4, 5);
+            runner.AssignSymbolToIsotropicExchange(J, 5, 0);
 
             double g_value = 2.0;
             auto g = runner.AddSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.AddGFactor(g, i);
+                runner.AssignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
