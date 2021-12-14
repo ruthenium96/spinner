@@ -392,16 +392,20 @@ void runner::Runner::initializeExperimentalValues(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
     magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
     double number_of_centers_ratio) {
+    if (experimental_values_worker_.has_value()) {
+        throw std::invalid_argument("Experimental values have been already initialized");
+    }
+
     experimental_values_worker_ =
         std::make_shared<magnetic_susceptibility::ExperimentalValuesWorker>(
             experimental_data,
             experimental_quantity_type,
             number_of_centers_ratio);
-}
 
-double runner::Runner::calculateResidualError() const {
-    // TODO: throw if experimental data was not initialized
-    return mu_squared_worker.value()->calculateResidualError();
+    if (mu_squared_worker.has_value()) {
+        mu_squared_worker.value()->initializeExperimentalValues(
+            experimental_values_worker_.value());
+    }
 }
 
 std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives() {
@@ -431,10 +435,6 @@ std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives(
     return answer;
 }
 
-std::vector<magnetic_susceptibility::ValueAtTemperature> runner::Runner::getTheoreticalValues() {
-    return mu_squared_worker.value()->getTheoreticalValues();
-}
-
 void runner::Runner::minimizeResidualError() {
     std::vector<symbols::SymbolName> changeable_names = symbols_.getChangeableNames();
     std::vector<double> changeable_values;
@@ -462,7 +462,7 @@ void runner::Runner::minimizeResidualError() {
 
             BuildMuSquaredWorker();
 
-            residual_error = calculateResidualError();
+            residual_error = mu_squared_worker.value()->calculateResidualError();
 
             std::map<symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
             for (size_t i = 0; i < changeable_names.size(); ++i) {
@@ -479,10 +479,11 @@ void runner::Runner::minimizeResidualError() {
     }
 }
 
-double runner::Runner::calculateTheoreticalMuSquared(double temperature) const {
-    return mu_squared_worker.value()->theory_at_temperature(temperature);
+const std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>&
+runner::Runner::getPtrToMuSquaredWorker() const {
+    return mu_squared_worker.value();
 }
 
-double runner::Runner::getValueOfName(const symbols::SymbolName& name) const {
-    return symbols_.getValueOfName(name);
+const symbols::Symbols& runner::Runner::getSymbols() const {
+    return symbols_;
 }

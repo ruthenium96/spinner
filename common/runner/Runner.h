@@ -36,7 +36,7 @@ class Runner {
     symbols::SymbolName
     AddSymbol(const std::string& name, double initial_value, bool is_changeable);
     symbols::SymbolName AddSymbol(const std::string& name, double initial_value);
-    [[nodiscard]] double getValueOfName(const symbols::SymbolName& name) const;
+    // TODO: Symbol& modifySymbol();
 
     // OPERATOR OPERATIONS
     void AssignSymbolToIsotropicExchange(
@@ -61,10 +61,7 @@ class Runner {
         const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
         magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
         double number_of_centers_ratio);
-    [[nodiscard]] double calculateResidualError() const;
     std::map<symbols::SymbolName, double> calculateTotalDerivatives();
-    [[nodiscard]] double calculateTheoreticalMuSquared(double temperature) const;
-    std::vector<magnetic_susceptibility::ValueAtTemperature> getTheoreticalValues();
     void minimizeResidualError();
 
     [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
@@ -84,6 +81,9 @@ class Runner {
         common::QuantityEnum,
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
+    [[nodiscard]] const std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>&
+    getPtrToMuSquaredWorker() const;
+    [[nodiscard]] const symbols::Symbols& getSymbols() const;
 
   private:
     struct MatrixHistory {

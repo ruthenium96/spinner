@@ -22,7 +22,7 @@ class MuSquaredWorker {
 
     std::vector<ValueAtTemperature> getTheoreticalValues() const;
 
-    virtual double theory_at_temperature(double temperature) const = 0;
+    virtual double calculateTheoreticalMuSquared(double temperature) const = 0;
 
     double calculateResidualError() const;
     double calculateTotalDerivative(

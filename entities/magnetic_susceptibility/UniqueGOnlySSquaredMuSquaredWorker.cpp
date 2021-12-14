@@ -10,7 +10,7 @@ UniqueGOnlySSquaredMuSquaredWorker::UniqueGOnlySSquaredMuSquaredWorker(
     s_squared_(std::move(s_squared)),
     g_unique_(g_unique) {}
 
-double UniqueGOnlySSquaredMuSquaredWorker::theory_at_temperature(double temperature) const {
+double UniqueGOnlySSquaredMuSquaredWorker::calculateTheoreticalMuSquared(double temperature) const {
     double s_squared_averaged = ensemble_averager_.ensemble_average(s_squared_, temperature);
     return g_unique_ * g_unique_ * s_squared_averaged;
 }

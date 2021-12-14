@@ -55,7 +55,7 @@ void MuSquaredWorker::initializeExperimentalValues(
     for (size_t i = 0; i < temperatures.size(); ++i) {
         theoretical_mu_squared_values[i] = {
             temperatures[i],
-            theory_at_temperature(temperatures[i])};
+            calculateTheoreticalMuSquared(temperatures[i])};
     }
     experimental_values_worker_.value()->setTheoreticalMuSquared(theoretical_mu_squared_values);
 }

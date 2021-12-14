@@ -14,7 +14,7 @@ class UniqueGOnlySSquaredMuSquaredWorker: public MuSquaredWorker {
         DenseVector&& s_squared,
         double g_unique);
 
-    double theory_at_temperature(double temperature) const override;
+    double calculateTheoreticalMuSquared(double temperature) const override;
 
   private:
     double g_unique_;
