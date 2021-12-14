@@ -64,3 +64,6 @@ const std::vector<int>& lexicographic::IndexConverter::get_mults() const {
 const std::vector<double>& lexicographic::IndexConverter::get_spins() const {
     return spins_;
 }
+uint32_t lexicographic::IndexConverter::get_total_space_size() const {
+    return total_space_size;
+}

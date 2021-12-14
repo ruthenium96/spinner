@@ -85,8 +85,6 @@ class Runner {
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
 
-    [[nodiscard]] uint32_t getTotalSpaceSize() const;
-
   private:
     struct MatrixHistory {
         bool matrices_was_built = false;

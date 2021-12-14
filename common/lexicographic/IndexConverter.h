@@ -20,14 +20,15 @@ class IndexConverter {
     // NB: one should check projection value before ladding
     [[nodiscard]] uint32_t ladder_projection(uint32_t lex, uint32_t center, int ladder) const;
 
-    uint32_t total_space_size;
     [[nodiscard]] const std::vector<int>& get_mults() const;
     [[nodiscard]] const std::vector<double>& get_spins() const;
+    [[nodiscard]] uint32_t get_total_space_size() const;
 
   private:
     std::vector<uint32_t> cumulative_product;
     std::vector<int> mults_;
     std::vector<double> spins_;
+    uint32_t total_space_size;
 };
 }  // namespace lexicographic
 

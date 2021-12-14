@@ -13,7 +13,7 @@
 runner::Runner::Runner(const std::vector<int>& mults) :
     symbols_(mults.size()),
     converter_(mults),
-    space_(converter_.total_space_size) {
+    space_(converter_.get_total_space_size()) {
     operator_energy = Operator();
 }
 
@@ -74,10 +74,6 @@ void runner::Runner::TzSort() {
 
 const Space& runner::Runner::getSpace() const {
     return space_;
-}
-
-uint32_t runner::Runner::getTotalSpaceSize() const {
-    return converter_.total_space_size;
 }
 
 void runner::Runner::AssignSymbolToIsotropicExchange(
@@ -151,6 +147,7 @@ void runner::Runner::InitializeSSquared() {
 }
 
 void runner::Runner::InitializeIsotropicExchangeDerivatives() {
+    // TODO: do nothing if this function is called twice
     for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
         Operator operator_derivative = Operator();
         operator_derivative.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(
@@ -316,6 +313,7 @@ symbols::SymbolName runner::Runner::AddSymbol(const std::string& name, double in
 void runner::Runner::AssignSymbolToGFactor(
     const symbols::SymbolName& symbol_name,
     size_t center_a) {
+    // TODO: implement the same throws as in AssignSymbolToIsotropicExchange()
     symbols_.assignSymbolToGFactor(symbol_name, center_a);
 }
 

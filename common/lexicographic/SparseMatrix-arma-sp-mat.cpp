@@ -14,7 +14,7 @@ struct SparseMatrix::Impl {
 SparseMatrix::SparseMatrix(lexicographic::IndexConverter converter) :
     pImpl {std::make_unique<Impl>()},
     converter_(std::move(converter)) {
-    resize(converter_.total_space_size);
+    resize(converter_.get_total_space_size());
 }
 SparseMatrix::~SparseMatrix() = default;
 SparseMatrix::SparseMatrix(SparseMatrix&&) noexcept = default;
