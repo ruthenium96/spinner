@@ -1,10 +1,9 @@
 #include <cmath>
 
 #include "common/lexicographic/IndexConverter.h"
-#include "components/matrix/MatrixBuilder.h"
 #include "components/operator/ConstantOperator.h"
 #include "components/operator/ScalarProduct.h"
-#include "entities/operator/Operator.h"
+#include "entities/matrix/Matrix.h"
 #include "gtest/gtest.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
@@ -23,8 +22,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
             operator_.zero_center_terms.emplace_back(std::make_unique<ConstantOperator>(constant));
 
             // Build Matrix
-            MatrixBuilder matrixBuilder(converter);
-            Matrix matrix = matrixBuilder.apply(space_, operator_);
+            Matrix matrix = Matrix(space_, operator_, converter);
 
             // Check results:
             for (const auto& matrix_block : matrix.blocks) {
@@ -61,8 +59,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         operator_.two_center_terms.emplace_back(std::make_unique<ScalarProduct>(ptr_to_js));
 
         // Build Matrix
-        MatrixBuilder matrixBuilder(converter);
-        Matrix matrix = matrixBuilder.apply(space_, operator_);
+        Matrix matrix = Matrix(space_, operator_, converter);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {
@@ -106,8 +103,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         operator_.two_center_terms.emplace_back(std::make_unique<ScalarProduct>(ptr_to_js));
 
         // Build Matrix
-        MatrixBuilder matrixBuilder(converter);
-        Matrix matrix = matrixBuilder.apply(space_, operator_);
+        Matrix matrix = Matrix(space_, operator_, converter);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {

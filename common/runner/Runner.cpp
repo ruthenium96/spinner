@@ -2,7 +2,6 @@
 
 #include <stlbfgs.h>
 
-#include "components/matrix/MatrixBuilder.h"
 #include "components/operator/ConstantOperator.h"
 #include "components/operator/ScalarProduct.h"
 #include "components/space/NonAbelianSimplifier.h"
@@ -85,20 +84,16 @@ const Space& runner::Runner::getSpace() const {
 void runner::Runner::BuildMatrices() {
     finish_the_model();
 
-    MatrixBuilder matrix_builder(converter_);
     if (!operator_energy.empty()) {
-        matrix_energy.blocks.clear();
-        matrix_energy = matrix_builder.apply(space_, operator_energy);
+        matrix_energy = Matrix(space_, operator_energy, converter_);
     }
     if (!operator_s_squared.empty()) {
-        matrix_s_squared.blocks.clear();
-        matrix_s_squared = matrix_builder.apply(space_, operator_s_squared);
+        matrix_s_squared = Matrix(space_, operator_s_squared, converter_);
     }
     for (const auto& [symbol, operator_derivative] :
          operator_derivative_of_energy_wrt_exchange_parameters) {
-        matrix_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.clear();
         matrix_derivative_of_energy_wrt_exchange_parameters[symbol] =
-            matrix_builder.apply(space_, operator_derivative);
+            Matrix(space_, operator_derivative, converter_);
     }
 
     matrix_history_.matrices_was_built = true;
@@ -186,7 +181,6 @@ void runner::Runner::BuildSpectraUsingMatrices() {
 void runner::Runner::BuildSpectraWithoutMatrices() {
     finish_the_model();
 
-    MatrixBuilder matrixBuilder(converter_);
     SpectrumBuilder spectrumBuilder;
 
     size_t number_of_blocks = space_.blocks.size();
@@ -208,16 +202,16 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         {
-            Submatrix hamiltonian_submatrix =
-                matrixBuilder.apply_to_subentity(space_.blocks[block], operator_energy);
+            auto hamiltonian_submatrix =
+                Submatrix(space_.blocks[block], operator_energy, converter_);
             spectrum_energy.blocks[block] = spectrumBuilder.apply_to_subentity_energy(
                 hamiltonian_submatrix,
                 unitary_transformation_matrix);
         }
 
         if (!operator_s_squared.empty()) {
-            Submatrix non_hamiltonian_submatrix =
-                matrixBuilder.apply_to_subentity(space_.blocks[block], operator_s_squared);
+            auto non_hamiltonian_submatrix =
+                Submatrix(space_.blocks[block], operator_s_squared, converter_);
             spectrum_s_squared.blocks[block] = spectrumBuilder.apply_to_subentity_non_energy(
                 non_hamiltonian_submatrix,
                 unitary_transformation_matrix);
@@ -225,8 +219,8 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
 
         for (const auto& [symbol, operator_derivative] :
              operator_derivative_of_energy_wrt_exchange_parameters) {
-            Submatrix derivative_submatrix =
-                matrixBuilder.apply_to_subentity(space_.blocks[block], operator_derivative);
+            auto derivative_submatrix =
+                Submatrix(space_.blocks[block], operator_derivative, converter_);
             spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks[block] =
                 spectrumBuilder.apply_to_subentity_non_energy(
                     derivative_submatrix,

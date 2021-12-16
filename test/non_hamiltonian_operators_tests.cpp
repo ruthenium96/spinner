@@ -2,7 +2,6 @@
 #include <deque>
 
 #include "common/runner/Runner.h"
-#include "components/matrix/MatrixBuilder.h"
 #include "gtest/gtest.h"
 
 std::deque<int> spin_addition(const std::vector<int>& mults) {
@@ -79,10 +78,10 @@ TEST(
 
         runner.InitializeSSquared();
 
-        MatrixBuilder matrix_builder(runner.getIndexConverter());
-        Matrix s_squared_matrix = matrix_builder.apply(
+        Matrix s_squared_matrix = Matrix(
             runner.getSpace(),
-            runner.getOperator(common::QuantityEnum::S_total_squared));
+            runner.getOperator(common::QuantityEnum::S_total_squared),
+            runner.getIndexConverter());
 
         std::vector<DenseVector> s_squared_values(s_squared_matrix.blocks.size());
         for (size_t i = 0; i < s_squared_values.size(); ++i) {
