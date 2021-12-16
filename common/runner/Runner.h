@@ -30,13 +30,7 @@ class Runner {
     // SYMBOLS OPERATIONS
 
     // OPERATOR OPERATIONS
-    void AssignSymbolToIsotropicExchange(
-        const symbols::SymbolName& symbol_name,
-        size_t center_a,
-        size_t center_b);
-    void AssignSymbolToGFactor(
-        const symbols::SymbolName& symbol_name,
-        size_t center_a);  // actually, it is not "Operator" operation
+    void InitializeIsotropicExchange();
     void InitializeIsotropicExchangeDerivatives();
     void InitializeSSquared();
 

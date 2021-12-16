@@ -14,10 +14,10 @@ TEST(symbols, throw_2222_isotropic_inconsistent_symmetry) {
     auto tripledJ = runner.modifySymbols().addSymbol("3J", 3 * J_value);
     auto J = runner.modifySymbols().addSymbol("J", J_value);
     auto doubledJ = runner.modifySymbols().addSymbol("2J", 2 * J_value);
-    runner.AssignSymbolToIsotropicExchange(tripledJ, 0, 1);
-    runner.AssignSymbolToIsotropicExchange(J, 1, 2);
-    runner.AssignSymbolToIsotropicExchange(doubledJ, 2, 3);
-    runner.AssignSymbolToIsotropicExchange(J, 3, 0);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(tripledJ, 0, 1);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(doubledJ, 2, 3);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
@@ -34,10 +34,10 @@ TEST(symbols, throw_2222_isotropic_accidental_symmetry) {
     double J = 10;
     auto firstJ = runner.modifySymbols().addSymbol("J1", J);
     auto secondJ = runner.modifySymbols().addSymbol("J2", J);
-    runner.AssignSymbolToIsotropicExchange(firstJ, 0, 1);
-    runner.AssignSymbolToIsotropicExchange(firstJ, 1, 2);
-    runner.AssignSymbolToIsotropicExchange(firstJ, 2, 3);
-    runner.AssignSymbolToIsotropicExchange(secondJ, 3, 0);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(firstJ, 0, 1);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(firstJ, 1, 2);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(firstJ, 2, 3);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(secondJ, 3, 0);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
@@ -55,14 +55,14 @@ TEST(symbols, throw_2222_gfactor_inconsistent_symmetry) {
     auto J = runner.modifySymbols().addSymbol("J", J_value);
     auto firstg = runner.modifySymbols().addSymbol("g1", 2.0);
     auto secondg = runner.modifySymbols().addSymbol("g2", 3.0);
-    runner.AssignSymbolToIsotropicExchange(J, 0, 1);
-    runner.AssignSymbolToIsotropicExchange(J, 1, 2);
-    runner.AssignSymbolToIsotropicExchange(J, 2, 3);
-    runner.AssignSymbolToIsotropicExchange(J, 3, 0);
-    runner.AssignSymbolToGFactor(firstg, 0);
-    runner.AssignSymbolToGFactor(firstg, 1);
-    runner.AssignSymbolToGFactor(firstg, 2);
-    runner.AssignSymbolToGFactor(secondg, 3);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
+    runner.modifySymbols().assignSymbolToGFactor(firstg, 0);
+    runner.modifySymbols().assignSymbolToGFactor(firstg, 1);
+    runner.modifySymbols().assignSymbolToGFactor(firstg, 2);
+    runner.modifySymbols().assignSymbolToGFactor(secondg, 3);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
@@ -81,14 +81,14 @@ TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
     auto J = runner.modifySymbols().addSymbol("J", J_value);
     auto firstg = runner.modifySymbols().addSymbol("g1", g_value);
     auto secondg = runner.modifySymbols().addSymbol("g2", g_value);
-    runner.AssignSymbolToIsotropicExchange(J, 0, 1);
-    runner.AssignSymbolToIsotropicExchange(J, 1, 2);
-    runner.AssignSymbolToIsotropicExchange(J, 2, 3);
-    runner.AssignSymbolToIsotropicExchange(J, 3, 0);
-    runner.AssignSymbolToGFactor(firstg, 0);
-    runner.AssignSymbolToGFactor(firstg, 1);
-    runner.AssignSymbolToGFactor(firstg, 2);
-    runner.AssignSymbolToGFactor(secondg, 3);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
+    runner.modifySymbols().assignSymbolToGFactor(firstg, 0);
+    runner.modifySymbols().assignSymbolToGFactor(firstg, 1);
+    runner.modifySymbols().assignSymbolToGFactor(firstg, 2);
+    runner.modifySymbols().assignSymbolToGFactor(secondg, 3);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }

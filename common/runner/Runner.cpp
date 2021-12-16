@@ -263,13 +263,6 @@ const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
     return converter_;
 }
 
-void runner::Runner::AssignSymbolToGFactor(
-    const symbols::SymbolName& symbol_name,
-    size_t center_a) {
-    // TODO: implement the same throws as in AssignSymbolToIsotropicExchange()
-    symbols_.assignSymbolToGFactor(symbol_name, center_a);
-}
-
 const Operator& runner::Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     symbols::SymbolTypeEnum symbol_type,
