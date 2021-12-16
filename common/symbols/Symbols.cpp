@@ -18,6 +18,9 @@ void Symbols::assignSymbolToIsotropicExchange(
             number_of_spins_,
             std::vector<SymbolName>(number_of_spins_));
     }
+    if (center_b == center_a) {
+        throw std::invalid_argument("Isotropic exchange takes place between different centers");
+    }
     if (!symbolic_isotropic_exchanges_[center_a][center_b].get_name().empty()) {
         throw std::invalid_argument("This parameter has been already specified");
     }
@@ -48,6 +51,15 @@ SymbolName Symbols::addSymbol(
     }
     symbolsMap[symbol_name] = {initial_value, is_changeable, type_enum};
     return symbol_name;
+}
+
+SymbolName
+Symbols::addSymbol(const std::string& name_string, double initial_value, bool is_changeable) {
+    return addSymbol(name_string, initial_value, is_changeable, SymbolTypeEnum::not_specified);
+}
+
+SymbolName Symbols::addSymbol(const std::string& name_string, double initial_value) {
+    return addSymbol(name_string, initial_value, true);
 }
 
 void Symbols::assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a) {

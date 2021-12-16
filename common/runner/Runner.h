@@ -28,15 +28,6 @@ class Runner {
     void TzSort();
 
     // SYMBOLS OPERATIONS
-    symbols::SymbolName AddSymbol(
-        const std::string& name,
-        double initial_value,
-        bool is_changeable,
-        symbols::SymbolTypeEnum type_enum);
-    symbols::SymbolName
-    AddSymbol(const std::string& name, double initial_value, bool is_changeable);
-    symbols::SymbolName AddSymbol(const std::string& name, double initial_value);
-    // TODO: Symbol& modifySymbol();
 
     // OPERATOR OPERATIONS
     void AssignSymbolToIsotropicExchange(
@@ -85,13 +76,15 @@ class Runner {
     getPtrToMuSquaredWorker() const;
     [[nodiscard]] const symbols::Symbols& getSymbols() const;
 
+    [[nodiscard]] symbols::Symbols& modifySymbols();
+
   private:
+    bool model_is_finished = false;
     struct MatrixHistory {
         bool matrices_was_built = false;
     };
     struct HamiltonianOperatorHistory {
         bool has_isotropic_exchange_interactions_initialized = false;
-        bool has_isotropic_exchange_interactions_finalized = false;
     };
     struct SpaceHistory {
         std::vector<group::Group> applied_groups;

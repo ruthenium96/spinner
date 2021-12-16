@@ -11,9 +11,9 @@ TEST(symbols, throw_2222_isotropic_inconsistent_symmetry) {
     runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
     double J_value = 10;
-    auto tripledJ = runner.AddSymbol("3J", 3 * J_value);
-    auto J = runner.AddSymbol("J", J_value);
-    auto doubledJ = runner.AddSymbol("2J", 2 * J_value);
+    auto tripledJ = runner.modifySymbols().addSymbol("3J", 3 * J_value);
+    auto J = runner.modifySymbols().addSymbol("J", J_value);
+    auto doubledJ = runner.modifySymbols().addSymbol("2J", 2 * J_value);
     runner.AssignSymbolToIsotropicExchange(tripledJ, 0, 1);
     runner.AssignSymbolToIsotropicExchange(J, 1, 2);
     runner.AssignSymbolToIsotropicExchange(doubledJ, 2, 3);
@@ -32,8 +32,8 @@ TEST(symbols, throw_2222_isotropic_accidental_symmetry) {
     runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
     double J = 10;
-    auto firstJ = runner.AddSymbol("J1", J);
-    auto secondJ = runner.AddSymbol("J2", J);
+    auto firstJ = runner.modifySymbols().addSymbol("J1", J);
+    auto secondJ = runner.modifySymbols().addSymbol("J2", J);
     runner.AssignSymbolToIsotropicExchange(firstJ, 0, 1);
     runner.AssignSymbolToIsotropicExchange(firstJ, 1, 2);
     runner.AssignSymbolToIsotropicExchange(firstJ, 2, 3);
@@ -52,9 +52,9 @@ TEST(symbols, throw_2222_gfactor_inconsistent_symmetry) {
     runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
     double J_value = 10;
-    auto J = runner.AddSymbol("J", J_value);
-    auto firstg = runner.AddSymbol("g1", 2.0);
-    auto secondg = runner.AddSymbol("g2", 3.0);
+    auto J = runner.modifySymbols().addSymbol("J", J_value);
+    auto firstg = runner.modifySymbols().addSymbol("g1", 2.0);
+    auto secondg = runner.modifySymbols().addSymbol("g2", 3.0);
     runner.AssignSymbolToIsotropicExchange(J, 0, 1);
     runner.AssignSymbolToIsotropicExchange(J, 1, 2);
     runner.AssignSymbolToIsotropicExchange(J, 2, 3);
@@ -78,9 +78,9 @@ TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
 
     double J_value = 10;
     double g_value = 2.0;
-    auto J = runner.AddSymbol("J", J_value);
-    auto firstg = runner.AddSymbol("g1", g_value);
-    auto secondg = runner.AddSymbol("g2", g_value);
+    auto J = runner.modifySymbols().addSymbol("J", J_value);
+    auto firstg = runner.modifySymbols().addSymbol("g1", g_value);
+    auto secondg = runner.modifySymbols().addSymbol("g2", g_value);
     runner.AssignSymbolToIsotropicExchange(J, 0, 1);
     runner.AssignSymbolToIsotropicExchange(J, 1, 2);
     runner.AssignSymbolToIsotropicExchange(J, 2, 3);
@@ -103,8 +103,8 @@ TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
 //
 //    double J = 10;
 //    double g = 2.0;
-//    runner.AddSymbol("J", J);
-//    runner.AddSymbol("g1", g);
+//    runner.modifySymbol().addSymbol("J", J);
+//    runner.modifySymbol().addSymbol("g1", g);
 //    runner.AddIsotropicExchange("J", 0, 1);
 //    runner.AddIsotropicExchange("J", 1, 2);
 //    runner.AddIsotropicExchange("J", 2, 3);
@@ -124,8 +124,8 @@ TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
 //
 //    double J = 10;
 //    double g = 2.0;
-//    runner.AddSymbol("J", J);
-//    runner.AddSymbol("g1", g);
+//    runner.modifySymbol().addSymbol("J", J);
+//    runner.modifySymbol().addSymbol("g1", g);
 //    runner.AddIsotropicExchange("J", 0, 1);
 //    runner.AddIsotropicExchange("J", 1, 2);
 //    runner.AddIsotropicExchange("J", 2, 3);

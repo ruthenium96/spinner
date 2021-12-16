@@ -29,6 +29,7 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
     }
 
     for (ValueAtTemperature& v : experimental_values) {
+        // TODO: number_of_centers_ratio_ or sqrt(number_of_centers_ratio_)?
         v.value *= number_of_centers_ratio_;
     }
 
@@ -78,6 +79,7 @@ std::vector<ValueAtTemperature> ExperimentalValuesWorker::getTheoreticalValues()
     std::vector<ValueAtTemperature> theoretical_values = theoretical_mu_squared_;
 
     for (ValueAtTemperature& v : theoretical_values) {
+        // TODO: number_of_centers_ratio_ or sqrt(number_of_centers_ratio_)?
         v.value /= number_of_centers_ratio_;
     }
 

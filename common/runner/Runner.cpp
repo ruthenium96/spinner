@@ -18,6 +18,7 @@ runner::Runner::Runner(const std::vector<int>& mults) :
 }
 
 void runner::Runner::NonAbelianSimplify() {
+    // TODO: model_is_finished
     if (space_history_.number_of_non_simplified_abelian_groups == 0) {
         return;
     }
@@ -33,6 +34,7 @@ void runner::Runner::NonAbelianSimplify() {
 }
 
 void runner::Runner::Symmetrize(group::Group new_group) {
+    // TODO: model_is_finished
     // check if user trying to use the same Group for a second time:
     if (std::count(
             space_history_.applied_groups.begin(),
@@ -63,6 +65,7 @@ void runner::Runner::Symmetrize(
 }
 
 void runner::Runner::TzSort() {
+    // TODO: model_is_finished
     // It does not make any sense to use tz_sorter twice.
     if (space_history_.isTzSorted) {
         return;
@@ -80,11 +83,8 @@ void runner::Runner::AssignSymbolToIsotropicExchange(
     const symbols::SymbolName& symbol_name,
     size_t center_a,
     size_t center_b) {
-    if (hamiltonian_history_.has_isotropic_exchange_interactions_finalized) {
-        throw std::invalid_argument("Adding parameters after initialization");
-    }
-    if (center_b == center_a) {
-        throw std::invalid_argument("Isotropic exchange takes place between different centers");
+    if (model_is_finished) {
+        throw std::invalid_argument("Adding parameters after finalization");
     }
 
     symbols_.assignSymbolToIsotropicExchange(symbol_name, center_a, center_b);
@@ -97,7 +97,7 @@ void runner::Runner::AssignSymbolToIsotropicExchange(
 
 void runner::Runner::BuildMatrices() {
     // TODO: refactor this:
-    hamiltonian_history_.has_isotropic_exchange_interactions_finalized = true;
+    model_is_finished = true;
     for (const auto& applied_group : space_history_.applied_groups) {
         if (!symbols_.symmetry_consistence(applied_group)) {
             throw std::invalid_argument("Symbols do not match applied symmetries");
@@ -158,7 +158,7 @@ void runner::Runner::InitializeIsotropicExchangeDerivatives() {
 }
 
 void runner::Runner::BuildSpectra() {
-    hamiltonian_history_.has_isotropic_exchange_interactions_finalized = true;
+    model_is_finished = true;
     if (matrix_history_.matrices_was_built) {
         BuildSpectraUsingMatrices();
     } else {
@@ -291,23 +291,6 @@ const Operator& runner::Runner::getOperator(common::QuantityEnum quantity_enum) 
 
 const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
     return converter_;
-}
-
-symbols::SymbolName runner::Runner::AddSymbol(
-    const std::string& name,
-    double initial_value,
-    bool is_changeable,
-    symbols::SymbolTypeEnum type_enum) {
-    return symbols_.addSymbol(name, initial_value, is_changeable, type_enum);
-}
-
-symbols::SymbolName
-runner::Runner::AddSymbol(const std::string& name, double initial_value, bool is_changeable) {
-    return AddSymbol(name, initial_value, is_changeable, symbols::SymbolTypeEnum::not_specified);
-}
-
-symbols::SymbolName runner::Runner::AddSymbol(const std::string& name, double initial_value) {
-    return AddSymbol(name, initial_value, true);
 }
 
 void runner::Runner::AssignSymbolToGFactor(
@@ -485,5 +468,9 @@ runner::Runner::getPtrToMuSquaredWorker() const {
 }
 
 const symbols::Symbols& runner::Runner::getSymbols() const {
+    return symbols_;
+}
+symbols::Symbols& runner::Runner::modifySymbols() {
+    // TODO: model_is_finished
     return symbols_;
 }

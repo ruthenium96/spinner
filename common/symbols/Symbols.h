@@ -36,6 +36,9 @@ class Symbols {
         double initial_value,
         bool is_changeable,
         SymbolTypeEnum type_enum);
+    SymbolName addSymbol(const std::string& name, double initial_value, bool is_changeable);
+    SymbolName addSymbol(const std::string& name, double initial_value);
+
     void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
 
     [[nodiscard]] std::vector<SymbolName> getChangeableNames(SymbolTypeEnum type_enum) const;
