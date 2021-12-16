@@ -18,7 +18,8 @@ runner::Runner::Runner(const std::vector<int>& mults) :
 }
 
 void runner::Runner::NonAbelianSimplify() {
-    // TODO: model_is_finished
+    throw_if_model_is_finished("Cannot non-Abelian simplify after model was finished");
+
     if (space_history_.number_of_non_simplified_abelian_groups == 0) {
         return;
     }
@@ -34,7 +35,8 @@ void runner::Runner::NonAbelianSimplify() {
 }
 
 void runner::Runner::Symmetrize(group::Group new_group) {
-    // TODO: model_is_finished
+    throw_if_model_is_finished("Cannot symmetrize after model was finished");
+
     // check if user trying to use the same Group for a second time:
     if (std::count(
             space_history_.applied_groups.begin(),
@@ -65,7 +67,8 @@ void runner::Runner::Symmetrize(
 }
 
 void runner::Runner::TzSort() {
-    // TODO: model_is_finished
+    throw_if_model_is_finished("Cannot Tz-sort after model was finished");
+
     // It does not make any sense to use tz_sorter twice.
     if (space_history_.isTzSorted) {
         return;
@@ -79,39 +82,8 @@ const Space& runner::Runner::getSpace() const {
     return space_;
 }
 
-void runner::Runner::AssignSymbolToIsotropicExchange(
-    const symbols::SymbolName& symbol_name,
-    size_t center_a,
-    size_t center_b) {
-    if (model_is_finished) {
-        throw std::invalid_argument("Adding parameters after finalization");
-    }
-
-    symbols_.assignSymbolToIsotropicExchange(symbol_name, center_a, center_b);
-    if (!hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
-        operator_energy.two_center_terms.emplace_back(
-            std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
-        hamiltonian_history_.has_isotropic_exchange_interactions_initialized = true;
-    }
-}
-
 void runner::Runner::BuildMatrices() {
-    // TODO: refactor this:
-    model_is_finished = true;
-    for (const auto& applied_group : space_history_.applied_groups) {
-        if (!symbols_.symmetry_consistence(applied_group)) {
-            throw std::invalid_argument("Symbols do not match applied symmetries");
-            // TODO: should we rename this exception?
-        }
-    }
-
-    if (!space_history_.isNormalized) {
-        for (auto& subspace : space_.blocks) {
-            // TODO: maybe, we can implement normalize as Space method
-            subspace.decomposition.normalize();
-        }
-        space_history_.isNormalized = true;
-    }
+    finish_the_model();
 
     MatrixBuilder matrix_builder(converter_);
     if (!operator_energy.empty()) {
@@ -133,6 +105,8 @@ void runner::Runner::BuildMatrices() {
 }
 
 void runner::Runner::InitializeSSquared() {
+    throw_if_model_is_finished("Cannot initialize S^2 after model was finished");
+
     Operator s_squared_operator_;
     double sum_of_s_squared = 0;
     for (double spin : converter_.get_spins()) {
@@ -147,6 +121,9 @@ void runner::Runner::InitializeSSquared() {
 }
 
 void runner::Runner::InitializeIsotropicExchangeDerivatives() {
+    throw_if_model_is_finished(
+        "Cannot initialize isotropic exchange derivatives after model was finished");
+
     // TODO: do nothing if this function is called twice
     for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
         Operator operator_derivative = Operator();
@@ -158,7 +135,6 @@ void runner::Runner::InitializeIsotropicExchangeDerivatives() {
 }
 
 void runner::Runner::BuildSpectra() {
-    model_is_finished = true;
     if (matrix_history_.matrices_was_built) {
         BuildSpectraUsingMatrices();
     } else {
@@ -208,6 +184,8 @@ void runner::Runner::BuildSpectraUsingMatrices() {
 }
 
 void runner::Runner::BuildSpectraWithoutMatrices() {
+    finish_the_model();
+
     MatrixBuilder matrixBuilder(converter_);
     SpectrumBuilder spectrumBuilder;
 
@@ -225,14 +203,6 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
         spectrum_derivative_of_energy_wrt_exchange_parameters[symbol] = Spectrum();
         spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.resize(
             number_of_blocks);
-    }
-
-    if (!space_history_.isNormalized) {
-        for (auto& subspace : space_.blocks) {
-            // TODO: maybe, we can implement normalize as Space method
-            subspace.decomposition.normalize();
-        }
-        space_history_.isNormalized = true;
     }
 
     for (size_t block = 0; block < number_of_blocks; ++block) {
@@ -470,7 +440,49 @@ runner::Runner::getPtrToMuSquaredWorker() const {
 const symbols::Symbols& runner::Runner::getSymbols() const {
     return symbols_;
 }
+
 symbols::Symbols& runner::Runner::modifySymbols() {
-    // TODO: model_is_finished
+    throw_if_model_is_finished("Cannot modify symbols after model was finished");
     return symbols_;
+}
+
+void runner::Runner::InitializeIsotropicExchange() {
+    if (!hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
+        operator_energy.two_center_terms.emplace_back(
+            std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
+        hamiltonian_history_.has_isotropic_exchange_interactions_initialized = true;
+    }
+}
+
+void runner::Runner::finish_the_model() {
+    model_is_finished = true;
+
+    if (symbols_.isIsotropicExchangeInitialized()) {
+        InitializeIsotropicExchange();
+    }
+
+    //    if (!symbols_.isGFactorInitialized()) {
+    //        throw std::length_error("g factor parameters have not been initialized");
+    //    }
+
+    for (const auto& applied_group : space_history_.applied_groups) {
+        if (!symbols_.symmetry_consistence(applied_group)) {
+            throw std::invalid_argument("Symbols do not match applied symmetries");
+            // TODO: should we rename this exception?
+        }
+    }
+
+    if (!space_history_.isNormalized) {
+        for (auto& subspace : space_.blocks) {
+            // TODO: maybe, we can implement normalize as Space method
+            subspace.decomposition.normalize();
+        }
+        space_history_.isNormalized = true;
+    }
+}
+
+void runner::Runner::throw_if_model_is_finished(const std::string& error) {
+    if (model_is_finished) {
+        throw std::invalid_argument(error);
+    }
 }

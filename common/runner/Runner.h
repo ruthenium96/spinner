@@ -117,6 +117,9 @@ class Runner {
     void BuildSpectraUsingMatrices();
     void BuildSpectraWithoutMatrices();
 
+    void finish_the_model();
+    void throw_if_model_is_finished(const std::string& error);
+
     MatrixHistory matrix_history_;
     HamiltonianOperatorHistory hamiltonian_history_;
     SpaceHistory space_history_;

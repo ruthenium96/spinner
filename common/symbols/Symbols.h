@@ -18,6 +18,8 @@ class Symbols {
     explicit Symbols(size_t number_of_spins);
 
     [[nodiscard]] bool isAllGFactorsEqual() const;
+    [[nodiscard]] bool isGFactorInitialized() const;
+    [[nodiscard]] bool isIsotropicExchangeInitialized() const;
     [[nodiscard]] bool symmetry_consistence(const group::Group& group) const;
 
     [[nodiscard]] std::shared_ptr<const DenseMatrix>

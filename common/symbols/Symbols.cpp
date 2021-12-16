@@ -244,10 +244,19 @@ void Symbols::updateGFactorParameters() {
 }
 
 std::shared_ptr<const DenseMatrix> Symbols::getIsotropicExchangeParameters() const {
+    // TODO: refactor it:
     if (numeric_isotropic_exchanges_ == nullptr) {
         throw std::invalid_argument("Isotropic exchange interaction was not initialized");
     }
     return numeric_isotropic_exchanges_;
+}
+
+bool Symbols::isIsotropicExchangeInitialized() const {
+    return !symbolic_isotropic_exchanges_.empty();
+}
+
+bool Symbols::isGFactorInitialized() const {
+    return !symbolic_g_factors_.empty();
 }
 
 }  // namespace symbols
