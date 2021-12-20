@@ -269,3 +269,93 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
         }
     }
 }
+
+TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> J_dist(20, 200);
+    std::uniform_real_distribution<double> g_dist(1.8, 3.0);
+
+    for (size_t _ = 0; _ < 20; ++_) {
+        const double J_exact = J_dist(rng);
+        const double g_exact = g_dist(rng);
+
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+
+        {
+            std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+
+            runner::Runner runner(mults);
+
+            double J_value = J_exact;
+            auto J = runner.modifySymbols().addSymbol("J", J_value);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 4);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 4, 5);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 5, 0);
+
+            double g_value = g_exact;
+            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            for (size_t i = 0; i < mults.size(); ++i) {
+                runner.modifySymbols().assignSymbolToGFactor(g, i);
+            }
+
+            runner.InitializeSSquared();
+            runner.InitializeIsotropicExchangeDerivatives();
+
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            for (size_t i = 1; i < 301; ++i) {
+                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                    static_cast<double>(i),
+                    runner.getPtrToMuSquaredWorker()->calculateTheoreticalMuSquared(i)};
+                values.push_back(value_at_temperature);
+            }
+        }
+
+        {
+            std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+
+            runner::Runner runner(mults);
+
+            double J_value = 40;
+            auto J = runner.modifySymbols().addSymbol("J", J_value);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 4);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 4, 5);
+            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 5, 0);
+
+            double g_value = 2.0;
+            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            for (size_t i = 0; i < mults.size(); ++i) {
+                runner.modifySymbols().assignSymbolToGFactor(g, i);
+            }
+
+            runner.InitializeSSquared();
+            runner.InitializeIsotropicExchangeDerivatives();
+
+            runner.initializeExperimentalValues(
+                values,
+                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                1);
+
+            runner.minimizeResidualError();
+
+            double residual_error = runner.getPtrToMuSquaredWorker()->calculateResidualError();
+            double J_fitted = runner.getSymbols().getValueOfName(J);
+            double g_fitted = runner.getSymbols().getValueOfName(g);
+            double J_range = std::abs(J_fitted / 1000);
+            double g_range = std::abs(g_fitted / 1000);
+
+            // TODO: epsilon
+            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(J_fitted, J_exact, J_range);
+            EXPECT_NEAR(g_fitted, g_exact, g_range);
+        }
+    }
+}
