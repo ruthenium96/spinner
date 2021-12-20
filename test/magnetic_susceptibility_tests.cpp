@@ -133,7 +133,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
-                    runner.getPtrToMuSquaredWorker()->calculateTheoreticalMuSquared(i)};
+                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
             }
         }
@@ -166,7 +166,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
 
             runner.minimizeResidualError();
 
-            double residual_error = runner.getPtrToMuSquaredWorker()->calculateResidualError();
+            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
             double J_fitted = runner.getSymbols().getValueOfName(J);
             double g_fitted = runner.getSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
@@ -221,7 +221,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
-                    runner.getPtrToMuSquaredWorker()->calculateTheoreticalMuSquared(i)};
+                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
             }
         }
@@ -256,7 +256,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
 
             runner.minimizeResidualError();
 
-            double residual_error = runner.getPtrToMuSquaredWorker()->calculateResidualError();
+            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
             double J_fitted = runner.getSymbols().getValueOfName(J);
             double g_fitted = runner.getSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
@@ -311,7 +311,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
-                    runner.getPtrToMuSquaredWorker()->calculateTheoreticalMuSquared(i)};
+                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
             }
         }
@@ -346,7 +346,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
 
             runner.minimizeResidualError();
 
-            double residual_error = runner.getPtrToMuSquaredWorker()->calculateResidualError();
+            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
             double J_fitted = runner.getSymbols().getValueOfName(J);
             double g_fitted = runner.getSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);

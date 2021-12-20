@@ -66,8 +66,7 @@ class Runner {
         common::QuantityEnum,
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
-    [[nodiscard]] const std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>&
-    getPtrToMuSquaredWorker() const;
+    [[nodiscard]] const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
     [[nodiscard]] const symbols::Symbols& getSymbols() const;
 
     [[nodiscard]] symbols::Symbols& modifySymbols();

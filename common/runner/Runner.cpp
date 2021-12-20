@@ -413,9 +413,8 @@ void runner::Runner::minimizeResidualError() {
     }
 }
 
-const std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>&
-runner::Runner::getPtrToMuSquaredWorker() const {
-    return mu_squared_worker.value();
+const magnetic_susceptibility::MuSquaredWorker& runner::Runner::getMuSquaredWorker() const {
+    return *mu_squared_worker.value();
 }
 
 const symbols::Symbols& runner::Runner::getSymbols() const {
@@ -428,11 +427,12 @@ symbols::Symbols& runner::Runner::modifySymbols() {
 }
 
 void runner::Runner::InitializeIsotropicExchange() {
-    if (!operators_history_.isotropic_exchange_in_hamiltonian) {
-        energy.operator_.two_center_terms.emplace_back(
-            std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
-        operators_history_.isotropic_exchange_in_hamiltonian = true;
+    if (operators_history_.isotropic_exchange_in_hamiltonian) {
+        return;
     }
+    energy.operator_.two_center_terms.emplace_back(
+        std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
+    operators_history_.isotropic_exchange_in_hamiltonian = true;
 }
 
 void runner::Runner::finish_the_model() {
