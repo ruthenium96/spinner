@@ -5,7 +5,7 @@ add_library(components
         operator/ScalarProduct.cpp operator/ScalarProduct.h
         operator/ConstantOperator.cpp operator/ConstantOperator.h
         operator/Interaction.h
-        spectrum/SpectrumBuilder.cpp spectrum/SpectrumBuilder.h)
+        )
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(components group space common matrix data_structures spectrum)

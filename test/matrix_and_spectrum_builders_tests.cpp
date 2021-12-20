@@ -1,5 +1,3 @@
-#include <components/spectrum/SpectrumBuilder.h>
-
 #include <armadillo>
 
 #include "common/runner/Runner.h"
@@ -1110,12 +1108,16 @@ TEST(spectrum_builder_apply_to_entity, spectra_equivalence_22_333_4444_23456) {
 
         runner_without_matrices.BuildSpectra();
 
-        SpectrumBuilder spectrum_builder;
-        Spectrum manually_energy_spectrum = spectrum_builder.apply_to_energy(
-            runner_to_manually_call_apply_to_entity.getMatrix(common::QuantityEnum::Energy));
-        Spectrum manually_s_squared_spectrum =
-            spectrum_builder.apply_to_non_energy(runner_to_manually_call_apply_to_entity.getMatrix(
-                common::QuantityEnum::S_total_squared));
+        std::vector<DenseMatrix> unitary_transformation_matrices(
+            runner_to_manually_call_apply_to_entity.getMatrix(common::QuantityEnum::Energy)
+                .blocks.size());
+        Spectrum manually_energy_spectrum = Spectrum::energy(
+            runner_to_manually_call_apply_to_entity.getMatrix(common::QuantityEnum::Energy),
+            unitary_transformation_matrices);
+        Spectrum manually_s_squared_spectrum = Spectrum::non_energy(
+            runner_to_manually_call_apply_to_entity.getMatrix(
+                common::QuantityEnum::S_total_squared),
+            unitary_transformation_matrices);
 
         expect_spectrum_equivalence(
             runner_without_matrices.getSpectrum(common::QuantityEnum::Energy),
@@ -1159,13 +1161,18 @@ TEST(
 
         runner_tz_sorted.BuildSpectra();
 
-        SpectrumBuilder spectrum_builder;
-        Spectrum manually_energy_spectrum = spectrum_builder.apply_to_energy(
+        std::vector<DenseMatrix> unitary_transformation_matrices(
+            runner_not_tz_sorted_to_manually_call_apply_to_entity
+                .getMatrix(common::QuantityEnum::Energy)
+                .blocks.size());
+        Spectrum manually_energy_spectrum = Spectrum::energy(
             runner_not_tz_sorted_to_manually_call_apply_to_entity.getMatrix(
-                common::QuantityEnum::Energy));
+                common::QuantityEnum::Energy),
+            unitary_transformation_matrices);
         EXPECT_THROW(
-            spectrum_builder.apply_to_non_energy(
-                runner_tz_sorted.getMatrix(common::QuantityEnum::S_total_squared)),
+            Spectrum::non_energy(
+                runner_tz_sorted.getMatrix(common::QuantityEnum::S_total_squared),
+                unitary_transformation_matrices),
             std::length_error);
     }
 }
