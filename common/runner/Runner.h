@@ -77,8 +77,10 @@ class Runner {
     struct MatrixHistory {
         bool matrices_was_built = false;
     };
-    struct HamiltonianOperatorHistory {
-        bool has_isotropic_exchange_interactions_initialized = false;
+    struct OperatorsHistory {
+        bool isotropic_exchange_in_hamiltonian = false;
+        bool s_squared = false;
+        bool isotropic_exchange_derivatives = false;
     };
     struct SpaceHistory {
         std::vector<group::Group> applied_groups;
@@ -115,7 +117,7 @@ class Runner {
     void throw_if_model_is_finished(const std::string& error);
 
     MatrixHistory matrix_history_;
-    HamiltonianOperatorHistory hamiltonian_history_;
+    OperatorsHistory operators_history_;
     SpaceHistory space_history_;
 };
 }  // namespace runner

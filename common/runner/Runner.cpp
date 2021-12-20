@@ -101,6 +101,10 @@ void runner::Runner::BuildMatrices() {
 void runner::Runner::InitializeSSquared() {
     throw_if_model_is_finished("Cannot initialize S^2 after model was finished");
 
+    if (operators_history_.s_squared) {
+        return;
+    }
+
     Operator s_squared_operator_;
     double sum_of_s_squared = 0;
     for (double spin : converter_.get_spins()) {
@@ -112,13 +116,17 @@ void runner::Runner::InitializeSSquared() {
         std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
 
     operator_s_squared = std::move(s_squared_operator_);
+    operators_history_.s_squared = true;
 }
 
 void runner::Runner::InitializeIsotropicExchangeDerivatives() {
     throw_if_model_is_finished(
         "Cannot initialize isotropic exchange derivatives after model was finished");
 
-    // TODO: do nothing if this function is called twice
+    if (operators_history_.isotropic_exchange_derivatives) {
+        return;
+    }
+
     for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
         Operator operator_derivative = Operator();
         operator_derivative.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(
@@ -126,9 +134,12 @@ void runner::Runner::InitializeIsotropicExchangeDerivatives() {
         operator_derivative_of_energy_wrt_exchange_parameters[symbol] =
             std::move(operator_derivative);
     }
+
+    operators_history_.isotropic_exchange_derivatives = true;
 }
 
 void runner::Runner::BuildSpectra() {
+    finish_the_model();
     if (matrix_history_.matrices_was_built) {
         BuildSpectraUsingMatrices();
     } else {
@@ -175,8 +186,6 @@ void runner::Runner::BuildSpectraUsingMatrices() {
 }
 
 void runner::Runner::BuildSpectraWithoutMatrices() {
-    finish_the_model();
-
     size_t number_of_blocks = space_.blocks.size();
 
     if (!operator_energy.empty()) {
@@ -424,15 +433,17 @@ symbols::Symbols& runner::Runner::modifySymbols() {
 }
 
 void runner::Runner::InitializeIsotropicExchange() {
-    if (!hamiltonian_history_.has_isotropic_exchange_interactions_initialized) {
+    if (!operators_history_.isotropic_exchange_in_hamiltonian) {
         operator_energy.two_center_terms.emplace_back(
             std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
-        hamiltonian_history_.has_isotropic_exchange_interactions_initialized = true;
+        operators_history_.isotropic_exchange_in_hamiltonian = true;
     }
 }
 
 void runner::Runner::finish_the_model() {
-    model_is_finished = true;
+    if (model_is_finished) {
+        return;
+    }
 
     if (symbols_.isIsotropicExchangeInitialized()) {
         InitializeIsotropicExchange();
@@ -456,6 +467,8 @@ void runner::Runner::finish_the_model() {
         }
         space_history_.isNormalized = true;
     }
+
+    model_is_finished = true;
 }
 
 void runner::Runner::throw_if_model_is_finished(const std::string& error) {
