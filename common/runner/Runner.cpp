@@ -98,23 +98,13 @@ void runner::Runner::BuildMatrices() {
 
 void runner::Runner::InitializeSSquared() {
     throw_if_model_is_finished("Cannot initialize S^2 after model was finished");
-
     if (operators_history_.s_squared) {
         return;
     }
+
     s_squared = common::Quantity();
+    s_squared->operator_ = Operator::s_squared(converter_.get_spins());
 
-    Operator s_squared_operator_;
-    double sum_of_s_squared = 0;
-    for (double spin : converter_.get_spins()) {
-        sum_of_s_squared += spin * (spin + 1);
-    }
-    s_squared_operator_.zero_center_terms.emplace_back(
-        std::make_unique<const ConstantOperator>(sum_of_s_squared));
-    s_squared_operator_.two_center_terms.emplace_back(
-        std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
-
-    s_squared->operator_ = std::move(s_squared_operator_);
     operators_history_.s_squared = true;
 }
 

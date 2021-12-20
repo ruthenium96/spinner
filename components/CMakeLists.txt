@@ -8,4 +8,4 @@ add_library(components
         )
 
 set_target_properties(components PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(components group space common matrix data_structures spectrum)
+target_link_libraries(components group space common operator matrix data_structures spectrum)

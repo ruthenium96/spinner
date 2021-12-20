@@ -11,4 +11,4 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/test/symbols_tests.cpp
         ${CMAKE_SOURCE_DIR}/test/magnetic_susceptibility_tests.cpp)
 
-target_link_libraries(julytest gtest gtest_main group components space common matrix magnetic_susceptibility)
+target_link_libraries(julytest gtest gtest_main group components space operator common matrix magnetic_susceptibility)
