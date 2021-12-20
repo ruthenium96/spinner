@@ -12,7 +12,7 @@ runner::Runner::Runner(const std::vector<int>& mults) :
     symbols_(mults.size()),
     converter_(mults),
     space_(converter_.get_total_space_size()) {
-    operator_energy = Operator();
+    energy.operator_ = Operator();
 }
 
 void runner::Runner::NonAbelianSimplify() {
@@ -83,16 +83,14 @@ const Space& runner::Runner::getSpace() const {
 void runner::Runner::BuildMatrices() {
     finish_the_model();
 
-    if (!operator_energy.empty()) {
-        matrix_energy = Matrix(space_, operator_energy, converter_);
+    if (!energy.operator_.empty()) {
+        energy.matrix_ = Matrix(space_, energy.operator_, converter_);
     }
-    if (!operator_s_squared.empty()) {
-        matrix_s_squared = Matrix(space_, operator_s_squared, converter_);
+    if (s_squared.has_value()) {
+        s_squared->matrix_ = Matrix(space_, s_squared->operator_, converter_);
     }
-    for (const auto& [symbol, operator_derivative] :
-         operator_derivative_of_energy_wrt_exchange_parameters) {
-        matrix_derivative_of_energy_wrt_exchange_parameters[symbol] =
-            Matrix(space_, operator_derivative, converter_);
+    for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+        derivative.matrix_ = Matrix(space_, derivative.operator_, converter_);
     }
 
     matrix_history_.matrices_was_built = true;
@@ -104,6 +102,7 @@ void runner::Runner::InitializeSSquared() {
     if (operators_history_.s_squared) {
         return;
     }
+    s_squared = common::Quantity();
 
     Operator s_squared_operator_;
     double sum_of_s_squared = 0;
@@ -115,7 +114,7 @@ void runner::Runner::InitializeSSquared() {
     s_squared_operator_.two_center_terms.emplace_back(
         std::make_unique<const ScalarProduct>(converter_.get_spins().size()));
 
-    operator_s_squared = std::move(s_squared_operator_);
+    s_squared->operator_ = std::move(s_squared_operator_);
     operators_history_.s_squared = true;
 }
 
@@ -131,7 +130,7 @@ void runner::Runner::InitializeIsotropicExchangeDerivatives() {
         Operator operator_derivative = Operator();
         operator_derivative.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(
             symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
-        operator_derivative_of_energy_wrt_exchange_parameters[symbol] =
+        derivative_of_energy_wrt_exchange_parameters[symbol].operator_ =
             std::move(operator_derivative);
     }
 
@@ -150,37 +149,34 @@ void runner::Runner::BuildSpectra() {
 void runner::Runner::BuildSpectraUsingMatrices() {
     size_t number_of_blocks = space_.blocks.size();
 
-    if (!operator_energy.empty()) {
-        spectrum_energy.blocks.clear();
-        spectrum_energy.blocks.resize(number_of_blocks);
+    if (!energy.operator_.empty()) {
+        energy.spectrum_.blocks.clear();
+        energy.spectrum_.blocks.resize(number_of_blocks);
     }
-    if (!operator_s_squared.empty()) {
-        spectrum_s_squared.blocks.clear();
-        spectrum_s_squared.blocks.resize(number_of_blocks);
+    if (s_squared.has_value()) {
+        s_squared->spectrum_.blocks.clear();
+        s_squared->spectrum_.blocks.resize(number_of_blocks);
     }
-    for (const auto& [symbol, _] : matrix_derivative_of_energy_wrt_exchange_parameters) {
-        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol] = Spectrum();
-        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.resize(
-            number_of_blocks);
+    for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+        derivative.spectrum_.blocks.clear();
+        derivative.spectrum_.blocks.resize(number_of_blocks);
     }
 
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
-        spectrum_energy.blocks[block] =
-            Subspectrum::energy(matrix_energy.blocks[block], unitary_transformation_matrix);
+        energy.spectrum_.blocks[block] =
+            Subspectrum::energy(energy.matrix_.blocks[block], unitary_transformation_matrix);
 
-        if (!operator_s_squared.empty()) {
-            spectrum_s_squared.blocks[block] = Subspectrum::non_energy(
-                matrix_s_squared.blocks[block],
+        if (s_squared.has_value()) {
+            s_squared->spectrum_.blocks[block] = Subspectrum::non_energy(
+                s_squared->matrix_.blocks[block],
                 unitary_transformation_matrix);
         }
 
-        for (const auto& [symbol, matrix_derivative] :
-             matrix_derivative_of_energy_wrt_exchange_parameters) {
-            spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks[block] =
-                Subspectrum::non_energy(
-                    matrix_derivative.blocks[block],
-                    unitary_transformation_matrix);
+        for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+            derivative.spectrum_.blocks[block] = Subspectrum::non_energy(
+                derivative.matrix_.blocks[block],
+                unitary_transformation_matrix);
         }
     }
 }
@@ -188,41 +184,39 @@ void runner::Runner::BuildSpectraUsingMatrices() {
 void runner::Runner::BuildSpectraWithoutMatrices() {
     size_t number_of_blocks = space_.blocks.size();
 
-    if (!operator_energy.empty()) {
-        spectrum_energy.blocks.clear();
-        spectrum_energy.blocks.resize(number_of_blocks);
+    if (!energy.operator_.empty()) {
+        energy.spectrum_.blocks.clear();
+        energy.spectrum_.blocks.resize(number_of_blocks);
     }
-    if (!operator_s_squared.empty()) {
-        spectrum_s_squared.blocks.clear();
-        spectrum_s_squared.blocks.resize(number_of_blocks);
+    if (s_squared.has_value()) {
+        s_squared->spectrum_.blocks.clear();
+        s_squared->spectrum_.blocks.resize(number_of_blocks);
     }
-    for (const auto& [symbol, _] : operator_derivative_of_energy_wrt_exchange_parameters) {
-        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol] = Spectrum();
-        spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks.resize(
-            number_of_blocks);
+    for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+        derivative.spectrum_.blocks.clear();
+        derivative.spectrum_.blocks.resize(number_of_blocks);
     }
 
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         {
             auto hamiltonian_submatrix =
-                Submatrix(space_.blocks[block], operator_energy, converter_);
-            spectrum_energy.blocks[block] =
+                Submatrix(space_.blocks[block], energy.operator_, converter_);
+            energy.spectrum_.blocks[block] =
                 Subspectrum::energy(hamiltonian_submatrix, unitary_transformation_matrix);
         }
 
-        if (!operator_s_squared.empty()) {
+        if (s_squared.has_value()) {
             auto non_hamiltonian_submatrix =
-                Submatrix(space_.blocks[block], operator_s_squared, converter_);
-            spectrum_s_squared.blocks[block] =
+                Submatrix(space_.blocks[block], s_squared->operator_, converter_);
+            s_squared->spectrum_.blocks[block] =
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix);
         }
 
-        for (const auto& [symbol, operator_derivative] :
-             operator_derivative_of_energy_wrt_exchange_parameters) {
+        for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
             auto derivative_submatrix =
-                Submatrix(space_.blocks[block], operator_derivative, converter_);
-            spectrum_derivative_of_energy_wrt_exchange_parameters[symbol].blocks[block] =
+                Submatrix(space_.blocks[block], derivative.operator_, converter_);
+            derivative.spectrum_.blocks[block] =
                 Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix);
         }
     }
@@ -230,25 +224,25 @@ void runner::Runner::BuildSpectraWithoutMatrices() {
 
 const Matrix& runner::Runner::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
-        return matrix_energy;
+        return energy.matrix_;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return matrix_s_squared;
+        return s_squared->matrix_;
     }
 }
 
 const Spectrum& runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
-        return spectrum_energy;
+        return energy.spectrum_;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return spectrum_s_squared;
+        return s_squared->spectrum_;
     }
 }
 
 const Operator& runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
-        return operator_energy;
+        return energy.operator_;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return operator_s_squared;
+        return s_squared->operator_;
     }
 }
 
@@ -262,7 +256,7 @@ const Operator& runner::Runner::getOperatorDerivative(
     const symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         if (symbol_type == symbols::SymbolTypeEnum::J) {
-            return operator_derivative_of_energy_wrt_exchange_parameters.at(symbol);
+            return derivative_of_energy_wrt_exchange_parameters.at(symbol).operator_;
         }
     }
 }
@@ -273,7 +267,7 @@ const Spectrum& runner::Runner::getSpectrumDerivative(
     const symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         if (symbol_type == symbols::SymbolTypeEnum::J) {
-            return spectrum_derivative_of_energy_wrt_exchange_parameters.at(symbol);
+            return derivative_of_energy_wrt_exchange_parameters.at(symbol).spectrum_;
         }
     }
 }
@@ -284,38 +278,38 @@ const Matrix& runner::Runner::getMatrixDerivative(
     const symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         if (symbol_type == symbols::SymbolTypeEnum::J) {
-            return matrix_derivative_of_energy_wrt_exchange_parameters.at(symbol);
+            return derivative_of_energy_wrt_exchange_parameters.at(symbol).matrix_;
         }
     }
 }
 
 void runner::Runner::BuildMuSquaredWorker() {
-    DenseVector energy;
-    DenseVector degeneracy;
+    DenseVector energy_vector;
+    DenseVector degeneracy_vector;
 
-    for (const auto& subspectrum : spectrum_energy.blocks) {
-        energy.concatenate_with(subspectrum.raw_data);
-        degeneracy.add_identical_values(
+    for (const auto& subspectrum : energy.spectrum_.blocks) {
+        energy_vector.concatenate_with(subspectrum.raw_data);
+        degeneracy_vector.add_identical_values(
             subspectrum.raw_data.size(),
             subspectrum.properties.degeneracy);
     }
-    energy.subtract_minimum();
+    energy_vector.subtract_minimum();
 
     if (symbols_.isAllGFactorsEqual()) {
         // and there is no field
         double g_factor = symbols_.getGFactorParameters()->operator()(0);
-        DenseVector s_squared;
+        DenseVector s_squared_vector;
 
         // TODO: check if s_squared has been initialized
-        for (const auto& subspectrum : spectrum_s_squared.blocks) {
-            s_squared.concatenate_with(subspectrum.raw_data);
+        for (const auto& subspectrum : s_squared->spectrum_.blocks) {
+            s_squared_vector.concatenate_with(subspectrum.raw_data);
         }
 
         mu_squared_worker =
             std::make_unique<magnetic_susceptibility::UniqueGOnlySSquaredMuSquaredWorker>(
-                std::move(energy),
-                std::move(degeneracy),
-                std::move(s_squared),
+                std::move(energy_vector),
+                std::move(degeneracy_vector),
+                std::move(s_squared_vector),
                 g_factor);
     } else {
         throw std::invalid_argument("Different g factors are not supported now.");
@@ -353,13 +347,14 @@ std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives(
     std::map<symbols::SymbolName, double> answer;
 
     for (const auto& changeable_symbol : symbols_.getChangeableNames(symbols::J)) {
-        DenseVector derivative;
+        DenseVector derivative_vector;
         for (const auto& subspectrum :
              getSpectrumDerivative(common::Energy, symbols::J, changeable_symbol).blocks) {
-            derivative.concatenate_with(subspectrum.raw_data);
+            derivative_vector.concatenate_with(subspectrum.raw_data);
         }
-        double value =
-            mu_squared_worker.value()->calculateTotalDerivative(symbols::J, std::move(derivative));
+        double value = mu_squared_worker.value()->calculateTotalDerivative(
+            symbols::J,
+            std::move(derivative_vector));
         answer[changeable_symbol] = value;
         //        std::cout << "dR^2/d" << changeable_symbol << " = "
         //                  << value << std::endl;
@@ -434,7 +429,7 @@ symbols::Symbols& runner::Runner::modifySymbols() {
 
 void runner::Runner::InitializeIsotropicExchange() {
     if (!operators_history_.isotropic_exchange_in_hamiltonian) {
-        operator_energy.two_center_terms.emplace_back(
+        energy.operator_.two_center_terms.emplace_back(
             std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
         operators_history_.isotropic_exchange_in_hamiltonian = true;
     }

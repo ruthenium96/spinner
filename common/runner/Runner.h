@@ -95,15 +95,9 @@ class Runner {
 
     Space space_;
 
-    Operator operator_energy;
-    Operator operator_s_squared;
-    std::map<symbols::SymbolName, Operator> operator_derivative_of_energy_wrt_exchange_parameters;
-    Matrix matrix_energy;
-    Matrix matrix_s_squared;
-    std::map<symbols::SymbolName, Matrix> matrix_derivative_of_energy_wrt_exchange_parameters;
-    Spectrum spectrum_energy;
-    Spectrum spectrum_s_squared;
-    std::map<symbols::SymbolName, Spectrum> spectrum_derivative_of_energy_wrt_exchange_parameters;
+    common::Quantity energy;
+    std::optional<common::Quantity> s_squared;
+    std::map<symbols::SymbolName, common::Quantity> derivative_of_energy_wrt_exchange_parameters;
 
     // TODO: can we use std::optional<magnetic_susceptibility::MuSquaredWorker> instead?
     std::optional<std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>> mu_squared_worker;
