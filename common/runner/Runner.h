@@ -103,8 +103,8 @@ class Runner {
     std::optional<std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>>
         experimental_values_worker_;
 
-    void BuildSpectraUsingMatrices();
-    void BuildSpectraWithoutMatrices();
+    void BuildSpectraUsingMatrices(size_t number_of_blocks);
+    void BuildSpectraWithoutMatrices(size_t number_of_blocks);
 
     void finish_the_model();
     void throw_if_model_is_finished(const std::string& error);

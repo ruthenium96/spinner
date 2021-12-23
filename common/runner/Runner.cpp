@@ -129,14 +129,7 @@ void runner::Runner::InitializeIsotropicExchangeDerivatives() {
 
 void runner::Runner::BuildSpectra() {
     finish_the_model();
-    if (matrix_history_.matrices_was_built) {
-        BuildSpectraUsingMatrices();
-    } else {
-        BuildSpectraWithoutMatrices();
-    }
-}
 
-void runner::Runner::BuildSpectraUsingMatrices() {
     size_t number_of_blocks = space_.blocks.size();
 
     if (!energy.operator_.empty()) {
@@ -152,6 +145,14 @@ void runner::Runner::BuildSpectraUsingMatrices() {
         derivative.spectrum_.blocks.resize(number_of_blocks);
     }
 
+    if (matrix_history_.matrices_was_built) {
+        BuildSpectraUsingMatrices(number_of_blocks);
+    } else {
+        BuildSpectraWithoutMatrices(number_of_blocks);
+    }
+}
+
+void runner::Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         energy.spectrum_.blocks[block] =
@@ -171,22 +172,7 @@ void runner::Runner::BuildSpectraUsingMatrices() {
     }
 }
 
-void runner::Runner::BuildSpectraWithoutMatrices() {
-    size_t number_of_blocks = space_.blocks.size();
-
-    if (!energy.operator_.empty()) {
-        energy.spectrum_.blocks.clear();
-        energy.spectrum_.blocks.resize(number_of_blocks);
-    }
-    if (s_squared.has_value()) {
-        s_squared->spectrum_.blocks.clear();
-        s_squared->spectrum_.blocks.resize(number_of_blocks);
-    }
-    for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
-        derivative.spectrum_.blocks.clear();
-        derivative.spectrum_.blocks.resize(number_of_blocks);
-    }
-
+void runner::Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         {
