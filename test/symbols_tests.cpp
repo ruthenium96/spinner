@@ -1,6 +1,19 @@
 #include "common/runner/Runner.h"
 #include "gtest/gtest.h"
 
+TEST(symbols, throw_add_the_same_symbol_name) {
+    symbols::Symbols symbols(2);
+    symbols.addSymbol("same", 10);
+    EXPECT_THROW(symbols.addSymbol("same", 10), std::invalid_argument);
+}
+
+TEST(symbols, throw_assign_the_same_exchange) {
+    symbols::Symbols symbols(2);
+    auto J = symbols.addSymbol("same", 10, symbols::J);
+    symbols.assignSymbolToIsotropicExchange(J, 0, 1);
+    EXPECT_THROW(symbols.assignSymbolToIsotropicExchange(J, 0, 1), std::invalid_argument);
+}
+
 TEST(symbols, throw_2222_isotropic_inconsistent_symmetry) {
     std::vector<int> mults = {2, 2, 2, 2};
 

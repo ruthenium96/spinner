@@ -63,6 +63,57 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_empty_experimenta
         std::length_error);
 }
 
+TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
+    std::vector<int> mults = {2, 2};
+    runner::Runner runner(mults);
+
+    double J_value = 10;
+    auto J = runner.modifySymbols().addSymbol("J", J_value);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    double g_value = 2.0;
+    auto g = runner.modifySymbols().addSymbol("g", g_value);
+    for (size_t i = 0; i < mults.size(); ++i) {
+        runner.modifySymbols().assignSymbolToGFactor(g, i);
+    }
+
+    runner.InitializeSSquared();
+    runner.InitializeIsotropicExchangeDerivatives();
+
+    runner.initializeExperimentalValues(
+        exp_values,
+        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        1);
+
+    runner.BuildSpectra();
+    EXPECT_NO_THROW(runner.BuildMuSquaredWorker());
+}
+
+TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
+    std::vector<int> mults = {2, 2};
+    runner::Runner runner(mults);
+
+    double J_value = 10;
+    auto J = runner.modifySymbols().addSymbol("J", J_value);
+    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    double g_value = 2.0;
+    auto g = runner.modifySymbols().addSymbol("g", g_value);
+    for (size_t i = 0; i < mults.size(); ++i) {
+        runner.modifySymbols().assignSymbolToGFactor(g, i);
+    }
+
+    runner.InitializeSSquared();
+    runner.InitializeIsotropicExchangeDerivatives();
+
+    runner.BuildSpectra();
+    runner.BuildMuSquaredWorker();
+    EXPECT_NO_THROW(runner.initializeExperimentalValues(
+        exp_values,
+        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        1));
+}
+
 TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
     std::vector<magnetic_susceptibility::ExperimentalValuesEnum> values_enum = {
         magnetic_susceptibility::mu_in_bohr_magnetons,

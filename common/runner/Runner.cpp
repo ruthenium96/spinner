@@ -403,6 +403,7 @@ symbols::Symbols& runner::Runner::modifySymbols() {
 }
 
 void runner::Runner::InitializeIsotropicExchange() {
+    throw_if_model_is_finished("Cannot initialize isotropic exchange after model was finished");
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
         return;
     }
