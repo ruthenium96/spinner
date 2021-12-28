@@ -5,6 +5,7 @@
 #include "components/operator/ConstantOperator.h"
 #include "components/operator/ScalarProduct.h"
 #include "components/space/NonAbelianSimplifier.h"
+#include "components/space/PositiveProjectionsEliminator.h"
 #include "components/space/Symmetrizer.h"
 #include "components/space/TzSorter.h"
 
@@ -13,6 +14,27 @@ runner::Runner::Runner(const std::vector<int>& mults) :
     converter_(mults),
     space_(converter_.get_total_space_size()) {
     energy.operator_ = Operator();
+}
+
+void runner::Runner::EliminatePositiveProjections() {
+    throw_if_model_is_finished("Cannot eliminate positive projections after model was finished");
+    if (space_history_.isPositiveProjectionsEliminated) {
+        return;
+    }
+
+    if (!space_history_.isTzSorted) {
+        throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
+    }
+
+    // TODO: we have the same code in tz-sorter. Can we move it to converter?
+    uint32_t max_ntz_proj = std::accumulate(
+        converter_.get_mults().begin(),
+        converter_.get_mults().end(),
+        1 - converter_.get_mults().size());
+
+    PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
+    space_ = positiveProjectionsEliminator.apply(std::move(space_));
+    space_history_.isPositiveProjectionsEliminated = true;
 }
 
 void runner::Runner::NonAbelianSimplify() {

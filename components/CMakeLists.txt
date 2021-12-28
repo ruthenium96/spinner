@@ -1,6 +1,7 @@
 add_library(components
         space/Symmetrizer.cpp space/Symmetrizer.h
         space/TzSorter.cpp space/TzSorter.h
+        space/PositiveProjectionsEliminator.cpp space/PositiveProjectionsEliminator.h
         space/NonAbelianSimplifier.cpp space/NonAbelianSimplifier.h
         operator/ScalarProduct.cpp operator/ScalarProduct.h
         operator/ConstantOperator.cpp operator/ConstantOperator.h

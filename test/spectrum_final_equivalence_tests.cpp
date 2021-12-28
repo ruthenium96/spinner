@@ -22,7 +22,7 @@ struct EnergyAndSSquared {
     double s_squared;
 };
 
-std::vector<EnergyAndSSquared> construct_final_vector(runner::Runner& runner) {
+std::vector<EnergyAndSSquared> construct_final_vector(const runner::Runner& runner) {
     std::vector<EnergyAndSSquared> vector;
 
     DenseVector energy_vector;
@@ -51,11 +51,10 @@ std::vector<EnergyAndSSquared> construct_final_vector(runner::Runner& runner) {
     return vector;
 }
 
-void expect_final_vectors_equivalence(runner::Runner& first, runner::Runner& second) {
-    first.BuildSpectra();
+void expect_final_vectors_equivalence(const runner::Runner& simple, runner::Runner& second) {
     second.BuildSpectra();
 
-    auto first_vector = construct_final_vector(first);
+    auto first_vector = construct_final_vector(simple);
     auto second_vector = construct_final_vector(second);
 
     double s_squared_sum_first = 0;
@@ -109,14 +108,25 @@ TEST(spectrum_final_equivalence, rectangle) {
 
             runner::Runner runner_simple(mults);
             initialize_four_centers_exchange_rectangle(runner_simple, Jfirst, Jsecond);
+            runner_simple.BuildSpectra();
 
             // TZ_SORTER
             {
                 runner::Runner runner_tz_sorted(mults);
                 runner_tz_sorted.TzSort();
                 initialize_four_centers_exchange_rectangle(runner_tz_sorted, Jfirst, Jsecond);
-
                 expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                runner::Runner runner_tz_sorted_eliminated(mults);
+                runner_tz_sorted_eliminated.TzSort();
+                runner_tz_sorted_eliminated.EliminatePositiveProjections();
+                initialize_four_centers_exchange_rectangle(
+                    runner_tz_sorted_eliminated,
+                    Jfirst,
+                    Jsecond);
+                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_eliminated);
             }
             // SYMMETRIZER
             {
@@ -220,6 +230,36 @@ TEST(spectrum_final_equivalence, rectangle) {
                     Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_both_directions_tz_sorted);
             }
+            // TZ_SORTER + SYMMETRIZER + SYMMETRIZER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                runner::Runner runner_both_directions_tz_sorted_eliminated(mults);
+                runner_both_directions_tz_sorted_eliminated.TzSort();
+                runner_both_directions_tz_sorted_eliminated.Symmetrize(first_direction);
+                runner_both_directions_tz_sorted_eliminated.Symmetrize(second_direction);
+                runner_both_directions_tz_sorted_eliminated.EliminatePositiveProjections();
+                initialize_four_centers_exchange_rectangle(
+                    runner_both_directions_tz_sorted_eliminated,
+                    Jfirst,
+                    Jsecond);
+                expect_final_vectors_equivalence(
+                    runner_simple,
+                    runner_both_directions_tz_sorted_eliminated);
+            }
+            // SYMMETRIZER + SYMMETRIZER + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                runner::Runner runner_both_directions_tz_sorted_eliminated(mults);
+                runner_both_directions_tz_sorted_eliminated.Symmetrize(first_direction);
+                runner_both_directions_tz_sorted_eliminated.Symmetrize(second_direction);
+                runner_both_directions_tz_sorted_eliminated.TzSort();
+                runner_both_directions_tz_sorted_eliminated.EliminatePositiveProjections();
+                initialize_four_centers_exchange_rectangle(
+                    runner_both_directions_tz_sorted_eliminated,
+                    Jfirst,
+                    Jsecond);
+                expect_final_vectors_equivalence(
+                    runner_simple,
+                    runner_both_directions_tz_sorted_eliminated);
+            }
         }
     }
 }
@@ -245,14 +285,22 @@ TEST(spectrum_final_equivalence, triangle) {
 
             runner::Runner runner_simple(mults);
             initialize_three_centers_exchange_triangle(runner_simple, Jfirst);
+            runner_simple.BuildSpectra();
 
             // TZ_SORTER
             {
                 runner::Runner runner_tz_sorted(mults);
                 runner_tz_sorted.TzSort();
                 initialize_three_centers_exchange_triangle(runner_tz_sorted, Jfirst);
-
                 expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                runner::Runner runner_tz_sorted_eliminated(mults);
+                runner_tz_sorted_eliminated.TzSort();
+                runner_tz_sorted_eliminated.EliminatePositiveProjections();
+                initialize_three_centers_exchange_triangle(runner_tz_sorted_eliminated, Jfirst);
+                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_eliminated);
             }
             // SYMMETRIZER
             {
@@ -283,6 +331,45 @@ TEST(spectrum_final_equivalence, triangle) {
                 runner_symmetrized_tz_sorted.TzSort();
                 initialize_three_centers_exchange_triangle(runner_symmetrized_tz_sorted, Jfirst);
                 expect_final_vectors_equivalence(runner_simple, runner_symmetrized_tz_sorted);
+            }
+            // TZ_SORTER + SYMMETRIZER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                runner::Runner runner_symmetrized_tz_sorted_eliminated(mults);
+                runner_symmetrized_tz_sorted_eliminated.TzSort();
+                runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
+                runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
+                initialize_three_centers_exchange_triangle(
+                    runner_symmetrized_tz_sorted_eliminated,
+                    Jfirst);
+                expect_final_vectors_equivalence(
+                    runner_simple,
+                    runner_symmetrized_tz_sorted_eliminated);
+            }
+            // SYMMETRIZER + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                runner::Runner runner_symmetrized_tz_sorted_eliminated(mults);
+                runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
+                runner_symmetrized_tz_sorted_eliminated.TzSort();
+                runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
+                initialize_three_centers_exchange_triangle(
+                    runner_symmetrized_tz_sorted_eliminated,
+                    Jfirst);
+                expect_final_vectors_equivalence(
+                    runner_simple,
+                    runner_symmetrized_tz_sorted_eliminated);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
+            {
+                runner::Runner runner_symmetrized_tz_sorted_eliminated(mults);
+                runner_symmetrized_tz_sorted_eliminated.TzSort();
+                runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
+                runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
+                initialize_three_centers_exchange_triangle(
+                    runner_symmetrized_tz_sorted_eliminated,
+                    Jfirst);
+                expect_final_vectors_equivalence(
+                    runner_simple,
+                    runner_symmetrized_tz_sorted_eliminated);
             }
             //            // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
             //            {

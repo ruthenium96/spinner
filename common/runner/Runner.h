@@ -19,6 +19,8 @@ class Runner {
     explicit Runner(const std::vector<int>& mults);
 
     // SPACE OPERATIONS
+    void EliminatePositiveProjections();
+
     void NonAbelianSimplify();
 
     void Symmetrize(group::Group new_group);
@@ -87,6 +89,7 @@ class Runner {
         bool isTzSorted = false;
         bool isNormalized = false;  // actually true, if we do not use Symmetrizer
         bool isNonAbelianSimplified = false;
+        bool isPositiveProjectionsEliminated = false;
     };
 
     const lexicographic::IndexConverter converter_;
