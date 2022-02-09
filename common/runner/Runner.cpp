@@ -375,32 +375,9 @@ void runner::Runner::minimizeResidualError() {
         changeable_values.push_back(symbols_.getValueOfName(name));
     }
 
+    using namespace std::placeholders;
     std::function<void(const std::vector<double>&, double&, std::vector<double>&)> func_grad_eval =
-        [this, &changeable_names](
-            const std::vector<double>& changeable_values,
-            double& residual_error,
-            std::vector<double>& gradient) {
-            for (size_t i = 0; i < changeable_names.size(); ++i) {
-                symbols_.setNewValueToChangeableSymbol(changeable_names[i], changeable_values[i]);
-            }
-
-            if (matrix_history_.matrices_was_built) {
-                // TODO: 1) it does not work now
-                //       2) here's the problem with future SSquaredTransformer
-                //       or we can use SSquaredTransform() as flag and actually apply it at BuildMatrix?
-                BuildMatrices();
-            }
-            BuildSpectra();
-
-            BuildMuSquaredWorker();
-
-            residual_error = mu_squared_worker.value()->calculateResidualError();
-
-            std::map<symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
-            for (size_t i = 0; i < changeable_names.size(); ++i) {
-                gradient[i] = map_gradient[changeable_names[i]];
-            }
-        };
+        std::bind(&Runner::stepOfRegression, this, std::cref(changeable_names), _1, _2, _3);
 
     STLBFGS::Optimizer opt {func_grad_eval};
     opt.verbose = false;
@@ -408,6 +385,33 @@ void runner::Runner::minimizeResidualError() {
 
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         //        std::cout << changeable_names[i] << ": " << changeable_values[i] << std::endl;
+    }
+}
+
+void runner::Runner::stepOfRegression(
+    const std::vector<symbols::SymbolName>& changeable_names,
+    const std::vector<double>& changeable_values,
+    double& residual_error,
+    std::vector<double>& gradient) {
+    for (size_t i = 0; i < changeable_names.size(); ++i) {
+        symbols_.setNewValueToChangeableSymbol(changeable_names[i], changeable_values[i]);
+    }
+
+    if (matrix_history_.matrices_was_built) {
+        // TODO: 1) it does not work now
+        //       2) here's the problem with future SSquaredTransformer
+        //       or we can use SSquaredTransform() as flag and actually apply it at BuildMatrix?
+        BuildMatrices();
+    }
+    BuildSpectra();
+
+    BuildMuSquaredWorker();
+
+    residual_error = mu_squared_worker.value()->calculateResidualError();
+
+    std::map<symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
+    for (size_t i = 0; i < changeable_names.size(); ++i) {
+        gradient[i] = map_gradient[changeable_names[i]];
     }
 }
 

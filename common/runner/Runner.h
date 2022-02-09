@@ -100,6 +100,12 @@ class Runner {
     common::Quantity energy;
     std::optional<common::Quantity> s_squared;
     std::map<symbols::SymbolName, common::Quantity> derivative_of_energy_wrt_exchange_parameters;
+    
+    void stepOfRegression(
+        const std::vector<symbols::SymbolName>&,
+        const std::vector<double>&,
+        double&,
+        std::vector<double>&);
 
     // TODO: can we use std::optional<magnetic_susceptibility::MuSquaredWorker> instead?
     std::optional<std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>> mu_squared_worker;
