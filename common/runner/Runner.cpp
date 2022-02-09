@@ -419,11 +419,11 @@ const magnetic_susceptibility::MuSquaredWorker& runner::Runner::getMuSquaredWork
     return *mu_squared_worker.value();
 }
 
-const symbols::Symbols& runner::Runner::getSymbols() const {
+const symbols::Symbols& runner::Runner::getConstSymbols() const {
     return symbols_;
 }
 
-symbols::Symbols& runner::Runner::modifySymbols() {
+symbols::Symbols& runner::Runner::getMutableSymbols() {
     throw_if_model_is_finished("Cannot modify symbols after model was finished");
     return symbols_;
 }

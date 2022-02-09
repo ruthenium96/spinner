@@ -69,12 +69,12 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
     runner::Runner runner(mults);
 
     double J_value = 10;
-    auto J = runner.modifySymbols().addSymbol("J", J_value);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
     double g_value = 2.0;
-    auto g = runner.modifySymbols().addSymbol("g", g_value);
+    auto g = runner.getMutableSymbols().addSymbol("g", g_value);
     for (size_t i = 0; i < mults.size(); ++i) {
-        runner.modifySymbols().assignSymbolToGFactor(g, i);
+        runner.getMutableSymbols().assignSymbolToGFactor(g, i);
     }
 
     runner.InitializeSSquared();
@@ -95,12 +95,12 @@ TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
     runner::Runner runner(mults);
 
     double J_value = 10;
-    auto J = runner.modifySymbols().addSymbol("J", J_value);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
     double g_value = 2.0;
-    auto g = runner.modifySymbols().addSymbol("g", g_value);
+    auto g = runner.getMutableSymbols().addSymbol("g", g_value);
     for (size_t i = 0; i < mults.size(); ++i) {
-        runner.modifySymbols().assignSymbolToGFactor(g, i);
+        runner.getMutableSymbols().assignSymbolToGFactor(g, i);
     }
 
     runner.InitializeSSquared();
@@ -163,16 +163,16 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
             runner::Runner runner(mults);
 
             double J_value = J_exact;
-            auto J = runner.modifySymbols().addSymbol("J", J_value);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
+            auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 0);
 
             double g_value = g_exact;
-            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            auto g = runner.getMutableSymbols().addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.modifySymbols().assignSymbolToGFactor(g, i);
+                runner.getMutableSymbols().assignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -195,16 +195,16 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
             runner::Runner runner(mults);
 
             double J_value = -10.0;
-            auto J = runner.modifySymbols().addSymbol("J", J_value);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
+            auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 0);
 
             double g_value = 2.0;
-            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            auto g = runner.getMutableSymbols().addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.modifySymbols().assignSymbolToGFactor(g, i);
+                runner.getMutableSymbols().assignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -218,8 +218,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
             runner.minimizeResidualError();
 
             double residual_error = runner.getMuSquaredWorker().calculateResidualError();
-            double J_fitted = runner.getSymbols().getValueOfName(J);
-            double g_fitted = runner.getSymbols().getValueOfName(g);
+            double J_fitted = runner.getConstSymbols().getValueOfName(J);
+            double g_fitted = runner.getConstSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
@@ -249,18 +249,18 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
             runner::Runner runner(mults);
 
             double J_value = J_exact;
-            auto J = runner.modifySymbols().addSymbol("J", J_value);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 4);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 4, 5);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 5, 0);
+            auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 4);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 4, 5);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 5, 0);
 
             double g_value = g_exact;
-            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            auto g = runner.getMutableSymbols().addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.modifySymbols().assignSymbolToGFactor(g, i);
+                runner.getMutableSymbols().assignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -283,18 +283,18 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
             runner::Runner runner(mults);
 
             double J_value = -10.0;
-            auto J = runner.modifySymbols().addSymbol("J", J_value);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 4);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 4, 5);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 5, 0);
+            auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 4);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 4, 5);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 5, 0);
 
             double g_value = 2.0;
-            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            auto g = runner.getMutableSymbols().addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.modifySymbols().assignSymbolToGFactor(g, i);
+                runner.getMutableSymbols().assignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -308,8 +308,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
             runner.minimizeResidualError();
 
             double residual_error = runner.getMuSquaredWorker().calculateResidualError();
-            double J_fitted = runner.getSymbols().getValueOfName(J);
-            double g_fitted = runner.getSymbols().getValueOfName(g);
+            double J_fitted = runner.getConstSymbols().getValueOfName(J);
+            double g_fitted = runner.getConstSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
@@ -339,18 +339,18 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
             runner::Runner runner(mults);
 
             double J_value = J_exact;
-            auto J = runner.modifySymbols().addSymbol("J", J_value);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 4);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 4, 5);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 5, 0);
+            auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 4);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 4, 5);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 5, 0);
 
             double g_value = g_exact;
-            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            auto g = runner.getMutableSymbols().addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.modifySymbols().assignSymbolToGFactor(g, i);
+                runner.getMutableSymbols().assignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -373,18 +373,18 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
             runner::Runner runner(mults);
 
             double J_value = 40;
-            auto J = runner.modifySymbols().addSymbol("J", J_value);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 4);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 4, 5);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 5, 0);
+            auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 4);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 4, 5);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 5, 0);
 
             double g_value = 2.0;
-            auto g = runner.modifySymbols().addSymbol("g", g_value);
+            auto g = runner.getMutableSymbols().addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                runner.modifySymbols().assignSymbolToGFactor(g, i);
+                runner.getMutableSymbols().assignSymbolToGFactor(g, i);
             }
 
             runner.InitializeSSquared();
@@ -398,8 +398,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
             runner.minimizeResidualError();
 
             double residual_error = runner.getMuSquaredWorker().calculateResidualError();
-            double J_fitted = runner.getSymbols().getValueOfName(J);
-            double g_fitted = runner.getSymbols().getValueOfName(g);
+            double J_fitted = runner.getConstSymbols().getValueOfName(J);
+            double g_fitted = runner.getConstSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 

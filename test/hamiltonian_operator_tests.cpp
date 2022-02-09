@@ -8,9 +8,9 @@ TEST(hamiltonian_operator, throw_isotropic_exchange_same_center_22_333_4444_2345
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        auto J = runner.modifySymbols().addSymbol("J", 10);
+        auto J = runner.getMutableSymbols().addSymbol("J", 10);
         EXPECT_THROW(
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 0),
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 0),
             std::invalid_argument);
     }
 }
@@ -22,8 +22,8 @@ TEST(hamiltonian_operator, exchange_interaction_22_333_4444_23456) {
     for (const auto& mults : vector_of_mults) {
         runner::Runner runner(mults);
 
-        auto J = runner.modifySymbols().addSymbol("J", 10);
-        runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+        auto J = runner.getMutableSymbols().addSymbol("J", 10);
+        runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
         // explicitly initialize isotropic exchange:
         runner.InitializeIsotropicExchange();
         EXPECT_EQ(runner.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 1);
@@ -39,21 +39,21 @@ TEST(
         {
             runner::Runner runner(mults);
 
-            auto J = runner.modifySymbols().addSymbol("J", 10);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            auto J = runner.getMutableSymbols().addSymbol("J", 10);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
             runner.BuildMatrices();
             EXPECT_THROW(
-                runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2),
+                runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2),
                 std::invalid_argument);
         }
         {
             runner::Runner runner(mults);
 
-            auto J = runner.modifySymbols().addSymbol("J", 10);
-            runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+            auto J = runner.getMutableSymbols().addSymbol("J", 10);
+            runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
             runner.BuildSpectra();
             EXPECT_THROW(
-                runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2),
+                runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2),
                 std::invalid_argument);
         }
     }

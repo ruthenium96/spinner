@@ -85,13 +85,13 @@ void initialize_four_centers_exchange_rectangle(
     runner::Runner& runner,
     double first,
     double second) {
-    auto Jfirst = runner.modifySymbols().addSymbol("J1", first);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(Jfirst, 0, 1);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(Jfirst, 2, 3);
+    auto Jfirst = runner.getMutableSymbols().addSymbol("J1", first);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 0, 1);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 2, 3);
 
-    auto Jsecond = runner.modifySymbols().addSymbol("J2", second);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(Jsecond, 1, 2);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(Jsecond, 3, 0);
+    auto Jsecond = runner.getMutableSymbols().addSymbol("J2", second);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jsecond, 1, 2);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jsecond, 3, 0);
 
     runner.InitializeSSquared();
 }
@@ -267,10 +267,10 @@ TEST(spectrum_final_equivalence, rectangle) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initialize_three_centers_exchange_triangle(runner::Runner& runner, double first) {
-    auto Jfirst = runner.modifySymbols().addSymbol("J1", first);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(Jfirst, 0, 1);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(Jfirst, 1, 2);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(Jfirst, 2, 0);
+    auto Jfirst = runner.getMutableSymbols().addSymbol("J1", first);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 0, 1);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 1, 2);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 2, 0);
 
     runner.InitializeSSquared();
 }

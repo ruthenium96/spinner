@@ -69,9 +69,9 @@ class Runner {
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
     const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
-    const symbols::Symbols& getSymbols() const;
+    const symbols::Symbols& getConstSymbols() const;
 
-    symbols::Symbols& modifySymbols();
+    symbols::Symbols& getMutableSymbols();
 
   private:
     bool model_is_finished = false;

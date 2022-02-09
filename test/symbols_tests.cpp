@@ -24,13 +24,13 @@ TEST(symbols, throw_2222_isotropic_inconsistent_symmetry) {
     runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
     double J_value = 10;
-    auto tripledJ = runner.modifySymbols().addSymbol("3J", 3 * J_value);
-    auto J = runner.modifySymbols().addSymbol("J", J_value);
-    auto doubledJ = runner.modifySymbols().addSymbol("2J", 2 * J_value);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(tripledJ, 0, 1);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(doubledJ, 2, 3);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
+    auto tripledJ = runner.getMutableSymbols().addSymbol("3J", 3 * J_value);
+    auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+    auto doubledJ = runner.getMutableSymbols().addSymbol("2J", 2 * J_value);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(tripledJ, 0, 1);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(doubledJ, 2, 3);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 0);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
@@ -45,12 +45,12 @@ TEST(symbols, throw_2222_isotropic_accidental_symmetry) {
     runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
     double J = 10;
-    auto firstJ = runner.modifySymbols().addSymbol("J1", J);
-    auto secondJ = runner.modifySymbols().addSymbol("J2", J);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(firstJ, 0, 1);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(firstJ, 1, 2);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(firstJ, 2, 3);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(secondJ, 3, 0);
+    auto firstJ = runner.getMutableSymbols().addSymbol("J1", J);
+    auto secondJ = runner.getMutableSymbols().addSymbol("J2", J);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(firstJ, 0, 1);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(firstJ, 1, 2);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(firstJ, 2, 3);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(secondJ, 3, 0);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
@@ -65,17 +65,17 @@ TEST(symbols, throw_2222_gfactor_inconsistent_symmetry) {
     runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
     double J_value = 10;
-    auto J = runner.modifySymbols().addSymbol("J", J_value);
-    auto firstg = runner.modifySymbols().addSymbol("g1", 2.0);
-    auto secondg = runner.modifySymbols().addSymbol("g2", 3.0);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
-    runner.modifySymbols().assignSymbolToGFactor(firstg, 0);
-    runner.modifySymbols().assignSymbolToGFactor(firstg, 1);
-    runner.modifySymbols().assignSymbolToGFactor(firstg, 2);
-    runner.modifySymbols().assignSymbolToGFactor(secondg, 3);
+    auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+    auto firstg = runner.getMutableSymbols().addSymbol("g1", 2.0);
+    auto secondg = runner.getMutableSymbols().addSymbol("g2", 3.0);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 0);
+    runner.getMutableSymbols().assignSymbolToGFactor(firstg, 0);
+    runner.getMutableSymbols().assignSymbolToGFactor(firstg, 1);
+    runner.getMutableSymbols().assignSymbolToGFactor(firstg, 2);
+    runner.getMutableSymbols().assignSymbolToGFactor(secondg, 3);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
@@ -91,17 +91,17 @@ TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
 
     double J_value = 10;
     double g_value = 2.0;
-    auto J = runner.modifySymbols().addSymbol("J", J_value);
-    auto firstg = runner.modifySymbols().addSymbol("g1", g_value);
-    auto secondg = runner.modifySymbols().addSymbol("g2", g_value);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 1, 2);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 2, 3);
-    runner.modifySymbols().assignSymbolToIsotropicExchange(J, 3, 0);
-    runner.modifySymbols().assignSymbolToGFactor(firstg, 0);
-    runner.modifySymbols().assignSymbolToGFactor(firstg, 1);
-    runner.modifySymbols().assignSymbolToGFactor(firstg, 2);
-    runner.modifySymbols().assignSymbolToGFactor(secondg, 3);
+    auto J = runner.getMutableSymbols().addSymbol("J", J_value);
+    auto firstg = runner.getMutableSymbols().addSymbol("g1", g_value);
+    auto secondg = runner.getMutableSymbols().addSymbol("g2", g_value);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 1, 2);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 2, 3);
+    runner.getMutableSymbols().assignSymbolToIsotropicExchange(J, 3, 0);
+    runner.getMutableSymbols().assignSymbolToGFactor(firstg, 0);
+    runner.getMutableSymbols().assignSymbolToGFactor(firstg, 1);
+    runner.getMutableSymbols().assignSymbolToGFactor(firstg, 2);
+    runner.getMutableSymbols().assignSymbolToGFactor(secondg, 3);
 
     EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
 }
