@@ -19,12 +19,12 @@ class DenseMatrix {
     // TODO: is it possible to implement diagonalize() in the other place?
     void diagonalize(DenseVector& values, DenseMatrix& vectors) const;
     void diagonalize(DenseVector& values) const;
-    [[nodiscard]] DenseVector return_main_diagonal() const;
-    [[nodiscard]] DenseMatrix unitary_transform(const DenseMatrix& matrix_to_transform) const;
+    DenseVector return_main_diagonal() const;
+    DenseMatrix unitary_transform(const DenseMatrix& matrix_to_transform) const;
 
-    [[nodiscard]] uint32_t size() const;
-    [[nodiscard]] uint32_t size_rows() const;
-    [[nodiscard]] uint32_t size_cols() const;
+    uint32_t size() const;
+    uint32_t size_rows() const;
+    uint32_t size_cols() const;
     double operator()(uint32_t i, uint32_t j) const;
 
     DenseMatrix();
@@ -59,11 +59,11 @@ class DenseVector {
     void add_identical_values(size_t number, double value);
     void subtract_minimum();
 
-    [[nodiscard]] DenseVector divide_and_wise_exp(double denominator) const;
-    [[nodiscard]] double dot(const DenseVector&) const;
-    [[nodiscard]] DenseVector element_wise_multiplication(const DenseVector&) const;
+    DenseVector divide_and_wise_exp(double denominator) const;
+    double dot(const DenseVector&) const;
+    DenseVector element_wise_multiplication(const DenseVector&) const;
 
-    [[nodiscard]] uint32_t size() const;
+    uint32_t size() const;
     double operator()(uint32_t i) const;
 
     friend std::ostream& operator<<(std::ostream& os, const DenseVector& raw_data);

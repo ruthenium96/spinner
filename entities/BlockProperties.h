@@ -7,7 +7,7 @@
 #include <vector>
 
 struct BlockProperties {
-    [[nodiscard]] std::string get_representation_name() const;
+    std::string get_representation_name() const;
 
     std::optional<uint32_t> n_proj = std::nullopt;
     uint32_t dimensionality = 1;

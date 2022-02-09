@@ -19,7 +19,7 @@ class UnitarySparseMatrix {
             uint32_t index;
             double value;
         };
-        [[nodiscard]] virtual bool hasNext() const = 0;
+        virtual bool hasNext() const = 0;
         virtual IndexValueItem getNext() = 0;
         virtual ~Iterator() = default;
     };
@@ -31,8 +31,7 @@ class UnitarySparseMatrix {
     UnitarySparseMatrix& operator=(UnitarySparseMatrix&&) noexcept;
     ~UnitarySparseMatrix();
 
-    [[nodiscard]] std::unique_ptr<UnitarySparseMatrix::Iterator>
-    GetNewIterator(size_t index_of_vector) const;
+    std::unique_ptr<UnitarySparseMatrix::Iterator> GetNewIterator(size_t index_of_vector) const;
 
     /*
      Some implementations want to know the maximum size of vector.
@@ -41,14 +40,14 @@ class UnitarySparseMatrix {
      */
     uint32_t tensor_size = 0;
 
-    [[nodiscard]] uint32_t size() const;
-    [[nodiscard]] bool empty() const;
-    [[nodiscard]] bool vempty(uint32_t index_of_vector) const;
+    uint32_t size() const;
+    bool empty() const;
+    bool vempty(uint32_t index_of_vector) const;
     void clear();
 
     void erase_if_zero();
 
-    [[nodiscard]] bool is_zero(uint32_t i, uint32_t j) const;
+    bool is_zero(uint32_t i, uint32_t j) const;
     void move_vector_from(uint32_t i, UnitarySparseMatrix& subspace_from);
     void move_all_from(UnitarySparseMatrix& subspace_from);
     void copy_vector_from(uint32_t i, const UnitarySparseMatrix& subspace_from);
@@ -60,7 +59,7 @@ class UnitarySparseMatrix {
 
     void normalize();
 
-    [[nodiscard]] bool is_equal_up_to_vector_order(const UnitarySparseMatrix& rhs) const;
+    bool is_equal_up_to_vector_order(const UnitarySparseMatrix& rhs) const;
 
     friend std::ostream& operator<<(std::ostream& os, const UnitarySparseMatrix& decomposition);
 

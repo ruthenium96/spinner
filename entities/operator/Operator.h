@@ -13,7 +13,7 @@ struct Operator {
 
     static Operator s_squared(const std::vector<double>& spins);
 
-    [[nodiscard]] bool empty() const {
+    bool empty() const {
         return zero_center_terms.empty() && one_center_terms.empty() && two_center_terms.empty();
     }
 };

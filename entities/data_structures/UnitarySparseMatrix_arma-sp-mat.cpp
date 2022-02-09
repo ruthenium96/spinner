@@ -22,7 +22,7 @@ struct IteratorImpl: public NewBasisDecomposition::Iterator {
         iter(iter1),
         end(iter2) {}
 
-    [[nodiscard]] bool hasNext() const override {
+    bool hasNext() const override {
         return iter != end;
     }
 

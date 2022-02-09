@@ -32,7 +32,7 @@ class TwoCenterTerm {
         uint32_t index_of_vector,
         uint32_t center_a,
         uint32_t center_b) const = 0;
-    [[nodiscard]] virtual std::shared_ptr<const DenseMatrix> get_parameters() const = 0;
+    virtual std::shared_ptr<const DenseMatrix> get_parameters() const = 0;
     virtual ~TwoCenterTerm() {};
 };
 

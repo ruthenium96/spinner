@@ -27,14 +27,14 @@ class ExperimentalValuesWorker {
         ExperimentalValuesEnum experimental_values_type,
         double number_of_centers_ratio);
 
-    [[nodiscard]] std::vector<double> getTemperatures() const;
+    std::vector<double> getTemperatures() const;
     void setTheoreticalMuSquared(std::vector<ValueAtTemperature> theoretical_mu_squared);
 
-    [[nodiscard]] std::vector<ValueAtTemperature> getTheoreticalValues() const;
-    [[nodiscard]] std::vector<ValueAtTemperature> getExperimentalMuSquared() const;
+    std::vector<ValueAtTemperature> getTheoreticalValues() const;
+    std::vector<ValueAtTemperature> getExperimentalMuSquared() const;
 
-    [[nodiscard]] double calculateResidualError() const;
-    [[nodiscard]] std::vector<ValueAtTemperature> calculateDerivative() const;
+    double calculateResidualError() const;
+    std::vector<ValueAtTemperature> calculateDerivative() const;
 
   private:
     void throw_exception_if_theoretical_mu_squared_was_not_initialized() const;

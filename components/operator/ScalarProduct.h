@@ -14,7 +14,7 @@ class ScalarProduct: public TwoCenterTerm {
         uint32_t center_a,
         uint32_t center_b) const override;
 
-    [[nodiscard]] std::shared_ptr<const DenseMatrix> get_parameters() const override;
+    std::shared_ptr<const DenseMatrix> get_parameters() const override;
 
   private:
     std::shared_ptr<const DenseMatrix> coefficients;

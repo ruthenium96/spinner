@@ -14,7 +14,7 @@ enum QuantityEnum {
     S_total_squared,
 };
 
-[[nodiscard]] std::string get_quantity_name(common::QuantityEnum);
+std::string get_quantity_name(common::QuantityEnum);
 
 struct Quantity {
     Operator operator_;

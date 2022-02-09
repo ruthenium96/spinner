@@ -51,27 +51,27 @@ class Runner {
     std::map<symbols::SymbolName, double> calculateTotalDerivatives();
     void minimizeResidualError();
 
-    [[nodiscard]] const lexicographic::IndexConverter& getIndexConverter() const;
-    [[nodiscard]] const Operator& getOperator(common::QuantityEnum) const;
-    [[nodiscard]] const Space& getSpace() const;
-    [[nodiscard]] const Spectrum& getSpectrum(common::QuantityEnum) const;
-    [[nodiscard]] const Matrix& getMatrix(common::QuantityEnum) const;
-    [[nodiscard]] const Operator& getOperatorDerivative(
+    const lexicographic::IndexConverter& getIndexConverter() const;
+    const Operator& getOperator(common::QuantityEnum) const;
+    const Space& getSpace() const;
+    const Spectrum& getSpectrum(common::QuantityEnum) const;
+    const Matrix& getMatrix(common::QuantityEnum) const;
+    const Operator& getOperatorDerivative(
         common::QuantityEnum,
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
-    [[nodiscard]] const Spectrum& getSpectrumDerivative(
+    const Spectrum& getSpectrumDerivative(
         common::QuantityEnum,
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
-    [[nodiscard]] const Matrix& getMatrixDerivative(
+    const Matrix& getMatrixDerivative(
         common::QuantityEnum,
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
-    [[nodiscard]] const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
-    [[nodiscard]] const symbols::Symbols& getSymbols() const;
+    const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
+    const symbols::Symbols& getSymbols() const;
 
-    [[nodiscard]] symbols::Symbols& modifySymbols();
+    symbols::Symbols& modifySymbols();
 
   private:
     bool model_is_finished = false;

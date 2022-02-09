@@ -49,8 +49,7 @@ class Group {
 
     explicit Group(GroupTypeEnum group_name, std::vector<Permutation> generators);
 
-    [[nodiscard]] std::vector<std::vector<uint8_t>>
-    permutate(const std::vector<uint8_t>& initial) const;
+    std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
 
     bool operator==(const Group& rhs) const;
 

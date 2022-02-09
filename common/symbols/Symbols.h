@@ -17,15 +17,15 @@ class Symbols {
   public:
     explicit Symbols(size_t number_of_spins);
 
-    [[nodiscard]] bool isAllGFactorsEqual() const;
-    [[nodiscard]] bool isGFactorInitialized() const;
-    [[nodiscard]] bool isIsotropicExchangeInitialized() const;
-    [[nodiscard]] bool symmetry_consistence(const group::Group& group) const;
+    bool isAllGFactorsEqual() const;
+    bool isGFactorInitialized() const;
+    bool isIsotropicExchangeInitialized() const;
+    bool symmetry_consistence(const group::Group& group) const;
 
-    [[nodiscard]] std::shared_ptr<const DenseMatrix>
+    std::shared_ptr<const DenseMatrix>
     constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name);
-    [[nodiscard]] std::shared_ptr<const DenseMatrix> getIsotropicExchangeParameters() const;
-    [[nodiscard]] std::shared_ptr<const DenseVector> getGFactorParameters() const;
+    std::shared_ptr<const DenseMatrix> getIsotropicExchangeParameters() const;
+    std::shared_ptr<const DenseVector> getGFactorParameters() const;
 
     void assignSymbolToIsotropicExchange(
         const SymbolName& symbol_name,
@@ -43,9 +43,9 @@ class Symbols {
 
     void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
 
-    [[nodiscard]] std::vector<SymbolName> getChangeableNames(SymbolTypeEnum type_enum) const;
-    [[nodiscard]] std::vector<SymbolName> getChangeableNames() const;
-    [[nodiscard]] double getValueOfName(const SymbolName& symbol_name) const;
+    std::vector<SymbolName> getChangeableNames(SymbolTypeEnum type_enum) const;
+    std::vector<SymbolName> getChangeableNames() const;
+    double getValueOfName(const SymbolName& symbol_name) const;
 
   private:
     size_t number_of_spins_;

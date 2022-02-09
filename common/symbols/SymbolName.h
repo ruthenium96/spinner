@@ -9,7 +9,7 @@ struct SymbolName {
   public:
     explicit SymbolName(std::string);
     SymbolName() = default;
-    [[nodiscard]] const std::string& get_name() const;
+    const std::string& get_name() const;
     bool operator<(const SymbolName& rhs) const;
     bool operator>(const SymbolName& rhs) const;
     bool operator<=(const SymbolName& rhs) const;

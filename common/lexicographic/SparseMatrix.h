@@ -18,7 +18,7 @@ class SparseMatrix {
     SparseMatrix& operator=(SparseMatrix&&) noexcept;
     ~SparseMatrix();
 
-    [[nodiscard]] uint32_t size() const;
+    uint32_t size() const;
 
     void add_to_position(double value, uint32_t i, uint32_t j);
     double operator()(uint32_t i, uint32_t j) const;
