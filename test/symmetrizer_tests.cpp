@@ -1,6 +1,6 @@
-#include "common/Logger.h"
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/Logger.h"
+#include "src/common/runner/Runner.h"
 
 size_t number_of_vectors(const Space& space) {
     size_t acc = 0;

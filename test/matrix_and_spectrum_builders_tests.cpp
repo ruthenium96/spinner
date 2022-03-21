@@ -1,7 +1,7 @@
 #include <armadillo>
 
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/runner/Runner.h"
 
 size_t size_of_matrix_without_degeneracy(const Matrix& matrix) {
     size_t accumulator = 0;

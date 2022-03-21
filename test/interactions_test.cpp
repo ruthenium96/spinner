@@ -1,10 +1,10 @@
 #include <cmath>
 
-#include "common/lexicographic/IndexConverter.h"
-#include "components/operator/ConstantOperator.h"
-#include "components/operator/ScalarProduct.h"
-#include "entities/matrix/Matrix.h"
 #include "gtest/gtest.h"
+#include "src/common/lexicographic/IndexConverter.h"
+#include "src/components/operator/ConstantOperator.h"
+#include "src/components/operator/ScalarProduct.h"
+#include "src/entities/matrix/Matrix.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
     std::vector<std::vector<int>> vector_of_mults =

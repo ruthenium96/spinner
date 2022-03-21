@@ -1,5 +1,5 @@
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/runner/Runner.h"
 
 TEST(hamiltonian_operator, throw_isotropic_exchange_same_center_22_333_4444_23456) {
     std::vector<std::vector<int>> vector_of_mults =

@@ -1,5 +1,5 @@
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/runner/Runner.h"
 
 struct EnergyAndSSquared {
     bool operator<(const EnergyAndSSquared& rhs) const {

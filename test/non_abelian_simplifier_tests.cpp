@@ -1,8 +1,8 @@
 #include <cmath>
 
-#include "common/Logger.h"
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/Logger.h"
+#include "src/common/runner/Runner.h"
 
 void compare_two_spaces(const Space& one, const Space& two) {
     ASSERT_EQ(one.blocks.size(), two.blocks.size()) << "Numbers of subspaces do not equal";

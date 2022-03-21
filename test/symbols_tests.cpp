@@ -1,5 +1,5 @@
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/runner/Runner.h"
 
 TEST(symbols, throw_add_the_same_symbol_name) {
     symbols::Symbols symbols(2);

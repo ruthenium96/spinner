@@ -1,8 +1,8 @@
 #include <cmath>
 #include <deque>
 
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/runner/Runner.h"
 
 std::deque<int> spin_addition(const std::vector<int>& mults) {
     std::deque<int> total_multiplicities;

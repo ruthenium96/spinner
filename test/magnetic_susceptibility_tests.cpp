@@ -1,7 +1,7 @@
 #include <random>
 
-#include "common/runner/Runner.h"
 #include "gtest/gtest.h"
+#include "src/common/runner/Runner.h"
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_set_values_length_error) {
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 1}, {2, 2}, {3, 3}};
