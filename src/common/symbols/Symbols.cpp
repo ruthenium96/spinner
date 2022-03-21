@@ -6,7 +6,7 @@
 namespace symbols {
 Symbols::Symbols(size_t number_of_spins) : number_of_spins_(number_of_spins) {}
 
-void Symbols::assignSymbolToIsotropicExchange(
+Symbols& Symbols::assignSymbolToIsotropicExchange(
     const SymbolName& symbol_name,
     size_t center_a,
     size_t center_b) {
@@ -38,6 +38,8 @@ void Symbols::assignSymbolToIsotropicExchange(
     symbolic_isotropic_exchanges_[center_b][center_a] = symbol_name;
 
     updateIsotropicExchangeParameters();
+
+    return *this;
 }
 
 SymbolName Symbols::addSymbol(
@@ -62,7 +64,7 @@ SymbolName Symbols::addSymbol(const std::string& name_string, double initial_val
     return addSymbol(name_string, initial_value, true);
 }
 
-void Symbols::assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a) {
+Symbols& Symbols::assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a) {
     if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
         throw std::invalid_argument(symbol_name.get_name() + " name has not been initialized");
     }
@@ -83,6 +85,8 @@ void Symbols::assignSymbolToGFactor(const SymbolName& symbol_name, size_t center
     symbolic_g_factors_[center_a] = symbol_name;
 
     updateGFactorParameters();
+
+    return *this;
 }
 
 std::shared_ptr<const DenseVector> Symbols::getGFactorParameters() const {
@@ -195,7 +199,7 @@ double Symbols::getValueOfName(const SymbolName& symbol_name) const {
     return symbolsMap.at(symbol_name).value;
 }
 
-void Symbols::setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value) {
+Symbols& Symbols::setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value) {
     SymbolData symbol_data = symbolsMap[symbol_name];
     if (!symbol_data.is_changeable) {
         throw std::invalid_argument("Cannot change value of unchangeable symbol");
@@ -210,6 +214,8 @@ void Symbols::setNewValueToChangeableSymbol(const SymbolName& symbol_name, doubl
         updateGFactorParameters();
         // and other things
     }
+
+    return *this;
 }
 
 void Symbols::updateIsotropicExchangeParameters() {

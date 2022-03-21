@@ -27,11 +27,11 @@ class Symbols {
     std::shared_ptr<const DenseMatrix> getIsotropicExchangeParameters() const;
     std::shared_ptr<const DenseVector> getGFactorParameters() const;
 
-    void assignSymbolToIsotropicExchange(
+    Symbols& assignSymbolToIsotropicExchange(
         const SymbolName& symbol_name,
         size_t center_a,
         size_t center_b);
-    void assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a);
+    Symbols& assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a);
 
     SymbolName addSymbol(
         const std::string& name_string,
@@ -41,7 +41,7 @@ class Symbols {
     SymbolName addSymbol(const std::string& name, double initial_value, bool is_changeable);
     SymbolName addSymbol(const std::string& name, double initial_value);
 
-    void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
+    Symbols& setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
 
     std::vector<SymbolName> getChangeableNames(SymbolTypeEnum type_enum) const;
     std::vector<SymbolName> getChangeableNames() const;
