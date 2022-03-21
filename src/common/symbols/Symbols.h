@@ -20,6 +20,7 @@ class Symbols {
     bool isAllGFactorsEqual() const;
     bool isGFactorInitialized() const;
     bool isIsotropicExchangeInitialized() const;
+    // TODO: move it from Symbols!
     bool symmetry_consistence(const group::Group& group) const;
 
     std::shared_ptr<const DenseMatrix>

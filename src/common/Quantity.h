@@ -5,7 +5,6 @@
 #include <string>
 
 #include "src/entities/matrix/Matrix.h"
-#include "src/entities/operator/Operator.h"
 #include "src/entities/spectrum/Spectrum.h"
 
 namespace common {
@@ -17,7 +16,6 @@ enum QuantityEnum {
 std::string get_quantity_name(common::QuantityEnum);
 
 struct Quantity {
-    Operator operator_;
     Matrix matrix_;
     Spectrum spectrum_;
 };

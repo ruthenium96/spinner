@@ -4,7 +4,8 @@
 #include <utility>
 
 #include "src/common/Quantity.h"
-#include "src/common/symbols/Symbols.h"
+#include "src/common/model/Model.h"
+//#include "src/common/symbols/Symbols.h"
 #include "src/entities/magnetic_susceptibility/MuSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
@@ -13,10 +14,13 @@
 #include "src/entities/spectrum/Spectrum.h"
 #include "src/group/Group.h"
 
+// TODO: check symmetry consistency of symbols and groups.
 namespace runner {
 class Runner {
   public:
-    explicit Runner(const std::vector<int>& mults);
+    explicit Runner(model::Model model);
+
+    //    explicit Runner(const std::vector<int>& mults);
 
     // SPACE OPERATIONS
     void EliminatePositiveProjections();
@@ -30,11 +34,6 @@ class Runner {
     void TzSort();
 
     // SYMBOLS OPERATIONS
-
-    // OPERATOR OPERATIONS
-    void InitializeIsotropicExchange();
-    void InitializeIsotropicExchangeDerivatives();
-    void InitializeSSquared();
 
     // MATRIX OPERATIONS
     void BuildMatrices();
@@ -69,19 +68,15 @@ class Runner {
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
     const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
-    const symbols::Symbols& getConstSymbols() const;
-
-    symbols::Symbols& getMutableSymbols();
+    const symbols::Symbols& getSymbols() const;
 
   private:
     bool model_is_finished = false;
+
+    model::Model model_;
+
     struct MatrixHistory {
         bool matrices_was_built = false;
-    };
-    struct OperatorsHistory {
-        bool isotropic_exchange_in_hamiltonian = false;
-        bool s_squared = false;
-        bool isotropic_exchange_derivatives = false;
     };
     struct SpaceHistory {
         std::vector<group::Group> applied_groups;
@@ -92,15 +87,12 @@ class Runner {
         bool isPositiveProjectionsEliminated = false;
     };
 
-    const lexicographic::IndexConverter converter_;
-    symbols::Symbols symbols_;
-
     Space space_;
 
     common::Quantity energy;
     std::optional<common::Quantity> s_squared;
     std::map<symbols::SymbolName, common::Quantity> derivative_of_energy_wrt_exchange_parameters;
-    
+
     void stepOfRegression(
         const std::vector<symbols::SymbolName>&,
         const std::vector<double>&,
@@ -115,11 +107,11 @@ class Runner {
     void BuildSpectraUsingMatrices(size_t number_of_blocks);
     void BuildSpectraWithoutMatrices(size_t number_of_blocks);
 
+    // TODO: delete these functions after refactoring.
     void finish_the_model();
     void throw_if_model_is_finished(const std::string& error);
 
     MatrixHistory matrix_history_;
-    OperatorsHistory operators_history_;
     SpaceHistory space_history_;
 };
 }  // namespace runner

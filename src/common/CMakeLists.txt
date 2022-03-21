@@ -8,6 +8,8 @@ add_library(common
         symbols/SymbolName.h
         Logger.h
         runner/Runner.cpp
+        model/Model.cpp
+        model/Model.h
         Quantity.cpp)
 
 target_link_libraries(common components magnetic_susceptibility stlbfgs)

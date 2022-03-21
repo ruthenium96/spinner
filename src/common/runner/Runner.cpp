@@ -2,6 +2,8 @@
 
 #include <stlbfgs.h>
 
+#include <utility>
+
 #include "src/components/operator/ConstantOperator.h"
 #include "src/components/operator/ScalarProduct.h"
 #include "src/components/space/NonAbelianSimplifier.h"
@@ -9,11 +11,17 @@
 #include "src/components/space/Symmetrizer.h"
 #include "src/components/space/TzSorter.h"
 
-runner::Runner::Runner(const std::vector<int>& mults) :
-    symbols_(mults.size()),
-    converter_(mults),
-    space_(converter_.get_total_space_size()) {
-    energy.operator_ = Operator();
+runner::Runner::Runner(model::Model model) :
+    model_(std::move(model)),
+    space_(model_.getIndexConverter().get_total_space_size()) {
+    if (model_.is_s_squared_initialized()) {
+        s_squared = common::Quantity();
+    }
+    if (model_.is_isotropic_exchange_derivatives_initialized()) {
+        for (const auto& symbol : getSymbols().getChangeableNames(symbols::SymbolTypeEnum::J)) {
+            derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
+        }
+    }
 }
 
 void runner::Runner::EliminatePositiveProjections() {
@@ -28,9 +36,9 @@ void runner::Runner::EliminatePositiveProjections() {
 
     // TODO: we have the same code in tz-sorter. Can we move it to converter?
     uint32_t max_ntz_proj = std::accumulate(
-        converter_.get_mults().begin(),
-        converter_.get_mults().end(),
-        1 - converter_.get_mults().size());
+        getIndexConverter().get_mults().begin(),
+        getIndexConverter().get_mults().end(),
+        1 - getIndexConverter().get_mults().size());
 
     PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
     space_ = positiveProjectionsEliminator.apply(std::move(space_));
@@ -70,7 +78,7 @@ void runner::Runner::Symmetrize(group::Group new_group) {
             "Symmetrization after using of non-Abelian simplifier causes bugs.");
     }
 
-    Symmetrizer symmetrizer(converter_, new_group);
+    Symmetrizer symmetrizer(getIndexConverter(), new_group);
     space_ = symmetrizer.apply(std::move(space_));
 
     if (!new_group.properties.is_abelian) {
@@ -93,7 +101,7 @@ void runner::Runner::TzSort() {
     if (space_history_.isTzSorted) {
         return;
     }
-    TzSorter tz_sorter(converter_);
+    TzSorter tz_sorter(getIndexConverter());
     space_ = tz_sorter.apply(std::move(space_));
     space_history_.isTzSorted = true;
 }
@@ -105,48 +113,22 @@ const Space& runner::Runner::getSpace() const {
 void runner::Runner::BuildMatrices() {
     finish_the_model();
 
-    if (!energy.operator_.empty()) {
-        energy.matrix_ = Matrix(space_, energy.operator_, converter_);
+    if (!getOperator(common::Energy).empty()) {
+        energy.matrix_ = Matrix(getSpace(), getOperator(common::Energy), getIndexConverter());
     }
     if (s_squared.has_value()) {
-        s_squared->matrix_ = Matrix(space_, s_squared->operator_, converter_);
+        s_squared->matrix_ =
+            Matrix(getSpace(), getOperator(common::S_total_squared), getIndexConverter());
     }
-    for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
-        derivative.matrix_ = Matrix(space_, derivative.operator_, converter_);
+    for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+        // TODO: fix it!
+        derivative.matrix_ = Matrix(
+            getSpace(),
+            getOperatorDerivative(common::Energy, symbols::J, symbol_name),
+            getIndexConverter());
     }
 
     matrix_history_.matrices_was_built = true;
-}
-
-void runner::Runner::InitializeSSquared() {
-    throw_if_model_is_finished("Cannot initialize S^2 after model was finished");
-    if (operators_history_.s_squared) {
-        return;
-    }
-
-    s_squared = common::Quantity();
-    s_squared->operator_ = Operator::s_squared(converter_.get_spins());
-
-    operators_history_.s_squared = true;
-}
-
-void runner::Runner::InitializeIsotropicExchangeDerivatives() {
-    throw_if_model_is_finished(
-        "Cannot initialize isotropic exchange derivatives after model was finished");
-
-    if (operators_history_.isotropic_exchange_derivatives) {
-        return;
-    }
-
-    for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
-        Operator operator_derivative = Operator();
-        operator_derivative.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(
-            symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
-        derivative_of_energy_wrt_exchange_parameters[symbol].operator_ =
-            std::move(operator_derivative);
-    }
-
-    operators_history_.isotropic_exchange_derivatives = true;
 }
 
 void runner::Runner::BuildSpectra() {
@@ -154,7 +136,7 @@ void runner::Runner::BuildSpectra() {
 
     size_t number_of_blocks = space_.blocks.size();
 
-    if (!energy.operator_.empty()) {
+    if (!getOperator(common::Energy).empty()) {
         energy.spectrum_.blocks.clear();
         energy.spectrum_.blocks.resize(number_of_blocks);
     }
@@ -199,21 +181,26 @@ void runner::Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
         DenseMatrix unitary_transformation_matrix;
         {
             auto hamiltonian_submatrix =
-                Submatrix(space_.blocks[block], energy.operator_, converter_);
+                Submatrix(space_.blocks[block], getOperator(common::Energy), getIndexConverter());
             energy.spectrum_.blocks[block] =
                 Subspectrum::energy(hamiltonian_submatrix, unitary_transformation_matrix);
         }
 
         if (s_squared.has_value()) {
-            auto non_hamiltonian_submatrix =
-                Submatrix(space_.blocks[block], s_squared->operator_, converter_);
+            auto non_hamiltonian_submatrix = Submatrix(
+                space_.blocks[block],
+                getOperator(common::S_total_squared),
+                getIndexConverter());
             s_squared->spectrum_.blocks[block] =
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix);
         }
 
-        for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
-            auto derivative_submatrix =
-                Submatrix(space_.blocks[block], derivative.operator_, converter_);
+        for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+            // TODO: fix it
+            auto derivative_submatrix = Submatrix(
+                space_.blocks[block],
+                getOperatorDerivative(common::Energy, symbols::J, symbol_name),
+                getIndexConverter());
             derivative.spectrum_.blocks[block] =
                 Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix);
         }
@@ -237,26 +224,18 @@ const Spectrum& runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) 
 }
 
 const Operator& runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        return energy.operator_;
-    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return s_squared->operator_;
-    }
+    return model_.getOperator(quantity_enum);
 }
 
 const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
-    return converter_;
+    return model_.getIndexConverter();
 }
 
 const Operator& runner::Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     symbols::SymbolTypeEnum symbol_type,
     const symbols::SymbolName& symbol) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == symbols::SymbolTypeEnum::J) {
-            return derivative_of_energy_wrt_exchange_parameters.at(symbol).operator_;
-        }
-    }
+    return model_.getOperatorDerivative(quantity_enum, symbol_type, symbol);
 }
 
 const Spectrum& runner::Runner::getSpectrumDerivative(
@@ -293,9 +272,9 @@ void runner::Runner::BuildMuSquaredWorker() {
     }
     energy_vector.subtract_minimum();
 
-    if (symbols_.isAllGFactorsEqual()) {
+    if (getSymbols().isAllGFactorsEqual()) {
         // and there is no field
-        double g_factor = symbols_.getGFactorParameters()->operator()(0);
+        double g_factor = getSymbols().getGFactorParameters()->operator()(0);
         DenseVector s_squared_vector;
 
         // TODO: check if s_squared has been initialized
@@ -344,7 +323,7 @@ std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives(
 
     std::map<symbols::SymbolName, double> answer;
 
-    for (const auto& changeable_symbol : symbols_.getChangeableNames(symbols::J)) {
+    for (const auto& changeable_symbol : getSymbols().getChangeableNames(symbols::J)) {
         DenseVector derivative_vector;
         for (const auto& subspectrum :
              getSpectrumDerivative(common::Energy, symbols::J, changeable_symbol).blocks) {
@@ -358,8 +337,8 @@ std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives(
         //                  << value << std::endl;
     }
 
-    if (!symbols_.getChangeableNames(symbols::g_factor).empty()) {
-        symbols::SymbolName g_name = symbols_.getChangeableNames(symbols::g_factor)[0];
+    if (!getSymbols().getChangeableNames(symbols::g_factor).empty()) {
+        symbols::SymbolName g_name = getSymbols().getChangeableNames(symbols::g_factor)[0];
         double value = mu_squared_worker.value()->calculateTotalDerivative(symbols::g_factor);
         answer[g_name] = value;
         //        std::cout << "dR^2/d" << g_name << " = " << value << std::endl;
@@ -368,11 +347,11 @@ std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives(
 }
 
 void runner::Runner::minimizeResidualError() {
-    std::vector<symbols::SymbolName> changeable_names = symbols_.getChangeableNames();
+    std::vector<symbols::SymbolName> changeable_names = getSymbols().getChangeableNames();
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
     for (const symbols::SymbolName& name : changeable_names) {
-        changeable_values.push_back(symbols_.getValueOfName(name));
+        changeable_values.push_back(getSymbols().getValueOfName(name));
     }
 
     using namespace std::placeholders;
@@ -394,7 +373,10 @@ void runner::Runner::stepOfRegression(
     double& residual_error,
     std::vector<double>& gradient) {
     for (size_t i = 0; i < changeable_names.size(); ++i) {
-        symbols_.setNewValueToChangeableSymbol(changeable_names[i], changeable_values[i]);
+        // TODO: mutable use of Model/Symbols. Refactor it.
+        model_.getSymbols().setNewValueToChangeableSymbol(
+            changeable_names[i],
+            changeable_values[i]);
     }
 
     if (matrix_history_.matrices_was_built) {
@@ -419,23 +401,8 @@ const magnetic_susceptibility::MuSquaredWorker& runner::Runner::getMuSquaredWork
     return *mu_squared_worker.value();
 }
 
-const symbols::Symbols& runner::Runner::getConstSymbols() const {
-    return symbols_;
-}
-
-symbols::Symbols& runner::Runner::getMutableSymbols() {
-    throw_if_model_is_finished("Cannot modify symbols after model was finished");
-    return symbols_;
-}
-
-void runner::Runner::InitializeIsotropicExchange() {
-    throw_if_model_is_finished("Cannot initialize isotropic exchange after model was finished");
-    if (operators_history_.isotropic_exchange_in_hamiltonian) {
-        return;
-    }
-    energy.operator_.two_center_terms.emplace_back(
-        std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
-    operators_history_.isotropic_exchange_in_hamiltonian = true;
+const symbols::Symbols& runner::Runner::getSymbols() const {
+    return model_.getSymbols();
 }
 
 void runner::Runner::finish_the_model() {
@@ -443,8 +410,8 @@ void runner::Runner::finish_the_model() {
         return;
     }
 
-    if (symbols_.isIsotropicExchangeInitialized()) {
-        InitializeIsotropicExchange();
+    if (getSymbols().isIsotropicExchangeInitialized()) {
+        model_.InitializeIsotropicExchange();
     }
 
     //    if (!symbols_.isGFactorInitialized()) {
@@ -452,7 +419,7 @@ void runner::Runner::finish_the_model() {
     //    }
 
     for (const auto& applied_group : space_history_.applied_groups) {
-        if (!symbols_.symmetry_consistence(applied_group)) {
+        if (!getSymbols().symmetry_consistence(applied_group)) {
             throw std::invalid_argument("Symbols do not match applied symmetries");
             // TODO: should we rename this exception?
         }
