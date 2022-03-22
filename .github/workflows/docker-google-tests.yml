@@ -24,4 +24,4 @@ jobs:
           docker exec -w /project/build july cmake ..
           docker exec -w /project/build july cmake --build .
       - name: Google Tests
-        run: docker exec -w /project/build/test july ./julytest
+        run: docker exec -w /project/build/tests july ./julytest
