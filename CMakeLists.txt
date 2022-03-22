@@ -46,4 +46,4 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_subdirectory(src)
-add_subdirectory(test)
+add_subdirectory(tests)

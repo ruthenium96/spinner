@@ -81,19 +81,18 @@ void expect_final_vectors_equivalence(const runner::Runner& simple, runner::Runn
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void initialize_four_centers_exchange_rectangle(
-    runner::Runner& runner,
-    double first,
-    double second) {
-    auto Jfirst = runner.getMutableSymbols().addSymbol("J1", first);
-    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 0, 1);
-    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 2, 3);
+void initialize_four_centers_exchange_rectangle(model::Model& model, double first, double second) {
+    auto Jfirst = model.getSymbols().addSymbol("J1", first);
+    model.getSymbols()
+        .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
+        .assignSymbolToIsotropicExchange(Jfirst, 2, 3);
 
-    auto Jsecond = runner.getMutableSymbols().addSymbol("J2", second);
-    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jsecond, 1, 2);
-    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jsecond, 3, 0);
+    auto Jsecond = model.getSymbols().addSymbol("J2", second);
+    model.getSymbols()
+        .assignSymbolToIsotropicExchange(Jsecond, 1, 2)
+        .assignSymbolToIsotropicExchange(Jsecond, 3, 0);
 
-    runner.InitializeSSquared();
+    model.InitializeSSquared();
 }
 
 TEST(spectrum_final_equivalence, rectangle) {
@@ -106,156 +105,112 @@ TEST(spectrum_final_equivalence, rectangle) {
             group::Group first_direction(group::Group::S2, {{1, 0, 3, 2}});
             group::Group second_direction(group::Group::S2, {{3, 2, 1, 0}});
 
-            runner::Runner runner_simple(mults);
-            initialize_four_centers_exchange_rectangle(runner_simple, Jfirst, Jsecond);
+            model::Model model(mults);
+            initialize_four_centers_exchange_rectangle(model, Jfirst, Jsecond);
+
+            runner::Runner runner_simple(model);
+
             runner_simple.BuildSpectra();
 
             // TZ_SORTER
             {
-                runner::Runner runner_tz_sorted(mults);
+                runner::Runner runner_tz_sorted(model);
                 runner_tz_sorted.TzSort();
-                initialize_four_centers_exchange_rectangle(runner_tz_sorted, Jfirst, Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
             }
             // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_tz_sorted_eliminated(mults);
+                runner::Runner runner_tz_sorted_eliminated(model);
                 runner_tz_sorted_eliminated.TzSort();
                 runner_tz_sorted_eliminated.EliminatePositiveProjections();
-                initialize_four_centers_exchange_rectangle(
-                    runner_tz_sorted_eliminated,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_eliminated);
             }
             // SYMMETRIZER
             {
-                runner::Runner runner_first_direction(mults);
+                runner::Runner runner_first_direction(model);
                 runner_first_direction.Symmetrize(first_direction);
-                initialize_four_centers_exchange_rectangle(runner_first_direction, Jfirst, Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_first_direction);
             }
             {
-                runner::Runner runner_second_direction(mults);
+                runner::Runner runner_second_direction(model);
                 runner_second_direction.Symmetrize(second_direction);
-                initialize_four_centers_exchange_rectangle(
-                    runner_second_direction,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_second_direction);
             }
             // TZ_SORTER + SYMMETRIZER
             {
-                runner::Runner runner_first_direction_tz_sorted(mults);
+                runner::Runner runner_first_direction_tz_sorted(model);
                 runner_first_direction_tz_sorted.TzSort();
                 runner_first_direction_tz_sorted.Symmetrize(first_direction);
-                initialize_four_centers_exchange_rectangle(
-                    runner_first_direction_tz_sorted,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_first_direction_tz_sorted);
             }
             {
-                runner::Runner runner_second_direction_tz_sorted(mults);
+                runner::Runner runner_second_direction_tz_sorted(model);
                 runner_second_direction_tz_sorted.TzSort();
                 runner_second_direction_tz_sorted.Symmetrize(second_direction);
-                initialize_four_centers_exchange_rectangle(
-                    runner_second_direction_tz_sorted,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_second_direction_tz_sorted);
             }
             // SYMMETRIZER + TZ_SORTER
             {
-                runner::Runner runner_first_direction_tz_sorted(mults);
+                runner::Runner runner_first_direction_tz_sorted(model);
                 runner_first_direction_tz_sorted.Symmetrize(first_direction);
                 runner_first_direction_tz_sorted.TzSort();
-                initialize_four_centers_exchange_rectangle(
-                    runner_first_direction_tz_sorted,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_first_direction_tz_sorted);
             }
             {
-                runner::Runner runner_second_direction_tz_sorted(mults);
+                runner::Runner runner_second_direction_tz_sorted(model);
                 runner_second_direction_tz_sorted.Symmetrize(second_direction);
                 runner_second_direction_tz_sorted.TzSort();
-                initialize_four_centers_exchange_rectangle(
-                    runner_second_direction_tz_sorted,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_second_direction_tz_sorted);
             }
             // SYMMETRIZER + SYMMETRIZER
             {
-                runner::Runner runner_both_directions(mults);
+                runner::Runner runner_both_directions(model);
                 runner_both_directions.Symmetrize(first_direction);
                 runner_both_directions.Symmetrize(second_direction);
-                initialize_four_centers_exchange_rectangle(runner_both_directions, Jfirst, Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_both_directions);
             }
             // TZ_SORTER + SYMMETRIZER + SYMMETRIZER
             {
-                runner::Runner runner_both_directions_tz_sorted(mults);
+                runner::Runner runner_both_directions_tz_sorted(model);
                 runner_both_directions_tz_sorted.TzSort();
                 runner_both_directions_tz_sorted.Symmetrize(first_direction);
                 runner_both_directions_tz_sorted.Symmetrize(second_direction);
-                initialize_four_centers_exchange_rectangle(
-                    runner_both_directions_tz_sorted,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_both_directions_tz_sorted);
             }
             // SYMMETRIZER + TZ_SORTER + SYMMETRIZER
             {
-                runner::Runner runner_both_directions_tz_sorted(mults);
+                runner::Runner runner_both_directions_tz_sorted(model);
                 runner_both_directions_tz_sorted.Symmetrize(first_direction);
                 runner_both_directions_tz_sorted.TzSort();
                 runner_both_directions_tz_sorted.Symmetrize(second_direction);
-                initialize_four_centers_exchange_rectangle(
-                    runner_both_directions_tz_sorted,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_both_directions_tz_sorted);
             }
             // SYMMETRIZER + SYMMETRIZER + TZ_SORTER
             {
-                runner::Runner runner_both_directions_tz_sorted(mults);
+                runner::Runner runner_both_directions_tz_sorted(model);
                 runner_both_directions_tz_sorted.Symmetrize(first_direction);
                 runner_both_directions_tz_sorted.Symmetrize(second_direction);
                 runner_both_directions_tz_sorted.TzSort();
-                initialize_four_centers_exchange_rectangle(
-                    runner_both_directions_tz_sorted,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(runner_simple, runner_both_directions_tz_sorted);
             }
             // TZ_SORTER + SYMMETRIZER + SYMMETRIZER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_both_directions_tz_sorted_eliminated(mults);
+                runner::Runner runner_both_directions_tz_sorted_eliminated(model);
                 runner_both_directions_tz_sorted_eliminated.TzSort();
                 runner_both_directions_tz_sorted_eliminated.Symmetrize(first_direction);
                 runner_both_directions_tz_sorted_eliminated.Symmetrize(second_direction);
                 runner_both_directions_tz_sorted_eliminated.EliminatePositiveProjections();
-                initialize_four_centers_exchange_rectangle(
-                    runner_both_directions_tz_sorted_eliminated,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(
                     runner_simple,
                     runner_both_directions_tz_sorted_eliminated);
             }
             // SYMMETRIZER + SYMMETRIZER + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_both_directions_tz_sorted_eliminated(mults);
+                runner::Runner runner_both_directions_tz_sorted_eliminated(model);
                 runner_both_directions_tz_sorted_eliminated.Symmetrize(first_direction);
                 runner_both_directions_tz_sorted_eliminated.Symmetrize(second_direction);
                 runner_both_directions_tz_sorted_eliminated.TzSort();
                 runner_both_directions_tz_sorted_eliminated.EliminatePositiveProjections();
-                initialize_four_centers_exchange_rectangle(
-                    runner_both_directions_tz_sorted_eliminated,
-                    Jfirst,
-                    Jsecond);
                 expect_final_vectors_equivalence(
                     runner_simple,
                     runner_both_directions_tz_sorted_eliminated);
@@ -266,13 +221,14 @@ TEST(spectrum_final_equivalence, rectangle) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void initialize_three_centers_exchange_triangle(runner::Runner& runner, double first) {
-    auto Jfirst = runner.getMutableSymbols().addSymbol("J1", first);
-    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 0, 1);
-    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 1, 2);
-    runner.getMutableSymbols().assignSymbolToIsotropicExchange(Jfirst, 2, 0);
+void initialize_three_centers_exchange_triangle(model::Model& model, double first) {
+    auto Jfirst = model.getSymbols().addSymbol("J1", first);
+    model.getSymbols()
+        .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
+        .assignSymbolToIsotropicExchange(Jfirst, 1, 2)
+        .assignSymbolToIsotropicExchange(Jfirst, 2, 0);
 
-    runner.InitializeSSquared();
+    model.InitializeSSquared();
 }
 
 TEST(spectrum_final_equivalence, triangle) {
@@ -282,91 +238,77 @@ TEST(spectrum_final_equivalence, triangle) {
     for (const auto& mults : multss) {
         for (auto Jfirst : js) {
             group::Group triangle(group::Group::S3, {{2, 0, 1}, {0, 2, 1}});
+            model::Model model(mults);
+            initialize_three_centers_exchange_triangle(model, Jfirst);
 
-            runner::Runner runner_simple(mults);
-            initialize_three_centers_exchange_triangle(runner_simple, Jfirst);
+            runner::Runner runner_simple(model);
             runner_simple.BuildSpectra();
 
             // TZ_SORTER
             {
-                runner::Runner runner_tz_sorted(mults);
+                runner::Runner runner_tz_sorted(model);
                 runner_tz_sorted.TzSort();
-                initialize_three_centers_exchange_triangle(runner_tz_sorted, Jfirst);
                 expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
             }
             // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_tz_sorted_eliminated(mults);
+                runner::Runner runner_tz_sorted_eliminated(model);
                 runner_tz_sorted_eliminated.TzSort();
                 runner_tz_sorted_eliminated.EliminatePositiveProjections();
-                initialize_three_centers_exchange_triangle(runner_tz_sorted_eliminated, Jfirst);
                 expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_eliminated);
             }
             // SYMMETRIZER
             {
-                runner::Runner runner_symmetrized(mults);
+                runner::Runner runner_symmetrized(model);
                 runner_symmetrized.Symmetrize(triangle);
-                initialize_three_centers_exchange_triangle(runner_symmetrized, Jfirst);
                 expect_final_vectors_equivalence(runner_simple, runner_symmetrized);
             }
             {
                 group::Group triangle_diff(group::Group::S3, {{1, 2, 0}, {2, 1, 0}});
-                runner::Runner runner_symmetrized(mults);
+                runner::Runner runner_symmetrized(model);
                 runner_symmetrized.Symmetrize(triangle_diff);
-                initialize_three_centers_exchange_triangle(runner_symmetrized, Jfirst);
                 expect_final_vectors_equivalence(runner_simple, runner_symmetrized);
             }
             // TZ_SORTER + SYMMETRIZER
             {
-                runner::Runner runner_symmetrized_tz_sorted(mults);
+                runner::Runner runner_symmetrized_tz_sorted(model);
                 runner_symmetrized_tz_sorted.TzSort();
                 runner_symmetrized_tz_sorted.Symmetrize(triangle);
-                initialize_three_centers_exchange_triangle(runner_symmetrized_tz_sorted, Jfirst);
                 expect_final_vectors_equivalence(runner_simple, runner_symmetrized_tz_sorted);
             }
             // SYMMETRIZER + TZ_SORTER
             {
-                runner::Runner runner_symmetrized_tz_sorted(mults);
+                runner::Runner runner_symmetrized_tz_sorted(model);
                 runner_symmetrized_tz_sorted.Symmetrize(triangle);
                 runner_symmetrized_tz_sorted.TzSort();
-                initialize_three_centers_exchange_triangle(runner_symmetrized_tz_sorted, Jfirst);
                 expect_final_vectors_equivalence(runner_simple, runner_symmetrized_tz_sorted);
             }
             // TZ_SORTER + SYMMETRIZER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_symmetrized_tz_sorted_eliminated(mults);
+                runner::Runner runner_symmetrized_tz_sorted_eliminated(model);
                 runner_symmetrized_tz_sorted_eliminated.TzSort();
                 runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
                 runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
-                initialize_three_centers_exchange_triangle(
-                    runner_symmetrized_tz_sorted_eliminated,
-                    Jfirst);
                 expect_final_vectors_equivalence(
                     runner_simple,
                     runner_symmetrized_tz_sorted_eliminated);
             }
             // SYMMETRIZER + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_symmetrized_tz_sorted_eliminated(mults);
+                runner::Runner runner_symmetrized_tz_sorted_eliminated(model);
                 runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
                 runner_symmetrized_tz_sorted_eliminated.TzSort();
                 runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
-                initialize_three_centers_exchange_triangle(
-                    runner_symmetrized_tz_sorted_eliminated,
-                    Jfirst);
                 expect_final_vectors_equivalence(
                     runner_simple,
                     runner_symmetrized_tz_sorted_eliminated);
             }
             // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
             {
-                runner::Runner runner_symmetrized_tz_sorted_eliminated(mults);
+                runner::Runner runner_symmetrized_tz_sorted_eliminated(model);
                 runner_symmetrized_tz_sorted_eliminated.TzSort();
                 runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
                 runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
-                initialize_three_centers_exchange_triangle(
-                    runner_symmetrized_tz_sorted_eliminated,
-                    Jfirst);
                 expect_final_vectors_equivalence(
                     runner_simple,
                     runner_symmetrized_tz_sorted_eliminated);

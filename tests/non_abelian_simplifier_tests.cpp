@@ -62,9 +62,10 @@ void compare_two_spaces(const Space& one, const Space& two) {
 
 TEST(nonAbelianSimplifier, 333_S3) {
     std::vector<int> mults = {3, 3, 3};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
 
@@ -76,9 +77,10 @@ TEST(nonAbelianSimplifier, 333_S3) {
 
 TEST(nonAbelianSimplifier, 333_doubleS3) {
     std::vector<int> mults = {3, 3, 3};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
     runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
@@ -92,9 +94,10 @@ TEST(nonAbelianSimplifier, 333_doubleS3) {
 
 TEST(nonAbelianSimplifier, 333_doubleS3_tricky) {
     std::vector<int> mults = {3, 3, 3};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
     runner_full.Symmetrize(group::Group::S3, {{2, 0, 1}, {1, 0, 2}});
@@ -108,9 +111,10 @@ TEST(nonAbelianSimplifier, 333_doubleS3_tricky) {
 
 TEST(nonAbelianSimplifier, 333333_S3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
 
@@ -122,9 +126,10 @@ TEST(nonAbelianSimplifier, 333333_S3) {
 
 TEST(nonAbelianSimplifier, 333333_S3xS2_after_both) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     runner_full.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
@@ -138,9 +143,10 @@ TEST(nonAbelianSimplifier, 333333_S3xS2_after_both) {
 
 TEST(nonAbelianSimplifier, 333333_S3xS2_after_first) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     runner_full.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
@@ -154,9 +160,10 @@ TEST(nonAbelianSimplifier, 333333_S3xS2_after_first) {
 
 TEST(nonAbelianSimplifier, 222222222_after_second_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(
         group::Group::S3,
@@ -178,9 +185,10 @@ TEST(nonAbelianSimplifier, 222222222_after_second_S3xS3) {
 
 TEST(nonAbelianSimplifier, 222222222_after_first_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(
         group::Group::S3,
@@ -204,9 +212,10 @@ TEST(nonAbelianSimplifier, 222222222_after_first_S3xS3) {
 
 TEST(nonAbelianSimplifier, 222222222_after_both_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(
         group::Group::S3,
@@ -231,9 +240,10 @@ TEST(nonAbelianSimplifier, 222222222_after_both_S3xS3) {
 
 TEST(nonAbelianSimplifier, 333333333_after_second_S3xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(
         group::Group::S3,
@@ -265,9 +275,10 @@ TEST(nonAbelianSimplifier, 333333333_after_first_S3xS3) {
         3,
         3,
     };
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(
         group::Group::S3,
@@ -301,9 +312,10 @@ TEST(nonAbelianSimplifier, 333333333_after_both_S3xS3) {
         3,
         3,
     };
+    model::Model model(mults);
 
-    runner::Runner runner_full(mults);
-    runner::Runner runner_simplified(mults);
+    runner::Runner runner_full(model);
+    runner::Runner runner_simplified(model);
 
     runner_full.Symmetrize(
         group::Group::S3,

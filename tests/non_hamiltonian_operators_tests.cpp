@@ -73,10 +73,11 @@ TEST(
         {{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        runner::Runner runner(mults);
-        lexicographic::IndexConverter converter(mults);
+        model::Model model(mults);
+        model.InitializeSSquared();
 
-        runner.InitializeSSquared();
+        runner::Runner runner(model);
+        lexicographic::IndexConverter converter(mults);
 
         Matrix s_squared_matrix = Matrix(
             runner.getSpace(),

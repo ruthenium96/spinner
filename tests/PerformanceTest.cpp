@@ -34,7 +34,8 @@ TEST(performanceTest, simple2ComponentSchema) {
 
     PerformanceTest(
         [&mults]() {
-            runner::Runner runner(mults);
+            model::Model model(mults);
+            runner::Runner runner(model);
 
             runner.TzSort();
 
