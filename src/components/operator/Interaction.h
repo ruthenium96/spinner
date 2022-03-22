@@ -10,6 +10,8 @@
 
 class ZeroCenterTerm {
   public:
+    // This method is required for deep copy of std::vector<std::unique_ptr<ZeroCenterTerm>>
+    virtual std::unique_ptr<ZeroCenterTerm> clone() const = 0;
     virtual void construct(
         lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
         uint32_t index_of_vector) const = 0;
@@ -18,6 +20,7 @@ class ZeroCenterTerm {
 
 class OneCenterTerm {
   public:
+    virtual std::unique_ptr<OneCenterTerm> clone() const = 0;
     virtual void construct(
         lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
@@ -27,6 +30,7 @@ class OneCenterTerm {
 
 class TwoCenterTerm {
   public:
+    virtual std::unique_ptr<TwoCenterTerm> clone() const = 0;
     virtual void construct(
         lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
         uint32_t index_of_vector,

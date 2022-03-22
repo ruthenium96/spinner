@@ -15,3 +15,15 @@ Operator Operator::s_squared(const std::vector<double>& spins) {
         std::make_unique<const ScalarProduct>(spins.size()));
     return s_squared_operator_;
 }
+
+Operator::Operator(const Operator& rhs) {
+    for (const std::unique_ptr<const ZeroCenterTerm>& el : rhs.zero_center_terms) {
+        zero_center_terms.emplace_back(el->clone());
+    }
+    for (const std::unique_ptr<const OneCenterTerm>& el : rhs.one_center_terms) {
+        one_center_terms.emplace_back(el->clone());
+    }
+    for (const std::unique_ptr<const TwoCenterTerm>& el : rhs.two_center_terms) {
+        two_center_terms.emplace_back(el->clone());
+    }
+}

@@ -7,3 +7,7 @@ void ConstantOperator::construct(
 }
 
 ConstantOperator::ConstantOperator(double constant) : constant_(constant) {}
+
+std::unique_ptr<ZeroCenterTerm> ConstantOperator::clone() const {
+    return std::make_unique<ConstantOperator>(constant_);
+}

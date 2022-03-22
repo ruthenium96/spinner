@@ -8,6 +8,8 @@ class ScalarProduct: public TwoCenterTerm {
     explicit ScalarProduct(size_t number_of_spins);
     explicit ScalarProduct(std::shared_ptr<const DenseMatrix> isotropic_exchange_parameters);
 
+    std::unique_ptr<TwoCenterTerm> clone() const override;
+
     void construct(
         lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
         uint32_t index_of_vector,

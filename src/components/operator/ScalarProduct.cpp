@@ -33,3 +33,7 @@ void ScalarProduct::construct(
 std::shared_ptr<const DenseMatrix> ScalarProduct::get_parameters() const {
     return coefficients;
 }
+
+std::unique_ptr<TwoCenterTerm> ScalarProduct::clone() const {
+    return std::make_unique<ScalarProduct>(coefficients);
+}
