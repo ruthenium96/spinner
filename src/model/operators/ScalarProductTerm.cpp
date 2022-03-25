@@ -1,8 +1,9 @@
-#include "ScalarProduct.h"
+#include "ScalarProductTerm.h"
 
 #include <cmath>
 
-ScalarProduct::ScalarProduct(size_t number_of_spins) {
+namespace model::operators {
+ScalarProductTerm::ScalarProductTerm(size_t number_of_spins) {
     std::shared_ptr<DenseMatrix> mutable_coefficients = std::make_unique<DenseMatrix>();
     mutable_coefficients->resize_with_nans(number_of_spins, number_of_spins);
     for (size_t i = 0; i < number_of_spins; ++i) {
@@ -15,10 +16,10 @@ ScalarProduct::ScalarProduct(size_t number_of_spins) {
     coefficients = mutable_coefficients;
 }
 
-ScalarProduct::ScalarProduct(std::shared_ptr<const DenseMatrix> parameters) :
+ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const DenseMatrix> parameters) :
     coefficients(std::move(parameters)) {}
 
-void ScalarProduct::construct(
+void ScalarProductTerm::construct(
     lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a,
@@ -30,10 +31,11 @@ void ScalarProduct::construct(
     }
 }
 
-std::shared_ptr<const DenseMatrix> ScalarProduct::get_parameters() const {
+std::shared_ptr<const DenseMatrix> ScalarProductTerm::get_parameters() const {
     return coefficients;
 }
 
-std::unique_ptr<TwoCenterTerm> ScalarProduct::clone() const {
-    return std::make_unique<ScalarProduct>(coefficients);
+std::unique_ptr<TwoCenterTerm> ScalarProductTerm::clone() const {
+    return std::make_unique<ScalarProductTerm>(coefficients);
 }
+}  // namespace model::operators

@@ -12,7 +12,7 @@ Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {}
 
 Matrix::Matrix(
     const Space& space,
-    const Operator& new_operator,
+    const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter) {
     blocks.resize(space.blocks.size());
 

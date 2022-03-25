@@ -9,10 +9,11 @@
 #include "src/entities/data_structures/DenseMatrix.h"
 #include "src/group/Group.h"
 
-namespace symbols {
+namespace model::symbols {
 
 enum SymbolTypeEnum { not_specified, J, g_factor };
 
+// TODO: Can we separate "model" part and "optimize-values" part?
 class Symbols {
   public:
     explicit Symbols(size_t number_of_spins);
@@ -51,6 +52,8 @@ class Symbols {
   private:
     size_t number_of_spins_;
 
+    // TODO: Can we move all of this to SymbolName and rename it to Symbol?
+    //  maybe except of value.
     struct SymbolData {
         double value;
         bool is_changeable;
@@ -70,5 +73,5 @@ class Symbols {
     std::map<SymbolName, SymbolData> symbolsMap;
 };
 
-}  // namespace symbols
+}  // namespace model::symbols
 #endif  //JULY_SYMBOLS_H

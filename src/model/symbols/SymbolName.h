@@ -3,8 +3,9 @@
 
 #include <string>
 
-namespace symbols {
+namespace model::symbols {
 
+// TODO: Does this class make sense, if public constructor is available?
 struct SymbolName {
   public:
     explicit SymbolName(std::string);

@@ -1,12 +1,11 @@
 #ifndef JULY_MODEL_H
 #define JULY_MODEL_H
 
-#include <src/common/Quantity.h>
-#include <src/common/symbols/Symbols.h>
-
 #include <vector>
 
-#include "src/entities/operator/Operator.h"
+#include "src/common/Quantity.h"
+#include "src/model/operators/Operator.h"
+#include "src/model/symbols/Symbols.h"
 namespace model {
 // class Model is responsible for Operators (parametrized by Symbols) and multiplicities
 class Model {
@@ -23,8 +22,8 @@ class Model {
     const lexicographic::IndexConverter& getIndexConverter() const;
     const symbols::Symbols& getSymbols() const;
     symbols::Symbols& getSymbols();
-    const Operator& getOperator(common::QuantityEnum) const;
-    const Operator& getOperatorDerivative(
+    const operators::Operator& getOperator(common::QuantityEnum) const;
+    const operators::Operator& getOperatorDerivative(
         common::QuantityEnum,
         symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
@@ -41,9 +40,10 @@ class Model {
     // std::shared_ptr<BasicQuantity>, where BasicQuantity is virtual class?
     // or Quantity can consist std::unique_ptr<VirtualMatrix>?
     // or can we just separate Operator and Spectrum?
-    Operator energy_operator;
-    std::optional<Operator> s_squared_operator;
-    std::map<symbols::SymbolName, Operator> derivative_of_energy_wrt_exchange_parameters_operator;
+    operators::Operator energy_operator;
+    std::optional<operators::Operator> s_squared_operator;
+    std::map<symbols::SymbolName, operators::Operator>
+        derivative_of_energy_wrt_exchange_parameters_operator;
 
     OperatorsHistory operators_history_;
 };

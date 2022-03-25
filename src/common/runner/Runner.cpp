@@ -4,12 +4,12 @@
 
 #include <utility>
 
-#include "src/components/operator/ConstantOperator.h"
-#include "src/components/operator/ScalarProduct.h"
 #include "src/components/space/NonAbelianSimplifier.h"
 #include "src/components/space/PositiveProjectionsEliminator.h"
 #include "src/components/space/Symmetrizer.h"
 #include "src/components/space/TzSorter.h"
+#include "src/model/operators/ConstantTerm.h"
+#include "src/model/operators/ScalarProductTerm.h"
 
 runner::Runner::Runner(model::Model model) :
     model_(std::move(model)),
@@ -18,7 +18,8 @@ runner::Runner::Runner(model::Model model) :
         s_squared = common::Quantity();
     }
     if (model_.is_isotropic_exchange_derivatives_initialized()) {
-        for (const auto& symbol : getSymbols().getChangeableNames(symbols::SymbolTypeEnum::J)) {
+        for (const auto& symbol :
+             getSymbols().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
             derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
         }
     }
@@ -124,7 +125,7 @@ void runner::Runner::BuildMatrices() {
         // TODO: fix it!
         derivative.matrix_ = Matrix(
             getSpace(),
-            getOperatorDerivative(common::Energy, symbols::J, symbol_name),
+            getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
             getIndexConverter());
     }
 
@@ -199,7 +200,7 @@ void runner::Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
             // TODO: fix it
             auto derivative_submatrix = Submatrix(
                 space_.blocks[block],
-                getOperatorDerivative(common::Energy, symbols::J, symbol_name),
+                getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
                 getIndexConverter());
             derivative.spectrum_.blocks[block] =
                 Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix);
@@ -223,7 +224,8 @@ const Spectrum& runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) 
     }
 }
 
-const Operator& runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
+const model::operators::Operator&
+runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
     return model_.getOperator(quantity_enum);
 }
 
@@ -231,19 +233,19 @@ const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
     return model_.getIndexConverter();
 }
 
-const Operator& runner::Runner::getOperatorDerivative(
+const model::operators::Operator& runner::Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
-    symbols::SymbolTypeEnum symbol_type,
-    const symbols::SymbolName& symbol) const {
+    model::symbols::SymbolTypeEnum symbol_type,
+    const model::symbols::SymbolName& symbol) const {
     return model_.getOperatorDerivative(quantity_enum, symbol_type, symbol);
 }
 
 const Spectrum& runner::Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
-    symbols::SymbolTypeEnum symbol_type,
-    const symbols::SymbolName& symbol) const {
+    model::symbols::SymbolTypeEnum symbol_type,
+    const model::symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == symbols::SymbolTypeEnum::J) {
+        if (symbol_type == model::symbols::SymbolTypeEnum::J) {
             return derivative_of_energy_wrt_exchange_parameters.at(symbol).spectrum_;
         }
     }
@@ -251,10 +253,10 @@ const Spectrum& runner::Runner::getSpectrumDerivative(
 
 const Matrix& runner::Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
-    symbols::SymbolTypeEnum symbol_type,
-    const symbols::SymbolName& symbol) const {
+    model::symbols::SymbolTypeEnum symbol_type,
+    const model::symbols::SymbolName& symbol) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == symbols::SymbolTypeEnum::J) {
+        if (symbol_type == model::symbols::SymbolTypeEnum::J) {
             return derivative_of_energy_wrt_exchange_parameters.at(symbol).matrix_;
         }
     }
@@ -318,28 +320,30 @@ void runner::Runner::initializeExperimentalValues(
     }
 }
 
-std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives() {
+std::map<model::symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives() {
     // TODO: ony s_squared-based calculation supported
 
-    std::map<symbols::SymbolName, double> answer;
+    std::map<model::symbols::SymbolName, double> answer;
 
-    for (const auto& changeable_symbol : getSymbols().getChangeableNames(symbols::J)) {
+    for (const auto& changeable_symbol : getSymbols().getChangeableNames(model::symbols::J)) {
         DenseVector derivative_vector;
         for (const auto& subspectrum :
-             getSpectrumDerivative(common::Energy, symbols::J, changeable_symbol).blocks) {
+             getSpectrumDerivative(common::Energy, model::symbols::J, changeable_symbol).blocks) {
             derivative_vector.concatenate_with(subspectrum.raw_data);
         }
         double value = mu_squared_worker.value()->calculateTotalDerivative(
-            symbols::J,
+            model::symbols::J,
             std::move(derivative_vector));
         answer[changeable_symbol] = value;
         //        std::cout << "dR^2/d" << changeable_symbol << " = "
         //                  << value << std::endl;
     }
 
-    if (!getSymbols().getChangeableNames(symbols::g_factor).empty()) {
-        symbols::SymbolName g_name = getSymbols().getChangeableNames(symbols::g_factor)[0];
-        double value = mu_squared_worker.value()->calculateTotalDerivative(symbols::g_factor);
+    if (!getSymbols().getChangeableNames(model::symbols::g_factor).empty()) {
+        model::symbols::SymbolName g_name =
+            getSymbols().getChangeableNames(model::symbols::g_factor)[0];
+        double value =
+            mu_squared_worker.value()->calculateTotalDerivative(model::symbols::g_factor);
         answer[g_name] = value;
         //        std::cout << "dR^2/d" << g_name << " = " << value << std::endl;
     }
@@ -347,10 +351,10 @@ std::map<symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives(
 }
 
 void runner::Runner::minimizeResidualError() {
-    std::vector<symbols::SymbolName> changeable_names = getSymbols().getChangeableNames();
+    std::vector<model::symbols::SymbolName> changeable_names = getSymbols().getChangeableNames();
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
-    for (const symbols::SymbolName& name : changeable_names) {
+    for (const model::symbols::SymbolName& name : changeable_names) {
         changeable_values.push_back(getSymbols().getValueOfName(name));
     }
 
@@ -368,7 +372,7 @@ void runner::Runner::minimizeResidualError() {
 }
 
 void runner::Runner::stepOfRegression(
-    const std::vector<symbols::SymbolName>& changeable_names,
+    const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
     double& residual_error,
     std::vector<double>& gradient) {
@@ -391,7 +395,7 @@ void runner::Runner::stepOfRegression(
 
     residual_error = mu_squared_worker.value()->calculateResidualError();
 
-    std::map<symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
+    std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         gradient[i] = map_gradient[changeable_names[i]];
     }
@@ -401,7 +405,7 @@ const magnetic_susceptibility::MuSquaredWorker& runner::Runner::getMuSquaredWork
     return *mu_squared_worker.value();
 }
 
-const symbols::Symbols& runner::Runner::getSymbols() const {
+const model::symbols::Symbols& runner::Runner::getSymbols() const {
     return model_.getSymbols();
 }
 

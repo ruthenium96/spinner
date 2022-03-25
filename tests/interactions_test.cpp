@@ -2,9 +2,9 @@
 
 #include "gtest/gtest.h"
 #include "src/common/lexicographic/IndexConverter.h"
-#include "src/components/operator/ConstantOperator.h"
-#include "src/components/operator/ScalarProduct.h"
 #include "src/entities/matrix/Matrix.h"
+#include "src/model/operators/ConstantTerm.h"
+#include "src/model/operators/ScalarProductTerm.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
     std::vector<std::vector<int>> vector_of_mults =
@@ -18,8 +18,9 @@ TEST(constant_operator, 2222_333_2345_44444) {
 
         for (int constant = 0; constant < 100; constant += 11) {
             // Construct Operator
-            Operator operator_;
-            operator_.zero_center_terms.emplace_back(std::make_unique<ConstantOperator>(constant));
+            model::operators::Operator operator_;
+            operator_.zero_center_terms.emplace_back(
+                std::make_unique<model::operators::ConstantTerm>(constant));
 
             // Build Matrix
             Matrix matrix = Matrix(space_, operator_, converter);
@@ -55,8 +56,9 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         Space space_(converter.get_total_space_size());
 
         // Construct Operator
-        Operator operator_;
-        operator_.two_center_terms.emplace_back(std::make_unique<ScalarProduct>(ptr_to_js));
+        model::operators::Operator operator_;
+        operator_.two_center_terms.emplace_back(
+            std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter);
@@ -99,8 +101,9 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         Space space_(converter.get_total_space_size());
 
         // Construct Operator
-        Operator operator_;
-        operator_.two_center_terms.emplace_back(std::make_unique<ScalarProduct>(ptr_to_js));
+        model::operators::Operator operator_;
+        operator_.two_center_terms.emplace_back(
+            std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter);

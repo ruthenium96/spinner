@@ -11,7 +11,7 @@ struct Matrix {
     Matrix() = default;
     Matrix(
         const Space& space,
-        const Operator& new_operator,
+        const model::operators::Operator& new_operator,
         const lexicographic::IndexConverter& converter);
 
     std::vector<Submatrix> blocks;

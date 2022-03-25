@@ -1,8 +1,9 @@
 #include "Operator.h"
 
-#include "src/components/operator/ConstantOperator.h"
-#include "src/components/operator/ScalarProduct.h"
+#include "ConstantTerm.h"
+#include "ScalarProductTerm.h"
 
+namespace model::operators {
 Operator Operator::s_squared(const std::vector<double>& spins) {
     Operator s_squared_operator_;
     double sum_of_s_squared = 0;
@@ -10,9 +11,9 @@ Operator Operator::s_squared(const std::vector<double>& spins) {
         sum_of_s_squared += spin * (spin + 1);
     }
     s_squared_operator_.zero_center_terms.emplace_back(
-        std::make_unique<const ConstantOperator>(sum_of_s_squared));
+        std::make_unique<const ConstantTerm>(sum_of_s_squared));
     s_squared_operator_.two_center_terms.emplace_back(
-        std::make_unique<const ScalarProduct>(spins.size()));
+        std::make_unique<const ScalarProductTerm>(spins.size()));
     return s_squared_operator_;
 }
 
@@ -27,3 +28,4 @@ Operator::Operator(const Operator& rhs) {
         two_center_terms.emplace_back(el->clone());
     }
 }
+}  // namespace model::operators

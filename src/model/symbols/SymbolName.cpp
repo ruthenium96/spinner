@@ -1,6 +1,6 @@
 #include "SymbolName.h"
 
-namespace symbols {
+namespace model::symbols {
 bool SymbolName::operator<(const SymbolName& rhs) const {
     return name_ < rhs.name_;
 }

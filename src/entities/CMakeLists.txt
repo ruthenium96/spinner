@@ -3,9 +3,6 @@ add_library(space
         space/Space.h space/Space.cpp
         space/Subspace.h space/Subspace.cpp)
 
-add_library(operator
-        operator/Operator.cpp operator/Operator.h)
-
 add_library(matrix
         matrix/Matrix.cpp matrix/Matrix.h
         matrix/Submatrix.cpp matrix/Submatrix.h)

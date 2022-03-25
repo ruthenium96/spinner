@@ -10,7 +10,7 @@ std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix) {
 }
 Submatrix::Submatrix(
     const Subspace& subspace,
-    const Operator& new_operator,
+    const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter) {
     lexicographic::SparseMatrix matrix_in_lexicografical_basis(converter);
     std::unordered_set<unsigned int> built_lexicografical_vectors;

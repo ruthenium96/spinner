@@ -4,8 +4,9 @@
 #include <memory>
 #include <vector>
 
-#include "src/components/operator/Interaction.h"
+#include "Term.h"
 
+namespace model::operators {
 struct Operator {
     Operator() = default;
     Operator(const Operator&);
@@ -25,5 +26,6 @@ struct Operator {
         return zero_center_terms.empty() && one_center_terms.empty() && two_center_terms.empty();
     }
 };
+}  // namespace model::operators
 
 #endif  //JULY_OPERATOR_H

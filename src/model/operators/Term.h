@@ -1,5 +1,5 @@
-#ifndef JULY_INTERACTION_H
-#define JULY_INTERACTION_H
+#ifndef JULY_TERM_H
+#define JULY_TERM_H
 
 #include <cstdint>
 #include <memory>
@@ -8,6 +8,7 @@
 #include "src/common/lexicographic/SparseMatrix.h"
 #include "src/entities/data_structures/DenseMatrix.h"
 
+namespace model::operators {
 class ZeroCenterTerm {
   public:
     // This method is required for deep copy of std::vector<std::unique_ptr<ZeroCenterTerm>>
@@ -39,5 +40,6 @@ class TwoCenterTerm {
     virtual std::shared_ptr<const DenseMatrix> get_parameters() const = 0;
     virtual ~TwoCenterTerm() {};
 };
+}  // namespace model::operators
 
-#endif  //JULY_INTERACTION_H
+#endif  //JULY_TERM_H

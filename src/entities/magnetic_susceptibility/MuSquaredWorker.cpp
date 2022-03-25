@@ -12,14 +12,14 @@ double MuSquaredWorker::calculateResidualError() const {
 }
 
 double MuSquaredWorker::calculateTotalDerivative(
-    symbols::SymbolTypeEnum symbol_type,
+    model::symbols::SymbolTypeEnum symbol_type,
     DenseVector&& derivative_value) const {
     std::vector<ValueAtTemperature> theoretical_derivative =
         calculateDerivative(symbol_type, std::move(derivative_value));
     return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
 }
 
-double MuSquaredWorker::calculateTotalDerivative(symbols::SymbolTypeEnum symbol_type) const {
+double MuSquaredWorker::calculateTotalDerivative(model::symbols::SymbolTypeEnum symbol_type) const {
     std::vector<ValueAtTemperature> theoretical_derivative = calculateDerivative(symbol_type);
     return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
 }

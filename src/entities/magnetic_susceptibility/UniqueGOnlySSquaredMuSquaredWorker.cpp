@@ -16,11 +16,11 @@ double UniqueGOnlySSquaredMuSquaredWorker::calculateTheoreticalMuSquared(double 
 }
 
 std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDerivative(
-    symbols::SymbolTypeEnum symbol_type,
+    model::symbols::SymbolTypeEnum symbol_type,
     DenseVector&& derivative_value) const {
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
-    if (symbol_type == symbols::SymbolTypeEnum::g_factor) {
+    if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
         throw std::invalid_argument("g-factor should be passed without Densevector.");
     } else {
         // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/dg = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
@@ -37,11 +37,11 @@ std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDer
     return derivatives;
 }
 
-std::vector<ValueAtTemperature>
-UniqueGOnlySSquaredMuSquaredWorker::calculateDerivative(symbols::SymbolTypeEnum symbol_type) const {
+std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDerivative(
+    model::symbols::SymbolTypeEnum symbol_type) const {
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
-    if (symbol_type == symbols::SymbolTypeEnum::g_factor) {
+    if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
         // d(mu_squared)/dg = d(g^2*<S^2>)/dg = d(g^2)/dg*<S^2> + g^2*d(<S^2>)/dg = 2g*<S^2>
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double value =

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-namespace symbols {
+namespace model::symbols {
 Symbols::Symbols(size_t number_of_spins) : number_of_spins_(number_of_spins) {}
 
 Symbols& Symbols::assignSymbolToIsotropicExchange(

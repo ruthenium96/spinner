@@ -5,8 +5,8 @@
 
 #include "EnsembleAverager.h"
 #include "ExperimentalValuesWorker.h"
-#include "src/common/symbols/Symbols.h"
 #include "src/entities/data_structures/DenseMatrix.h"
+#include "src/model/symbols/Symbols.h"
 
 // TODO: is it true?
 //constexpr double bohr_magneton = 0.67171388;
@@ -26,17 +26,17 @@ class MuSquaredWorker {
 
     double calculateResidualError() const;
     double calculateTotalDerivative(
-        symbols::SymbolTypeEnum symbol_type,
+        model::symbols::SymbolTypeEnum symbol_type,
         DenseVector&& derivative_value) const;
-    double calculateTotalDerivative(symbols::SymbolTypeEnum symbol_type) const;
+    double calculateTotalDerivative(model::symbols::SymbolTypeEnum symbol_type) const;
 
   protected:
     const EnsembleAverager ensemble_averager_;
     virtual std::vector<ValueAtTemperature> calculateDerivative(
-        symbols::SymbolTypeEnum symbol_type,
+        model::symbols::SymbolTypeEnum symbol_type,
         DenseVector&& derivative_value) const = 0;
     virtual std::vector<ValueAtTemperature>
-    calculateDerivative(symbols::SymbolTypeEnum symbol_type) const = 0;
+    calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const = 0;
 
     double multiplyExperimentalAndTheoreticalDerivatives(
         std::vector<ValueAtTemperature> theoretical_derivative) const;

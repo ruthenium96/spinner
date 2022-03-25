@@ -1,11 +1,11 @@
 #include "Model.h"
 
-#include <src/components/operator/ScalarProduct.h>
+#include <src/model/operators/ScalarProductTerm.h>
 
 namespace model {
 
 Model::Model(const std::vector<int>& mults) : symbols_(mults.size()), converter_(mults) {
-    energy_operator = Operator();
+    energy_operator = operators::Operator();
 }
 
 Model& Model::InitializeSSquared() {
@@ -13,7 +13,7 @@ Model& Model::InitializeSSquared() {
         return *this;
     }
 
-    s_squared_operator = Operator::s_squared(converter_.get_spins());
+    s_squared_operator = operators::Operator::s_squared(converter_.get_spins());
 
     operators_history_.s_squared = true;
     return *this;
@@ -24,7 +24,8 @@ Model& Model::InitializeIsotropicExchange() {
         return *this;
     }
     energy_operator.two_center_terms.emplace_back(
-        std::make_unique<const ScalarProduct>(symbols_.getIsotropicExchangeParameters()));
+        std::make_unique<const operators::ScalarProductTerm>(
+            symbols_.getIsotropicExchangeParameters()));
     operators_history_.isotropic_exchange_in_hamiltonian = true;
     return *this;
 }
@@ -35,9 +36,10 @@ Model& Model::InitializeIsotropicExchangeDerivatives() {
     }
 
     for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
-        Operator operator_derivative = Operator();
-        operator_derivative.two_center_terms.emplace_back(std::make_unique<const ScalarProduct>(
-            symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
+        operators::Operator operator_derivative = operators::Operator();
+        operator_derivative.two_center_terms.emplace_back(
+            std::make_unique<const operators::ScalarProductTerm>(
+                symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
         derivative_of_energy_wrt_exchange_parameters_operator[symbol] =
             std::move(operator_derivative);
     }
@@ -59,7 +61,7 @@ symbols::Symbols& Model::getSymbols() {
     return symbols_;
 }
 
-const Operator& Model::getOperator(common::QuantityEnum quantity_enum) const {
+const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         return energy_operator;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
@@ -67,7 +69,7 @@ const Operator& Model::getOperator(common::QuantityEnum quantity_enum) const {
     }
 }
 
-const Operator& Model::getOperatorDerivative(
+const operators::Operator& Model::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     symbols::SymbolTypeEnum symbol_type,
     const symbols::SymbolName& symbol) const {

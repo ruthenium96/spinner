@@ -1,12 +1,13 @@
-#ifndef JULY_SCALARPRODUCT_H
-#define JULY_SCALARPRODUCT_H
+#ifndef JULY_SCALARPRODUCTTERM_H
+#define JULY_SCALARPRODUCTTERM_H
 
-#include "Interaction.h"
+#include "Term.h"
 
-class ScalarProduct: public TwoCenterTerm {
+namespace model::operators {
+class ScalarProductTerm: public TwoCenterTerm {
   public:
-    explicit ScalarProduct(size_t number_of_spins);
-    explicit ScalarProduct(std::shared_ptr<const DenseMatrix> isotropic_exchange_parameters);
+    explicit ScalarProductTerm(size_t number_of_spins);
+    explicit ScalarProductTerm(std::shared_ptr<const DenseMatrix> isotropic_exchange_parameters);
 
     std::unique_ptr<TwoCenterTerm> clone() const override;
 
@@ -21,5 +22,6 @@ class ScalarProduct: public TwoCenterTerm {
   private:
     std::shared_ptr<const DenseMatrix> coefficients;
 };
+}  // namespace model::operators
 
-#endif  //JULY_SCALARPRODUCT_H
+#endif  //JULY_SCALARPRODUCTTERM_H

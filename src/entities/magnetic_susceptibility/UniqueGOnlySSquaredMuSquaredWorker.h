@@ -20,10 +20,10 @@ class UniqueGOnlySSquaredMuSquaredWorker: public MuSquaredWorker {
     double g_unique_;
     DenseVector s_squared_;
     std::vector<ValueAtTemperature> calculateDerivative(
-        symbols::SymbolTypeEnum symbol_type,
+        model::symbols::SymbolTypeEnum symbol_type,
         DenseVector&& derivative_value) const override;
     std::vector<ValueAtTemperature>
-    calculateDerivative(symbols::SymbolTypeEnum symbol_type) const override;
+    calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const override;
 };
 
 }  // namespace magnetic_susceptibility
