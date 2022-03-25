@@ -26,6 +26,6 @@ TEST(hamiltonian_operator, exchange_interaction_22_333_4444_23456) {
         model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
         // explicitly initialize isotropic exchange:
         model.InitializeIsotropicExchange();
-        EXPECT_EQ(model.getOperator(common::QuantityEnum::Energy).two_center_terms.size(), 1);
+        EXPECT_EQ(model.getOperator(common::QuantityEnum::Energy).getTwoCenterTerms().size(), 1);
     }
 }

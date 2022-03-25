@@ -23,7 +23,7 @@ Model& Model::InitializeIsotropicExchange() {
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
         return *this;
     }
-    energy_operator.two_center_terms.emplace_back(
+    energy_operator.getTwoCenterTerms().emplace_back(
         std::make_unique<const operators::ScalarProductTerm>(
             symbols_.getIsotropicExchangeParameters()));
     operators_history_.isotropic_exchange_in_hamiltonian = true;
@@ -37,7 +37,7 @@ Model& Model::InitializeIsotropicExchangeDerivatives() {
 
     for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
         operators::Operator operator_derivative = operators::Operator();
-        operator_derivative.two_center_terms.emplace_back(
+        operator_derivative.getTwoCenterTerms().emplace_back(
             std::make_unique<const operators::ScalarProductTerm>(
                 symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
         derivative_of_energy_wrt_exchange_parameters_operator[symbol] =

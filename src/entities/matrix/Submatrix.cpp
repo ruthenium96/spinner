@@ -27,13 +27,13 @@ Submatrix::Submatrix(
             uint32_t index_of_lexicographic_vector_k = outer_item.index;
             // BUILDING k-th ROW OF INITIAL_MATRIX
             if (built_lexicografical_vectors.count(index_of_lexicographic_vector_k) == 0) {
-                for (auto& term : new_operator.zero_center_terms) {
+                for (auto& term : new_operator.getZeroCenterTerms()) {
                     term->construct(
                         matrix_in_lexicografical_basis,
                         index_of_lexicographic_vector_k);
                 }
                 for (int center_a = 0; center_a < converter.get_mults().size(); ++center_a) {
-                    for (auto& term : new_operator.one_center_terms) {
+                    for (auto& term : new_operator.getOneCenterTerms()) {
                         term->construct(
                             matrix_in_lexicografical_basis,
                             index_of_lexicographic_vector_k,
@@ -41,7 +41,7 @@ Submatrix::Submatrix(
                     }
                     for (int center_b = center_a + 1; center_b < converter.get_mults().size();
                          ++center_b) {
-                        for (auto& term : new_operator.two_center_terms) {
+                        for (auto& term : new_operator.getTwoCenterTerms()) {
                             term->construct(
                                 matrix_in_lexicografical_basis,
                                 index_of_lexicographic_vector_k,

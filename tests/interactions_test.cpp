@@ -19,7 +19,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
         for (int constant = 0; constant < 100; constant += 11) {
             // Construct Operator
             model::operators::Operator operator_;
-            operator_.zero_center_terms.emplace_back(
+            operator_.getZeroCenterTerms().emplace_back(
                 std::make_unique<model::operators::ConstantTerm>(constant));
 
             // Build Matrix
@@ -57,7 +57,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
 
         // Construct Operator
         model::operators::Operator operator_;
-        operator_.two_center_terms.emplace_back(
+        operator_.getTwoCenterTerms().emplace_back(
             std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
         // Build Matrix
@@ -102,7 +102,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
 
         // Construct Operator
         model::operators::Operator operator_;
-        operator_.two_center_terms.emplace_back(
+        operator_.getTwoCenterTerms().emplace_back(
             std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
         // Build Matrix

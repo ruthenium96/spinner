@@ -28,4 +28,33 @@ Operator::Operator(const Operator& rhs) {
         two_center_terms.emplace_back(el->clone());
     }
 }
+
+bool Operator::empty() const {
+    return zero_center_terms.empty() && one_center_terms.empty() && two_center_terms.empty();
+}
+
+std::vector<std::unique_ptr<const ZeroCenterTerm>>& Operator::getZeroCenterTerms() {
+    return zero_center_terms;
+}
+
+const std::vector<std::unique_ptr<const ZeroCenterTerm>>& Operator::getZeroCenterTerms() const {
+    return zero_center_terms;
+}
+
+std::vector<std::unique_ptr<const OneCenterTerm>>& Operator::getOneCenterTerms() {
+    return one_center_terms;
+}
+
+const std::vector<std::unique_ptr<const OneCenterTerm>>& Operator::getOneCenterTerms() const {
+    return one_center_terms;
+}
+
+std::vector<std::unique_ptr<const TwoCenterTerm>>& Operator::getTwoCenterTerms() {
+    return two_center_terms;
+}
+
+const std::vector<std::unique_ptr<const TwoCenterTerm>>& Operator::getTwoCenterTerms() const {
+    return two_center_terms;
+}
+
 }  // namespace model::operators

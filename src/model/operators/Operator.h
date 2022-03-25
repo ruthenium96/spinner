@@ -7,7 +7,8 @@
 #include "Term.h"
 
 namespace model::operators {
-struct Operator {
+class Operator {
+  public:
     Operator() = default;
     Operator(const Operator&);
     // TODO: should we implement copy assignment?
@@ -16,15 +17,20 @@ struct Operator {
     Operator& operator=(Operator&&) noexcept = default;
     ~Operator() = default;
 
+    static Operator s_squared(const std::vector<double>& spins);
+
+    bool empty() const;
+    std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms();
+    const std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms() const;
+    std::vector<std::unique_ptr<const OneCenterTerm>>& getOneCenterTerms();
+    const std::vector<std::unique_ptr<const OneCenterTerm>>& getOneCenterTerms() const;
+    std::vector<std::unique_ptr<const TwoCenterTerm>>& getTwoCenterTerms();
+    const std::vector<std::unique_ptr<const TwoCenterTerm>>& getTwoCenterTerms() const;
+
+  private:
     std::vector<std::unique_ptr<const ZeroCenterTerm>> zero_center_terms;
     std::vector<std::unique_ptr<const OneCenterTerm>> one_center_terms;
     std::vector<std::unique_ptr<const TwoCenterTerm>> two_center_terms;
-
-    static Operator s_squared(const std::vector<double>& spins);
-
-    bool empty() const {
-        return zero_center_terms.empty() && one_center_terms.empty() && two_center_terms.empty();
-    }
 };
 }  // namespace model::operators
 
