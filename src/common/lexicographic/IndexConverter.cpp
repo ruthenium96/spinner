@@ -67,3 +67,9 @@ const std::vector<double>& lexicographic::IndexConverter::get_spins() const {
 uint32_t lexicographic::IndexConverter::get_total_space_size() const {
     return total_space_size;
 }
+uint32_t lexicographic::IndexConverter::get_max_ntz_proj() const {
+    // We want to get 2T + 1 (projections are counted from zero to multiplicity),
+    // where T = sum_{1}^{N} S_i. So 2T + 1 = sum_{1}^{N} (2S_i + 1) - N + 1.
+    return std::accumulate(get_mults().begin(), get_mults().end(), 1 - get_mults().size());
+    ;
+}

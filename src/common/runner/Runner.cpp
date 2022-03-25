@@ -35,11 +35,7 @@ void runner::Runner::EliminatePositiveProjections() {
         throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
     }
 
-    // TODO: we have the same code in tz-sorter. Can we move it to converter?
-    uint32_t max_ntz_proj = std::accumulate(
-        getIndexConverter().get_mults().begin(),
-        getIndexConverter().get_mults().end(),
-        1 - getIndexConverter().get_mults().size());
+    uint32_t max_ntz_proj = getIndexConverter().get_max_ntz_proj();
 
     PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
     space_ = positiveProjectionsEliminator.apply(std::move(space_));

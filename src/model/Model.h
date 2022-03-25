@@ -34,6 +34,7 @@ class Model {
         bool s_squared = false;
         bool isotropic_exchange_derivatives = false;
     };
+    // TODO: should we move it from here?
     const lexicographic::IndexConverter converter_;
     symbols::Symbols symbols_;
 

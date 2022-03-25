@@ -21,6 +21,7 @@ class IndexConverter {
     const std::vector<int>& get_mults() const;
     const std::vector<double>& get_spins() const;
     uint32_t get_total_space_size() const;
+    uint32_t get_max_ntz_proj() const;
 
   private:
     std::vector<uint32_t> cumulative_product;
