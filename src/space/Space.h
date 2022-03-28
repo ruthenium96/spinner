@@ -9,11 +9,18 @@
 #include "src/common/lexicographic/IndexConverter.h"
 
 namespace space {
-struct Space {
+// Space is responsible for _sparse_ unitary transformation of Hamiltonian matrix.
+// This transformation leads to block-diagonal Hamiltonian matrix.
+class Space {
+  public:
     explicit Space(uint32_t total_space_size);
     explicit Space(std::vector<Subspace>&& m);
 
-    std::vector<Subspace> blocks;
+    std::vector<Subspace>& getBlocks();
+    const std::vector<Subspace>& getBlocks() const;
+
+  private:
+    std::vector<Subspace> blocks_;
 };
 }  // namespace space
 

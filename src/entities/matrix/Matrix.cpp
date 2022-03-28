@@ -14,10 +14,10 @@ Matrix::Matrix(
     const space::Space& space,
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter) {
-    blocks.resize(space.blocks.size());
+    blocks.resize(space.getBlocks().size());
 
-    for (size_t i = 0; i < space.blocks.size(); ++i) {
-        const space::Subspace& subspace = space.blocks[i];
+    for (size_t i = 0; i < space.getBlocks().size(); ++i) {
+        const space::Subspace& subspace = space.getBlocks()[i];
         blocks[i] = Submatrix(subspace, new_operator, converter);
     }
 }

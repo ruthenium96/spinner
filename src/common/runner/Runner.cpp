@@ -131,7 +131,7 @@ void runner::Runner::BuildMatrices() {
 void runner::Runner::BuildSpectra() {
     finish_the_model();
 
-    size_t number_of_blocks = space_.blocks.size();
+    size_t number_of_blocks = space_.getBlocks().size();
 
     if (!getOperator(common::Energy).empty()) {
         energy.spectrum_.blocks.clear();
@@ -177,15 +177,17 @@ void runner::Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         {
-            auto hamiltonian_submatrix =
-                Submatrix(space_.blocks[block], getOperator(common::Energy), getIndexConverter());
+            auto hamiltonian_submatrix = Submatrix(
+                space_.getBlocks()[block],
+                getOperator(common::Energy),
+                getIndexConverter());
             energy.spectrum_.blocks[block] =
                 Subspectrum::energy(hamiltonian_submatrix, unitary_transformation_matrix);
         }
 
         if (s_squared.has_value()) {
             auto non_hamiltonian_submatrix = Submatrix(
-                space_.blocks[block],
+                space_.getBlocks()[block],
                 getOperator(common::S_total_squared),
                 getIndexConverter());
             s_squared->spectrum_.blocks[block] =
@@ -195,7 +197,7 @@ void runner::Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
         for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
             // TODO: fix it
             auto derivative_submatrix = Submatrix(
-                space_.blocks[block],
+                space_.getBlocks()[block],
                 getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
                 getIndexConverter());
             derivative.spectrum_.blocks[block] =
@@ -426,7 +428,7 @@ void runner::Runner::finish_the_model() {
     }
 
     if (!space_history_.isNormalized) {
-        for (auto& subspace : space_.blocks) {
+        for (auto& subspace : space_.getBlocks()) {
             // TODO: maybe, we can implement normalize as Space method
             subspace.decomposition.normalize();
         }

@@ -7,7 +7,7 @@ std::ostream& operator<<(std::ostream& os, const Subspace& subspace) {
     os << std::endl;
     return os;
 }
-}  // namespace space
 
-space::Subspace::Subspace(UnitarySparseMatrix&& new_basis_decomposition) :
+Subspace::Subspace(UnitarySparseMatrix&& new_basis_decomposition) :
     decomposition(std::move(new_basis_decomposition)) {}
+}  // namespace space

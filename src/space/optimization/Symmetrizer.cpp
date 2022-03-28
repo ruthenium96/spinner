@@ -41,11 +41,11 @@ Symmetrizer::Symmetrizer(lexicographic::IndexConverter converter, group::Group g
 
 Space Symmetrizer::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
-    vector_result.resize(space.blocks.size() * group_.properties.number_of_representations);
+    vector_result.resize(space.getBlocks().size() * group_.properties.number_of_representations);
 
 #pragma omp parallel for shared(space, vector_result) default(none)
-    for (size_t i = 0; i < space.blocks.size(); ++i) {
-        Subspace& subspace_parent = space.blocks[i];
+    for (size_t i = 0; i < space.getBlocks().size(); ++i) {
+        Subspace& subspace_parent = space.getBlocks()[i];
         // add child subspaces of all representation (even if they will be empty)
         for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
             BlockProperties block_properties = subspace_parent.properties;

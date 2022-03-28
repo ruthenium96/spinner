@@ -5,37 +5,40 @@
 #include "src/common/runner/Runner.h"
 
 void compare_two_spaces(const space::Space& one, const space::Space& two) {
-    ASSERT_EQ(one.blocks.size(), two.blocks.size()) << "Numbers of subspaces do not equal";
-    for (size_t i = 0; i < one.blocks.size(); ++i) {
-        uint32_t one_dimensionality = one.blocks[i].properties.dimensionality;
-        uint32_t two_dimensionality = two.blocks[i].properties.dimensionality;
-        uint32_t one_degeneracy = one.blocks[i].properties.degeneracy;
-        uint32_t two_degeneracy = two.blocks[i].properties.degeneracy;
+    ASSERT_EQ(one.getBlocks().size(), two.getBlocks().size())
+        << "Numbers of subspaces do not equal";
+    for (size_t i = 0; i < one.getBlocks().size(); ++i) {
+        uint32_t one_dimensionality = one.getBlocks()[i].properties.dimensionality;
+        uint32_t two_dimensionality = two.getBlocks()[i].properties.dimensionality;
+        uint32_t one_degeneracy = one.getBlocks()[i].properties.degeneracy;
+        uint32_t two_degeneracy = two.getBlocks()[i].properties.degeneracy;
 
         ASSERT_EQ(
-            one.blocks[i].decomposition.size() * one_degeneracy,
-            two.blocks[i].decomposition.size() * two_degeneracy)
+            one.getBlocks()[i].decomposition.size() * one_degeneracy,
+            two.getBlocks()[i].decomposition.size() * two_degeneracy)
             << "Size of subspace " << i << " does not equal";
 
         EXPECT_EQ(one_dimensionality * one_degeneracy, two_dimensionality * two_degeneracy)
-            << "First space :" << one.blocks[i].properties
-            << "Second space :" << two.blocks[i].properties;
+            << "First space :" << one.getBlocks()[i].properties
+            << "Second space :" << two.getBlocks()[i].properties;
 
         std::unordered_map<uint32_t, uint32_t> one_met;
         std::unordered_map<uint32_t, uint32_t> two_met;
 
         // counting:
-        for (uint32_t index_of_vector = 0; index_of_vector < one.blocks[i].decomposition.size();
+        for (uint32_t index_of_vector = 0;
+             index_of_vector < one.getBlocks()[i].decomposition.size();
              ++index_of_vector) {
-            auto iterator = one.blocks[i].decomposition.GetNewIterator(index_of_vector);
+            auto iterator = one.getBlocks()[i].decomposition.GetNewIterator(index_of_vector);
             while (iterator->hasNext()) {
                 auto item = iterator->getNext();
                 one_met[item.index] += 1;
             }
         }
-        for (uint32_t index_of_vector = 0; index_of_vector < two.blocks[i].decomposition.size();
+        for (uint32_t index_of_vector = 0;
+             index_of_vector < two.getBlocks()[i].decomposition.size();
              ++index_of_vector) {
-            auto iterator = two.blocks[i].decomposition.GetNewIterator(index_of_vector);
+            auto iterator = two.getBlocks()[i].decomposition.GetNewIterator(index_of_vector);
             while (iterator->hasNext()) {
                 auto item = iterator->getNext();
                 two_met[item.index] += 1;
@@ -55,7 +58,7 @@ void compare_two_spaces(const space::Space& one, const space::Space& two) {
             EXPECT_EQ(p.second * one_degeneracy, two_met[p.first] * two_degeneracy)
                 << "Lex index [" << p.first
                 << "] is met different times in spaces, representation: "
-                << one.blocks[i].properties.get_representation_name();
+                << one.getBlocks()[i].properties.get_representation_name();
         }
     }
 }

@@ -4,11 +4,11 @@ namespace space::optimization {
 
 Space NonAbelianSimplifier::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
-    vector_result.resize(space.blocks.size());
+    vector_result.resize(space.getBlocks().size());
 
 #pragma omp parallel for shared(space, vector_result) default(none)
-    for (size_t i = 0; i < space.blocks.size(); ++i) {
-        Subspace& subspace_parent = space.blocks[i];
+    for (size_t i = 0; i < space.getBlocks().size(); ++i) {
+        Subspace& subspace_parent = space.getBlocks()[i];
         uint32_t old_dimensionality = subspace_parent.properties.dimensionality;
         if (old_dimensionality == 1) {
             // it is senseless to modify subspaces with old_dimensionality == 1:

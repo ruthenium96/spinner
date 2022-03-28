@@ -6,11 +6,11 @@ namespace space::optimization {
 
 Space TzSorter::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
-    vector_result.resize(space.blocks.size() * (max_ntz_proj + 1));
+    vector_result.resize(space.getBlocks().size() * (max_ntz_proj + 1));
 
 #pragma omp parallel for shared(space, vector_result) default(none)
-    for (size_t i = 0; i < space.blocks.size(); ++i) {
-        Subspace& subspace_parent = space.blocks[i];
+    for (size_t i = 0; i < space.getBlocks().size(); ++i) {
+        Subspace& subspace_parent = space.getBlocks()[i];
 
         for (size_t ntz_proj = 0; ntz_proj < max_ntz_proj + 1; ++ntz_proj) {
             BlockProperties block_properties = subspace_parent.properties;

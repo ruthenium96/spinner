@@ -13,8 +13,8 @@ Space PositiveProjectionsEliminator::apply(Space&& space) const {
 
     std::vector<Subspace> vector_result;
 
-    for (size_t i = 0; i < space.blocks.size(); ++i) {
-        Subspace& subspace_parent = space.blocks[i];
+    for (size_t i = 0; i < space.getBlocks().size(); ++i) {
+        Subspace& subspace_parent = space.getBlocks()[i];
         uint32_t ntz_projection = subspace_parent.properties.n_proj.value();
         if (ntz_projection > half_of_max_projection) {
             continue;

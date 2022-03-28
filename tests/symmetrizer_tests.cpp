@@ -4,7 +4,7 @@
 
 size_t number_of_vectors(const space::Space& space) {
     size_t acc = 0;
-    for (const auto& subspace : space.blocks) {
+    for (const auto& subspace : space.getBlocks()) {
         acc += subspace.decomposition.size();
     }
     return acc;
@@ -12,7 +12,7 @@ size_t number_of_vectors(const space::Space& space) {
 
 bool orthogonality_of_basis(const space::Space& space) {
     UnitarySparseMatrix unitary_matrix;
-    for (const auto& subspace : space.blocks) {
+    for (const auto& subspace : space.getBlocks()) {
         unitary_matrix.copy_all_from(subspace.decomposition);
     }
     bool answer = true;
@@ -170,8 +170,8 @@ TEST(symmetrizer, 333333_S2xS3_S3xS2_direct_product_commutativity) {
     runner_second.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
     runner_second.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
 
-    for (const auto& subspace_first : runner_first.getSpace().blocks) {
-        for (const auto& subspace_second : runner_second.getSpace().blocks) {
+    for (const auto& subspace_first : runner_first.getSpace().getBlocks()) {
+        for (const auto& subspace_second : runner_second.getSpace().getBlocks()) {
             if (subspace_first.properties.representation[0]
                     == subspace_second.properties.representation[1]
                 && subspace_first.properties.representation[1]
