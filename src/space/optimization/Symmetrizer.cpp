@@ -25,6 +25,8 @@ bool OrbitOfCentersHasTheSameValueOfMultiplicity(
 }
 }  // namespace
 
+namespace space::optimization {
+
 Symmetrizer::Symmetrizer(lexicographic::IndexConverter converter, group::Group group) :
     converter_(std::move(converter)),
     group_(std::move(group)) {
@@ -222,3 +224,4 @@ void Symmetrizer::move_vector_and_remember_it(
         hs[item.index].emplace_back(subspace_to.decomposition.size() - 1);
     }
 }
+}  // namespace space::optimization

@@ -6,4 +6,4 @@ add_library(common
         runner/Runner.cpp
         Quantity.cpp)
 
-target_link_libraries(common model components magnetic_susceptibility stlbfgs)
+target_link_libraries(common model space magnetic_susceptibility stlbfgs)

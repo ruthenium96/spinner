@@ -5,12 +5,12 @@
 #include <vector>
 
 #include "Submatrix.h"
-#include "src/entities/space/Space.h"
+#include "src/space/Space.h"
 
 struct Matrix {
     Matrix() = default;
     Matrix(
-        const Space& space,
+        const space::Space& space,
         const model::operators::Operator& new_operator,
         const lexicographic::IndexConverter& converter);
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <mutex>
 
-#include "src/entities/space/Space.h"
+#include "src/space/Space.h"
 extern std::mutex logMutex;
 // clang-format off
 #define LOG(t,x) do{\

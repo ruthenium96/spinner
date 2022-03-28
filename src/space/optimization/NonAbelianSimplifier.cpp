@@ -1,5 +1,7 @@
 #include "NonAbelianSimplifier.h"
 
+namespace space::optimization {
+
 Space NonAbelianSimplifier::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size());
@@ -27,3 +29,4 @@ Space NonAbelianSimplifier::apply(Space&& space) const {
     }
     return Space(std::move(vector_result));
 }
+}  // namespace space::optimization

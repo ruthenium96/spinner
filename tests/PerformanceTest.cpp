@@ -3,9 +3,9 @@
 #include "gtest/gtest.h"
 #include "src/common/Logger.h"
 #include "src/common/runner/Runner.h"
-#include "src/components/space/Symmetrizer.h"
-#include "src/components/space/TzSorter.h"
-#include "src/entities/space/Space.h"
+#include "src/space/Space.h"
+#include "src/space/optimization/Symmetrizer.h"
+#include "src/space/optimization/TzSorter.h"
 
 void PerformanceTest(std::function<void(void)> f, int cycles = 1) {
     auto start = std::chrono::high_resolution_clock::now();

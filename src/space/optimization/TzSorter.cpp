@@ -2,6 +2,8 @@
 
 #include <utility>
 
+namespace space::optimization {
+
 Space TzSorter::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
     vector_result.resize(space.blocks.size() * (max_ntz_proj + 1));
@@ -37,3 +39,4 @@ Space TzSorter::apply(Space&& space) const {
 TzSorter::TzSorter(lexicographic::IndexConverter indexes) : converter_(std::move(indexes)) {
     max_ntz_proj = converter_.get_max_ntz_proj();
 }
+}  // namespace space::optimization

@@ -4,12 +4,12 @@
 
 #include <utility>
 
-#include "src/components/space/NonAbelianSimplifier.h"
-#include "src/components/space/PositiveProjectionsEliminator.h"
-#include "src/components/space/Symmetrizer.h"
-#include "src/components/space/TzSorter.h"
 #include "src/model/operators/ConstantTerm.h"
 #include "src/model/operators/ScalarProductTerm.h"
+#include "src/space/optimization/NonAbelianSimplifier.h"
+#include "src/space/optimization/PositiveProjectionsEliminator.h"
+#include "src/space/optimization/Symmetrizer.h"
+#include "src/space/optimization/TzSorter.h"
 
 runner::Runner::Runner(model::Model model) :
     model_(std::move(model)),
@@ -37,7 +37,7 @@ void runner::Runner::EliminatePositiveProjections() {
 
     uint32_t max_ntz_proj = getIndexConverter().get_max_ntz_proj();
 
-    PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
+    space::optimization::PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
     space_ = positiveProjectionsEliminator.apply(std::move(space_));
     space_history_.isPositiveProjectionsEliminated = true;
 }
@@ -53,7 +53,7 @@ void runner::Runner::NonAbelianSimplify() {
             "Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
             "currently is not allowed.");
     }
-    NonAbelianSimplifier nonAbelianSimplifier;
+    space::optimization::NonAbelianSimplifier nonAbelianSimplifier;
     space_ = nonAbelianSimplifier.apply(std::move(space_));
     space_history_.number_of_non_simplified_abelian_groups = 0;
     space_history_.isNonAbelianSimplified = true;
@@ -75,7 +75,7 @@ void runner::Runner::Symmetrize(group::Group new_group) {
             "Symmetrization after using of non-Abelian simplifier causes bugs.");
     }
 
-    Symmetrizer symmetrizer(getIndexConverter(), new_group);
+    space::optimization::Symmetrizer symmetrizer(getIndexConverter(), new_group);
     space_ = symmetrizer.apply(std::move(space_));
 
     if (!new_group.properties.is_abelian) {
@@ -98,12 +98,12 @@ void runner::Runner::TzSort() {
     if (space_history_.isTzSorted) {
         return;
     }
-    TzSorter tz_sorter(getIndexConverter());
+    space::optimization::TzSorter tz_sorter(getIndexConverter());
     space_ = tz_sorter.apply(std::move(space_));
     space_history_.isTzSorted = true;
 }
 
-const Space& runner::Runner::getSpace() const {
+const space::Space& runner::Runner::getSpace() const {
     return space_;
 }
 

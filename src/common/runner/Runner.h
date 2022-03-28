@@ -7,10 +7,10 @@
 #include "src/entities/magnetic_susceptibility/MuSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
-#include "src/entities/space/Space.h"
 #include "src/entities/spectrum/Spectrum.h"
 #include "src/group/Group.h"
 #include "src/model/Model.h"
+#include "src/space/Space.h"
 
 // TODO: check symmetry consistency of symbols and groups.
 namespace runner {
@@ -50,7 +50,7 @@ class Runner {
 
     const lexicographic::IndexConverter& getIndexConverter() const;
     const model::operators::Operator& getOperator(common::QuantityEnum) const;
-    const Space& getSpace() const;
+    const space::Space& getSpace() const;
     const Spectrum& getSpectrum(common::QuantityEnum) const;
     const Matrix& getMatrix(common::QuantityEnum) const;
     const model::operators::Operator& getOperatorDerivative(
@@ -85,7 +85,7 @@ class Runner {
         bool isPositiveProjectionsEliminated = false;
     };
 
-    Space space_;
+    space::Space space_;
 
     common::Quantity energy;
     std::optional<common::Quantity> s_squared;

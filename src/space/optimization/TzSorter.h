@@ -4,8 +4,9 @@
 #include <numeric>
 #include <utility>
 
-#include "src/entities/space/Space.h"
+#include "src/space/Space.h"
 
+namespace space::optimization {
 class TzSorter {
   public:
     explicit TzSorter(lexicographic::IndexConverter converter);
@@ -16,5 +17,6 @@ class TzSorter {
     const lexicographic::IndexConverter converter_;
     uint32_t max_ntz_proj;
 };
+}  // namespace space::optimization
 
 #endif  //JULY_TZSORTER_H

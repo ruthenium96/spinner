@@ -3,8 +3,8 @@
 
 #include "src/entities/BlockProperties.h"
 #include "src/entities/data_structures/DenseMatrix.h"
-#include "src/entities/space/Subspace.h"
 #include "src/model/operators/Operator.h"
+#include "src/space/Subspace.h"
 
 struct Submatrix {
     BlockProperties properties;
@@ -13,7 +13,7 @@ struct Submatrix {
     Submatrix() = default;
 
     Submatrix(
-        const Subspace& subspace,
+        const space::Subspace& subspace,
         const model::operators::Operator& new_operator,
         const lexicographic::IndexConverter& converter);
     friend std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);

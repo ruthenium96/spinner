@@ -1,7 +1,9 @@
 #ifndef JULY_POSITIVEPROJECTIONSELIMINATOR_H
 #define JULY_POSITIVEPROJECTIONSELIMINATOR_H
 
-#include "src/entities/space/Space.h"
+#include "src/space/Space.h"
+
+namespace space::optimization {
 
 class PositiveProjectionsEliminator {
   public:
@@ -11,5 +13,6 @@ class PositiveProjectionsEliminator {
   private:
     uint32_t max_ntz_proj_;
 };
+}  // namespace space::optimization
 
 #endif  //JULY_POSITIVEPROJECTIONSELIMINATOR_H

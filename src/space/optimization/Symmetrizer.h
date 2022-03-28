@@ -7,8 +7,10 @@
 #include <unordered_set>
 #include <vector>
 
-#include "src/entities/space/Space.h"
 #include "src/group/Group.h"
+#include "src/space/Space.h"
+
+namespace space::optimization {
 
 class Symmetrizer {
   public:
@@ -45,5 +47,6 @@ class Symmetrizer {
     const lexicographic::IndexConverter converter_;
     const group::Group group_;
 };
+}  // namespace space::optimization
 
 #endif  // JULY_SYMMETRIZER_H

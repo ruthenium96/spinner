@@ -4,7 +4,7 @@
 #include "src/common/Logger.h"
 #include "src/common/runner/Runner.h"
 
-void compare_two_spaces(const Space& one, const Space& two) {
+void compare_two_spaces(const space::Space& one, const space::Space& two) {
     ASSERT_EQ(one.blocks.size(), two.blocks.size()) << "Numbers of subspaces do not equal";
     for (size_t i = 0; i < one.blocks.size(); ++i) {
         uint32_t one_dimensionality = one.blocks[i].properties.dimensionality;

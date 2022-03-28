@@ -14,7 +14,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
         // Construct Space
-        Space space_(converter.get_total_space_size());
+        space::Space space_(converter.get_total_space_size());
 
         for (int constant = 0; constant < 100; constant += 11) {
             // Construct Operator
@@ -53,7 +53,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
         // Construct Space
-        Space space_(converter.get_total_space_size());
+        space::Space space_(converter.get_total_space_size());
 
         // Construct Operator
         model::operators::Operator operator_;
@@ -98,7 +98,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
         // Construct Space
-        Space space_(converter.get_total_space_size());
+        space::Space space_(converter.get_total_space_size());
 
         // Construct Operator
         model::operators::Operator operator_;

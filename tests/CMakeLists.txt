@@ -12,4 +12,4 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/tests/magnetic_susceptibility_tests.cpp
         ${CMAKE_SOURCE_DIR}/tests/spectrum_final_equivalence_tests.cpp)
 
-target_link_libraries(julytest gtest gtest_main group components space model common matrix magnetic_susceptibility)
+target_link_libraries(julytest gtest gtest_main group space model spectrum common matrix magnetic_susceptibility)

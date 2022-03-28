@@ -1,5 +1,7 @@
 #include "PositiveProjectionsEliminator.h"
 
+namespace space::optimization {
+
 PositiveProjectionsEliminator::PositiveProjectionsEliminator(uint32_t max_ntz_proj) :
     max_ntz_proj_(max_ntz_proj) {}
 
@@ -26,3 +28,4 @@ Space PositiveProjectionsEliminator::apply(Space&& space) const {
     }
     return Space(std::move(vector_result));
 }
+}  // namespace space::optimization

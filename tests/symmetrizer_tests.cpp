@@ -2,7 +2,7 @@
 #include "src/common/Logger.h"
 #include "src/common/runner/Runner.h"
 
-size_t number_of_vectors(const Space& space) {
+size_t number_of_vectors(const space::Space& space) {
     size_t acc = 0;
     for (const auto& subspace : space.blocks) {
         acc += subspace.decomposition.size();
@@ -10,7 +10,7 @@ size_t number_of_vectors(const Space& space) {
     return acc;
 }
 
-bool orthogonality_of_basis(const Space& space) {
+bool orthogonality_of_basis(const space::Space& space) {
     UnitarySparseMatrix unitary_matrix;
     for (const auto& subspace : space.blocks) {
         unitary_matrix.copy_all_from(subspace.decomposition);

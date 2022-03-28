@@ -1,5 +1,5 @@
 #include "Space.h"
-
+namespace space {
 Space::Space(uint32_t total_space_size) {
     UnitarySparseMatrix identity_decomposition;
     identity_decomposition.tensor_size = total_space_size;
@@ -17,9 +17,10 @@ Space::Space(std::vector<Subspace>&& v) {
         }
     }
 }
+}  // namespace space
 
-std::ostream& operator<<(std::ostream& os, const Space& space) {
-    for (const Subspace& subspace : space.blocks) {
+std::ostream& operator<<(std::ostream& os, const space::Space& space) {
+    for (const space::Subspace& subspace : space.blocks) {
         os << subspace;
     }
     os << "------" << std::endl;
