@@ -4,6 +4,7 @@ add_library(common
         lexicographic/SparseMatrix-arma-sp-mat.cpp
         Logger.h
         runner/Runner.cpp
-        Quantity.cpp)
+        Quantity.cpp
+        physical_optimization/OptimizationList.cpp physical_optimization/OptimizationList.h)
 
 target_link_libraries(common model space magnetic_susceptibility stlbfgs)

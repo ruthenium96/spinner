@@ -11,8 +11,18 @@
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TzSorter.h"
 
-runner::Runner::Runner(model::Model model) :
+namespace runner {
+
+Runner::Runner(model::Model model) :
+    Runner(std::move(model), common::physical_optimization::OptimizationList()) {}
+
+Runner::Runner(
+    model::Model model,
+    common::physical_optimization::OptimizationList optimizationList) :
     model_(std::move(model)),
+    optimizationList_(std::move(optimizationList)),
+    // TODO: Move it from here, because we do not need to allocate Space if Model
+    //  and OptimizationList are not consistence.
     space_(model_.getIndexConverter().get_total_space_size()) {
     if (model_.is_s_squared_initialized()) {
         s_squared = common::Quantity();
@@ -23,28 +33,47 @@ runner::Runner::Runner(model::Model model) :
             derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
         }
     }
+    // TODO: check here model_ and optimizationList_ consistence!
+
+    for (const auto& applied_group : optimizationList_.getGroupsToApply()) {
+        if (!getSymbols().symmetry_consistence(applied_group)) {
+            throw std::invalid_argument("Symbols do not match applied symmetries");
+            // TODO: should we rename this exception?
+        }
+    }
+
+    if (getSymbols().isIsotropicExchangeInitialized()) {
+        model_.InitializeIsotropicExchange();
+    }
+
+    //    if (!symbols_.isGFactorInitialized()) {
+    //        throw std::length_error("g factor parameters have not been initialized");
+    //    }
+
+    if (optimizationList_.isTzSorted()) {
+        TzSort();
+    }
+    if (optimizationList_.isPositiveProjectionsEliminated()) {
+        EliminatePositiveProjections();
+    }
+    for (const auto& group : optimizationList_.getGroupsToApply()) {
+        Symmetrize(group);
+    }
+    for (auto& subspace : space_.getBlocks()) {
+        // TODO: maybe, we can implement normalize as Space method
+        subspace.decomposition.normalize();
+    }
+    space_history_.isNormalized = true;
 }
 
-void runner::Runner::EliminatePositiveProjections() {
-    throw_if_model_is_finished("Cannot eliminate positive projections after model was finished");
-    if (space_history_.isPositiveProjectionsEliminated) {
-        return;
-    }
-
-    if (!space_history_.isTzSorted) {
-        throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
-    }
-
+void Runner::EliminatePositiveProjections() {
     uint32_t max_ntz_proj = getIndexConverter().get_max_ntz_proj();
 
     space::optimization::PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
     space_ = positiveProjectionsEliminator.apply(std::move(space_));
-    space_history_.isPositiveProjectionsEliminated = true;
 }
 
-void runner::Runner::NonAbelianSimplify() {
-    throw_if_model_is_finished("Cannot non-Abelian simplify after model was finished");
-
+void Runner::NonAbelianSimplify() {
     if (space_history_.number_of_non_simplified_abelian_groups == 0) {
         return;
     }
@@ -59,16 +88,7 @@ void runner::Runner::NonAbelianSimplify() {
     space_history_.isNonAbelianSimplified = true;
 }
 
-void runner::Runner::Symmetrize(group::Group new_group) {
-    throw_if_model_is_finished("Cannot symmetrize after model was finished");
-
-    // check if user trying to use the same Group for a second time:
-    if (std::count(
-            space_history_.applied_groups.begin(),
-            space_history_.applied_groups.end(),
-            new_group)) {
-        return;
-    }
+void Runner::Symmetrize(group::Group new_group) {
     // TODO: symmetrizer does not work correct after non-Abelian simplifier. Fix it.
     if (space_history_.isNonAbelianSimplified && !new_group.properties.is_abelian) {
         throw std::invalid_argument(
@@ -81,35 +101,18 @@ void runner::Runner::Symmetrize(group::Group new_group) {
     if (!new_group.properties.is_abelian) {
         ++space_history_.number_of_non_simplified_abelian_groups;
     }
-    space_history_.applied_groups.emplace_back(std::move(new_group));
 }
 
-void runner::Runner::Symmetrize(
-    group::Group::GroupTypeEnum group_name,
-    std::vector<group::Permutation> generators) {
-    group::Group new_group(group_name, std::move(generators));
-    Symmetrize(new_group);
-}
-
-void runner::Runner::TzSort() {
-    throw_if_model_is_finished("Cannot Tz-sort after model was finished");
-
-    // It does not make any sense to use tz_sorter twice.
-    if (space_history_.isTzSorted) {
-        return;
-    }
+void Runner::TzSort() {
     space::optimization::TzSorter tz_sorter(getIndexConverter());
     space_ = tz_sorter.apply(std::move(space_));
-    space_history_.isTzSorted = true;
 }
 
 const space::Space& runner::Runner::getSpace() const {
     return space_;
 }
 
-void runner::Runner::BuildMatrices() {
-    finish_the_model();
-
+void Runner::BuildMatrices() {
     if (!getOperator(common::Energy).empty()) {
         energy.matrix_ = Matrix(getSpace(), getOperator(common::Energy), getIndexConverter());
     }
@@ -128,9 +131,7 @@ void runner::Runner::BuildMatrices() {
     matrix_history_.matrices_was_built = true;
 }
 
-void runner::Runner::BuildSpectra() {
-    finish_the_model();
-
+void Runner::BuildSpectra() {
     size_t number_of_blocks = getSpace().getBlocks().size();
 
     if (!getOperator(common::Energy).empty()) {
@@ -153,7 +154,7 @@ void runner::Runner::BuildSpectra() {
     }
 }
 
-void runner::Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
+void Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         energy.spectrum_.blocks[block] =
@@ -173,7 +174,7 @@ void runner::Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
     }
 }
 
-void runner::Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
+void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         DenseMatrix unitary_transformation_matrix;
         {
@@ -206,7 +207,7 @@ void runner::Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
     }
 }
 
-const Matrix& runner::Runner::getMatrix(common::QuantityEnum quantity_enum) const {
+const Matrix& Runner::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         return energy.matrix_;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
@@ -214,7 +215,7 @@ const Matrix& runner::Runner::getMatrix(common::QuantityEnum quantity_enum) cons
     }
 }
 
-const Spectrum& runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
+const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         return energy.spectrum_;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
@@ -222,23 +223,22 @@ const Spectrum& runner::Runner::getSpectrum(common::QuantityEnum quantity_enum) 
     }
 }
 
-const model::operators::Operator&
-runner::Runner::getOperator(common::QuantityEnum quantity_enum) const {
+const model::operators::Operator& Runner::getOperator(common::QuantityEnum quantity_enum) const {
     return model_.getOperator(quantity_enum);
 }
 
-const lexicographic::IndexConverter& runner::Runner::getIndexConverter() const {
+const lexicographic::IndexConverter& Runner::getIndexConverter() const {
     return model_.getIndexConverter();
 }
 
-const model::operators::Operator& runner::Runner::getOperatorDerivative(
+const model::operators::Operator& Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
     return model_.getOperatorDerivative(quantity_enum, symbol_type, symbol);
 }
 
-const Spectrum& runner::Runner::getSpectrumDerivative(
+const Spectrum& Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
@@ -249,7 +249,7 @@ const Spectrum& runner::Runner::getSpectrumDerivative(
     }
 }
 
-const Matrix& runner::Runner::getMatrixDerivative(
+const Matrix& Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
@@ -260,7 +260,7 @@ const Matrix& runner::Runner::getMatrixDerivative(
     }
 }
 
-void runner::Runner::BuildMuSquaredWorker() {
+void Runner::BuildMuSquaredWorker() {
     DenseVector energy_vector;
     DenseVector degeneracy_vector;
 
@@ -298,7 +298,7 @@ void runner::Runner::BuildMuSquaredWorker() {
     }
 }
 
-void runner::Runner::initializeExperimentalValues(
+void Runner::initializeExperimentalValues(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
     magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
     double number_of_centers_ratio) {
@@ -318,7 +318,7 @@ void runner::Runner::initializeExperimentalValues(
     }
 }
 
-std::map<model::symbols::SymbolName, double> runner::Runner::calculateTotalDerivatives() {
+std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {
     // TODO: ony s_squared-based calculation supported
 
     std::map<model::symbols::SymbolName, double> answer;
@@ -348,7 +348,7 @@ std::map<model::symbols::SymbolName, double> runner::Runner::calculateTotalDeriv
     return answer;
 }
 
-void runner::Runner::minimizeResidualError() {
+void Runner::minimizeResidualError() {
     std::vector<model::symbols::SymbolName> changeable_names = getSymbols().getChangeableNames();
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
@@ -369,7 +369,7 @@ void runner::Runner::minimizeResidualError() {
     }
 }
 
-void runner::Runner::stepOfRegression(
+void Runner::stepOfRegression(
     const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
     double& residual_error,
@@ -399,47 +399,11 @@ void runner::Runner::stepOfRegression(
     }
 }
 
-const magnetic_susceptibility::MuSquaredWorker& runner::Runner::getMuSquaredWorker() const {
+const magnetic_susceptibility::MuSquaredWorker& Runner::getMuSquaredWorker() const {
     return *mu_squared_worker.value();
 }
 
-const model::symbols::Symbols& runner::Runner::getSymbols() const {
+const model::symbols::Symbols& Runner::getSymbols() const {
     return model_.getSymbols();
 }
-
-void runner::Runner::finish_the_model() {
-    if (model_is_finished) {
-        return;
-    }
-
-    if (getSymbols().isIsotropicExchangeInitialized()) {
-        model_.InitializeIsotropicExchange();
-    }
-
-    //    if (!symbols_.isGFactorInitialized()) {
-    //        throw std::length_error("g factor parameters have not been initialized");
-    //    }
-
-    for (const auto& applied_group : space_history_.applied_groups) {
-        if (!getSymbols().symmetry_consistence(applied_group)) {
-            throw std::invalid_argument("Symbols do not match applied symmetries");
-            // TODO: should we rename this exception?
-        }
-    }
-
-    if (!space_history_.isNormalized) {
-        for (auto& subspace : space_.getBlocks()) {
-            // TODO: maybe, we can implement normalize as Space method
-            subspace.decomposition.normalize();
-        }
-        space_history_.isNormalized = true;
-    }
-
-    model_is_finished = true;
-}
-
-void runner::Runner::throw_if_model_is_finished(const std::string& error) {
-    if (model_is_finished) {
-        throw std::invalid_argument(error);
-    }
-}
+}  // namespace runner

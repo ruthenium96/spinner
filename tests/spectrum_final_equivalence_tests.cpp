@@ -114,106 +114,69 @@ TEST(spectrum_final_equivalence, rectangle) {
 
             // TZ_SORTER
             {
-                runner::Runner runner_tz_sorted(model);
-                runner_tz_sorted.TzSort();
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort();
+                runner::Runner runner_tz_sorted(model, optimizationList);
                 expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
             }
             // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_tz_sorted_eliminated(model);
-                runner_tz_sorted_eliminated.TzSort();
-                runner_tz_sorted_eliminated.EliminatePositiveProjections();
-                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_eliminated);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections();
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // SYMMETRIZER
             {
-                runner::Runner runner_first_direction(model);
-                runner_first_direction.Symmetrize(first_direction);
-                expect_final_vectors_equivalence(runner_simple, runner_first_direction);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.Symmetrize(first_direction);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             {
-                runner::Runner runner_second_direction(model);
-                runner_second_direction.Symmetrize(second_direction);
-                expect_final_vectors_equivalence(runner_simple, runner_second_direction);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.Symmetrize(second_direction);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // TZ_SORTER + SYMMETRIZER
             {
-                runner::Runner runner_first_direction_tz_sorted(model);
-                runner_first_direction_tz_sorted.TzSort();
-                runner_first_direction_tz_sorted.Symmetrize(first_direction);
-                expect_final_vectors_equivalence(runner_simple, runner_first_direction_tz_sorted);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().Symmetrize(first_direction);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             {
-                runner::Runner runner_second_direction_tz_sorted(model);
-                runner_second_direction_tz_sorted.TzSort();
-                runner_second_direction_tz_sorted.Symmetrize(second_direction);
-                expect_final_vectors_equivalence(runner_simple, runner_second_direction_tz_sorted);
-            }
-            // SYMMETRIZER + TZ_SORTER
-            {
-                runner::Runner runner_first_direction_tz_sorted(model);
-                runner_first_direction_tz_sorted.Symmetrize(first_direction);
-                runner_first_direction_tz_sorted.TzSort();
-                expect_final_vectors_equivalence(runner_simple, runner_first_direction_tz_sorted);
-            }
-            {
-                runner::Runner runner_second_direction_tz_sorted(model);
-                runner_second_direction_tz_sorted.Symmetrize(second_direction);
-                runner_second_direction_tz_sorted.TzSort();
-                expect_final_vectors_equivalence(runner_simple, runner_second_direction_tz_sorted);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().Symmetrize(second_direction);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // SYMMETRIZER + SYMMETRIZER
             {
-                runner::Runner runner_both_directions(model);
-                runner_both_directions.Symmetrize(first_direction);
-                runner_both_directions.Symmetrize(second_direction);
-                expect_final_vectors_equivalence(runner_simple, runner_both_directions);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.Symmetrize(first_direction).Symmetrize(second_direction);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // TZ_SORTER + SYMMETRIZER + SYMMETRIZER
             {
-                runner::Runner runner_both_directions_tz_sorted(model);
-                runner_both_directions_tz_sorted.TzSort();
-                runner_both_directions_tz_sorted.Symmetrize(first_direction);
-                runner_both_directions_tz_sorted.Symmetrize(second_direction);
-                expect_final_vectors_equivalence(runner_simple, runner_both_directions_tz_sorted);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().Symmetrize(first_direction).Symmetrize(second_direction);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
-            // SYMMETRIZER + TZ_SORTER + SYMMETRIZER
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + SYMMETRIZER
             {
-                runner::Runner runner_both_directions_tz_sorted(model);
-                runner_both_directions_tz_sorted.Symmetrize(first_direction);
-                runner_both_directions_tz_sorted.TzSort();
-                runner_both_directions_tz_sorted.Symmetrize(second_direction);
-                expect_final_vectors_equivalence(runner_simple, runner_both_directions_tz_sorted);
-            }
-            // SYMMETRIZER + SYMMETRIZER + TZ_SORTER
-            {
-                runner::Runner runner_both_directions_tz_sorted(model);
-                runner_both_directions_tz_sorted.Symmetrize(first_direction);
-                runner_both_directions_tz_sorted.Symmetrize(second_direction);
-                runner_both_directions_tz_sorted.TzSort();
-                expect_final_vectors_equivalence(runner_simple, runner_both_directions_tz_sorted);
-            }
-            // TZ_SORTER + SYMMETRIZER + SYMMETRIZER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                runner::Runner runner_both_directions_tz_sorted_eliminated(model);
-                runner_both_directions_tz_sorted_eliminated.TzSort();
-                runner_both_directions_tz_sorted_eliminated.Symmetrize(first_direction);
-                runner_both_directions_tz_sorted_eliminated.Symmetrize(second_direction);
-                runner_both_directions_tz_sorted_eliminated.EliminatePositiveProjections();
-                expect_final_vectors_equivalence(
-                    runner_simple,
-                    runner_both_directions_tz_sorted_eliminated);
-            }
-            // SYMMETRIZER + SYMMETRIZER + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                runner::Runner runner_both_directions_tz_sorted_eliminated(model);
-                runner_both_directions_tz_sorted_eliminated.Symmetrize(first_direction);
-                runner_both_directions_tz_sorted_eliminated.Symmetrize(second_direction);
-                runner_both_directions_tz_sorted_eliminated.TzSort();
-                runner_both_directions_tz_sorted_eliminated.EliminatePositiveProjections();
-                expect_final_vectors_equivalence(
-                    runner_simple,
-                    runner_both_directions_tz_sorted_eliminated);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(first_direction)
+                    .Symmetrize(second_direction);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
         }
     }
@@ -246,72 +209,49 @@ TEST(spectrum_final_equivalence, triangle) {
 
             // TZ_SORTER
             {
-                runner::Runner runner_tz_sorted(model);
-                runner_tz_sorted.TzSort();
-                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort();
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
             {
-                runner::Runner runner_tz_sorted_eliminated(model);
-                runner_tz_sorted_eliminated.TzSort();
-                runner_tz_sorted_eliminated.EliminatePositiveProjections();
-                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_eliminated);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections();
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // SYMMETRIZER
             {
-                runner::Runner runner_symmetrized(model);
-                runner_symmetrized.Symmetrize(triangle);
-                expect_final_vectors_equivalence(runner_simple, runner_symmetrized);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.Symmetrize(triangle);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             {
                 group::Group triangle_diff(group::Group::S3, {{1, 2, 0}, {2, 1, 0}});
-                runner::Runner runner_symmetrized(model);
-                runner_symmetrized.Symmetrize(triangle_diff);
-                expect_final_vectors_equivalence(runner_simple, runner_symmetrized);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.Symmetrize(triangle_diff);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // TZ_SORTER + SYMMETRIZER
             {
-                runner::Runner runner_symmetrized_tz_sorted(model);
-                runner_symmetrized_tz_sorted.TzSort();
-                runner_symmetrized_tz_sorted.Symmetrize(triangle);
-                expect_final_vectors_equivalence(runner_simple, runner_symmetrized_tz_sorted);
-            }
-            // SYMMETRIZER + TZ_SORTER
-            {
-                runner::Runner runner_symmetrized_tz_sorted(model);
-                runner_symmetrized_tz_sorted.Symmetrize(triangle);
-                runner_symmetrized_tz_sorted.TzSort();
-                expect_final_vectors_equivalence(runner_simple, runner_symmetrized_tz_sorted);
-            }
-            // TZ_SORTER + SYMMETRIZER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                runner::Runner runner_symmetrized_tz_sorted_eliminated(model);
-                runner_symmetrized_tz_sorted_eliminated.TzSort();
-                runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
-                runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
-                expect_final_vectors_equivalence(
-                    runner_simple,
-                    runner_symmetrized_tz_sorted_eliminated);
-            }
-            // SYMMETRIZER + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                runner::Runner runner_symmetrized_tz_sorted_eliminated(model);
-                runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
-                runner_symmetrized_tz_sorted_eliminated.TzSort();
-                runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
-                expect_final_vectors_equivalence(
-                    runner_simple,
-                    runner_symmetrized_tz_sorted_eliminated);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().Symmetrize(triangle);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
             {
-                runner::Runner runner_symmetrized_tz_sorted_eliminated(model);
-                runner_symmetrized_tz_sorted_eliminated.TzSort();
-                runner_symmetrized_tz_sorted_eliminated.EliminatePositiveProjections();
-                runner_symmetrized_tz_sorted_eliminated.Symmetrize(triangle);
-                expect_final_vectors_equivalence(
-                    runner_simple,
-                    runner_symmetrized_tz_sorted_eliminated);
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().Symmetrize(triangle);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
             }
             //            // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
             //            {

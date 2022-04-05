@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "src/common/Quantity.h"
+#include "src/common/physical_optimization/OptimizationList.h"
 #include "src/entities/magnetic_susceptibility/MuSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
@@ -16,20 +17,11 @@
 namespace runner {
 class Runner {
   public:
+    Runner(model::Model model, common::physical_optimization::OptimizationList optimizationList);
+    // constructor for Runner with no optimizations:
     explicit Runner(model::Model model);
 
-    //    explicit Runner(const std::vector<int>& mults);
-
     // SPACE OPERATIONS
-    void EliminatePositiveProjections();
-
-    void NonAbelianSimplify();
-
-    void Symmetrize(group::Group new_group);
-    void
-    Symmetrize(group::Group::GroupTypeEnum group_name, std::vector<group::Permutation> generators);
-
-    void TzSort();
 
     // SYMBOLS OPERATIONS
 
@@ -69,23 +61,23 @@ class Runner {
     const model::symbols::Symbols& getSymbols() const;
 
   private:
-    bool model_is_finished = false;
-
     model::Model model_;
+    const common::physical_optimization::OptimizationList optimizationList_;
 
     struct MatrixHistory {
         bool matrices_was_built = false;
     };
     struct SpaceHistory {
-        std::vector<group::Group> applied_groups;
         uint32_t number_of_non_simplified_abelian_groups = 0;
-        bool isTzSorted = false;
         bool isNormalized = false;  // actually true, if we do not use Symmetrizer
         bool isNonAbelianSimplified = false;
-        bool isPositiveProjectionsEliminated = false;
     };
 
     space::Space space_;
+    void EliminatePositiveProjections();
+    void NonAbelianSimplify();
+    void Symmetrize(group::Group new_group);
+    void TzSort();
 
     common::Quantity energy;
     std::optional<common::Quantity> s_squared;
@@ -105,10 +97,6 @@ class Runner {
 
     void BuildSpectraUsingMatrices(size_t number_of_blocks);
     void BuildSpectraWithoutMatrices(size_t number_of_blocks);
-
-    // TODO: delete these functions after refactoring.
-    void finish_the_model();
-    void throw_if_model_is_finished(const std::string& error);
 
     MatrixHistory matrix_history_;
     SpaceHistory space_history_;

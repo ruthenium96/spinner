@@ -27,13 +27,12 @@ TEST(symbols, throw_2222_isotropic_inconsistent_symmetry) {
         .assignSymbolToIsotropicExchange(doubledJ, 2, 3)
         .assignSymbolToIsotropicExchange(J, 3, 0);
 
-    runner::Runner runner(model);
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort()
+        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-    runner.TzSort();
-    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
-
-    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
+    EXPECT_THROW(runner::Runner runner(model, optimizationList), std::invalid_argument);
 }
 
 TEST(symbols, throw_2222_isotropic_accidental_symmetry) {
@@ -48,13 +47,12 @@ TEST(symbols, throw_2222_isotropic_accidental_symmetry) {
         .assignSymbolToIsotropicExchange(firstJ, 2, 3)
         .assignSymbolToIsotropicExchange(secondJ, 3, 0);
 
-    runner::Runner runner(model);
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort()
+        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-    runner.TzSort();
-    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
-
-    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
+    EXPECT_THROW(runner::Runner runner(model, optimizationList), std::invalid_argument);
 }
 
 TEST(symbols, throw_2222_gfactor_inconsistent_symmetry) {
@@ -74,13 +72,12 @@ TEST(symbols, throw_2222_gfactor_inconsistent_symmetry) {
         .assignSymbolToGFactor(firstg, 2)
         .assignSymbolToGFactor(secondg, 3);
 
-    runner::Runner runner(model);
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort()
+        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-    runner.TzSort();
-    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
-
-    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
+    EXPECT_THROW(runner::Runner runner(model, optimizationList), std::invalid_argument);
 }
 
 TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
@@ -101,13 +98,12 @@ TEST(symbols, throw_2222_gfactor_accidental_symmetry) {
         .assignSymbolToGFactor(firstg, 2)
         .assignSymbolToGFactor(secondg, 3);
 
-    runner::Runner runner(model);
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort()
+        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
 
-    runner.TzSort();
-    runner.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-    runner.Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
-
-    EXPECT_THROW(runner.BuildMatrices(), std::invalid_argument);
+    EXPECT_THROW(runner::Runner runner(model, optimizationList), std::invalid_argument);
 }
 
 // TODO: make these tests pass
