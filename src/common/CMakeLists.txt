@@ -5,6 +5,7 @@ add_library(common
         Logger.h
         runner/Runner.cpp
         Quantity.cpp
-        physical_optimization/OptimizationList.cpp physical_optimization/OptimizationList.h)
+        physical_optimization/OptimizationList.cpp physical_optimization/OptimizationList.h
+        runner/ModelOptimizationListConsistence.cpp runner/ModelOptimizationListConsistence.h)
 
 target_link_libraries(common model space magnetic_susceptibility stlbfgs)

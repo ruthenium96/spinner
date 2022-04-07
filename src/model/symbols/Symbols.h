@@ -21,13 +21,14 @@ class Symbols {
     bool isAllGFactorsEqual() const;
     bool isGFactorInitialized() const;
     bool isIsotropicExchangeInitialized() const;
-    // TODO: move it from Symbols!
-    bool symmetry_consistence(const group::Group& group) const;
 
     std::shared_ptr<const DenseMatrix>
     constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name);
     std::shared_ptr<const DenseMatrix> getIsotropicExchangeParameters() const;
     std::shared_ptr<const DenseVector> getGFactorParameters() const;
+
+    SymbolName getIsotropicExchangeSymbolName(size_t i, size_t j) const;
+    SymbolName getGFactorSymbolName(size_t i) const;
 
     Symbols& assignSymbolToIsotropicExchange(
         const SymbolName& symbol_name,

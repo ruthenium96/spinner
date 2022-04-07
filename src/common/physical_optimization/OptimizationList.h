@@ -3,7 +3,7 @@
 
 #include <src/group/Group.h>
 namespace common::physical_optimization {
-// This class memorizes (physical) optimizations to apply and checks their consistence.
+// This class memorizes (physical) optimizations to apply and checks their _internal_ consistence.
 class OptimizationList {
   public:
     OptimizationList& TzSort();

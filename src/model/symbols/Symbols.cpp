@@ -96,38 +96,6 @@ std::shared_ptr<const DenseVector> Symbols::getGFactorParameters() const {
     return numeric_g_factors_;
 }
 
-bool Symbols::symmetry_consistence(const group::Group& group) const {
-    // isotropic exchange parameters:
-    if (!symbolic_isotropic_exchanges_.empty()) {
-        for (const auto& element : group.getElements()) {
-            std::vector<std::vector<SymbolName>> permutated_symbols(
-                element.size(),
-                std::vector<SymbolName>(element.size()));
-            for (size_t i = 0; i < element.size(); ++i) {
-                for (size_t j = 0; j < element.size(); ++j) {
-                    permutated_symbols[element[i]][element[j]] =
-                        symbolic_isotropic_exchanges_[i][j];
-                }
-            }
-            if (permutated_symbols != symbolic_isotropic_exchanges_) {
-                return false;
-            }
-        }
-    }
-    if (!symbolic_g_factors_.empty()) {
-        for (const auto& element : group.getElements()) {
-            std::vector<SymbolName> permutated_symbols(element.size());
-            for (size_t i = 0; i < element.size(); ++i) {
-                permutated_symbols[element[i]] = symbolic_g_factors_[i];
-            }
-            if (permutated_symbols != symbolic_g_factors_) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 std::shared_ptr<const DenseMatrix>
 Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name) {
     if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
@@ -263,6 +231,14 @@ bool Symbols::isIsotropicExchangeInitialized() const {
 
 bool Symbols::isGFactorInitialized() const {
     return !symbolic_g_factors_.empty();
+}
+
+SymbolName Symbols::getIsotropicExchangeSymbolName(size_t i, size_t j) const {
+    return symbolic_isotropic_exchanges_[i][j];
+}
+
+SymbolName Symbols::getGFactorSymbolName(size_t i) const {
+    return symbolic_g_factors_[i];
 }
 
 }  // namespace symbols
