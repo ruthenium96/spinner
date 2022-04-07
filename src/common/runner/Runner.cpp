@@ -4,6 +4,7 @@
 
 #include <utility>
 
+#include "src/common/runner/ModelOptimizationListConsistence.h"
 #include "src/model/operators/ConstantTerm.h"
 #include "src/model/operators/ScalarProductTerm.h"
 #include "src/space/optimization/NonAbelianSimplifier.h"
@@ -33,14 +34,9 @@ Runner::Runner(
             derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
         }
     }
+    // throw if Model and OptimizationList inconsistent:
+    runner::ModelOptimizationListConsistence::check(model_, optimizationList_);
     // TODO: check here model_ and optimizationList_ consistence!
-
-    for (const auto& applied_group : optimizationList_.getGroupsToApply()) {
-        if (!getSymbols().symmetry_consistence(applied_group)) {
-            throw std::invalid_argument("Symbols do not match applied symmetries");
-            // TODO: should we rename this exception?
-        }
-    }
 
     if (getSymbols().isIsotropicExchangeInitialized()) {
         model_.InitializeIsotropicExchange();

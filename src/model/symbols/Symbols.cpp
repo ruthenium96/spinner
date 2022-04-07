@@ -99,7 +99,7 @@ std::shared_ptr<const DenseVector> Symbols::getGFactorParameters() const {
 bool Symbols::symmetry_consistence(const group::Group& group) const {
     // isotropic exchange parameters:
     if (!symbolic_isotropic_exchanges_.empty()) {
-        for (const auto& element : group.elements_) {
+        for (const auto& element : group.getElements()) {
             std::vector<std::vector<SymbolName>> permutated_symbols(
                 element.size(),
                 std::vector<SymbolName>(element.size()));
@@ -115,7 +115,7 @@ bool Symbols::symmetry_consistence(const group::Group& group) const {
         }
     }
     if (!symbolic_g_factors_.empty()) {
-        for (const auto& element : group.elements_) {
+        for (const auto& element : group.getElements()) {
             std::vector<SymbolName> permutated_symbols(element.size());
             for (size_t i = 0; i < element.size(); ++i) {
                 permutated_symbols[element[i]] = symbolic_g_factors_[i];

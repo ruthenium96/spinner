@@ -57,11 +57,12 @@ class Group {
 
     const Group::AlgebraicProperties& properties;
 
-    std::vector<Permutation> elements_;
+    const std::vector<Permutation>& getElements() const;
 
     static const AlgebraicProperties& return_group_info_by_group_name(GroupTypeEnum group_name);
 
   private:
+    std::vector<Permutation> elements_;
     // There are generators and elements for _specific_ input.
     // Length of Permutation vectors -- number of spins.
     std::vector<Permutation> generators_;

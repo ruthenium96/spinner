@@ -67,7 +67,8 @@ bool ElementsInPowerOfItsOrderIsIdentity(
 
 }  // namespace
 
-group::Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> generators) :
+namespace group {
+Group::Group(GroupTypeEnum group_name, std::vector<Permutation> generators) :
     generators_(std::move(generators)),
     properties(Group::return_group_info_by_group_name(group_name)) {
     if (!NumberOfGeneratorsConsistent(generators_, properties)) {
@@ -115,8 +116,7 @@ group::Group::Group(Group::GroupTypeEnum group_name, std::vector<Permutation> ge
     }
 }
 
-std::vector<std::vector<uint8_t>>
-group::Group::permutate(const std::vector<uint8_t>& initial) const {
+std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& initial) const {
     std::vector<std::vector<uint8_t>> permutated_vectors(properties.group_size);
     for (size_t i = 0; i < properties.group_size; ++i) {
         permutated_vectors[i].resize(initial.size());
@@ -134,7 +134,7 @@ group::Group::permutate(const std::vector<uint8_t>& initial) const {
  The isomorphic groups in our case differ only in elements order,
  thus sorting will help to unify them.
  */
-bool group::Group::operator==(const Group& rhs) const {
+bool Group::operator==(const Group& rhs) const {
     std::vector<Permutation> left_elements_copy = elements_;
     std::vector<Permutation> right_elements_copy = rhs.elements_;
     std::sort(left_elements_copy.begin(), left_elements_copy.end());
@@ -142,12 +142,12 @@ bool group::Group::operator==(const Group& rhs) const {
     return left_elements_copy == right_elements_copy;
 }
 
-bool group::Group::operator!=(const Group& rhs) const {
+bool Group::operator!=(const Group& rhs) const {
     return !(rhs == *this);
 }
 
-const group::Group::AlgebraicProperties&
-group::Group::return_group_info_by_group_name(group::Group::GroupTypeEnum group_name) {
+const Group::AlgebraicProperties&
+Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
     if (group_name == S2) {
         return GroupInfoS2;
     }
@@ -155,3 +155,8 @@ group::Group::return_group_info_by_group_name(group::Group::GroupTypeEnum group_
         return GroupInfoS3;
     }
 }
+
+const std::vector<Permutation>& Group::getElements() const {
+    return elements_;
+}
+}  // namespace group
