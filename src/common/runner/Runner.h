@@ -5,13 +5,10 @@
 
 #include "ConsistentModelOptimizationList.h"
 #include "src/common/Quantity.h"
-#include "src/common/physical_optimization/OptimizationList.h"
 #include "src/entities/magnetic_susceptibility/MuSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
-#include "src/group/Group.h"
-#include "src/model/Model.h"
 #include "src/space/Space.h"
 
 namespace runner {
@@ -61,26 +58,16 @@ class Runner {
     const model::symbols::Symbols& getSymbols() const;
 
   private:
-    ConsistentModelOptimizationList consistentModelOptimizationList;
+    ConsistentModelOptimizationList consistentModelOptimizationList_;
+    const space::Space space_;
+
     const model::Model& getModel() const;
     model::Model& getModel();
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
-    //    model::Model model_;
-    //    const common::physical_optimization::OptimizationList optimizationList_;
 
     struct MatrixHistory {
         bool matrices_was_built = false;
     };
-    struct SpaceHistory {
-        uint32_t number_of_non_simplified_abelian_groups = 0;
-        bool isNonAbelianSimplified = false;
-    };
-
-    space::Space space_;
-    void EliminatePositiveProjections();
-    void NonAbelianSimplify();
-    void Symmetrize(group::Group new_group);
-    void TzSort();
 
     common::Quantity energy;
     std::optional<common::Quantity> s_squared;
@@ -102,7 +89,6 @@ class Runner {
     void BuildSpectraWithoutMatrices(size_t number_of_blocks);
 
     MatrixHistory matrix_history_;
-    SpaceHistory space_history_;
 };
 }  // namespace runner
 

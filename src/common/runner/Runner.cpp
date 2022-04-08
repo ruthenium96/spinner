@@ -6,10 +6,7 @@
 
 #include "src/model/operators/ConstantTerm.h"
 #include "src/model/operators/ScalarProductTerm.h"
-#include "src/space/optimization/NonAbelianSimplifier.h"
-#include "src/space/optimization/PositiveProjectionsEliminator.h"
-#include "src/space/optimization/Symmetrizer.h"
-#include "src/space/optimization/TzSorter.h"
+#include "src/space/optimization/OptimizedSpaceConstructor.h"
 
 namespace runner {
 
@@ -19,7 +16,9 @@ Runner::Runner(model::Model model) :
 Runner::Runner(
     model::Model model,
     common::physical_optimization::OptimizationList optimizationList) :
-    consistentModelOptimizationList(std::move(model), std::move(optimizationList)) {
+    consistentModelOptimizationList_(std::move(model), std::move(optimizationList)),
+    space_(space::optimization::OptimizedSpaceConstructor::construct(
+        consistentModelOptimizationList_)) {
     if (getModel().is_s_squared_initialized()) {
         s_squared = common::Quantity();
     }
@@ -34,67 +33,9 @@ Runner::Runner(
         getModel().InitializeIsotropicExchange();
     }
 
-    space_ = space::Space(getModel().getIndexConverter().get_total_space_size());
-
-    if (getOptimizationList().isTzSorted()) {
-        TzSort();
-    }
-    if (getOptimizationList().isPositiveProjectionsEliminated()) {
-        EliminatePositiveProjections();
-    }
-    for (const auto& group : getOptimizationList().getGroupsToApply()) {
-        Symmetrize(group);
-    }
-    for (auto& subspace : space_.getBlocks()) {
-        // TODO: maybe, we can implement normalize as Space method
-        subspace.decomposition.normalize();
-    }
-
     //    if (!symbols_.isGFactorInitialized()) {
     //        throw std::length_error("g factor parameters have not been initialized");
     //    }
-}
-
-void Runner::EliminatePositiveProjections() {
-    uint32_t max_ntz_proj = getIndexConverter().get_max_ntz_proj();
-
-    space::optimization::PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
-    space_ = positiveProjectionsEliminator.apply(std::move(space_));
-}
-
-void Runner::NonAbelianSimplify() {
-    if (space_history_.number_of_non_simplified_abelian_groups == 0) {
-        return;
-    }
-    if (space_history_.number_of_non_simplified_abelian_groups != 1) {
-        throw std::invalid_argument(
-            "Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
-            "currently is not allowed.");
-    }
-    space::optimization::NonAbelianSimplifier nonAbelianSimplifier;
-    space_ = nonAbelianSimplifier.apply(std::move(space_));
-    space_history_.number_of_non_simplified_abelian_groups = 0;
-    space_history_.isNonAbelianSimplified = true;
-}
-
-void Runner::Symmetrize(group::Group new_group) {
-    // TODO: symmetrizer does not work correct after non-Abelian simplifier. Fix it.
-    if (space_history_.isNonAbelianSimplified && !new_group.properties.is_abelian) {
-        throw std::invalid_argument(
-            "Symmetrization after using of non-Abelian simplifier causes bugs.");
-    }
-
-    space::optimization::Symmetrizer symmetrizer(getIndexConverter(), new_group);
-    space_ = symmetrizer.apply(std::move(space_));
-
-    if (!new_group.properties.is_abelian) {
-        ++space_history_.number_of_non_simplified_abelian_groups;
-    }
-}
-
-void Runner::TzSort() {
-    space::optimization::TzSorter tz_sorter(getIndexConverter());
-    space_ = tz_sorter.apply(std::move(space_));
 }
 
 const space::Space& runner::Runner::getSpace() const {
@@ -409,14 +350,14 @@ const model::symbols::Symbols& Runner::getSymbols() const {
 }
 
 const model::Model& Runner::getModel() const {
-    return consistentModelOptimizationList.getModel();
+    return consistentModelOptimizationList_.getModel();
 }
 
 model::Model& Runner::getModel() {
-    return consistentModelOptimizationList.getModel();
+    return consistentModelOptimizationList_.getModel();
 }
 
 const common::physical_optimization::OptimizationList& Runner::getOptimizationList() const {
-    return consistentModelOptimizationList.getOptimizationList();
+    return consistentModelOptimizationList_.getOptimizationList();
 }
 }  // namespace runner
