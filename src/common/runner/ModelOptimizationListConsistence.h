@@ -8,12 +8,14 @@ namespace runner {
 // This class throws exception if Model and OptimizationList are inconsistent.
 class ModelOptimizationListConsistence {
   public:
-    ModelOptimizationListConsistence() = default;
     static void check(
         const model::Model& model,
         const common::physical_optimization::OptimizationList& optimizationList);
 
   private:
+    // This function checks if multiplicities are invariant to all elements from the group.
+    static void
+    checkMultiplicitiesGroupConsistence(const std::vector<int>&, const group::Group& group);
     // This function checks if all SymbolNames from Symbols are invariant to all elements from the group.
     static void checkAllSymbolNamesGroupConsistence(
         const model::symbols::Symbols& symbols,

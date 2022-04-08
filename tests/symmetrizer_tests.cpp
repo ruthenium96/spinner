@@ -40,26 +40,6 @@ bool orthogonality_of_basis(const space::Space& space) {
     return answer;
 }
 
-// TODO: looks like these two testes are integration testes, not unit-testes.
-
-TEST(symmetrizer, throw_wrong_size_of_pemutation) {
-    std::vector<int> mults = {4, 4, 4};
-    model::Model model(mults);
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-
-    EXPECT_THROW(runner::Runner runner(model, optimizationList), std::length_error);
-}
-
-TEST(symmetrizer, throw_permutes_different_multiplicities) {
-    std::vector<int> mults = {4, 4, 4, 3};
-    model::Model model(mults);
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-
-    EXPECT_THROW(runner::Runner runner(model, optimizationList), std::invalid_argument);
-}
-
 TEST(symmetrizer, 4444) {
     std::vector<int> mults = {4, 4, 4, 4};
     model::Model model(mults);

@@ -2,6 +2,7 @@ add_executable(julytest
         ${CMAKE_SOURCE_DIR}/tests/main.cpp
         ${CMAKE_SOURCE_DIR}/tests/PerformanceTest.cpp
         ${CMAKE_SOURCE_DIR}/tests/group_test.cpp
+        ${CMAKE_SOURCE_DIR}/tests/consistentModelOptimizationList_tests.cpp
         ${CMAKE_SOURCE_DIR}/tests/symmetrizer_tests.cpp
         ${CMAKE_SOURCE_DIR}/tests/non_abelian_simplifier_tests.cpp
         ${CMAKE_SOURCE_DIR}/tests/matrix_and_spectrum_builders_tests.cpp

@@ -4,10 +4,31 @@ namespace runner {
 void ModelOptimizationListConsistence::check(
     const model::Model& model,
     const common::physical_optimization::OptimizationList& optimizationList) {
-    // Symmetrizer can be applied for all Hamiltonian terms,
-    // if they match up with symmetry:
+    // Symmetrizer can be applied for all types of Hamiltonian terms...
     for (const auto& group : optimizationList.getGroupsToApply()) {
+        // ...if spins invariant to group elements:
+        checkMultiplicitiesGroupConsistence(model.getIndexConverter().get_mults(), group);
+        // ...if Hamiltonian terms invariant to group elements:
         checkAllSymbolNamesGroupConsistence(model.getSymbols(), group);
+    }
+}
+
+void ModelOptimizationListConsistence::checkMultiplicitiesGroupConsistence(
+    const std::vector<int>& mults,
+    const group::Group& group) {
+    // TODO: split code above (maybe rewrite checkSymbolNamesGroupElementConsistence with templates?)
+    if (mults.size() != group.getElements()[0].size()) {
+        throw std::length_error(
+            "The size of group elements does not equal to the number of spins.");
+    }
+    for (const auto& el : group.getElements()) {
+        std::vector<int> permutated_mults(mults);
+        for (size_t i = 0; i < group.getElements()[0].size(); ++i) {
+            permutated_mults[i] = mults[el[i]];
+        }
+        if (permutated_mults != mults) {
+            throw std::invalid_argument("Group permutes centers with different multiplicities.");
+        }
     }
 }
 
