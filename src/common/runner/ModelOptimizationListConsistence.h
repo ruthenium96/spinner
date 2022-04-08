@@ -5,7 +5,7 @@
 #include "src/model/Model.h"
 
 namespace runner {
-// This class throws exception if Model and OptimizationList inconsistent.
+// This class throws exception if Model and OptimizationList are inconsistent.
 class ModelOptimizationListConsistence {
   public:
     ModelOptimizationListConsistence() = default;

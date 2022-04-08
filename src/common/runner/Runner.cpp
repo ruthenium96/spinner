@@ -59,7 +59,6 @@ Runner::Runner(
         // TODO: maybe, we can implement normalize as Space method
         subspace.decomposition.normalize();
     }
-    space_history_.isNormalized = true;
 }
 
 void Runner::EliminatePositiveProjections() {
@@ -352,12 +351,19 @@ void Runner::minimizeResidualError() {
         changeable_values.push_back(getSymbols().getValueOfName(name));
     }
 
-    using namespace std::placeholders;
+    // Function-adapter for STLBFGS library.
+    // It should calculate residual error and derivatives at a point of changeable_values.
     std::function<void(const std::vector<double>&, double&, std::vector<double>&)> func_grad_eval =
-        std::bind(&Runner::stepOfRegression, this, std::cref(changeable_names), _1, _2, _3);
+        [this, capture0 = std::cref(changeable_names)](
+            const std::vector<double>& changeable_values,
+            double& residual_error,
+            std::vector<double>& gradient) {
+            stepOfRegression(capture0, changeable_values, residual_error, gradient);
+        };
 
     STLBFGS::Optimizer opt {func_grad_eval};
     opt.verbose = false;
+    // Run calculation from initial guess. STLBFGS updates changeable_values every iteration.
     opt.run(changeable_values);
 
     for (size_t i = 0; i < changeable_names.size(); ++i) {
@@ -370,6 +376,7 @@ void Runner::stepOfRegression(
     const std::vector<double>& changeable_values,
     double& residual_error,
     std::vector<double>& gradient) {
+    // At first, update actual values in Symbols:
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         // TODO: mutable use of Model/Symbols. Refactor it.
         model_.getSymbols().setNewValueToChangeableSymbol(
@@ -377,6 +384,7 @@ void Runner::stepOfRegression(
             changeable_values[i]);
     }
 
+    // Do some calculation stuff...
     if (matrix_history_.matrices_was_built) {
         // TODO: 1) it does not work now
         //       2) here's the problem with future SSquaredTransformer
@@ -387,10 +395,13 @@ void Runner::stepOfRegression(
 
     BuildMuSquaredWorker();
 
+    // Calculate residual error and write it to external variable:
     residual_error = mu_squared_worker.value()->calculateResidualError();
 
+    // Calculate derivatives...
     std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
     for (size_t i = 0; i < changeable_names.size(); ++i) {
+        // ...and write it to external variable:
         gradient[i] = map_gradient[changeable_names[i]];
     }
 }
