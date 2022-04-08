@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#include "ConsistentModelOptimizationList.h"
 #include "src/common/Quantity.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 #include "src/entities/magnetic_susceptibility/MuSquaredWorker.h"
@@ -60,8 +61,12 @@ class Runner {
     const model::symbols::Symbols& getSymbols() const;
 
   private:
-    model::Model model_;
-    const common::physical_optimization::OptimizationList optimizationList_;
+    ConsistentModelOptimizationList consistentModelOptimizationList;
+    const model::Model& getModel() const;
+    model::Model& getModel();
+    const common::physical_optimization::OptimizationList& getOptimizationList() const;
+    //    model::Model model_;
+    //    const common::physical_optimization::OptimizationList optimizationList_;
 
     struct MatrixHistory {
         bool matrices_was_built = false;

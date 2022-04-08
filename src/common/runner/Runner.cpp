@@ -4,7 +4,6 @@
 
 #include <utility>
 
-#include "src/common/runner/ModelOptimizationListConsistence.h"
 #include "src/model/operators/ConstantTerm.h"
 #include "src/model/operators/ScalarProductTerm.h"
 #include "src/space/optimization/NonAbelianSimplifier.h"
@@ -20,12 +19,11 @@ Runner::Runner(model::Model model) :
 Runner::Runner(
     model::Model model,
     common::physical_optimization::OptimizationList optimizationList) :
-    model_(std::move(model)),
-    optimizationList_(std::move(optimizationList)) {
-    if (model_.is_s_squared_initialized()) {
+    consistentModelOptimizationList(std::move(model), std::move(optimizationList)) {
+    if (getModel().is_s_squared_initialized()) {
         s_squared = common::Quantity();
     }
-    if (model_.is_isotropic_exchange_derivatives_initialized()) {
+    if (getModel().is_isotropic_exchange_derivatives_initialized()) {
         for (const auto& symbol :
              getSymbols().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
             derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
@@ -33,21 +31,18 @@ Runner::Runner(
     }
 
     if (getSymbols().isIsotropicExchangeInitialized()) {
-        model_.InitializeIsotropicExchange();
+        getModel().InitializeIsotropicExchange();
     }
 
-    // throw if Model and OptimizationList inconsistent:
-    runner::ModelOptimizationListConsistence::check(model_, optimizationList_);
+    space_ = space::Space(getModel().getIndexConverter().get_total_space_size());
 
-    space_ = space::Space(model_.getIndexConverter().get_total_space_size());
-
-    if (optimizationList_.isTzSorted()) {
+    if (getOptimizationList().isTzSorted()) {
         TzSort();
     }
-    if (optimizationList_.isPositiveProjectionsEliminated()) {
+    if (getOptimizationList().isPositiveProjectionsEliminated()) {
         EliminatePositiveProjections();
     }
-    for (const auto& group : optimizationList_.getGroupsToApply()) {
+    for (const auto& group : getOptimizationList().getGroupsToApply()) {
         Symmetrize(group);
     }
     for (auto& subspace : space_.getBlocks()) {
@@ -218,18 +213,18 @@ const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
 }
 
 const model::operators::Operator& Runner::getOperator(common::QuantityEnum quantity_enum) const {
-    return model_.getOperator(quantity_enum);
+    return getModel().getOperator(quantity_enum);
 }
 
 const lexicographic::IndexConverter& Runner::getIndexConverter() const {
-    return model_.getIndexConverter();
+    return getModel().getIndexConverter();
 }
 
 const model::operators::Operator& Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
-    return model_.getOperatorDerivative(quantity_enum, symbol_type, symbol);
+    return getModel().getOperatorDerivative(quantity_enum, symbol_type, symbol);
 }
 
 const Spectrum& Runner::getSpectrumDerivative(
@@ -378,7 +373,7 @@ void Runner::stepOfRegression(
     // At first, update actual values in Symbols:
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         // TODO: mutable use of Model/Symbols. Refactor it.
-        model_.getSymbols().setNewValueToChangeableSymbol(
+        getModel().getSymbols().setNewValueToChangeableSymbol(
             changeable_names[i],
             changeable_values[i]);
     }
@@ -410,6 +405,18 @@ const magnetic_susceptibility::MuSquaredWorker& Runner::getMuSquaredWorker() con
 }
 
 const model::symbols::Symbols& Runner::getSymbols() const {
-    return model_.getSymbols();
+    return getModel().getSymbols();
+}
+
+const model::Model& Runner::getModel() const {
+    return consistentModelOptimizationList.getModel();
+}
+
+model::Model& Runner::getModel() {
+    return consistentModelOptimizationList.getModel();
+}
+
+const common::physical_optimization::OptimizationList& Runner::getOptimizationList() const {
+    return consistentModelOptimizationList.getOptimizationList();
 }
 }  // namespace runner
