@@ -13,7 +13,6 @@
 #include "src/model/Model.h"
 #include "src/space/Space.h"
 
-// TODO: check symmetry consistency of symbols and groups.
 namespace runner {
 class Runner {
   public:

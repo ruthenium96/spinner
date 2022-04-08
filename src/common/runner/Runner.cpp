@@ -21,10 +21,7 @@ Runner::Runner(
     model::Model model,
     common::physical_optimization::OptimizationList optimizationList) :
     model_(std::move(model)),
-    optimizationList_(std::move(optimizationList)),
-    // TODO: Move it from here, because we do not need to allocate Space if Model
-    //  and OptimizationList are not consistence.
-    space_(model_.getIndexConverter().get_total_space_size()) {
+    optimizationList_(std::move(optimizationList)) {
     if (model_.is_s_squared_initialized()) {
         s_squared = common::Quantity();
     }
@@ -34,17 +31,15 @@ Runner::Runner(
             derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
         }
     }
-    // throw if Model and OptimizationList inconsistent:
-    runner::ModelOptimizationListConsistence::check(model_, optimizationList_);
-    // TODO: check here model_ and optimizationList_ consistence!
 
     if (getSymbols().isIsotropicExchangeInitialized()) {
         model_.InitializeIsotropicExchange();
     }
 
-    //    if (!symbols_.isGFactorInitialized()) {
-    //        throw std::length_error("g factor parameters have not been initialized");
-    //    }
+    // throw if Model and OptimizationList inconsistent:
+    runner::ModelOptimizationListConsistence::check(model_, optimizationList_);
+
+    space_ = space::Space(model_.getIndexConverter().get_total_space_size());
 
     if (optimizationList_.isTzSorted()) {
         TzSort();
@@ -59,6 +54,10 @@ Runner::Runner(
         // TODO: maybe, we can implement normalize as Space method
         subspace.decomposition.normalize();
     }
+
+    //    if (!symbols_.isGFactorInitialized()) {
+    //        throw std::length_error("g factor parameters have not been initialized");
+    //    }
 }
 
 void Runner::EliminatePositiveProjections() {

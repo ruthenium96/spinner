@@ -13,6 +13,7 @@ namespace space {
 // This transformation leads to block-diagonal Hamiltonian matrix.
 class Space {
   public:
+    Space() = default;
     explicit Space(uint32_t total_space_size);
     explicit Space(std::vector<Subspace>&& m);
 
