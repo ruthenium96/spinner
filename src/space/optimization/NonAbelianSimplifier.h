@@ -1,5 +1,5 @@
-#ifndef JULY_NON_ABELIAN_SIMPLIFIER_H
-#define JULY_NON_ABELIAN_SIMPLIFIER_H
+#ifndef SPINNER_NON_ABELIAN_SIMPLIFIER_H
+#define SPINNER_NON_ABELIAN_SIMPLIFIER_H
 
 #include "src/space/Space.h"
 
@@ -10,4 +10,4 @@ class NonAbelianSimplifier {
 };
 }  // namespace space::optimization
 
-#endif  //JULY_NON_ABELIAN_SIMPLIFIER_H
+#endif  //SPINNER_NON_ABELIAN_SIMPLIFIER_H

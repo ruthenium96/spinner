@@ -1,5 +1,5 @@
-#ifndef JULY_ENSEMBLEAVERAGER_H
-#define JULY_ENSEMBLEAVERAGER_H
+#ifndef SPINNER_ENSEMBLEAVERAGER_H
+#define SPINNER_ENSEMBLEAVERAGER_H
 
 #include <cmath>
 
@@ -19,4 +19,4 @@ class EnsembleAverager {
 };
 }  // namespace magnetic_susceptibility
 
-#endif  //JULY_ENSEMBLEAVERAGER_H
+#endif  //SPINNER_ENSEMBLEAVERAGER_H

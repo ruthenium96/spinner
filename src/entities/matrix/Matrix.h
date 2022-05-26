@@ -1,5 +1,5 @@
-#ifndef JULY_MATRIX_H
-#define JULY_MATRIX_H
+#ifndef SPINNER_MATRIX_H
+#define SPINNER_MATRIX_H
 
 #include <iostream>
 #include <vector>
@@ -20,4 +20,4 @@ struct Matrix {
 
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix);
 
-#endif  //JULY_MATRIX_H
+#endif  //SPINNER_MATRIX_H

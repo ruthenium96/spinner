@@ -1,5 +1,5 @@
-#ifndef JULY_QUANTITYENUM_H
-#define JULY_QUANTITYENUM_H
+#ifndef SPINNER_QUANTITYENUM_H
+#define SPINNER_QUANTITYENUM_H
 
 #include <ostream>
 #include <string>
@@ -23,4 +23,4 @@ struct Quantity {
 
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
 
-#endif  //JULY_QUANTITYENUM_H
+#endif  //SPINNER_QUANTITYENUM_H

@@ -1,5 +1,5 @@
-#ifndef JULY_CONSISTENTMODELOPTIMIZATIONLIST_H
-#define JULY_CONSISTENTMODELOPTIMIZATIONLIST_H
+#ifndef SPINNER_CONSISTENTMODELOPTIMIZATIONLIST_H
+#define SPINNER_CONSISTENTMODELOPTIMIZATIONLIST_H
 
 #include "src/common/physical_optimization/OptimizationList.h"
 #include "src/model/Model.h"
@@ -20,4 +20,4 @@ class ConsistentModelOptimizationList {
 };
 }  // namespace runner
 
-#endif  //JULY_CONSISTENTMODELOPTIMIZATIONLIST_H
+#endif  //SPINNER_CONSISTENTMODELOPTIMIZATIONLIST_H

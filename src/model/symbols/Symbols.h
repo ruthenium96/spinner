@@ -1,5 +1,5 @@
-#ifndef JULY_SYMBOLS_H
-#define JULY_SYMBOLS_H
+#ifndef SPINNER_SYMBOLS_H
+#define SPINNER_SYMBOLS_H
 
 #include <map>
 #include <memory>
@@ -75,4 +75,4 @@ class Symbols {
 };
 
 }  // namespace model::symbols
-#endif  //JULY_SYMBOLS_H
+#endif  //SPINNER_SYMBOLS_H

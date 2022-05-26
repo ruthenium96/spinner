@@ -1,5 +1,5 @@
-#ifndef JULY_SYMMETRIZER_H
-#define JULY_SYMMETRIZER_H
+#ifndef SPINNER_SYMMETRIZER_H
+#define SPINNER_SYMMETRIZER_H
 
 #include <boost/functional/hash.hpp>
 #include <cmath>
@@ -49,4 +49,4 @@ class Symmetrizer {
 };
 }  // namespace space::optimization
 
-#endif  // JULY_SYMMETRIZER_H
+#endif  // SPINNER_SYMMETRIZER_H

@@ -1,5 +1,5 @@
-#ifndef JULY_OPERATOR_H
-#define JULY_OPERATOR_H
+#ifndef SPINNER_OPERATOR_H
+#define SPINNER_OPERATOR_H
 
 #include <memory>
 #include <vector>
@@ -34,4 +34,4 @@ class Operator {
 };
 }  // namespace model::operators
 
-#endif  //JULY_OPERATOR_H
+#endif  //SPINNER_OPERATOR_H

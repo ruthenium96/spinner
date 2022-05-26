@@ -1,5 +1,5 @@
-#ifndef JULY_SPECTRUM_H
-#define JULY_SPECTRUM_H
+#ifndef SPINNER_SPECTRUM_H
+#define SPINNER_SPECTRUM_H
 
 #include <vector>
 
@@ -22,4 +22,4 @@ struct Spectrum {
 
 std::ostream& operator<<(std::ostream& os, const Spectrum& space);
 
-#endif  //JULY_SPECTRUM_H
+#endif  //SPINNER_SPECTRUM_H

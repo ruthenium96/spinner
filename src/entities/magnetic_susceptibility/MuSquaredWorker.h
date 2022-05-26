@@ -1,5 +1,5 @@
-#ifndef JULY_MUSQUAREDWORKER_H
-#define JULY_MUSQUAREDWORKER_H
+#ifndef SPINNER_MUSQUAREDWORKER_H
+#define SPINNER_MUSQUAREDWORKER_H
 
 #include <optional>
 
@@ -45,4 +45,4 @@ class MuSquaredWorker {
 };
 
 }  // namespace magnetic_susceptibility
-#endif  //JULY_MUSQUAREDWORKER_H
+#endif  //SPINNER_MUSQUAREDWORKER_H

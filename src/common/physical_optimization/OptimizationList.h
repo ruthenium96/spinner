@@ -1,5 +1,5 @@
-#ifndef JULY_OPTIMIZATIONLIST_H
-#define JULY_OPTIMIZATIONLIST_H
+#ifndef SPINNER_OPTIMIZATIONLIST_H
+#define SPINNER_OPTIMIZATIONLIST_H
 
 #include <src/group/Group.h>
 namespace common::physical_optimization {
@@ -26,4 +26,4 @@ class OptimizationList {
     // TODO: something about SSquaredTransform
 };
 }  // namespace common::physical_optimization
-#endif  //JULY_OPTIMIZATIONLIST_H
+#endif  //SPINNER_OPTIMIZATIONLIST_H

@@ -1,5 +1,5 @@
-#ifndef JULY_TERM_H
-#define JULY_TERM_H
+#ifndef SPINNER_TERM_H
+#define SPINNER_TERM_H
 
 #include <cstdint>
 #include <memory>
@@ -42,4 +42,4 @@ class TwoCenterTerm {
 };
 }  // namespace model::operators
 
-#endif  //JULY_TERM_H
+#endif  //SPINNER_TERM_H
