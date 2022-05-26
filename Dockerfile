@@ -11,8 +11,8 @@ RUN apt install -y \
   software-properties-common \
   libboost-all-dev
   
-# Aramadillo dependencies
-RUN apt update && apt install -y \
+# Armadillo dependencies
+RUN apt install -y \
   libopenblas-dev \
   liblapack-dev \
   libarpack2-dev \
