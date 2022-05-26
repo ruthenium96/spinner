@@ -1,5 +1,5 @@
-#ifndef JULY_DENSEMATRIX_H
-#define JULY_DENSEMATRIX_H
+#ifndef SPINNER_DENSEMATRIX_H
+#define SPINNER_DENSEMATRIX_H
 
 #include <iostream>
 #include <memory>
@@ -80,4 +80,4 @@ class DenseVector {
     std::unique_ptr<SubspectrumDataImpl> pImpl;
 };
 
-#endif  //JULY_DENSEMATRIX_H
+#endif  //SPINNER_DENSEMATRIX_H

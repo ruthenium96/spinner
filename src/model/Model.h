@@ -1,5 +1,5 @@
-#ifndef JULY_MODEL_H
-#define JULY_MODEL_H
+#ifndef SPINNER_MODEL_H
+#define SPINNER_MODEL_H
 
 #include <vector>
 
@@ -50,4 +50,4 @@ class Model {
 };
 }  // namespace model
 
-#endif  //JULY_MODEL_H
+#endif  //SPINNER_MODEL_H

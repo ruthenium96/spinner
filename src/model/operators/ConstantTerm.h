@@ -1,5 +1,5 @@
-#ifndef JULY_CONSTANTTERM_H
-#define JULY_CONSTANTTERM_H
+#ifndef SPINNER_CONSTANTTERM_H
+#define SPINNER_CONSTANTTERM_H
 
 #include "Term.h"
 
@@ -19,4 +19,4 @@ class ConstantTerm: public ZeroCenterTerm {
 };
 }  // namespace model::operators
 
-#endif  //JULY_CONSTANTTERM_H
+#endif  //SPINNER_CONSTANTTERM_H

@@ -1,5 +1,5 @@
-#ifndef JULY_SPACE_H
-#define JULY_SPACE_H
+#ifndef SPINNER_SPACE_H
+#define SPINNER_SPACE_H
 
 #include <deque>
 #include <iostream>
@@ -27,4 +27,4 @@ class Space {
 
 std::ostream& operator<<(std::ostream& os, const space::Space& space);
 
-#endif  // JULY_SPACE_H
+#endif  // SPINNER_SPACE_H

@@ -1,5 +1,5 @@
-#ifndef JULY_UNITARYSPARSEMATRIX_H
-#define JULY_UNITARYSPARSEMATRIX_H
+#ifndef SPINNER_UNITARYSPARSEMATRIX_H
+#define SPINNER_UNITARYSPARSEMATRIX_H
 
 #include <cstdint>
 #include <memory>
@@ -68,4 +68,4 @@ class UnitarySparseMatrix {
     std::unique_ptr<Impl> pImpl;
 };
 
-#endif  //JULY_UNITARYSPARSEMATRIX_H
+#endif  //SPINNER_UNITARYSPARSEMATRIX_H

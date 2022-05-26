@@ -1,5 +1,5 @@
-#ifndef JULY_MODELOPTIMIZATIONLISTCONSISTENCE_H
-#define JULY_MODELOPTIMIZATIONLISTCONSISTENCE_H
+#ifndef SPINNER_MODELOPTIMIZATIONLISTCONSISTENCE_H
+#define SPINNER_MODELOPTIMIZATIONLISTCONSISTENCE_H
 
 #include "src/common/physical_optimization/OptimizationList.h"
 #include "src/model/Model.h"
@@ -32,4 +32,4 @@ class ModelOptimizationListConsistence {
         group::Permutation element);
 };
 }  // namespace runner
-#endif  //JULY_MODELOPTIMIZATIONLISTCONSISTENCE_H
+#endif  //SPINNER_MODELOPTIMIZATIONLISTCONSISTENCE_H

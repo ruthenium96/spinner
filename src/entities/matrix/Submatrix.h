@@ -1,5 +1,5 @@
-#ifndef JULY_SUBMATRIX_H
-#define JULY_SUBMATRIX_H
+#ifndef SPINNER_SUBMATRIX_H
+#define SPINNER_SUBMATRIX_H
 
 #include "src/entities/BlockProperties.h"
 #include "src/entities/data_structures/DenseMatrix.h"
@@ -19,4 +19,4 @@ struct Submatrix {
     friend std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 };
 
-#endif  //JULY_SUBMATRIX_H
+#endif  //SPINNER_SUBMATRIX_H

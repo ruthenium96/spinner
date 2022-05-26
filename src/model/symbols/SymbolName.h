@@ -1,5 +1,5 @@
-#ifndef JULY_SYMBOLNAME_H
-#define JULY_SYMBOLNAME_H
+#ifndef SPINNER_SYMBOLNAME_H
+#define SPINNER_SYMBOLNAME_H
 
 #include <string>
 
@@ -24,4 +24,4 @@ struct SymbolName {
 
 }  // namespace symbols
 
-#endif  //JULY_SYMBOLNAME_H
+#endif  //SPINNER_SYMBOLNAME_H

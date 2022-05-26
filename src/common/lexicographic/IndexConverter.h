@@ -1,5 +1,5 @@
-#ifndef JULY_INDEXES_H
-#define JULY_INDEXES_H
+#ifndef SPINNER_INDEXES_H
+#define SPINNER_INDEXES_H
 
 #include <cstdint>
 #include <functional>
@@ -31,4 +31,4 @@ class IndexConverter {
 };
 }  // namespace lexicographic
 
-#endif  // JULY_INDEXES_H
+#endif  // SPINNER_INDEXES_H

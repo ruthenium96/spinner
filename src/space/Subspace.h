@@ -1,5 +1,5 @@
-#ifndef JULY_SUBSPACE_H
-#define JULY_SUBSPACE_H
+#ifndef SPINNER_SUBSPACE_H
+#define SPINNER_SUBSPACE_H
 
 #include <ostream>
 
@@ -18,4 +18,4 @@ struct Subspace {
 };
 }  // namespace space
 
-#endif  // JULY_SUBSPACE_H
+#endif  // SPINNER_SUBSPACE_H

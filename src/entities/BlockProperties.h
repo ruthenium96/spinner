@@ -1,5 +1,5 @@
-#ifndef JULY_BLOCKPROPERTIES_H
-#define JULY_BLOCKPROPERTIES_H
+#ifndef SPINNER_BLOCKPROPERTIES_H
+#define SPINNER_BLOCKPROPERTIES_H
 
 #include <optional>
 #include <ostream>
@@ -18,4 +18,4 @@ struct BlockProperties {
 // TODO: consider moving all the printing code out of the domain classes
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 
-#endif  //JULY_BLOCKPROPERTIES_H
+#endif  //SPINNER_BLOCKPROPERTIES_H

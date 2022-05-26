@@ -1,5 +1,5 @@
-#ifndef JULY_SUBSPECTRUM_H
-#define JULY_SUBSPECTRUM_H
+#ifndef SPINNER_SUBSPECTRUM_H
+#define SPINNER_SUBSPECTRUM_H
 
 #include "src/entities/BlockProperties.h"
 #include "src/entities/data_structures/DenseMatrix.h"
@@ -18,4 +18,4 @@ struct Subspectrum {
     friend std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum);
 };
 
-#endif  //JULY_SUBSPECTRUM_H
+#endif  //SPINNER_SUBSPECTRUM_H

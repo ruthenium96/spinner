@@ -1,5 +1,5 @@
-#ifndef JULY_GROUP_H
-#define JULY_GROUP_H
+#ifndef SPINNER_GROUP_H
+#define SPINNER_GROUP_H
 
 #include <cstdint>
 #include <stdexcept>
@@ -77,4 +77,4 @@ struct InitializationError: public std::logic_error {
 extern const group::Group::AlgebraicProperties GroupInfoS2;
 extern const group::Group::AlgebraicProperties GroupInfoS3;
 
-#endif  //JULY_GROUP_H
+#endif  //SPINNER_GROUP_H

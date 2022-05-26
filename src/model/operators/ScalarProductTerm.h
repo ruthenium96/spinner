@@ -1,5 +1,5 @@
-#ifndef JULY_SCALARPRODUCTTERM_H
-#define JULY_SCALARPRODUCTTERM_H
+#ifndef SPINNER_SCALARPRODUCTTERM_H
+#define SPINNER_SCALARPRODUCTTERM_H
 
 #include "Term.h"
 
@@ -24,4 +24,4 @@ class ScalarProductTerm: public TwoCenterTerm {
 };
 }  // namespace model::operators
 
-#endif  //JULY_SCALARPRODUCTTERM_H
+#endif  //SPINNER_SCALARPRODUCTTERM_H

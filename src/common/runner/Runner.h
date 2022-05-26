@@ -1,5 +1,5 @@
-#ifndef JULY_RUNNER_H
-#define JULY_RUNNER_H
+#ifndef SPINNER_RUNNER_H
+#define SPINNER_RUNNER_H
 
 #include <utility>
 
@@ -92,4 +92,4 @@ class Runner {
 };
 }  // namespace runner
 
-#endif  //JULY_RUNNER_H
+#endif  //SPINNER_RUNNER_H

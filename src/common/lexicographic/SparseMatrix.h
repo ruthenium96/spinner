@@ -1,5 +1,5 @@
-#ifndef JULY_SPARSEMATRIX_H
-#define JULY_SPARSEMATRIX_H
+#ifndef SPINNER_SPARSEMATRIX_H
+#define SPINNER_SPARSEMATRIX_H
 
 #include <cstdint>
 #include <memory>
@@ -48,4 +48,4 @@ class SparseMatrix {
 };
 }  // namespace lexicographic
 
-#endif  // JULY_SPARSEMATRIX_H
+#endif  // SPINNER_SPARSEMATRIX_H

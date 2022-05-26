@@ -33,4 +33,4 @@ jobs:
           cmake ..
           cmake --build .
       - name: Run google Tests
-        run: ${{github.workspace}}/build/tests/julytest
+        run: ${{github.workspace}}/build/tests/spinner_test

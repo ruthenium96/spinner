@@ -16,12 +16,12 @@ jobs:
       - uses: actions/checkout@v2
       - name: Docker build
         run: |
-          docker build . -t july
-          docker run --name july --env CXX=clang++-13 -v $PWD:/project -d july
+          docker build . -t spinner
+          docker run --name spinner --env CXX=clang++-13 -v $PWD:/project -d spinner
       - name: Cmake build
         run: |
-          docker exec july mkdir -p /project/build
-          docker exec -w /project/build july cmake ..
-          docker exec -w /project/build july cmake --build .
+          docker exec spinner mkdir -p /project/build
+          docker exec -w /project/build spinner cmake ..
+          docker exec -w /project/build spinner cmake --build .
       - name: Google Tests
-        run: docker exec -w /project/build/tests july ./julytest
+        run: docker exec -w /project/build/tests spinner ./spinner_test

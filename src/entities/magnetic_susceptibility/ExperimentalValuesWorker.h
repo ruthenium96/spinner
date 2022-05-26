@@ -1,5 +1,5 @@
-#ifndef JULY_EXPERIMENTALVALUESWORKER_H
-#define JULY_EXPERIMENTALVALUESWORKER_H
+#ifndef SPINNER_EXPERIMENTALVALUESWORKER_H
+#define SPINNER_EXPERIMENTALVALUESWORKER_H
 
 #include <vector>
 
@@ -45,4 +45,4 @@ class ExperimentalValuesWorker {
     double number_of_centers_ratio_;
 };
 }  // namespace magnetic_susceptibility
-#endif  //JULY_EXPERIMENTALVALUESWORKER_H
+#endif  //SPINNER_EXPERIMENTALVALUESWORKER_H

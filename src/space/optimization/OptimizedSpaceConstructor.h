@@ -1,5 +1,5 @@
-#ifndef JULY_OPTIMIZEDSPACECONSTRUCTOR_H
-#define JULY_OPTIMIZEDSPACECONSTRUCTOR_H
+#ifndef SPINNER_OPTIMIZEDSPACECONSTRUCTOR_H
+#define SPINNER_OPTIMIZEDSPACECONSTRUCTOR_H
 
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 #include "src/space/Space.h"
@@ -12,4 +12,4 @@ class OptimizedSpaceConstructor {
 };
 }  // namespace space::optimization
 
-#endif  //JULY_OPTIMIZEDSPACECONSTRUCTOR_H
+#endif  //SPINNER_OPTIMIZEDSPACECONSTRUCTOR_H

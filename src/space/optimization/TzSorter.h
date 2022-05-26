@@ -1,5 +1,5 @@
-#ifndef JULY_TZSORTER_H
-#define JULY_TZSORTER_H
+#ifndef SPINNER_TZSORTER_H
+#define SPINNER_TZSORTER_H
 
 #include <numeric>
 #include <utility>
@@ -19,4 +19,4 @@ class TzSorter {
 };
 }  // namespace space::optimization
 
-#endif  //JULY_TZSORTER_H
+#endif  //SPINNER_TZSORTER_H
