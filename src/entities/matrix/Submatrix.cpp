@@ -4,20 +4,22 @@
 
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix) {
     os << submatrix.properties;
-    os << submatrix.raw_data;
+    submatrix.raw_data->print(os);
     os << std::endl;
     return os;
 }
 Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
-    const lexicographic::IndexConverter& converter) {
+    const lexicographic::IndexConverter& converter,
+    const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
     lexicographic::SparseMatrix matrix_in_lexicografical_basis(converter);
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 
     size_t matrix_in_space_basis_size = subspace.decomposition.size();
     properties = subspace.properties;
-    raw_data.resize(matrix_in_space_basis_size, matrix_in_space_basis_size);
+    raw_data = factory->createMatrix();
+    raw_data->resize(matrix_in_space_basis_size, matrix_in_space_basis_size);
 
     for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size;
          ++index_of_space_vector_i) {
@@ -65,7 +67,7 @@ Submatrix::Submatrix(
                         index_of_lexicographic_vector_k,
                         index_of_lexicographic_vector_l);
                     if (value_in_matrix_in_lexicografical_basis != 0) {
-                        raw_data.add_to_position(
+                        raw_data->add_to_position(
                             outer_item.value * value_in_matrix_in_lexicografical_basis
                                 * inner_item.value,
                             index_of_space_vector_i,

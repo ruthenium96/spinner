@@ -13,11 +13,12 @@ Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {}
 Matrix::Matrix(
     const space::Space& space,
     const model::operators::Operator& new_operator,
-    const lexicographic::IndexConverter& converter) {
-    blocks.resize(space.getBlocks().size());
+    const lexicographic::IndexConverter& converter,
+    const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
+    blocks.reserve(space.getBlocks().size());
+    //    blocks.resize(space.getBlocks().size());
 
-    for (size_t i = 0; i < space.getBlocks().size(); ++i) {
-        const space::Subspace& subspace = space.getBlocks()[i];
-        blocks[i] = Submatrix(subspace, new_operator, converter);
+    for (const auto& subspace : space.getBlocks()) {
+        blocks.emplace_back(Submatrix(subspace, new_operator, converter, factory));
     }
 }
