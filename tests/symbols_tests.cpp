@@ -117,12 +117,12 @@ TEST(symbols, set_new_value_to_changeable_J_g) {
     }
     auto shared_ptr_J = symbols_.getIsotropicExchangeParameters();
     auto shared_ptr_g = symbols_.getGFactorParameters();
-    EXPECT_EQ(JChangeable_value, shared_ptr_J->operator()(2, 7));
-    EXPECT_EQ(gChangeable_value, shared_ptr_g->operator()(7));
+    EXPECT_EQ(JChangeable_value, shared_ptr_J->at(2, 7));
+    EXPECT_EQ(gChangeable_value, shared_ptr_g->at(7));
     symbols_.setNewValueToChangeableSymbol(J_changeable, 2 * JChangeable_value);
-    EXPECT_EQ(2 * JChangeable_value, shared_ptr_J->operator()(2, 7));
-    EXPECT_EQ(gChangeable_value, shared_ptr_g->operator()(7));
+    EXPECT_EQ(2 * JChangeable_value, shared_ptr_J->at(2, 7));
+    EXPECT_EQ(gChangeable_value, shared_ptr_g->at(7));
     symbols_.setNewValueToChangeableSymbol(g_changeable, 2 * gChangeable_value);
-    EXPECT_EQ(2 * JChangeable_value, shared_ptr_J->operator()(2, 7));
-    EXPECT_EQ(2 * gChangeable_value, shared_ptr_g->operator()(7));
+    EXPECT_EQ(2 * JChangeable_value, shared_ptr_J->at(2, 7));
+    EXPECT_EQ(2 * gChangeable_value, shared_ptr_g->at(7));
 }
