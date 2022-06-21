@@ -9,19 +9,19 @@ namespace magnetic_susceptibility {
 class UniqueGOnlySSquaredMuSquaredWorker: public MuSquaredWorker {
   public:
     UniqueGOnlySSquaredMuSquaredWorker(
-        DenseVector&& energy,
-        DenseVector&& degeneracy,
-        DenseVector&& s_squared,
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy,
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& s_squared,
         double g_unique);
 
     double calculateTheoreticalMuSquared(double temperature) const override;
 
   private:
     double g_unique_;
-    DenseVector s_squared_;
+    std::unique_ptr<quantum::linear_algebra::AbstractVector> s_squared_;
     std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        DenseVector&& derivative_value) const override;
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const override;
     std::vector<ValueAtTemperature>
     calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const override;
 };

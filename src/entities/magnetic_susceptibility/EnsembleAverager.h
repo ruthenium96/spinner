@@ -3,17 +3,23 @@
 
 #include <cmath>
 
-#include "src/entities/data_structures/DenseMatrix.h"
+#include "src/entities/data_structures/AbstractMatrix.h"
+#include "src/entities/data_structures/AbstractVector.h"
+
 namespace magnetic_susceptibility {
 class EnsembleAverager {
   public:
-    EnsembleAverager(DenseVector&& energy, DenseVector&& degeneracy);
-    double ensemble_average(const DenseVector& value, double temperature) const;
+    EnsembleAverager(
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy);
+    double ensemble_average(
+        const std::unique_ptr<quantum::linear_algebra::AbstractVector>& value,
+        double temperature) const;
 
   private:
-    const DenseVector energy_;
-    const DenseVector degeneracy_;
-    mutable DenseVector divided_and_wise_exped_energy;
+    std::unique_ptr<quantum::linear_algebra::AbstractVector> energy_;
+    const std::unique_ptr<quantum::linear_algebra::AbstractVector> degeneracy_;
+    mutable std::unique_ptr<quantum::linear_algebra::AbstractVector> divided_and_wise_exped_energy;
     mutable double partition_function = NAN;
     mutable double last_temperature = NAN;
 };

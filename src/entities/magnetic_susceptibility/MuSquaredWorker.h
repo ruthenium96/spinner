@@ -5,7 +5,7 @@
 
 #include "EnsembleAverager.h"
 #include "ExperimentalValuesWorker.h"
-#include "src/entities/data_structures/DenseMatrix.h"
+#include "src/entities/data_structures/AbstractVector.h"
 #include "src/model/symbols/Symbols.h"
 
 // TODO: is it true?
@@ -15,7 +15,9 @@ namespace magnetic_susceptibility {
 
 class MuSquaredWorker {
   public:
-    MuSquaredWorker(DenseVector&& energy, DenseVector&& degeneracy);
+    MuSquaredWorker(
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy);
 
     void initializeExperimentalValues(
         const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker);
@@ -27,14 +29,14 @@ class MuSquaredWorker {
     double calculateResidualError() const;
     double calculateTotalDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        DenseVector&& derivative_value) const;
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const;
     double calculateTotalDerivative(model::symbols::SymbolTypeEnum symbol_type) const;
 
   protected:
     const EnsembleAverager ensemble_averager_;
     virtual std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        DenseVector&& derivative_value) const = 0;
+        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const = 0;
     virtual std::vector<ValueAtTemperature>
     calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const = 0;
 
