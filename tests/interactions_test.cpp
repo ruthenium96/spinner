@@ -5,6 +5,8 @@
 #include "src/entities/matrix/Matrix.h"
 #include "src/model/operators/ConstantTerm.h"
 #include "src/model/operators/ScalarProductTerm.h"
+// TODO: fix it :(
+#include "src/entities/data_structures/arma/ArmaFactory.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
     std::vector<std::vector<int>> vector_of_mults =
@@ -16,6 +18,10 @@ TEST(constant_operator, 2222_333_2345_44444) {
         // Construct Space
         space::Space space_(converter.get_total_space_size());
 
+        // Create Factory:
+        std::unique_ptr<quantum::linear_algebra::AbstractFactory> factory_ =
+            std::move(std::make_unique<quantum::linear_algebra::ArmaFactory>());
+
         for (int constant = 0; constant < 100; constant += 11) {
             // Construct Operator
             model::operators::Operator operator_;
@@ -23,16 +29,16 @@ TEST(constant_operator, 2222_333_2345_44444) {
                 std::make_unique<model::operators::ConstantTerm>(constant));
 
             // Build Matrix
-            Matrix matrix = Matrix(space_, operator_, converter);
+            Matrix matrix = Matrix(space_, operator_, converter, factory_);
 
             // Check results:
             for (const auto& matrix_block : matrix.blocks) {
-                for (size_t i = 0; i < matrix_block.raw_data.size(); ++i) {
-                    for (size_t j = 0; j < matrix_block.raw_data.size(); ++j) {
+                for (size_t i = 0; i < matrix_block.raw_data->size(); ++i) {
+                    for (size_t j = 0; j < matrix_block.raw_data->size(); ++j) {
                         if (i == j) {
-                            EXPECT_DOUBLE_EQ(matrix_block.raw_data(i, i), constant);
+                            EXPECT_DOUBLE_EQ(matrix_block.raw_data->at(i, i), constant);
                         } else {
-                            EXPECT_DOUBLE_EQ(matrix_block.raw_data(i, j), 0);
+                            EXPECT_DOUBLE_EQ(matrix_block.raw_data->at(i, j), 0);
                         }
                     }
                 }
@@ -43,9 +49,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
 
 TEST(scalar_product, one_center_1_2_3_4_5_6) {
     // Construct matrix of interaction parameters
-    DenseMatrix js;
-    js.resize_with_nans(1, 1);
-    auto ptr_to_js = std::make_shared<const DenseMatrix>(std::move(js));
+    auto ptr_to_js = std::make_shared<const model::TwoDNumericalParameters<double>>(1, NAN);
 
     std::vector<std::vector<int>> vector_of_mults = {{1}, {2}, {3}, {4}, {5}, {6}};
     for (const auto& mults : vector_of_mults) {
@@ -60,14 +64,18 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         operator_.getTwoCenterTerms().emplace_back(
             std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
+        // Create Factory:
+        std::unique_ptr<quantum::linear_algebra::AbstractFactory> factory_ =
+            std::move(std::make_unique<quantum::linear_algebra::ArmaFactory>());
+
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter);
+        Matrix matrix = Matrix(space_, operator_, converter, factory_);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {
-            for (size_t i = 0; i < matrix_block.raw_data.size(); ++i) {
-                for (size_t j = 0; j < matrix_block.raw_data.size(); ++j) {
-                    EXPECT_DOUBLE_EQ(matrix_block.raw_data(i, j), 0);
+            for (size_t i = 0; i < matrix_block.raw_data->size(); ++i) {
+                for (size_t j = 0; j < matrix_block.raw_data->size(); ++j) {
+                    EXPECT_DOUBLE_EQ(matrix_block.raw_data->at(i, j), 0);
                 }
             }
         }
@@ -89,10 +97,9 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
     for (const auto& mults : vector_of_mults) {
         // Construct matrix of interaction parameters
         double J = 10;
-        DenseMatrix js;
-        js.resize_with_nans(mults.size(), mults.size());
-        js.assign_to_position(J, 0, 1);
-        auto ptr_to_js = std::make_shared<const DenseMatrix>(std::move(js));
+        auto ptr_to_js =
+            std::make_shared<model::TwoDNumericalParameters<double>>(mults.size(), NAN);
+        ptr_to_js->at(0, 1) = J;
 
         // Construct Converter
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
@@ -105,13 +112,17 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         operator_.getTwoCenterTerms().emplace_back(
             std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
+        // Create Factory:
+        std::unique_ptr<quantum::linear_algebra::AbstractFactory> factory_ =
+            std::move(std::make_unique<quantum::linear_algebra::ArmaFactory>());
+
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter);
+        Matrix matrix = Matrix(space_, operator_, converter, factory_);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {
-            for (size_t i = 0; i < matrix_block.raw_data.size(); ++i) {
-                for (size_t j = 0; j < matrix_block.raw_data.size(); ++j) {
+            for (size_t i = 0; i < matrix_block.raw_data->size(); ++i) {
+                for (size_t j = 0; j < matrix_block.raw_data->size(); ++j) {
                     double first_spin = converter.get_spins()[0];
                     double second_spin = converter.get_spins()[1];
                     double j_first_center_projection =
@@ -122,7 +133,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
                     if (i == j) {
                         // S0z * S1z part
                         EXPECT_DOUBLE_EQ(
-                            matrix_block.raw_data(i, i),
+                            matrix_block.raw_data->at(i, i),
                             -2 * J * j_first_center_projection * j_second_center_projection);
                     } else if (
                         i
@@ -138,7 +149,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
                             second_spin * (second_spin + 1)
                             - j_second_center_projection * (j_second_center_projection - 1));
                         EXPECT_DOUBLE_EQ(
-                            matrix_block.raw_data(i, j),
+                            matrix_block.raw_data->at(i, j),
                             -J * first_center_ladder_factor * second_center_ladder_factor);
                     } else if (
                         i
@@ -152,10 +163,10 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
                             second_spin * (second_spin + 1)
                             - j_second_center_projection * (j_second_center_projection + 1));
                         EXPECT_DOUBLE_EQ(
-                            matrix_block.raw_data(i, j),
+                            matrix_block.raw_data->at(i, j),
                             -J * first_center_ladder_factor * second_center_ladder_factor);
                     } else {
-                        EXPECT_DOUBLE_EQ(matrix_block.raw_data(i, j), 0);
+                        EXPECT_DOUBLE_EQ(matrix_block.raw_data->at(i, j), 0);
                     }
                 }
             }

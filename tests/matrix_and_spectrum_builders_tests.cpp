@@ -6,7 +6,7 @@
 size_t size_of_matrix_without_degeneracy(const Matrix& matrix) {
     size_t accumulator = 0;
     for (const auto& submatrix : matrix.blocks) {
-        accumulator += submatrix.raw_data.size();
+        accumulator += submatrix.raw_data->size();
     }
     return accumulator;
 }
@@ -14,7 +14,7 @@ size_t size_of_matrix_without_degeneracy(const Matrix& matrix) {
 size_t size_of_matrix_with_degeneracy(const Matrix& matrix) {
     size_t accumulator = 0;
     for (const auto& submatrix : matrix.blocks) {
-        accumulator += submatrix.raw_data.size() * submatrix.properties.degeneracy;
+        accumulator += submatrix.raw_data->size() * submatrix.properties.degeneracy;
     }
     return accumulator;
 }
@@ -22,7 +22,7 @@ size_t size_of_matrix_with_degeneracy(const Matrix& matrix) {
 size_t size_of_spectrum_without_degeneracy(const Spectrum& spectrum) {
     size_t accumulator = 0;
     for (const auto& subspectrum : spectrum.blocks) {
-        accumulator += subspectrum.raw_data.size();
+        accumulator += subspectrum.raw_data->size();
     }
     return accumulator;
 }
@@ -30,14 +30,14 @@ size_t size_of_spectrum_without_degeneracy(const Spectrum& spectrum) {
 size_t size_of_spectrum_with_degeneracy(const Spectrum& spectrum) {
     size_t accumulator = 0;
     for (const auto& subspectrum : spectrum.blocks) {
-        accumulator += subspectrum.raw_data.size() * subspectrum.properties.degeneracy;
+        accumulator += subspectrum.raw_data->size() * subspectrum.properties.degeneracy;
     }
     return accumulator;
 }
 
 void expect_spectrum_equivalence(const Spectrum& first, const Spectrum& second) {
     for (size_t i = 0; i < first.blocks.size(); ++i) {
-        EXPECT_EQ(first.blocks[i].raw_data, second.blocks[i].raw_data);
+        EXPECT_EQ(*(first.blocks[i].raw_data), second.blocks[i].raw_data);
     }
 }
 
@@ -575,12 +575,8 @@ TEST(spectrum_builder_apply_to_entity, spectra_equivalence_22_333_4444_23456) {
 
         runner_without_matrices.BuildSpectra();
 
-        std::vector<DenseMatrix> unitary_transformation_matrices(
-            runner_to_manually_call_apply_to_entity.getMatrix(common::QuantityEnum::Energy)
-                .blocks.size());
-        Spectrum manually_energy_spectrum = Spectrum::energy(
-            runner_to_manually_call_apply_to_entity.getMatrix(common::QuantityEnum::Energy),
-            unitary_transformation_matrices);
+        auto [manually_energy_spectrum, unitary_transformation_matrices] = Spectrum::energy(
+            runner_to_manually_call_apply_to_entity.getMatrix(common::QuantityEnum::Energy));
         Spectrum manually_s_squared_spectrum = Spectrum::non_energy(
             runner_to_manually_call_apply_to_entity.getMatrix(
                 common::QuantityEnum::S_total_squared),
@@ -619,14 +615,9 @@ TEST(
 
         runner_tz_sorted.BuildSpectra();
 
-        std::vector<DenseMatrix> unitary_transformation_matrices(
-            runner_not_tz_sorted_to_manually_call_apply_to_entity
-                .getMatrix(common::QuantityEnum::Energy)
-                .blocks.size());
-        Spectrum manually_energy_spectrum = Spectrum::energy(
-            runner_not_tz_sorted_to_manually_call_apply_to_entity.getMatrix(
-                common::QuantityEnum::Energy),
-            unitary_transformation_matrices);
+        auto [manually_energy_spectrum, unitary_transformation_matrices] =
+            Spectrum::energy(runner_not_tz_sorted_to_manually_call_apply_to_entity.getMatrix(
+                common::QuantityEnum::Energy));
         EXPECT_THROW(
             Spectrum::non_energy(
                 runner_tz_sorted.getMatrix(common::QuantityEnum::S_total_squared),

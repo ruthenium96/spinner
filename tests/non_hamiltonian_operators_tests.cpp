@@ -82,13 +82,16 @@ TEST(
         Matrix s_squared_matrix = Matrix(
             runner.getSpace(),
             runner.getOperator(common::QuantityEnum::S_total_squared),
-            runner.getIndexConverter());
+            runner.getIndexConverter(),
+            runner.getAlgebraDataFactory());
 
-        std::vector<DenseVector> s_squared_values(s_squared_matrix.blocks.size());
-        for (size_t i = 0; i < s_squared_values.size(); ++i) {
-            s_squared_matrix.blocks[i].raw_data.diagonalize(s_squared_values[i]);
+        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractVector>> s_squared_values;
+        s_squared_values.reserve(s_squared_matrix.blocks.size());
+        for (size_t i = 0; i < s_squared_matrix.blocks.size(); ++i) {
+            s_squared_values.emplace_back(s_squared_matrix.blocks[i].raw_data->diagonalizeValues());
         }
-        std::vector<double> s_squared_vector = concatenate(s_squared_values);
+        std::vector<double> s_squared_vector =
+            runner.getAlgebraDataFactory()->concatenate(s_squared_values);
 
         std::vector<int> total_multiplicities(s_squared_vector.size());
         for (size_t i = 0; i < total_multiplicities.size(); ++i) {

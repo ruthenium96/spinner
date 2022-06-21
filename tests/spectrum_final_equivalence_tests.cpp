@@ -25,25 +25,26 @@ struct EnergyAndSSquared {
 std::vector<EnergyAndSSquared> construct_final_vector(const runner::Runner& runner) {
     std::vector<EnergyAndSSquared> vector;
 
-    DenseVector energy_vector;
-    DenseVector s_squared_vector;
-    DenseVector degeneracy_vector;
+    auto& factory = runner.getAlgebraDataFactory();
+    auto energy_vector = factory->createVector();
+    auto s_squared_vector = factory->createVector();
+    auto degeneracy_vector = factory->createVector();
 
     for (const auto& subspectrum : runner.getSpectrum(common::Energy).blocks) {
-        energy_vector.concatenate_with(subspectrum.raw_data);
-        degeneracy_vector.add_identical_values(
-            subspectrum.raw_data.size(),
+        energy_vector->concatenate_with(subspectrum.raw_data);
+        degeneracy_vector->add_identical_values(
+            subspectrum.raw_data->size(),
             subspectrum.properties.degeneracy);
     }
-    energy_vector.subtract_minimum();
+    energy_vector->subtract_minimum();
 
     for (const auto& subspectrum : runner.getSpectrum(common::S_total_squared).blocks) {
-        s_squared_vector.concatenate_with(subspectrum.raw_data);
+        s_squared_vector->concatenate_with(subspectrum.raw_data);
     }
 
-    for (size_t i = 0; i < degeneracy_vector.size(); ++i) {
-        EnergyAndSSquared energy_and_s_squared = {energy_vector(i), s_squared_vector(i)};
-        for (size_t j = 0; j < (size_t)degeneracy_vector(i); ++j) {
+    for (size_t i = 0; i < degeneracy_vector->size(); ++i) {
+        EnergyAndSSquared energy_and_s_squared = {energy_vector->at(i), s_squared_vector->at(i)};
+        for (size_t j = 0; j < (size_t)degeneracy_vector->at(i); ++j) {
             vector.push_back(energy_and_s_squared);
         }
     }
