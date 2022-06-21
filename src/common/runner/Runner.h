@@ -5,6 +5,7 @@
 
 #include "ConsistentModelOptimizationList.h"
 #include "src/common/Quantity.h"
+#include "src/entities/data_structures/AbstractFactory.h"
 #include "src/entities/magnetic_susceptibility/MuSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
@@ -14,8 +15,17 @@
 namespace runner {
 class Runner {
   public:
+    Runner(
+        model::Model model,
+        common::physical_optimization::OptimizationList optimizationList,
+        std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory);
+    // constructor for Runner with default algebra package:
     Runner(model::Model model, common::physical_optimization::OptimizationList optimizationList);
     // constructor for Runner with no optimizations:
+    Runner(
+        model::Model model,
+        std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory);
+    // constructor for Runner with no optimizations and default algebra package:
     explicit Runner(model::Model model);
 
     // SPACE OPERATIONS
@@ -57,9 +67,13 @@ class Runner {
     const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
     const model::symbols::Symbols& getSymbols() const;
 
+    const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& getAlgebraDataFactory() const;
+
   private:
     ConsistentModelOptimizationList consistentModelOptimizationList_;
     const space::Space space_;
+    // TODO: rename it.
+    std::unique_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory_;
 
     const model::Model& getModel() const;
     model::Model& getModel();

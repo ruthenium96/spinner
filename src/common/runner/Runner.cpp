@@ -8,15 +8,39 @@
 #include "src/model/operators/ScalarProductTerm.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
 
+// TODO: temporary solution, default option should be a global constant
+#include "src/entities/data_structures/arma/ArmaFactory.h"
+
 namespace runner {
 
 Runner::Runner(model::Model model) :
-    Runner(std::move(model), common::physical_optimization::OptimizationList()) {}
+    Runner(
+        std::move(model),
+        common::physical_optimization::OptimizationList(),
+        std::make_unique<quantum::linear_algebra::ArmaFactory>()) {}
 
 Runner::Runner(
     model::Model model,
     common::physical_optimization::OptimizationList optimizationList) :
+    Runner(
+        std::move(model),
+        std::move(optimizationList),
+        std::make_unique<quantum::linear_algebra::ArmaFactory>()) {}
+
+Runner::Runner(
+    model::Model model,
+    std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory) :
+    Runner(
+        std::move(model),
+        common::physical_optimization::OptimizationList(),
+        std::move(algebraDataFactory)) {}
+
+Runner::Runner(
+    model::Model model,
+    common::physical_optimization::OptimizationList optimizationList,
+    std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory) :
     consistentModelOptimizationList_(std::move(model), std::move(optimizationList)),
+    algebraDataFactory_(std::move(algebraDataFactory)),
     space_(space::optimization::OptimizedSpaceConstructor::construct(
         consistentModelOptimizationList_)) {
     if (getModel().is_s_squared_initialized()) {
@@ -44,18 +68,26 @@ const space::Space& runner::Runner::getSpace() const {
 
 void Runner::BuildMatrices() {
     if (!getOperator(common::Energy).empty()) {
-        energy.matrix_ = Matrix(getSpace(), getOperator(common::Energy), getIndexConverter());
+        energy.matrix_ = Matrix(
+            getSpace(),
+            getOperator(common::Energy),
+            getIndexConverter(),
+            getAlgebraDataFactory());
     }
     if (s_squared.has_value()) {
-        s_squared->matrix_ =
-            Matrix(getSpace(), getOperator(common::S_total_squared), getIndexConverter());
+        s_squared->matrix_ = Matrix(
+            getSpace(),
+            getOperator(common::S_total_squared),
+            getIndexConverter(),
+            getAlgebraDataFactory());
     }
     for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
         // TODO: fix it!
         derivative.matrix_ = Matrix(
             getSpace(),
             getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
-            getIndexConverter());
+            getIndexConverter(),
+            getAlgebraDataFactory());
     }
 
     matrix_history_.matrices_was_built = true;
@@ -66,15 +98,15 @@ void Runner::BuildSpectra() {
 
     if (!getOperator(common::Energy).empty()) {
         energy.spectrum_.blocks.clear();
-        energy.spectrum_.blocks.resize(number_of_blocks);
+        energy.spectrum_.blocks.reserve(number_of_blocks);
     }
     if (s_squared.has_value()) {
         s_squared->spectrum_.blocks.clear();
-        s_squared->spectrum_.blocks.resize(number_of_blocks);
+        s_squared->spectrum_.blocks.reserve(number_of_blocks);
     }
     for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
         derivative.spectrum_.blocks.clear();
-        derivative.spectrum_.blocks.resize(number_of_blocks);
+        derivative.spectrum_.blocks.reserve(number_of_blocks);
     }
 
     if (matrix_history_.matrices_was_built) {
@@ -86,43 +118,46 @@ void Runner::BuildSpectra() {
 
 void Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
-        DenseMatrix unitary_transformation_matrix;
-        energy.spectrum_.blocks[block] =
-            Subspectrum::energy(energy.matrix_.blocks[block], unitary_transformation_matrix);
+        auto [subspectrum_energy, unitary_transformation_matrix] =
+            Subspectrum::energy(energy.matrix_.blocks[block]);
+        energy.spectrum_.blocks.emplace_back(std::move(subspectrum_energy));
 
         if (s_squared.has_value()) {
-            s_squared->spectrum_.blocks[block] = Subspectrum::non_energy(
+            s_squared->spectrum_.blocks.emplace_back(Subspectrum::non_energy(
                 s_squared->matrix_.blocks[block],
-                unitary_transformation_matrix);
+                unitary_transformation_matrix));
         }
 
         for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
-            derivative.spectrum_.blocks[block] = Subspectrum::non_energy(
+            derivative.spectrum_.blocks.emplace_back(Subspectrum::non_energy(
                 derivative.matrix_.blocks[block],
-                unitary_transformation_matrix);
+                unitary_transformation_matrix));
         }
     }
 }
 
 void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
-        DenseMatrix unitary_transformation_matrix;
+        auto unitary_transformation_matrix = algebraDataFactory_->createMatrix();
         {
             auto hamiltonian_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
                 getOperator(common::Energy),
-                getIndexConverter());
-            energy.spectrum_.blocks[block] =
-                Subspectrum::energy(hamiltonian_submatrix, unitary_transformation_matrix);
+                getIndexConverter(),
+                getAlgebraDataFactory());
+            auto pair = Subspectrum::energy(hamiltonian_submatrix);
+            energy.spectrum_.blocks.emplace_back(std::move(pair.first));
+            unitary_transformation_matrix = std::move(pair.second);
         }
 
         if (s_squared.has_value()) {
             auto non_hamiltonian_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
                 getOperator(common::S_total_squared),
-                getIndexConverter());
-            s_squared->spectrum_.blocks[block] =
-                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix);
+                getIndexConverter(),
+                getAlgebraDataFactory());
+            s_squared->spectrum_.blocks.emplace_back(
+                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
         }
 
         for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
@@ -130,9 +165,10 @@ void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
             auto derivative_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
                 getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
-                getIndexConverter());
-            derivative.spectrum_.blocks[block] =
-                Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix);
+                getIndexConverter(),
+                getAlgebraDataFactory());
+            derivative.spectrum_.blocks.emplace_back(
+                Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
         }
     }
 }
@@ -191,25 +227,27 @@ const Matrix& Runner::getMatrixDerivative(
 }
 
 void Runner::BuildMuSquaredWorker() {
-    DenseVector energy_vector;
-    DenseVector degeneracy_vector;
+    auto energy_vector = algebraDataFactory_->createVector();
+    auto degeneracy_vector = algebraDataFactory_->createVector();
+    ;
 
     for (const auto& subspectrum : energy.spectrum_.blocks) {
-        energy_vector.concatenate_with(subspectrum.raw_data);
-        degeneracy_vector.add_identical_values(
-            subspectrum.raw_data.size(),
+        energy_vector->concatenate_with(subspectrum.raw_data);
+        degeneracy_vector->add_identical_values(
+            subspectrum.raw_data->size(),
             subspectrum.properties.degeneracy);
     }
-    energy_vector.subtract_minimum();
+    energy_vector->subtract_minimum();
 
     if (getSymbols().isAllGFactorsEqual()) {
         // and there is no field
-        double g_factor = getSymbols().getGFactorParameters()->operator()(0);
-        DenseVector s_squared_vector;
+        // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
+        double g_factor = getSymbols().getGFactorParameters()->at(0);
+        auto s_squared_vector = algebraDataFactory_->createVector();
 
         // TODO: check if s_squared has been initialized
         for (const auto& subspectrum : s_squared->spectrum_.blocks) {
-            s_squared_vector.concatenate_with(subspectrum.raw_data);
+            s_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 
         mu_squared_worker =
@@ -254,10 +292,10 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
     std::map<model::symbols::SymbolName, double> answer;
 
     for (const auto& changeable_symbol : getSymbols().getChangeableNames(model::symbols::J)) {
-        DenseVector derivative_vector;
+        auto derivative_vector = algebraDataFactory_->createVector();
         for (const auto& subspectrum :
              getSpectrumDerivative(common::Energy, model::symbols::J, changeable_symbol).blocks) {
-            derivative_vector.concatenate_with(subspectrum.raw_data);
+            derivative_vector->concatenate_with(subspectrum.raw_data);
         }
         double value = mu_squared_worker.value()->calculateTotalDerivative(
             model::symbols::J,
@@ -359,5 +397,10 @@ model::Model& Runner::getModel() {
 
 const common::physical_optimization::OptimizationList& Runner::getOptimizationList() const {
     return consistentModelOptimizationList_.getOptimizationList();
+}
+
+const std::unique_ptr<quantum::linear_algebra::AbstractFactory>&
+Runner::getAlgebraDataFactory() const {
+    return algebraDataFactory_;
 }
 }  // namespace runner
