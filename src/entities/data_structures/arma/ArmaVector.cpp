@@ -72,10 +72,6 @@ bool ArmaVector::operator!=(const std::unique_ptr<AbstractVector>& rhs) const {
     return !(*this == rhs);
 }
 
-const ArmaVector* ArmaVector::downcast_ptr(std::unique_ptr<const AbstractVector>& ptr) {
-    return dynamic_cast<const ArmaVector*>(ptr.get());
-}
-
 const ArmaVector* ArmaVector::downcast_ptr(const std::unique_ptr<AbstractVector>& ptr) {
     return dynamic_cast<const ArmaVector*>(ptr.get());
 }
@@ -84,7 +80,4 @@ void ArmaVector::print(std::ostream& os) const {
     os << vector_ << std::endl;
 }
 
-ArmaVector* ArmaVector::downcast_ptr(std::unique_ptr<AbstractVector>& ptr) {
-    return dynamic_cast<ArmaVector*>(ptr.get());
-}
 }  // namespace quantum::linear_algebra

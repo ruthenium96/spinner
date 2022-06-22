@@ -33,8 +33,6 @@ class ArmaVector: public AbstractVector {
   private:
     // c-like pointers are necessary to avoid double-free error
     static const ArmaVector* downcast_ptr(const std::unique_ptr<AbstractVector>& ptr);
-    static const ArmaVector* downcast_ptr(std::unique_ptr<const AbstractVector>& ptr);
-    static ArmaVector* downcast_ptr(std::unique_ptr<AbstractVector>& ptr);
     arma::dvec vector_;
 };
 }  // namespace quantum::linear_algebra

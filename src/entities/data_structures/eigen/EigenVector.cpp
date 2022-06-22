@@ -86,7 +86,4 @@ const EigenVector* EigenVector::downcast_ptr(const std::unique_ptr<AbstractVecto
     return dynamic_cast<const EigenVector*>(ptr.get());
 }
 
-const EigenVector* EigenVector::downcast_ptr(std::unique_ptr<const AbstractVector>& ptr) {
-    return dynamic_cast<const EigenVector*>(ptr.get());
-}
 }  // namespace quantum::linear_algebra

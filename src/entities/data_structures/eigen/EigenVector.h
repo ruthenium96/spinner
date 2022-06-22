@@ -34,8 +34,6 @@ class EigenVector: public AbstractVector {
 
     // c-like pointers are necessary to avoid double-free error
     static const EigenVector* downcast_ptr(const std::unique_ptr<AbstractVector>& ptr);
-    static const EigenVector* downcast_ptr(std::unique_ptr<const AbstractVector>& ptr);
-    static EigenVector* downcast_ptr(std::unique_ptr<AbstractVector>& ptr);
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_EIGENVECTOR_H
