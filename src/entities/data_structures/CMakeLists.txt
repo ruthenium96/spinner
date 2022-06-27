@@ -4,10 +4,12 @@ add_library(data_structures
         #        space/SubspaceData_sparse_matrix.cpp
         )
 
+message("Trying to find packages of linear algebra...")
+
 find_package(Armadillo)
 
 if (ARMADILLO_FOUND)
-    include_directories(${ARMADILLO_INCLUDE_DIRS})
+    message(" * Armadillo was found")
     add_library(arma_structures
             arma/ArmaFactory.cpp arma/ArmaFactory.h
             arma/ArmaMatrix.cpp arma/ArmaMatrix.h
@@ -15,15 +17,20 @@ if (ARMADILLO_FOUND)
             )
     target_link_libraries(arma_structures ${ARMADILLO_LIBRARIES})
     target_link_libraries(data_structures arma_structures)
+else ()
+    message(" * Armadillo was NOT found")
 endif ()
 
 find_package(Eigen3 3.3)
 
 if (Eigen3_FOUND)
+    message(" * Eigen3 was found")
     add_library(eigen_structures
             eigen/EigenFactory.cpp eigen/EigenFactory.h
             eigen/EigenMatrix.cpp eigen/EigenMatrix.h
             eigen/EigenVector.cpp eigen/EigenVector.h)
     target_link_libraries(eigen_structures Eigen3::Eigen)
     target_link_libraries(data_structures eigen_structures)
+else ()
+    message(" * Eigen3 was NOT found")
 endif ()
