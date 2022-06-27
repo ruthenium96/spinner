@@ -2,6 +2,7 @@
 
 #include <stlbfgs.h>
 
+#include <cassert>
 #include <utility>
 
 #include "src/model/operators/ConstantTerm.h"
@@ -179,6 +180,7 @@ const Matrix& Runner::getMatrix(common::QuantityEnum quantity_enum) const {
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
         return s_squared->matrix_;
     }
+    assert(0);
 }
 
 const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
@@ -187,6 +189,7 @@ const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
         return s_squared->spectrum_;
     }
+    assert(0);
 }
 
 const model::operators::Operator& Runner::getOperator(common::QuantityEnum quantity_enum) const {
