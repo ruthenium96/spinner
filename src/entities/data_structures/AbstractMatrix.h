@@ -20,9 +20,6 @@ class AbstractMatrix {
     virtual void assign_to_position(double value, uint32_t i, uint32_t j) = 0;
     virtual void
     resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) = 0;
-    virtual void resize_with_nans(
-        uint32_t matrix_in_space_basis_size_i,
-        uint32_t matrix_in_space_basis_size_j) = 0;
     virtual EigenCouple diagonalizeValuesVectors() const = 0;
     virtual std::unique_ptr<AbstractVector> diagonalizeValues() const = 0;
     virtual std::unique_ptr<AbstractVector> return_main_diagonal() const = 0;

@@ -20,14 +20,6 @@ void ArmaMatrix::resize(
     matrix_.fill(arma::fill::zeros);
 }
 
-void ArmaMatrix::resize_with_nans(
-    uint32_t matrix_in_space_basis_size_i,
-    uint32_t matrix_in_space_basis_size_j) {
-    // TODO: is it the fastest way to initialize NaNs matrix?
-    matrix_.resize(matrix_in_space_basis_size_i, matrix_in_space_basis_size_j);
-    matrix_.fill(arma::datum::nan);
-}
-
 uint32_t ArmaMatrix::size() const {
     return matrix_.n_rows;
 }

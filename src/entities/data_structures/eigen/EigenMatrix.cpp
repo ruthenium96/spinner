@@ -16,13 +16,6 @@ void EigenMatrix::resize(
     matrix_.fill(0);
 }
 
-void EigenMatrix::resize_with_nans(
-    uint32_t matrix_in_space_basis_size_i,
-    uint32_t matrix_in_space_basis_size_j) {
-    matrix_.resize(matrix_in_space_basis_size_i, matrix_in_space_basis_size_j);
-    matrix_.fill(NAN);
-}
-
 EigenCouple EigenMatrix::diagonalizeValuesVectors() const {
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es;
     es.compute(matrix_, Eigen::ComputeEigenvectors);

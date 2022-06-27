@@ -17,9 +17,6 @@ class ArmaMatrix: public AbstractMatrix {
     void assign_to_position(double value, uint32_t i, uint32_t j) override;
     void
     resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) override;
-    void resize_with_nans(
-        uint32_t matrix_in_space_basis_size_i,
-        uint32_t matrix_in_space_basis_size_j) override;
     std::unique_ptr<AbstractMatrix>
     unitary_transform(const std::unique_ptr<AbstractMatrix>& matrix_to_transform) const override;
 
