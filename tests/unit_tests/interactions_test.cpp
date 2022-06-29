@@ -2,11 +2,10 @@
 
 #include "gtest/gtest.h"
 #include "src/common/lexicographic/IndexConverter.h"
+#include "src/entities/data_structures/AbstractFactory.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/model/operators/ConstantTerm.h"
 #include "src/model/operators/ScalarProductTerm.h"
-// TODO: fix it :(
-#include "src/entities/data_structures/arma/ArmaFactory.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
     std::vector<std::vector<int>> vector_of_mults =
@@ -19,8 +18,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
         space::Space space_(converter.get_total_space_size());
 
         // Create Factory:
-        std::unique_ptr<quantum::linear_algebra::AbstractFactory> factory_ =
-            std::move(std::make_unique<quantum::linear_algebra::ArmaFactory>());
+        auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
 
         for (int constant = 0; constant < 100; constant += 11) {
             // Construct Operator
@@ -65,8 +63,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
             std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
         // Create Factory:
-        std::unique_ptr<quantum::linear_algebra::AbstractFactory> factory_ =
-            std::move(std::make_unique<quantum::linear_algebra::ArmaFactory>());
+        auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter, factory_);
@@ -113,8 +110,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
             std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
 
         // Create Factory:
-        std::unique_ptr<quantum::linear_algebra::AbstractFactory> factory_ =
-            std::move(std::make_unique<quantum::linear_algebra::ArmaFactory>());
+        auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter, factory_);

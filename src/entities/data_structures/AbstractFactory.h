@@ -7,6 +7,7 @@
 namespace quantum::linear_algebra {
 class AbstractFactory {
   public:
+    static std::shared_ptr<AbstractFactory> defaultFactory();
     virtual std::unique_ptr<AbstractMatrix> createMatrix() = 0;
     virtual std::unique_ptr<AbstractVector> createVector() = 0;
     // TODO: it is a temporary solution, fix it

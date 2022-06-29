@@ -9,16 +9,13 @@
 #include "src/model/operators/ScalarProductTerm.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
 
-// TODO: temporary solution, default option should be a global constant
-#include "src/entities/data_structures/arma/ArmaFactory.h"
-
 namespace runner {
 
 Runner::Runner(model::Model model) :
     Runner(
         std::move(model),
         common::physical_optimization::OptimizationList(),
-        std::make_unique<quantum::linear_algebra::ArmaFactory>()) {}
+        quantum::linear_algebra::AbstractFactory::defaultFactory()) {}
 
 Runner::Runner(
     model::Model model,
@@ -26,7 +23,7 @@ Runner::Runner(
     Runner(
         std::move(model),
         std::move(optimizationList),
-        std::make_unique<quantum::linear_algebra::ArmaFactory>()) {}
+        quantum::linear_algebra::AbstractFactory::defaultFactory()) {}
 
 Runner::Runner(
     model::Model model,
