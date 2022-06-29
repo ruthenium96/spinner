@@ -12,7 +12,7 @@ Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter,
-    const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
+    const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
     lexicographic::SparseMatrix matrix_in_lexicografical_basis(converter);
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 

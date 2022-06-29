@@ -25,7 +25,7 @@ struct EnergyAndSSquared {
 std::vector<EnergyAndSSquared> construct_final_vector(const runner::Runner& runner) {
     std::vector<EnergyAndSSquared> vector;
 
-    auto& factory = runner.getAlgebraDataFactory();
+    auto factory = runner.getAlgebraDataFactory();
     auto energy_vector = factory->createVector();
     auto s_squared_vector = factory->createVector();
     auto degeneracy_vector = factory->createVector();

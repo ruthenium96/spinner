@@ -30,7 +30,7 @@ Runner::Runner(
 
 Runner::Runner(
     model::Model model,
-    std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory) :
+    std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory) :
     Runner(
         std::move(model),
         common::physical_optimization::OptimizationList(),
@@ -39,7 +39,7 @@ Runner::Runner(
 Runner::Runner(
     model::Model model,
     common::physical_optimization::OptimizationList optimizationList,
-    std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory) :
+    std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory) :
     consistentModelOptimizationList_(std::move(model), std::move(optimizationList)),
     algebraDataFactory_(std::move(algebraDataFactory)),
     space_(space::optimization::OptimizedSpaceConstructor::construct(
@@ -402,8 +402,7 @@ const common::physical_optimization::OptimizationList& Runner::getOptimizationLi
     return consistentModelOptimizationList_.getOptimizationList();
 }
 
-const std::unique_ptr<quantum::linear_algebra::AbstractFactory>&
-Runner::getAlgebraDataFactory() const {
+std::shared_ptr<quantum::linear_algebra::AbstractFactory> Runner::getAlgebraDataFactory() const {
     return algebraDataFactory_;
 }
 }  // namespace runner

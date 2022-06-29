@@ -14,7 +14,7 @@ struct Matrix {
         const space::Space& space,
         const model::operators::Operator& new_operator,
         const lexicographic::IndexConverter& converter,
-        const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& factory);
+        const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory);
 
     std::vector<Submatrix> blocks;
     explicit Matrix(std::vector<Submatrix>&& m);

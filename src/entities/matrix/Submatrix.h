@@ -18,7 +18,7 @@ struct Submatrix {
         const space::Subspace& subspace,
         const model::operators::Operator& new_operator,
         const lexicographic::IndexConverter& converter,
-        const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& factory);
+        const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory);
     friend std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 };
 

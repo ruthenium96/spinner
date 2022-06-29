@@ -18,13 +18,13 @@ class Runner {
     Runner(
         model::Model model,
         common::physical_optimization::OptimizationList optimizationList,
-        std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory);
+        std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory);
     // constructor for Runner with default algebra package:
     Runner(model::Model model, common::physical_optimization::OptimizationList optimizationList);
     // constructor for Runner with no optimizations:
     Runner(
         model::Model model,
-        std::unique_ptr<quantum::linear_algebra::AbstractFactory>&& algebraDataFactory);
+        std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory);
     // constructor for Runner with no optimizations and default algebra package:
     explicit Runner(model::Model model);
 
@@ -67,13 +67,13 @@ class Runner {
     const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
     const model::symbols::Symbols& getSymbols() const;
 
-    const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& getAlgebraDataFactory() const;
+    std::shared_ptr<quantum::linear_algebra::AbstractFactory> getAlgebraDataFactory() const;
 
   private:
     ConsistentModelOptimizationList consistentModelOptimizationList_;
     const space::Space space_;
     // TODO: rename it.
-    std::unique_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory_;
+    std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory_;
 
     const model::Model& getModel() const;
     model::Model& getModel();

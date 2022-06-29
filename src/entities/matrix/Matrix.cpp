@@ -14,7 +14,7 @@ Matrix::Matrix(
     const space::Space& space,
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter,
-    const std::unique_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
+    const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
     blocks.reserve(space.getBlocks().size());
     //    blocks.resize(space.getBlocks().size());
 
