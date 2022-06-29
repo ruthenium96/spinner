@@ -11,6 +11,8 @@ add_executable(spinner_test
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
         magnetic_susceptibility_tests.cpp
-        integration_tests/spectrum_final_equivalence_tests.cpp)
+        integration_tests/spectrum_final_equivalence_tests.cpp
+        # TODO: add it only if both Eigen and Armadillo are installed
+        unit_tests/linearAlgebraFactories_tests.cpp)
 
 target_link_libraries(spinner_test gtest gtest_main group space model spectrum common matrix magnetic_susceptibility)
