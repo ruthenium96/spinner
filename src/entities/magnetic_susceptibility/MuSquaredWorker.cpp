@@ -4,7 +4,9 @@
 
 namespace magnetic_susceptibility {
 
-MuSquaredWorker::MuSquaredWorker(DenseVector&& energy, DenseVector&& degeneracy) :
+MuSquaredWorker::MuSquaredWorker(
+    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
+    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy) :
     ensemble_averager_(std::move(energy), std::move(degeneracy)) {}
 
 double MuSquaredWorker::calculateResidualError() const {
@@ -13,7 +15,7 @@ double MuSquaredWorker::calculateResidualError() const {
 
 double MuSquaredWorker::calculateTotalDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    DenseVector&& derivative_value) const {
+    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const {
     std::vector<ValueAtTemperature> theoretical_derivative =
         calculateDerivative(symbol_type, std::move(derivative_value));
     return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));

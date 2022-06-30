@@ -24,6 +24,7 @@ jobs:
             libarpack2-dev \
             libsuperlu-dev \
             libarmadillo-dev \
+            libeigen3-dev \
             gfortran \
             libomp-dev \
       - name: Build project

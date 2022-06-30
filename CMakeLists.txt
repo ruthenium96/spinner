@@ -30,12 +30,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(stlbfgs)
 include_directories(${stlbfgs_SOURCE_DIR}/)
 
-find_package(Boost)
-include_directories(${Boost_INCLUDE_DIRS})
-
-find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
-
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")

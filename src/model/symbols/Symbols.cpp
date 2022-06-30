@@ -89,14 +89,14 @@ Symbols& Symbols::assignSymbolToGFactor(const SymbolName& symbol_name, size_t ce
     return *this;
 }
 
-std::shared_ptr<const DenseVector> Symbols::getGFactorParameters() const {
+std::shared_ptr<const OneDNumericalParameters<double>> Symbols::getGFactorParameters() const {
     if (numeric_g_factors_ == nullptr) {
         throw std::invalid_argument("g-factors were not initialized");
     }
     return numeric_g_factors_;
 }
 
-std::shared_ptr<const DenseMatrix>
+std::shared_ptr<const TwoDNumericalParameters<double>>
 Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name) {
     if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
         throw std::invalid_argument(symbol_name.get_name() + " name has not been initialized");
@@ -111,8 +111,8 @@ Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol
         throw std::length_error("Isotropic exchange parameters has not been initialized");
     }
 
-    auto ptr_to_derivative = std::make_shared<DenseMatrix>();
-    ptr_to_derivative->resize_with_nans(number_of_spins_, number_of_spins_);
+    auto ptr_to_derivative =
+        std::make_shared<TwoDNumericalParameters<double>>(number_of_spins_, NAN);
 
     for (size_t i = 0; i < number_of_spins_; ++i) {
         for (size_t j = 0; j < number_of_spins_; ++j) {
@@ -122,7 +122,7 @@ Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol
             } else {
                 value = 1;
             }
-            ptr_to_derivative->assign_to_position(value, i, j);
+            ptr_to_derivative->at(i, j) = value;
         }
     }
 
@@ -188,8 +188,8 @@ Symbols& Symbols::setNewValueToChangeableSymbol(const SymbolName& symbol_name, d
 
 void Symbols::updateIsotropicExchangeParameters() {
     if (numeric_isotropic_exchanges_ == nullptr) {
-        numeric_isotropic_exchanges_ = std::make_shared<DenseMatrix>();
-        numeric_isotropic_exchanges_->resize_with_nans(number_of_spins_, number_of_spins_);
+        numeric_isotropic_exchanges_ =
+            std::make_shared<TwoDNumericalParameters<double>>(number_of_spins_, NAN);
     }
 
     for (size_t i = 0; i < number_of_spins_; ++i) {
@@ -200,24 +200,25 @@ void Symbols::updateIsotropicExchangeParameters() {
             } else {
                 value = symbolsMap[symbolic_isotropic_exchanges_[i][j]].value;
             }
-            numeric_isotropic_exchanges_->assign_to_position(value, i, j);
+            numeric_isotropic_exchanges_->at(i, j) = value;
         }
     }
 }
 
 void Symbols::updateGFactorParameters() {
     if (numeric_g_factors_ == nullptr) {
-        numeric_g_factors_ = std::make_shared<DenseVector>();
-        numeric_g_factors_->resize(number_of_spins_);
+        numeric_g_factors_ =
+            std::make_shared<OneDNumericalParameters<double>>(number_of_spins_, NAN);
     }
 
     for (size_t i = 0; i < number_of_spins_; ++i) {
         double value = symbolsMap[symbolic_g_factors_[i]].value;
-        numeric_g_factors_->assign_to_position(value, i);
+        numeric_g_factors_->at(i) = value;
     }
 }
 
-std::shared_ptr<const DenseMatrix> Symbols::getIsotropicExchangeParameters() const {
+std::shared_ptr<const TwoDNumericalParameters<double>>
+Symbols::getIsotropicExchangeParameters() const {
     // TODO: refactor it:
     if (numeric_isotropic_exchanges_ == nullptr) {
         throw std::invalid_argument("Isotropic exchange interaction was not initialized");

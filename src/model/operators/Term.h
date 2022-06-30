@@ -6,7 +6,7 @@
 
 #include "src/common/lexicographic/IndexConverter.h"
 #include "src/common/lexicographic/SparseMatrix.h"
-#include "src/entities/data_structures/DenseMatrix.h"
+#include "src/model/NumericalParameters.h"
 
 namespace model::operators {
 class ZeroCenterTerm {
@@ -16,7 +16,8 @@ class ZeroCenterTerm {
     virtual void construct(
         lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
         uint32_t index_of_vector) const = 0;
-    virtual ~ZeroCenterTerm() {};
+    virtual ~ZeroCenterTerm() = default;
+    ;
 };
 
 class OneCenterTerm {
@@ -26,7 +27,8 @@ class OneCenterTerm {
         lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
         uint32_t center_a) const = 0;
-    virtual ~OneCenterTerm() {};
+    virtual ~OneCenterTerm() = default;
+    ;
 };
 
 class TwoCenterTerm {
@@ -37,8 +39,9 @@ class TwoCenterTerm {
         uint32_t index_of_vector,
         uint32_t center_a,
         uint32_t center_b) const = 0;
-    virtual std::shared_ptr<const DenseMatrix> get_parameters() const = 0;
-    virtual ~TwoCenterTerm() {};
+    virtual std::shared_ptr<const TwoDNumericalParameters<double>> get_parameters() const = 0;
+    virtual ~TwoCenterTerm() = default;
+    ;
 };
 }  // namespace model::operators
 

@@ -2,6 +2,8 @@
 
 #include <src/model/operators/ScalarProductTerm.h>
 
+#include <cassert>
+
 namespace model {
 
 Model::Model(const std::vector<int>& mults) : symbols_(mults.size()), converter_(mults) {
@@ -67,6 +69,7 @@ const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
         return s_squared_operator.value();
     }
+    assert(0);
 }
 
 const operators::Operator& Model::getOperatorDerivative(
@@ -78,10 +81,13 @@ const operators::Operator& Model::getOperatorDerivative(
             return derivative_of_energy_wrt_exchange_parameters_operator.at(symbol);
         }
     }
+    assert(0);
 }
+
 bool Model::is_s_squared_initialized() const {
     return operators_history_.s_squared;
 }
+
 bool Model::is_isotropic_exchange_derivatives_initialized() const {
     return operators_history_.isotropic_exchange_derivatives;
 }

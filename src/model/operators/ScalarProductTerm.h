@@ -7,7 +7,8 @@ namespace model::operators {
 class ScalarProductTerm: public TwoCenterTerm {
   public:
     explicit ScalarProductTerm(size_t number_of_spins);
-    explicit ScalarProductTerm(std::shared_ptr<const DenseMatrix> isotropic_exchange_parameters);
+    explicit ScalarProductTerm(
+        std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters);
 
     std::unique_ptr<TwoCenterTerm> clone() const override;
 
@@ -17,10 +18,10 @@ class ScalarProductTerm: public TwoCenterTerm {
         uint32_t center_a,
         uint32_t center_b) const override;
 
-    std::shared_ptr<const DenseMatrix> get_parameters() const override;
+    std::shared_ptr<const TwoDNumericalParameters<double>> get_parameters() const override;
 
   private:
-    std::shared_ptr<const DenseMatrix> coefficients;
+    std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
 };
 }  // namespace model::operators
 

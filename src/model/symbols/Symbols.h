@@ -6,8 +6,8 @@
 #include <stdexcept>
 
 #include "SymbolName.h"
-#include "src/entities/data_structures/DenseMatrix.h"
 #include "src/group/Group.h"
+#include "src/model/NumericalParameters.h"
 
 namespace model::symbols {
 
@@ -22,10 +22,10 @@ class Symbols {
     bool isGFactorInitialized() const;
     bool isIsotropicExchangeInitialized() const;
 
-    std::shared_ptr<const DenseMatrix>
+    std::shared_ptr<const TwoDNumericalParameters<double>>
     constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name);
-    std::shared_ptr<const DenseMatrix> getIsotropicExchangeParameters() const;
-    std::shared_ptr<const DenseVector> getGFactorParameters() const;
+    std::shared_ptr<const TwoDNumericalParameters<double>> getIsotropicExchangeParameters() const;
+    std::shared_ptr<const OneDNumericalParameters<double>> getGFactorParameters() const;
 
     SymbolName getIsotropicExchangeSymbolName(size_t i, size_t j) const;
     SymbolName getGFactorSymbolName(size_t i) const;
@@ -67,9 +67,10 @@ class Symbols {
     void updateIsotropicExchangeParameters();
     void updateGFactorParameters();
 
-    std::shared_ptr<DenseMatrix> numeric_isotropic_exchanges_;
-    std::shared_ptr<DenseVector> numeric_g_factors_;
-    std::vector<std::shared_ptr<DenseMatrix>> numeric_isotropic_exchange_derivatives_;
+    std::shared_ptr<TwoDNumericalParameters<double>> numeric_isotropic_exchanges_;
+    std::shared_ptr<OneDNumericalParameters<double>> numeric_g_factors_;
+    std::vector<std::shared_ptr<TwoDNumericalParameters<double>>>
+        numeric_isotropic_exchange_derivatives_;
 
     std::map<SymbolName, SymbolData> symbolsMap;
 };
