@@ -73,7 +73,11 @@ bool ArmaVector::operator!=(const std::unique_ptr<AbstractVector>& rhs) const {
 }
 
 const ArmaVector* ArmaVector::downcast_ptr(const std::unique_ptr<AbstractVector>& ptr) {
-    return dynamic_cast<const ArmaVector*>(ptr.get());
+    auto answer = dynamic_cast<const ArmaVector*>(ptr.get());
+    if (answer == nullptr) {
+        throw std::bad_cast();
+    }
+    return answer;
 }
 
 void ArmaVector::print(std::ostream& os) const {

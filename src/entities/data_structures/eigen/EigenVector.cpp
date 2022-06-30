@@ -83,7 +83,11 @@ bool EigenVector::operator!=(const std::unique_ptr<AbstractVector>& rhs) const {
 }
 
 const EigenVector* EigenVector::downcast_ptr(const std::unique_ptr<AbstractVector>& ptr) {
-    return dynamic_cast<const EigenVector*>(ptr.get());
+    auto answer = dynamic_cast<const EigenVector*>(ptr.get());
+    if (answer == nullptr) {
+        throw std::bad_cast();
+    }
+    return answer;
 }
 
 }  // namespace quantum::linear_algebra

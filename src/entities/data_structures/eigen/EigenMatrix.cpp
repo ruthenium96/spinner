@@ -80,7 +80,11 @@ void EigenMatrix::print(std::ostream& os) const {
 }
 
 const EigenMatrix* EigenMatrix::downcast_ptr(const std::unique_ptr<AbstractMatrix>& ptr) {
-    return dynamic_cast<const EigenMatrix*>(ptr.get());
+    auto answer = dynamic_cast<const EigenMatrix*>(ptr.get());
+    if (answer == nullptr) {
+        throw std::bad_cast();
+    }
+    return answer;
 }
 
 }  // namespace quantum::linear_algebra

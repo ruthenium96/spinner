@@ -78,6 +78,10 @@ void ArmaMatrix::print(std::ostream& os) const {
 }
 
 const ArmaMatrix* ArmaMatrix::downcast_ptr(const std::unique_ptr<AbstractMatrix>& ptr) {
-    return dynamic_cast<const ArmaMatrix*>(ptr.get());
+    auto answer = dynamic_cast<const ArmaMatrix*>(ptr.get());
+    if (answer == nullptr) {
+        throw std::bad_cast();
+    }
+    return answer;
 }
 }  // namespace quantum::linear_algebra
