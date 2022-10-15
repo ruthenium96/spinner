@@ -17,8 +17,16 @@ add_executable(spinner_test
 find_package(Armadillo)
 find_package(Eigen3 3.3)
 
+if (ARMADILLO_FOUND)
+    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaIndividual_tests.cpp)
+endif ()
+
+if (Eigen3_FOUND)
+    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenIndividual_tests.cpp)
+endif ()
+
 if (ARMADILLO_FOUND AND Eigen3_FOUND)
-    target_sources(spinner_test PRIVATE unit_tests/linearAlgebraFactories_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaEigenComparison_tests.cpp)
 endif ()
 
 target_link_libraries(spinner_test gtest gtest_main group space model spectrum common matrix magnetic_susceptibility)

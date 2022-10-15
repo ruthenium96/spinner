@@ -22,6 +22,8 @@ void makeUnitaryMatrixSame(
     }
 }
 
+// TODO: I guess, it will be better to return std::vector<> or something like that
+
 std::pair<
     std::unique_ptr<quantum::linear_algebra::AbstractMatrix>,
     std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>
