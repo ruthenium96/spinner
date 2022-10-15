@@ -42,7 +42,6 @@ RUN bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 
 # Add clang-format
 RUN apt install -y clang-format
-RUN update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-13 1
 
 RUN rm -rf /var/lib/apt/lists/*
 
