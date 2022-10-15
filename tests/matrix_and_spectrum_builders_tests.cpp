@@ -1,5 +1,3 @@
-#include <armadillo>
-
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
