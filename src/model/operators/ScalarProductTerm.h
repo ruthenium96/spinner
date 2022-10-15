@@ -14,7 +14,7 @@ class ScalarProductTerm: public TwoCenterTerm {
     std::unique_ptr<TwoCenterTerm> clone() const override;
 
     void construct(
-        lexicographic::SparseMatrix& matrix_in_lexicografical_basis,
+        UnitarySparseMatrix& matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
         uint32_t center_a,
         uint32_t center_b) const override;
@@ -24,6 +24,20 @@ class ScalarProductTerm: public TwoCenterTerm {
   private:
     const lexicographic::IndexConverter converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
+    void add_scalar_product(
+        UnitarySparseMatrix& matrix,
+        uint32_t index_of_vector,
+        uint32_t center_a,
+        uint32_t center_b,
+        double factor) const;
+    void add_scalar_product_nondiagonal_part(
+        UnitarySparseMatrix& matrix,
+        uint32_t index_of_vector,
+        uint32_t plus_center,
+        uint32_t minus_center,
+        uint32_t projection_of_plus_center,
+        uint32_t projection_of_minus_center,
+        double factor) const;
 };
 }  // namespace model::operators
 

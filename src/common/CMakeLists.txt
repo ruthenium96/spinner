@@ -1,7 +1,5 @@
 add_library(common
         lexicographic/IndexConverter.cpp lexicographic/IndexConverter.h
-        lexicographic/SparseMatrix.h
-        lexicographic/SparseMatrix-arma-sp-mat.cpp
         Logger.h
         runner/Runner.cpp
         Quantity.cpp

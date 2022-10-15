@@ -13,7 +13,8 @@ Submatrix::Submatrix(
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter,
     const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
-    lexicographic::SparseMatrix matrix_in_lexicografical_basis(converter);
+    UnitarySparseMatrix matrix_in_lexicografical_basis;
+    matrix_in_lexicografical_basis.resize(converter.get_total_space_size());
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 
     size_t matrix_in_space_basis_size = subspace.decomposition.size();
