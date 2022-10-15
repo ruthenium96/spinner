@@ -10,6 +10,7 @@ on:
 jobs:
 
   google-tests:
+    name: Run all google tests
     runs-on: ubuntu-20.04
 
     steps:
@@ -35,3 +36,53 @@ jobs:
           cmake --build .
       - name: Run google Tests
         run: ${{github.workspace}}/build/tests/spinner_test
+
+  build-without-armadillo:
+    name: Build Spinner without Armadillo
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libboost-all-dev \
+            libopenblas-dev \
+            liblapack-dev \
+            libarpack2-dev \
+            libsuperlu-dev \
+            libeigen3-dev \
+            gfortran \
+            libomp-dev \
+      - name: Build project
+        run: |
+          mkdir ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          cmake ..
+          cmake --build .
+
+  build-without-eigen:
+    name: Build Spinner without Eigen3
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libboost-all-dev \
+            libopenblas-dev \
+            liblapack-dev \
+            libarpack2-dev \
+            libsuperlu-dev \
+            libarmadillo-dev \
+            gfortran \
+            libomp-dev \
+      - name: Build project
+        run: |
+          mkdir ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          cmake ..
+          cmake --build .
