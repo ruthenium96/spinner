@@ -99,7 +99,12 @@ void UnitarySparseMatrix::add_to_position(double value, uint32_t i, uint32_t j) 
 }
 
 double UnitarySparseMatrix::operator()(uint32_t i, uint32_t j) const {
-    return pImpl->basis[i].at(j);
+    auto mb_iterator = pImpl->basis[i].find(j);
+    if (mb_iterator == pImpl->basis[i].end()) {
+        return 0;
+    } else {
+        return mb_iterator->second;
+    }
 }
 
 void UnitarySparseMatrix::resize(uint32_t new_size) {
