@@ -1,9 +1,12 @@
 #include "ScalarProductTerm.h"
 
 #include <cmath>
+#include <utility>
 
 namespace model::operators {
-ScalarProductTerm::ScalarProductTerm(size_t number_of_spins) {
+ScalarProductTerm::ScalarProductTerm(lexicographic::IndexConverter converter) :
+    converter_(std::move(converter)) {
+    size_t number_of_spins = converter_.get_mults().size();
     auto mutable_coefficients =
         std::make_shared<TwoDNumericalParameters<double>>(number_of_spins, NAN);
     for (size_t i = 0; i < number_of_spins; ++i) {
@@ -17,7 +20,9 @@ ScalarProductTerm::ScalarProductTerm(size_t number_of_spins) {
 }
 
 ScalarProductTerm::ScalarProductTerm(
+    lexicographic::IndexConverter converter,
     std::shared_ptr<const TwoDNumericalParameters<double>> parameters) :
+    converter_(std::move(converter)),
     coefficients_(std::move(parameters)) {}
 
 void ScalarProductTerm::construct(

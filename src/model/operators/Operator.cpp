@@ -4,16 +4,16 @@
 #include "ScalarProductTerm.h"
 
 namespace model::operators {
-Operator Operator::s_squared(const std::vector<double>& spins) {
+Operator Operator::s_squared(lexicographic::IndexConverter converter) {
     Operator s_squared_operator_;
     double sum_of_s_squared = 0;
-    for (double spin : spins) {
+    for (double spin : converter.get_spins()) {
         sum_of_s_squared += spin * (spin + 1);
     }
     s_squared_operator_.zero_center_terms.emplace_back(
         std::make_unique<const ConstantTerm>(sum_of_s_squared));
     s_squared_operator_.two_center_terms.emplace_back(
-        std::make_unique<const ScalarProductTerm>(spins.size()));
+        std::make_unique<const ScalarProductTerm>(converter));
     return s_squared_operator_;
 }
 

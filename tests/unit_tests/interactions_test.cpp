@@ -60,7 +60,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         // Construct Operator
         model::operators::Operator operator_;
         operator_.getTwoCenterTerms().emplace_back(
-            std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
+            std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
 
         // Create Factory:
         auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
@@ -107,7 +107,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         // Construct Operator
         model::operators::Operator operator_;
         operator_.getTwoCenterTerms().emplace_back(
-            std::make_unique<model::operators::ScalarProductTerm>(ptr_to_js));
+            std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
 
         // Create Factory:
         auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();

@@ -15,7 +15,7 @@ Model& Model::InitializeSSquared() {
         return *this;
     }
 
-    s_squared_operator = operators::Operator::s_squared(converter_.get_spins());
+    s_squared_operator = operators::Operator::s_squared(converter_);
 
     operators_history_.s_squared = true;
     return *this;
@@ -27,6 +27,7 @@ Model& Model::InitializeIsotropicExchange() {
     }
     energy_operator.getTwoCenterTerms().emplace_back(
         std::make_unique<const operators::ScalarProductTerm>(
+            converter_,
             symbols_.getIsotropicExchangeParameters()));
     operators_history_.isotropic_exchange_in_hamiltonian = true;
     return *this;
@@ -41,6 +42,7 @@ Model& Model::InitializeIsotropicExchangeDerivatives() {
         operators::Operator operator_derivative = operators::Operator();
         operator_derivative.getTwoCenterTerms().emplace_back(
             std::make_unique<const operators::ScalarProductTerm>(
+                converter_,
                 symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
         derivative_of_energy_wrt_exchange_parameters_operator[symbol] =
             std::move(operator_derivative);

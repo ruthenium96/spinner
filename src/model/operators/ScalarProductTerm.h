@@ -6,8 +6,9 @@
 namespace model::operators {
 class ScalarProductTerm: public TwoCenterTerm {
   public:
-    explicit ScalarProductTerm(size_t number_of_spins);
-    explicit ScalarProductTerm(
+    explicit ScalarProductTerm(lexicographic::IndexConverter converter);
+    ScalarProductTerm(
+        lexicographic::IndexConverter converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters);
 
     std::unique_ptr<TwoCenterTerm> clone() const override;
@@ -21,6 +22,7 @@ class ScalarProductTerm: public TwoCenterTerm {
     std::shared_ptr<const TwoDNumericalParameters<double>> get_parameters() const override;
 
   private:
+    const lexicographic::IndexConverter converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
 };
 }  // namespace model::operators

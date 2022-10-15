@@ -17,7 +17,7 @@ class Operator {
     Operator& operator=(Operator&&) noexcept = default;
     ~Operator() = default;
 
-    static Operator s_squared(const std::vector<double>& spins);
+    static Operator s_squared(lexicographic::IndexConverter converter);
 
     bool empty() const;
     std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms();
