@@ -19,6 +19,9 @@ enum ExperimentalValuesEnum {
     chiT_in_cm_cubed_kelvin_per_mol,
 };
 
+// Stores experimental data and calculates all values, depending on it.
+// Namely, residual error (\sum_T (exp(T) - theor(T))^2)
+// and its chain rule derivative: 2 * (exp(T) - theor(T)).
 class ExperimentalValuesWorker {
   public:
     // TODO: can we also add weight function?
@@ -42,6 +45,7 @@ class ExperimentalValuesWorker {
     std::vector<ValueAtTemperature> experimental_mu_squared_;
     std::vector<ValueAtTemperature> theoretical_mu_squared_;
     ExperimentalValuesEnum experimental_values_type_;
+    // Ratio between number of centers (or molar weight) of theoretical and experimental systems.
     double number_of_centers_ratio_;
 };
 }  // namespace magnetic_susceptibility

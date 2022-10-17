@@ -229,7 +229,6 @@ const Matrix& Runner::getMatrixDerivative(
 void Runner::BuildMuSquaredWorker() {
     auto energy_vector = algebraDataFactory_->createVector();
     auto degeneracy_vector = algebraDataFactory_->createVector();
-    ;
 
     for (const auto& subspectrum : energy.spectrum_.blocks) {
         energy_vector->concatenate_with(subspectrum.raw_data);

@@ -21,9 +21,9 @@ std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDer
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
     if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
-        throw std::invalid_argument("g-factor should be passed without Densevector.");
+        throw std::invalid_argument("g-factor should be passed without vector.");
     } else {
-        // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/dg = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
+        // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/da = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double first_term = ensemble_averager_.ensemble_average(s_squared_, temperatures[i])
                 * ensemble_averager_.ensemble_average(derivative_value, temperatures[i]);
@@ -49,7 +49,7 @@ std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDer
             derivatives[i] = {temperatures[i], value};
         }
     } else {
-        throw std::invalid_argument("Only g-factor can be passed without Densevector.");
+        throw std::invalid_argument("Only g-factor can be passed without vector.");
     }
     return derivatives;
 }

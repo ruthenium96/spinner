@@ -3,9 +3,9 @@
 
 #include <cmath>
 
-#include "src/entities/data_structures/AbstractMatrix.h"
 #include "src/entities/data_structures/AbstractVector.h"
 
+// Calculates ensemble-averaged values using Boltzmann distribution.
 namespace magnetic_susceptibility {
 class EnsembleAverager {
   public:

@@ -32,13 +32,14 @@ double MuSquaredWorker::multiplyExperimentalAndTheoreticalDerivatives(
         experimental_values_worker_.value()->calculateDerivative();
     if (experimental_derivative.size() != theoretical_derivative.size()) {
         throw std::invalid_argument(
-            "experimantal_derivative.size() != theoretical_derivative.size()");
+            "experimental_derivative.size() != theoretical_derivative.size()");
     }
+    // just dot product:
     double derivative = 0;
     for (size_t i = 0; i < experimental_derivative.size(); ++i) {
         if (experimental_derivative[i].temperature != theoretical_derivative[i].temperature) {
             throw std::invalid_argument(
-                "experimantal_derivative[i].temperature != theoretical_derivative[i].temperature");
+                "experimental_derivative[i].temperature != theoretical_derivative[i].temperature");
         }
         derivative += experimental_derivative[i].value * theoretical_derivative[i].value;
     }
