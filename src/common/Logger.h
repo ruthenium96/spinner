@@ -1,8 +1,10 @@
+#ifndef SPINNER_LOGGER_H
+#define SPINNER_LOGGER_H
+
 #include <ctime>
 #include <iostream>
 #include <mutex>
 
-#include "src/space/Space.h"
 extern std::mutex logMutex;
 // clang-format off
 #define LOG(t,x) do{\
@@ -19,3 +21,5 @@ extern std::mutex logMutex;
 // clang-format on
 // for color text
 // https://stackoverflow.com/questions/2616906/how-do-i-output-coloured-text-to-a-linux-terminal
+
+#endif  //SPINNER_LOGGER_H
