@@ -1,5 +1,6 @@
 #include "ExperimentalValuesWorker.h"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -33,7 +34,10 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
         v.value *= number_of_centers_ratio_;
     }
 
-    // TODO: sort by temperature
+    std::sort(experimental_values.begin(), experimental_values.end(), [](auto lhs, auto rhs) {
+        return lhs.temperature < rhs.temperature;
+    });
+
     experimental_mu_squared_ = std::move(experimental_values);
 }
 

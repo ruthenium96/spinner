@@ -114,6 +114,17 @@ TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
         1));
 }
 
+TEST(magnetic_susceptibility, sort_experimental_temperatues) {
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values =
+        {{10, 20}, {4, 20}, {5, 20}, {11, 20}, {8, 20}, {9, 20}};
+    auto worker = magnetic_susceptibility::ExperimentalValuesWorker(
+        exp_values,
+        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        1);
+    auto temperatures = worker.getTemperatures();
+    EXPECT_TRUE(std::is_sorted(temperatures.begin(), temperatures.end()));
+}
+
 TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
     std::vector<magnetic_susceptibility::ExperimentalValuesEnum> values_enum = {
         magnetic_susceptibility::mu_in_bohr_magnetons,
