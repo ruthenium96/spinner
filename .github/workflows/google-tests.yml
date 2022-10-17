@@ -86,3 +86,30 @@ jobs:
           cd ${{github.workspace}}/build
           cmake ..
           cmake --build .
+
+  build-with-system-gtest:
+    name: Build Spinner without Armadillo
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libboost-all-dev \
+            libopenblas-dev \
+            liblapack-dev \
+            libarpack2-dev \
+            libsuperlu-dev \
+            libeigen3-dev \
+            libarmadillo-dev \
+            libgtest-dev \
+            gfortran \
+            libomp-dev \
+      - name: Build project
+        run: |
+          mkdir ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          cmake ..
+          cmake --build .

@@ -7,14 +7,6 @@ project(spinner)
 
 include(FetchContent)
 FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG "release-1.11.0"
-)
-FetchContent_MakeAvailable(googletest)
-include_directories(${CMAKE_SOURCE_DIR}/libs/googletest/googletest/include)
-
-FetchContent_Declare(
         wignersymbols
         GIT_REPOSITORY https://github.com/joeydumont/wignerSymbols.git
         GIT_TAG "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
