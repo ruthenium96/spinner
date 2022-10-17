@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "src/common/lexicographic/IndexConverter.h"
-#include "src/entities/data_structures/UnitarySparseMatrix.h"
+#include "src/entities/data_structures/std/UnitarySparseMatrix.h"
 #include "src/model/NumericalParameters.h"
 
 namespace model::operators {

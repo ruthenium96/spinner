@@ -1,7 +1,5 @@
 add_library(data_structures
-        UnitarySparseMatrix_std-vector_of_std-maps.cpp
-        #        space/SubspaceData_vector_of_sparse_vectors.cpp
-        #        space/SubspaceData_sparse_matrix.cpp
+        std/UnitarySparseMatrix_std-vector_of_std-maps.cpp
         )
 
 message("Trying to find packages of linear algebra...")

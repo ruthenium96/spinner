@@ -4,7 +4,7 @@
 #include <ostream>
 
 #include "src/entities/BlockProperties.h"
-#include "src/entities/data_structures/UnitarySparseMatrix.h"
+#include "src/entities/data_structures/std/UnitarySparseMatrix.h"
 
 namespace space {
 struct Subspace {

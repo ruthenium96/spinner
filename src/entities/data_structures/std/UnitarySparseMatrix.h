@@ -5,6 +5,8 @@
 #include <memory>
 #include <ostream>
 
+// TODO: implement arma- and eigen3-based sparse matrix
+
 class UnitarySparseMatrix {
   public:
     /*
