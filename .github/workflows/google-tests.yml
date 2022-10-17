@@ -38,18 +38,18 @@ jobs:
         run: ${{github.workspace}}/build/tests/spinner_test
 
   build-tests:
-    name: Build Spinner with different linear algebra packages.
+    name: Build tests.
     runs-on: ubuntu-20.04
 
     strategy:
       matrix:
-        linear-algebra: [ libeigen3-dev, libarmadillo-dev ]
-        compiler-cpp: [ g++, clang++ ]
+        linear-algebra: [ eigen3, armadillo ]
+        compiler-c: [ gcc, clang ]
         include:
-          - compiler-c: gcc
-            compiler-ccp: g++
-          - compiler-c: clang
-            compiler-cpp: clang++
+          - compiler-cpp: g++
+            compiler-c: gcc
+          - compiler-cpp: clang++
+            compiler-c: clang
     env:
       CC: ${{ matrix.compiler-c }}
       CXX: ${{ matrix.compiler-cpp }}
@@ -65,7 +65,7 @@ jobs:
             liblapack-dev \
             libarpack2-dev \
             libsuperlu-dev \
-            ${{ matrix.linear-algebra }} \
+            lib${{ matrix.linear-algebra }}-dev \
             gfortran \
             libomp-dev \
       - name: Build project
