@@ -56,7 +56,7 @@ jobs:
             liblapack-dev \
             libarpack2-dev \
             libsuperlu-dev \
-            ${{ matrix.algebra }} \
+            ${{ matrix.linear-algebra }} \
             gfortran \
             libomp-dev \
       - name: Build project
