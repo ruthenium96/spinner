@@ -16,8 +16,6 @@ Space TzSorter::apply(Space&& space) const {
             BlockProperties block_properties = subspace_parent.properties;
             block_properties.n_proj = ntz_proj;
             vector_result[(max_ntz_proj + 1) * i + ntz_proj].properties = block_properties;
-            vector_result[(max_ntz_proj + 1) * i + ntz_proj].decomposition.tensor_size =
-                subspace_parent.decomposition.tensor_size;
         }
 
         for (uint32_t l = 0; l < subspace_parent.decomposition.size(); ++l) {

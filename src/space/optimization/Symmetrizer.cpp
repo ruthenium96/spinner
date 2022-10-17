@@ -23,8 +23,6 @@ Space Symmetrizer::apply(Space&& space) const {
             block_properties.dimensionality *= group_.properties.dimension_of_representation[repr];
             vector_result[group_.properties.number_of_representations * i + repr].properties =
                 block_properties;
-            vector_result[group_.properties.number_of_representations * i + repr]
-                .decomposition.tensor_size = subspace_parent.decomposition.tensor_size;
         }
 
         // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
@@ -80,7 +78,6 @@ std::vector<UnitarySparseMatrix> Symmetrizer::get_symmetrical_projected_decompos
     // it is a set (partitioned by representations) of all projected decompositions:
     std::vector<UnitarySparseMatrix> projections(group_.properties.number_of_representations);
     for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
-        projections[repr].tensor_size = subspace.decomposition.tensor_size;
         projections[repr].resize(group_.properties.number_of_projectors_of_representation[repr]);
     }
 

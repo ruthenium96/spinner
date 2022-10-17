@@ -33,13 +33,6 @@ class UnitarySparseMatrix {
 
     std::unique_ptr<UnitarySparseMatrix::Iterator> GetNewIterator(size_t index_of_vector) const;
 
-    /*
-     Some implementations want to know the maximum size of vector.
-     I pass the tensor_size to an object after all constructions, it is inconvenient.
-     TODO: refactor it.
-     */
-    uint32_t tensor_size = 0;
-
     uint32_t size() const;
     bool empty() const;
     bool vempty(uint32_t index_of_vector) const;
