@@ -44,6 +44,15 @@ jobs:
     strategy:
       matrix:
         linear-algebra: [ libeigen3-dev, libarmadillo-dev ]
+        compiler-cpp: [ g++, clang++ ]
+        include:
+          - compiler-c: gcc
+            compiler-ccp: g++
+          - compiler-c: clang
+            compiler-cpp: clang++
+    env:
+      CC: ${{ matrix.compiler-c }}
+      CXX: ${{ matrix.compiler-cpp }}
 
     steps:
       - uses: actions/checkout@v2
