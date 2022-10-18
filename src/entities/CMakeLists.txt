@@ -14,4 +14,6 @@ add_library(magnetic_susceptibility
         magnetic_susceptibility/assistant/ExperimentalValuesWorker.cpp
         magnetic_susceptibility/assistant/ExperimentalValuesWorker.h
         magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.cpp
-        magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h)
+        magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h
+        magnetic_susceptibility/CurieWeissMuSquaredWorker.cpp
+        magnetic_susceptibility/CurieWeissMuSquaredWorker.h magnetic_susceptibility/BasicMuSquaredWorker.cpp magnetic_susceptibility/BasicMuSquaredWorker.h magnetic_susceptibility/AbstractMuSquaredWorker.cpp)

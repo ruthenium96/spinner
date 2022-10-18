@@ -6,7 +6,8 @@
 #include "ConsistentModelOptimizationList.h"
 #include "src/common/Quantity.h"
 #include "src/entities/data_structures/AbstractFactory.h"
-#include "src/entities/magnetic_susceptibility/MuSquaredWorker.h"
+#include "src/entities/magnetic_susceptibility/AbstractMuSquaredWorker.h"
+#include "src/entities/magnetic_susceptibility/CurieWeissMuSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
@@ -64,7 +65,7 @@ class Runner {
         common::QuantityEnum,
         model::symbols::SymbolTypeEnum,
         const model::symbols::SymbolName&) const;
-    const magnetic_susceptibility::MuSquaredWorker& getMuSquaredWorker() const;
+    const magnetic_susceptibility::AbstractMuSquaredWorker& getMuSquaredWorker() const;
     const model::symbols::Symbols& getSymbols() const;
 
     std::shared_ptr<quantum::linear_algebra::AbstractFactory> getAlgebraDataFactory() const;
@@ -94,8 +95,8 @@ class Runner {
         double&,
         std::vector<double>&);
 
-    // TODO: can we use std::optional<magnetic_susceptibility::MuSquaredWorker> instead?
-    std::optional<std::unique_ptr<magnetic_susceptibility::MuSquaredWorker>> mu_squared_worker;
+    std::optional<std::unique_ptr<magnetic_susceptibility::AbstractMuSquaredWorker>>
+        mu_squared_worker;
     std::optional<std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>>
         experimental_values_worker_;
 
