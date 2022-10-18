@@ -6,7 +6,7 @@ UniqueGOnlySSquaredMuSquaredWorker::UniqueGOnlySSquaredMuSquaredWorker(
     std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy,
     std::unique_ptr<quantum::linear_algebra::AbstractVector>&& s_squared,
     double g_unique) :
-    MuSquaredWorker(std::move(energy), std::move(degeneracy)),
+    BasicMuSquaredWorker(std::move(energy), std::move(degeneracy)),
     s_squared_(std::move(s_squared)),
     g_unique_(g_unique) {}
 

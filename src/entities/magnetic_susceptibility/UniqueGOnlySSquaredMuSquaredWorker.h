@@ -1,12 +1,12 @@
 #ifndef SPINNER_UNIQUEGONLYSSQUAREDMUSQUAREDWORKER_H
 #define SPINNER_UNIQUEGONLYSSQUAREDMUSQUAREDWORKER_H
 
-#include "MuSquaredWorker.h"
+#include "BasicMuSquaredWorker.h"
 
 namespace magnetic_susceptibility {
 
 // mu^2 = mu_B^2 * g_{iso}^2 * <S^2_{total}>
-class UniqueGOnlySSquaredMuSquaredWorker: public MuSquaredWorker {
+class UniqueGOnlySSquaredMuSquaredWorker: public BasicMuSquaredWorker {
   public:
     UniqueGOnlySSquaredMuSquaredWorker(
         std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
