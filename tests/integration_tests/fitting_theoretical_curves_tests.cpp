@@ -3,6 +3,78 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
+TEST(fitting_magnetic_susceptibility, Theta) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> Theta_dist(-100, -1.0);
+
+    for (size_t _ = 0; _ < 20; ++_) {
+        const double Theta_exact = Theta_dist(rng);
+        const double g_exact = 2.0;
+
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+
+        {
+            std::vector<int> mults = {2};
+            model::Model model(mults);
+            double J_value = Theta_exact;
+            auto Theta = model.getSymbols().addSymbol("Theta", J_value);
+            model.getSymbols().assignSymbolToTheta(Theta);
+            double g_value = g_exact;
+            auto g = model.getSymbols().addSymbol("g", g_value, false);
+            for (size_t i = 0; i < mults.size(); ++i) {
+                model.getSymbols().assignSymbolToGFactor(g, i);
+            }
+            model.InitializeSSquared();
+
+            runner::Runner runner(model);
+
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            for (size_t i = 1; i < 301; ++i) {
+                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                    static_cast<double>(i),
+                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
+                values.push_back(value_at_temperature);
+            }
+        }
+
+        {
+            std::vector<int> mults = {2};
+            model::Model model(mults);
+            double Theta_value = -10.0;
+            auto Theta = model.getSymbols().addSymbol("Theta", Theta_value);
+            model.getSymbols().assignSymbolToTheta(Theta);
+            double g_value = 2.0;
+            auto g = model.getSymbols().addSymbol("g", g_value, false);
+            for (size_t i = 0; i < mults.size(); ++i) {
+                model.getSymbols().assignSymbolToGFactor(g, i);
+            }
+            model.InitializeSSquared();
+
+            runner::Runner runner(model);
+            runner.initializeExperimentalValues(
+                values,
+                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                1);
+
+            runner.minimizeResidualError();
+
+            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
+            double Theta_fitted = runner.getSymbols().getValueOfName(Theta);
+            double g_fitted = runner.getSymbols().getValueOfName(g);
+            double Theta_range = std::abs(Theta_fitted / 1000);
+            double g_range = std::abs(g_fitted / 1000);
+
+            // TODO: epsilon
+            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(Theta_fitted, Theta_exact, Theta_range);
+            EXPECT_NEAR(g_fitted, g_exact, g_range);
+        }
+    }
+}
+
 TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
