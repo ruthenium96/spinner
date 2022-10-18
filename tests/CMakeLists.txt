@@ -20,6 +20,7 @@ add_executable(spinner_test
         time_tests/PerformanceTest.cpp
         integration_tests/spectrum_final_equivalence_tests.cpp
         integration_tests/fitting_theoretical_curves_tests.cpp
+        integration_tests/simple_analytical_dependencies_tests.cpp
         unit_tests/group_test.cpp
         unit_tests/consistentModelOptimizationList_tests.cpp
         unit_tests/symmetrizer_tests.cpp
