@@ -94,7 +94,7 @@ void Runner::BuildMatrices() {
 void Runner::BuildSpectra() {
     size_t number_of_blocks = getSpace().getBlocks().size();
 
-    if (!getOperator(common::Energy).empty()) {
+    if (!getOperator(common::Energy).empty() || !energy.spectrum_.blocks.empty()) {
         energy.spectrum_.blocks.clear();
         energy.spectrum_.blocks.reserve(number_of_blocks);
     }
