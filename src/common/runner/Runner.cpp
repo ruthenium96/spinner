@@ -238,6 +238,8 @@ void Runner::BuildMuSquaredWorker() {
     }
     energy_vector->subtract_minimum();
 
+    std::unique_ptr<magnetic_susceptibility::worker::AbstractWorker> magnetic_susceptibility_worker;
+
     if (getSymbols().isAllGFactorsEqual()) {
         // and there is no field
         // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
@@ -249,25 +251,28 @@ void Runner::BuildMuSquaredWorker() {
             s_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 
-        mu_squared_worker =
-            std::make_unique<magnetic_susceptibility::UniqueGOnlySSquaredMuSquaredWorker>(
+        magnetic_susceptibility_worker =
+            std::make_unique<magnetic_susceptibility::worker::UniqueGOnlySSquaredWorker>(
                 std::move(energy_vector),
                 std::move(degeneracy_vector),
                 std::move(s_squared_vector),
                 g_factor);
 
         if (getSymbols().isThetaInitialized()) {
-            mu_squared_worker.value() =
-                std::make_unique<magnetic_susceptibility::CurieWeissMuSquaredWorker>(
-                    std::move(mu_squared_worker.value()),
+            magnetic_susceptibility_worker =
+                std::make_unique<magnetic_susceptibility::worker::CurieWeissWorker>(
+                    std::move(magnetic_susceptibility_worker),
                     getSymbols().getThetaParameter());
         }
     } else {
         throw std::invalid_argument("Different g factors are not supported now.");
     }
 
+    magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
+        std::move(magnetic_susceptibility_worker));
+
     if (experimental_values_worker_.has_value()) {
-        mu_squared_worker.value()->initializeExperimentalValues(
+        magnetic_susceptibility_controller_.value().initializeExperimentalValues(
             experimental_values_worker_.value());
     }
 }
@@ -286,8 +291,8 @@ void Runner::initializeExperimentalValues(
             experimental_quantity_type,
             number_of_centers_ratio);
 
-    if (mu_squared_worker.has_value()) {
-        mu_squared_worker.value()->initializeExperimentalValues(
+    if (magnetic_susceptibility_controller_.has_value()) {
+        magnetic_susceptibility_controller_.value().initializeExperimentalValues(
             experimental_values_worker_.value());
     }
 }
@@ -304,7 +309,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
              getSpectrumDerivative(common::Energy, model::symbols::J, changeable_symbol).blocks) {
             derivative_vector->concatenate_with(subspectrum.raw_data);
         }
-        double value = mu_squared_worker.value()->calculateTotalDerivative(
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
             model::symbols::J,
             std::move(derivative_vector));
         answer[changeable_symbol] = value;
@@ -315,8 +320,8 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
     if (!getSymbols().getChangeableNames(model::symbols::g_factor).empty()) {
         model::symbols::SymbolName g_name =
             getSymbols().getChangeableNames(model::symbols::g_factor)[0];
-        double value =
-            mu_squared_worker.value()->calculateTotalDerivative(model::symbols::g_factor);
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+            model::symbols::g_factor);
         answer[g_name] = value;
         //        std::cout << "dR^2/d" << g_name << " = " << value << std::endl;
     }
@@ -325,7 +330,8 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
     if (!getSymbols().getChangeableNames(model::symbols::Theta).empty()) {
         model::symbols::SymbolName Theta_name =
             getSymbols().getChangeableNames(model::symbols::Theta)[0];
-        double value = mu_squared_worker.value()->calculateTotalDerivative(model::symbols::Theta);
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+            model::symbols::Theta);
         answer[Theta_name] = value;
     }
 
@@ -385,7 +391,7 @@ void Runner::stepOfRegression(
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
-    residual_error = mu_squared_worker.value()->calculateResidualError();
+    residual_error = magnetic_susceptibility_controller_.value().calculateResidualError();
 
     // Calculate derivatives...
     std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
@@ -395,8 +401,9 @@ void Runner::stepOfRegression(
     }
 }
 
-const magnetic_susceptibility::AbstractMuSquaredWorker& Runner::getMuSquaredWorker() const {
-    return *mu_squared_worker.value();
+const magnetic_susceptibility::MagneticSusceptibilityController&
+Runner::getMagneticSusceptibilityController() const {
+    return magnetic_susceptibility_controller_.value();
 }
 
 const model::symbols::Symbols& Runner::getSymbols() const {

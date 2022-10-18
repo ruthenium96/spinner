@@ -1,21 +1,21 @@
-#include "UniqueGOnlySSquaredMuSquaredWorker.h"
-namespace magnetic_susceptibility {
+#include "UniqueGOnlySSquaredWorker.h"
+namespace magnetic_susceptibility::worker {
 
-UniqueGOnlySSquaredMuSquaredWorker::UniqueGOnlySSquaredMuSquaredWorker(
+UniqueGOnlySSquaredWorker::UniqueGOnlySSquaredWorker(
     std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
     std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy,
     std::unique_ptr<quantum::linear_algebra::AbstractVector>&& s_squared,
     double g_unique) :
-    BasicMuSquaredWorker(std::move(energy), std::move(degeneracy)),
+    BasicWorker(std::move(energy), std::move(degeneracy)),
     s_squared_(std::move(s_squared)),
     g_unique_(g_unique) {}
 
-double UniqueGOnlySSquaredMuSquaredWorker::calculateTheoreticalMuSquared(double temperature) const {
+double UniqueGOnlySSquaredWorker::calculateTheoreticalMuSquared(double temperature) const {
     double s_squared_averaged = ensemble_averager_.ensemble_average(s_squared_, temperature);
     return g_unique_ * g_unique_ * s_squared_averaged;
 }
 
-std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDerivative(
+std::vector<ValueAtTemperature> UniqueGOnlySSquaredWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
     std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const {
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
@@ -37,8 +37,8 @@ std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDer
     return derivatives;
 }
 
-std::vector<ValueAtTemperature> UniqueGOnlySSquaredMuSquaredWorker::calculateDerivative(
-    model::symbols::SymbolTypeEnum symbol_type) const {
+std::vector<ValueAtTemperature>
+UniqueGOnlySSquaredWorker::calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const {
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
     if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {

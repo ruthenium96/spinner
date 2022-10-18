@@ -1,17 +1,17 @@
-#ifndef SPINNER_CURIEWEISSMUSQUAREDWORKER_H
-#define SPINNER_CURIEWEISSMUSQUAREDWORKER_H
+#ifndef SPINNER_CURIEWEISSWORKER_H
+#define SPINNER_CURIEWEISSWORKER_H
 
 #include <optional>
 
-#include "AbstractMuSquaredWorker.h"
+#include "src/entities/magnetic_susceptibility/worker/AbstractWorker.h"
 
-namespace magnetic_susceptibility {
+namespace magnetic_susceptibility::worker {
 
 // It is a decorator. Takes concrete worker with mu^2(T) and returns T*mu^2(T)/(T-\Theta)
-class CurieWeissMuSquaredWorker: public AbstractMuSquaredWorker {
+class CurieWeissWorker: public AbstractWorker {
   public:
-    CurieWeissMuSquaredWorker(
-        std::unique_ptr<AbstractMuSquaredWorker>&& muSquaredWorker,
+    CurieWeissWorker(
+        std::unique_ptr<AbstractWorker>&& muSquaredWorker,
         std::shared_ptr<const double> Theta);
     double calculateTheoreticalMuSquared(double temperature) const override;
 
@@ -21,7 +21,7 @@ class CurieWeissMuSquaredWorker: public AbstractMuSquaredWorker {
         const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) override;
 
   protected:
-    std::unique_ptr<AbstractMuSquaredWorker> muSquaredWorker_;
+    std::unique_ptr<AbstractWorker> worker_;
     std::shared_ptr<const double> Theta_;
 
     std::vector<ValueAtTemperature> calculateDerivative(
@@ -33,4 +33,4 @@ class CurieWeissMuSquaredWorker: public AbstractMuSquaredWorker {
 
 }  // namespace magnetic_susceptibility
 
-#endif  //SPINNER_CURIEWEISSMUSQUAREDWORKER_H
+#endif  //SPINNER_CURIEWEISSWORKER_H

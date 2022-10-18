@@ -1,19 +1,23 @@
-#include "AbstractMuSquaredWorker.h"
+#include "MagneticSusceptibilityController.h"
 
 namespace magnetic_susceptibility {
 
-double AbstractMuSquaredWorker::calculateResidualError() const {
-    return getExperimentalValuesWorker()->calculateResidualError();
+MagneticSusceptibilityController::MagneticSusceptibilityController(
+    std::unique_ptr<worker::AbstractWorker>&& worker) :
+    worker_(std::move(worker)) {}
+
+double MagneticSusceptibilityController::calculateResidualError() const {
+    return worker_->getExperimentalValuesWorker()->calculateResidualError();
 }
 
-std::vector<ValueAtTemperature> AbstractMuSquaredWorker::getTheoreticalValues() const {
-    return getExperimentalValuesWorker()->getTheoreticalValues();
+std::vector<ValueAtTemperature> MagneticSusceptibilityController::getTheoreticalValues() const {
+    return worker_->getExperimentalValuesWorker()->getTheoreticalValues();
 }
 
-double AbstractMuSquaredWorker::multiplyExperimentalAndTheoreticalDerivatives(
+double MagneticSusceptibilityController::multiplyExperimentalAndTheoreticalDerivatives(
     std::vector<ValueAtTemperature> theoretical_derivative) const {
     std::vector<ValueAtTemperature> experimental_derivative =
-        getExperimentalValuesWorker()->calculateDerivative();
+        worker_->getExperimentalValuesWorker()->calculateDerivative();
     if (experimental_derivative.size() != theoretical_derivative.size()) {
         throw std::invalid_argument(
             "experimental_derivative.size() != theoretical_derivative.size()");
@@ -30,31 +34,36 @@ double AbstractMuSquaredWorker::multiplyExperimentalAndTheoreticalDerivatives(
     return derivative;
 }
 
-double AbstractMuSquaredWorker::calculateTotalDerivative(
+double MagneticSusceptibilityController::calculateTotalDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
     std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const {
     std::vector<ValueAtTemperature> theoretical_derivative =
-        calculateDerivative(symbol_type, std::move(derivative_value));
+        worker_->calculateDerivative(symbol_type, std::move(derivative_value));
     return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
 }
 
-double AbstractMuSquaredWorker::calculateTotalDerivative(
+double MagneticSusceptibilityController::calculateTotalDerivative(
     model::symbols::SymbolTypeEnum symbol_type) const {
-    std::vector<ValueAtTemperature> theoretical_derivative = calculateDerivative(symbol_type);
+    std::vector<ValueAtTemperature> theoretical_derivative =
+        worker_->calculateDerivative(symbol_type);
     return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
 }
 
-void AbstractMuSquaredWorker::initializeExperimentalValues(
+void MagneticSusceptibilityController::initializeExperimentalValues(
     const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) {
-    setExperimentalValuesWorker(experimental_values_worker);
-    std::vector<double> temperatures = getExperimentalValuesWorker()->getTemperatures();
+    worker_->setExperimentalValuesWorker(experimental_values_worker);
+    std::vector<double> temperatures = worker_->getExperimentalValuesWorker()->getTemperatures();
     std::vector<ValueAtTemperature> theoretical_mu_squared_values(temperatures.size());
     for (size_t i = 0; i < temperatures.size(); ++i) {
         theoretical_mu_squared_values[i] = {
             temperatures[i],
-            calculateTheoreticalMuSquared(temperatures[i])};
+            worker_->calculateTheoreticalMuSquared(temperatures[i])};
     }
-    getExperimentalValuesWorker()->setTheoreticalMuSquared(theoretical_mu_squared_values);
+    worker_->getExperimentalValuesWorker()->setTheoreticalMuSquared(theoretical_mu_squared_values);
+}
+
+double MagneticSusceptibilityController::calculateTheoreticalMuSquared(double temperature) const {
+    return worker_->calculateTheoreticalMuSquared(temperature);
 }
 
 }  // namespace magnetic_susceptibility

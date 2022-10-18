@@ -1,16 +1,16 @@
-#ifndef SPINNER_BASICMUSQUAREDWORKER_H
-#define SPINNER_BASICMUSQUAREDWORKER_H
+#ifndef SPINNER_BASICWORKER_H
+#define SPINNER_BASICWORKER_H
 
 #include <optional>
 
-#include "AbstractMuSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/assistant/EnsembleAverager.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
+#include "src/entities/magnetic_susceptibility/worker/AbstractWorker.h"
 
-namespace magnetic_susceptibility {
-class BasicMuSquaredWorker: public AbstractMuSquaredWorker {
+namespace magnetic_susceptibility::worker {
+class BasicWorker: public AbstractWorker {
   public:
-    BasicMuSquaredWorker(
+    BasicWorker(
         std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
         std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy);
     std::shared_ptr<ExperimentalValuesWorker> getExperimentalValuesWorker() override;
@@ -23,4 +23,4 @@ class BasicMuSquaredWorker: public AbstractMuSquaredWorker {
     std::optional<std::shared_ptr<ExperimentalValuesWorker>> experimental_values_worker_;
 };
 }  // namespace magnetic_susceptibility
-#endif  //SPINNER_BASICMUSQUAREDWORKER_H
+#endif  //SPINNER_BASICWORKER_H

@@ -43,7 +43,8 @@ TEST(simple_analytical_dependencies, nothing) {
 
                 for (size_t temperature = 1; temperature < 301; ++temperature) {
                     double calculated_value =
-                        runner.getMuSquaredWorker().calculateTheoreticalMuSquared(temperature);
+                        runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
+                            temperature);
                     double exact_value = (g_exact * g_exact * sum_of_s_squared_);
                     // TODO: epsilon
                     EXPECT_NEAR(calculated_value, exact_value, 1e-9);
@@ -88,7 +89,8 @@ TEST(simple_analytical_dependencies, Theta) {
 
                 for (size_t temperature = 1; temperature < 301; ++temperature) {
                     double calculated_value =
-                        runner.getMuSquaredWorker().calculateTheoreticalMuSquared(temperature);
+                        runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
+                            temperature);
                     double exact_value = (g_exact * g_exact * sum_of_s_squared_) * temperature
                         / (temperature - Theta_exact);
                     // TODO: epsilon

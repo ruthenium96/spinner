@@ -1,14 +1,14 @@
-#ifndef SPINNER_UNIQUEGONLYSSQUAREDMUSQUAREDWORKER_H
-#define SPINNER_UNIQUEGONLYSSQUAREDMUSQUAREDWORKER_H
+#ifndef SPINNER_UNIQUEGONLYSSQUAREDWORKER_H
+#define SPINNER_UNIQUEGONLYSSQUAREDWORKER_H
 
-#include "BasicMuSquaredWorker.h"
+#include "BasicWorker.h"
 
-namespace magnetic_susceptibility {
+namespace magnetic_susceptibility::worker {
 
 // mu^2 = mu_B^2 * g_{iso}^2 * <S^2_{total}>
-class UniqueGOnlySSquaredMuSquaredWorker: public BasicMuSquaredWorker {
+class UniqueGOnlySSquaredWorker: public BasicWorker {
   public:
-    UniqueGOnlySSquaredMuSquaredWorker(
+    UniqueGOnlySSquaredWorker(
         std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
         std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy,
         std::unique_ptr<quantum::linear_algebra::AbstractVector>&& s_squared,
@@ -28,4 +28,4 @@ class UniqueGOnlySSquaredMuSquaredWorker: public BasicMuSquaredWorker {
 
 }  // namespace magnetic_susceptibility
 
-#endif  //SPINNER_UNIQUEGONLYSSQUAREDMUSQUAREDWORKER_H
+#endif  //SPINNER_UNIQUEGONLYSSQUAREDWORKER_H

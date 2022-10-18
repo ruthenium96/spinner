@@ -8,12 +8,16 @@ add_library(spectrum
 add_subdirectory(data_structures)
 
 add_library(magnetic_susceptibility
-        magnetic_susceptibility/AbstractMuSquaredWorker.h
+        magnetic_susceptibility/MagneticSusceptibilityController.h
         magnetic_susceptibility/assistant/EnsembleAverager.cpp
         magnetic_susceptibility/assistant/EnsembleAverager.h
         magnetic_susceptibility/assistant/ExperimentalValuesWorker.cpp
         magnetic_susceptibility/assistant/ExperimentalValuesWorker.h
-        magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.cpp
-        magnetic_susceptibility/UniqueGOnlySSquaredMuSquaredWorker.h
-        magnetic_susceptibility/CurieWeissMuSquaredWorker.cpp
-        magnetic_susceptibility/CurieWeissMuSquaredWorker.h magnetic_susceptibility/BasicMuSquaredWorker.cpp magnetic_susceptibility/BasicMuSquaredWorker.h magnetic_susceptibility/AbstractMuSquaredWorker.cpp)
+        magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.cpp
+        magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h
+        magnetic_susceptibility/worker/CurieWeissWorker.cpp
+        magnetic_susceptibility/worker/CurieWeissWorker.h
+        magnetic_susceptibility/worker/BasicWorker.cpp
+        magnetic_susceptibility/worker/BasicWorker.h
+        magnetic_susceptibility/MagneticSusceptibilityController.cpp
+        magnetic_susceptibility/worker/AbstractWorker.h)

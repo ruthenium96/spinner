@@ -3,6 +3,8 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
+// TODO: TEST for Theta=0
+
 TEST(fitting_magnetic_susceptibility, Theta) {
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -35,7 +37,7 @@ TEST(fitting_magnetic_susceptibility, Theta) {
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
-                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
             }
         }
@@ -61,7 +63,8 @@ TEST(fitting_magnetic_susceptibility, Theta) {
 
             runner.minimizeResidualError();
 
-            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
+            double residual_error =
+                runner.getMagneticSusceptibilityController().calculateResidualError();
             double Theta_fitted = runner.getSymbols().getValueOfName(Theta);
             double g_fitted = runner.getSymbols().getValueOfName(g);
             double Theta_range = std::abs(Theta_fitted / 1000);
@@ -113,7 +116,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
-                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
             }
         }
@@ -144,7 +147,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
 
             runner.minimizeResidualError();
 
-            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
+            double residual_error =
+                runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbols().getValueOfName(J);
             double g_fitted = runner.getSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
@@ -200,7 +204,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
-                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
             }
         }
@@ -236,7 +240,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
 
             runner.minimizeResidualError();
 
-            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
+            double residual_error =
+                runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbols().getValueOfName(J);
             double g_fitted = runner.getSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
@@ -290,7 +295,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
-                    runner.getMuSquaredWorker().calculateTheoreticalMuSquared(i)};
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
             }
         }
@@ -324,7 +329,8 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
 
             runner.minimizeResidualError();
 
-            double residual_error = runner.getMuSquaredWorker().calculateResidualError();
+            double residual_error =
+                runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbols().getValueOfName(J);
             double g_fitted = runner.getSymbols().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
