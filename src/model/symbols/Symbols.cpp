@@ -42,28 +42,6 @@ Symbols& Symbols::assignSymbolToIsotropicExchange(
     return *this;
 }
 
-SymbolName Symbols::addSymbol(
-    const std::string& name_string,
-    double initial_value,
-    bool is_changeable,
-    SymbolTypeEnum type_enum) {
-    SymbolName symbol_name(name_string);
-    if (symbolsMap.find(symbol_name) != symbolsMap.end()) {
-        throw std::invalid_argument(symbol_name.get_name() + " name has been already initialized");
-    }
-    symbolsMap[symbol_name] = {initial_value, is_changeable, type_enum};
-    return symbol_name;
-}
-
-SymbolName
-Symbols::addSymbol(const std::string& name_string, double initial_value, bool is_changeable) {
-    return addSymbol(name_string, initial_value, is_changeable, SymbolTypeEnum::not_specified);
-}
-
-SymbolName Symbols::addSymbol(const std::string& name_string, double initial_value) {
-    return addSymbol(name_string, initial_value, true);
-}
-
 Symbols& Symbols::assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a) {
     if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
         throw std::invalid_argument(symbol_name.get_name() + " name has not been initialized");
@@ -88,6 +66,50 @@ Symbols& Symbols::assignSymbolToGFactor(const SymbolName& symbol_name, size_t ce
 
     return *this;
 }
+
+Symbols& Symbols::assignSymbolToTheta(const SymbolName& symbol_name) {
+    if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
+        throw std::invalid_argument(symbol_name.get_name() + " name has not been initialized");
+    }
+
+    if (symbolsMap[symbol_name].type_enum != SymbolTypeEnum::not_specified
+        && symbolsMap[symbol_name].type_enum != SymbolTypeEnum::Theta) {
+        throw std::invalid_argument(
+            symbol_name.get_name() + " has been already specified as not Theta parameter");
+    }
+    if (symbolsMap[symbol_name].type_enum == SymbolTypeEnum::not_specified) {
+        symbolsMap[symbol_name].type_enum = SymbolTypeEnum::Theta;
+    }
+
+    symbolic_Theta_ = symbol_name;
+
+    updateThetaParameter();
+
+    return *this;
+}
+
+SymbolName Symbols::addSymbol(
+    const std::string& name_string,
+    double initial_value,
+    bool is_changeable,
+    SymbolTypeEnum type_enum) {
+    SymbolName symbol_name(name_string);
+    if (symbolsMap.find(symbol_name) != symbolsMap.end()) {
+        throw std::invalid_argument(symbol_name.get_name() + " name has been already initialized");
+    }
+    symbolsMap[symbol_name] = {initial_value, is_changeable, type_enum};
+    return symbol_name;
+}
+
+SymbolName
+Symbols::addSymbol(const std::string& name_string, double initial_value, bool is_changeable) {
+    return addSymbol(name_string, initial_value, is_changeable, SymbolTypeEnum::not_specified);
+}
+
+SymbolName Symbols::addSymbol(const std::string& name_string, double initial_value) {
+    return addSymbol(name_string, initial_value, true);
+}
+
 
 std::shared_ptr<const OneDNumericalParameters<double>> Symbols::getGFactorParameters() const {
     if (numeric_g_factors_ == nullptr) {
@@ -180,8 +202,10 @@ Symbols& Symbols::setNewValueToChangeableSymbol(const SymbolName& symbol_name, d
         // NB: numeric_isotropic_exchange_derivatives_ does not change when J changes.
     } else if (symbol_data.type_enum == symbols::SymbolTypeEnum::g_factor) {
         updateGFactorParameters();
-        // and other things
+    } else if (symbol_data.type_enum == symbols::SymbolTypeEnum::Theta) {
+        updateThetaParameter();
     }
+    // and other things
 
     return *this;
 }
@@ -217,6 +241,15 @@ void Symbols::updateGFactorParameters() {
     }
 }
 
+void Symbols::updateThetaParameter() {
+    if (numeric_Theta_ == nullptr) {
+        numeric_Theta_ = std::make_shared<double>(NAN);
+    }
+
+    double value = symbolsMap[symbolic_Theta_.value()].value;
+    *numeric_Theta_ = value;
+}
+
 std::shared_ptr<const TwoDNumericalParameters<double>>
 Symbols::getIsotropicExchangeParameters() const {
     // TODO: refactor it:
@@ -224,6 +257,13 @@ Symbols::getIsotropicExchangeParameters() const {
         throw std::invalid_argument("Isotropic exchange interaction was not initialized");
     }
     return numeric_isotropic_exchanges_;
+}
+
+std::shared_ptr<const double> Symbols::getThetaParameter() const {
+    if (numeric_Theta_ == nullptr) {
+        throw std::invalid_argument("Theta was not initialized");
+    }
+    return numeric_Theta_;
 }
 
 bool Symbols::isIsotropicExchangeInitialized() const {
@@ -234,12 +274,20 @@ bool Symbols::isGFactorInitialized() const {
     return !symbolic_g_factors_.empty();
 }
 
+bool Symbols::isThetaInitialized() const {
+    return symbolic_Theta_.has_value();
+}
+
 SymbolName Symbols::getIsotropicExchangeSymbolName(size_t i, size_t j) const {
     return symbolic_isotropic_exchanges_[i][j];
 }
 
 SymbolName Symbols::getGFactorSymbolName(size_t i) const {
     return symbolic_g_factors_[i];
+}
+
+SymbolName Symbols::getThetaSymbolName() const {
+    return symbolic_Theta_.value();
 }
 
 }  // namespace symbols
