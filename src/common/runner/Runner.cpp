@@ -255,6 +255,13 @@ void Runner::BuildMuSquaredWorker() {
                 std::move(degeneracy_vector),
                 std::move(s_squared_vector),
                 g_factor);
+
+        if (getSymbols().isThetaInitialized()) {
+            mu_squared_worker.value() =
+                std::make_unique<magnetic_susceptibility::CurieWeissMuSquaredWorker>(
+                    std::move(mu_squared_worker.value()),
+                    getSymbols().getThetaParameter());
+        }
     } else {
         throw std::invalid_argument("Different g factors are not supported now.");
     }
@@ -287,6 +294,7 @@ void Runner::initializeExperimentalValues(
 
 std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {
     // TODO: ony s_squared-based calculation supported
+    // TODO: it is awful. Fix it somehow, this code should be moved from Runner.
 
     std::map<model::symbols::SymbolName, double> answer;
 
@@ -312,6 +320,15 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
         answer[g_name] = value;
         //        std::cout << "dR^2/d" << g_name << " = " << value << std::endl;
     }
+
+    // Theta calculation:
+    if (!getSymbols().getChangeableNames(model::symbols::Theta).empty()) {
+        model::symbols::SymbolName Theta_name =
+            getSymbols().getChangeableNames(model::symbols::Theta)[0];
+        double value = mu_squared_worker.value()->calculateTotalDerivative(model::symbols::Theta);
+        answer[Theta_name] = value;
+    }
+
     return answer;
 }
 
@@ -378,7 +395,7 @@ void Runner::stepOfRegression(
     }
 }
 
-const magnetic_susceptibility::MuSquaredWorker& Runner::getMuSquaredWorker() const {
+const magnetic_susceptibility::AbstractMuSquaredWorker& Runner::getMuSquaredWorker() const {
     return *mu_squared_worker.value();
 }
 
