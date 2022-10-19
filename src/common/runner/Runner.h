@@ -11,6 +11,7 @@
 #include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
+#include "src/nonlinear_solver/AbstractNonlinearSolver.h"
 #include "src/space/Space.h"
 
 namespace runner {
@@ -46,7 +47,7 @@ class Runner {
         magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
         double number_of_centers_ratio);
     std::map<model::symbols::SymbolName, double> calculateTotalDerivatives();
-    void minimizeResidualError();
+    void minimizeResidualError(std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>);
 
     const lexicographic::IndexConverter& getIndexConverter() const;
     const model::operators::Operator& getOperator(common::QuantityEnum) const;
@@ -90,10 +91,9 @@ class Runner {
     std::map<model::symbols::SymbolName, common::Quantity>
         derivative_of_energy_wrt_exchange_parameters;
 
-    void stepOfRegression(
+    double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,
         const std::vector<double>&,
-        double&,
         std::vector<double>&);
 
     std::optional<magnetic_susceptibility::MagneticSusceptibilityController>

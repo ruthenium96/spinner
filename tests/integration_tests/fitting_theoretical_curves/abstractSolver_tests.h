@@ -1,11 +1,27 @@
+#ifndef SPINNER_ABSTRACTSOLVER_TESTS_H
+#define SPINNER_ABSTRACTSOLVER_TESTS_H
+
 #include <random>
 
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
+#include "src/nonlinear_solver/AbstractNonlinearSolver.h"
+
+template<class T>
+std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> createConcreteSolver();
+
+template<class T>
+class fitting_magnetic_susceptibility: public testing::Test {
+  protected:
+    fitting_magnetic_susceptibility() : solver_(createConcreteSolver<T>()) {}
+    std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> const solver_;
+};
+
+TYPED_TEST_SUITE_P(fitting_magnetic_susceptibility);
 
 // TODO: TEST for Theta=0
 
-TEST(fitting_magnetic_susceptibility, Theta) {
+TYPED_TEST_P(fitting_magnetic_susceptibility, Theta) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> Theta_dist(-100, -1.0);
@@ -61,7 +77,7 @@ TEST(fitting_magnetic_susceptibility, Theta) {
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            runner.minimizeResidualError();
+            runner.minimizeResidualError(this->solver_);
 
             double residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
@@ -78,7 +94,7 @@ TEST(fitting_magnetic_susceptibility, Theta) {
     }
 }
 
-TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
+TYPED_TEST_P(fitting_magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> J_dist(-200, -0.1);
@@ -145,7 +161,7 @@ TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            runner.minimizeResidualError();
+            runner.minimizeResidualError(this->solver_);
 
             double residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
@@ -162,7 +178,7 @@ TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
     }
 }
 
-TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
+TYPED_TEST_P(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> J_dist(-200, -0.1);
@@ -238,7 +254,7 @@ TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            runner.minimizeResidualError();
+            runner.minimizeResidualError(this->solver_);
 
             double residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
@@ -255,7 +271,7 @@ TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
     }
 }
 
-TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
+TYPED_TEST_P(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> J_dist(20, 200);
@@ -327,7 +343,7 @@ TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            runner.minimizeResidualError();
+            runner.minimizeResidualError(this->solver_);
 
             double residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
@@ -343,3 +359,11 @@ TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
         }
     }
 }
+REGISTER_TYPED_TEST_SUITE_P(
+    fitting_magnetic_susceptibility,
+    Theta,
+    fit_theoretical_curve_2222_JAF_g,
+    fit_theoretical_curve_222222_JFM_g,
+    fit_theoretical_curve_222222_JAF_g);
+
+#endif  //SPINNER_ABSTRACTSOLVER_TESTS_H

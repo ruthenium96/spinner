@@ -19,7 +19,6 @@ add_executable(spinner_test
         main.cpp
         time_tests/PerformanceTest.cpp
         integration_tests/spectrum_final_equivalence_tests.cpp
-        integration_tests/fitting_theoretical_curves_tests.cpp
         integration_tests/simple_analytical_dependencies_tests.cpp
         unit_tests/group_test.cpp
         unit_tests/consistentModelOptimizationList_tests.cpp
@@ -44,8 +43,14 @@ if (Eigen3_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenIndividual_tests.cpp)
 endif ()
 
+target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/stlbfgs_tests.cpp)
+if (Eigen3_FOUND)
+    target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/LBFGSpp_tests.cpp)
+endif ()
+
 if (ARMADILLO_FOUND AND Eigen3_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaEigenComparison_tests.cpp)
 endif ()
 
-target_link_libraries(spinner_test gtest gtest_main group space model spectrum common matrix magnetic_susceptibility)
+target_link_libraries(spinner_test gtest gtest_main
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
