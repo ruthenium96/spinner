@@ -78,7 +78,7 @@ TEST(fitting_magnetic_susceptibility, Theta) {
     }
 }
 
-TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
+TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> J_dist(-200, -0.1);
@@ -162,7 +162,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_2222_JAF_g) {
     }
 }
 
-TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
+TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> J_dist(-200, -0.1);
@@ -255,7 +255,7 @@ TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JAF_g) {
     }
 }
 
-TEST(magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
+TEST(fitting_magnetic_susceptibility, fit_theoretical_curve_222222_JFM_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> J_dist(20, 200);
