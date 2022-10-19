@@ -11,8 +11,8 @@
 
 namespace magnetic_susceptibility {
 
-// Abstract class for calculating mu^2 and dmu^2/dparameter.
-// Concrete classes correspond to different types of Hamiltonian or expressions.
+// Class for calculating mu^2 and dmu^2/dparameter.
+// Different types of Hamiltonian and expressions in worker::AbstractWorker.
 class MagneticSusceptibilityController {
   public:
     explicit MagneticSusceptibilityController(std::unique_ptr<worker::AbstractWorker>&& worker);
