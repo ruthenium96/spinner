@@ -7,3 +7,5 @@ add_library(model
         symbols/Symbols.h symbols/Symbols.cpp
         symbols/SymbolName.h symbols/SymbolName.cpp
         )
+
+target_link_libraries(model group)

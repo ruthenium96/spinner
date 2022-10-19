@@ -7,4 +7,4 @@ add_library(common
         runner/ConsistentModelOptimizationList.h runner/ConsistentModelOptimizationList.cpp
         runner/ModelOptimizationListConsistence.h runner/ModelOptimizationListConsistence.cpp)
 
-target_link_libraries(common model space magnetic_susceptibility stlbfgs)
+target_link_libraries(common model matrix spectrum space magnetic_susceptibility nonlinear_solver)

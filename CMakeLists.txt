@@ -15,14 +15,6 @@ FetchContent_Declare(
 #FetchContent_MakeAvailable(wignersymbols)
 #include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
-FetchContent_Declare(
-        stlbfgs
-        GIT_REPOSITORY https://github.com/ssloy/stlbfgs.git
-        GIT_TAG "0dedf926faf66cf95fffbdc3ff5c3e0067b70296"
-)
-FetchContent_MakeAvailable(stlbfgs)
-include_directories(${stlbfgs_SOURCE_DIR}/)
-
 find_package(OpenMP)
 if (OPENMP_FOUND)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
