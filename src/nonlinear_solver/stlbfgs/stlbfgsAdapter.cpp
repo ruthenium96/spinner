@@ -8,7 +8,7 @@ void stlbfgsAdapter::optimize(
     std::vector<double>& changeable_values) {
     auto adaptedSignatureFunction = adaptSignature(oneStepFunction);
     STLBFGS::Optimizer optimizer {adaptedSignatureFunction};
-    optimizer.verbose = true;
+    optimizer.verbose = false;
     // Run calculation from initial guess. STLBFGS updates changeable_values every iteration.
     optimizer.run(changeable_values);
 }

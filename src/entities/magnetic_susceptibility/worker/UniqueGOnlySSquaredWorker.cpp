@@ -12,6 +12,7 @@ UniqueGOnlySSquaredWorker::UniqueGOnlySSquaredWorker(
 
 double UniqueGOnlySSquaredWorker::calculateTheoreticalMuSquared(double temperature) const {
     double s_squared_averaged = ensemble_averager_.ensemble_average(s_squared_, temperature);
+    // TODO: should we here divide by 3?
     return g_unique_ * g_unique_ * s_squared_averaged;
 }
 
@@ -30,6 +31,7 @@ std::vector<ValueAtTemperature> UniqueGOnlySSquaredWorker::calculateDerivative(
             double second_term = ensemble_averager_.ensemble_average(
                 s_squared_->element_wise_multiplication(derivative_value),
                 temperatures[i]);
+            // TODO: should we here divide by 3?
             double value = g_unique_ * g_unique_ * (first_term - second_term) / temperatures[i];
             derivatives[i] = {temperatures[i], value};
         }
@@ -44,6 +46,7 @@ UniqueGOnlySSquaredWorker::calculateDerivative(model::symbols::SymbolTypeEnum sy
     if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
         // d(mu_squared)/dg = d(g^2*<S^2>)/dg = d(g^2)/dg*<S^2> + g^2*d(<S^2>)/dg = 2g*<S^2>
         for (size_t i = 0; i < temperatures.size(); ++i) {
+            // TODO: should we here divide by 3?
             double value =
                 2 * g_unique_ * ensemble_averager_.ensemble_average(s_squared_, temperatures[i]);
             derivatives[i] = {temperatures[i], value};

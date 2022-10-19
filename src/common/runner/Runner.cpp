@@ -1,7 +1,5 @@
 #include "Runner.h"
 
-#include <stlbfgs.h>
-
 #include <cassert>
 #include <utility>
 
@@ -313,8 +311,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::J,
             std::move(derivative_vector));
         answer[changeable_symbol] = value;
-        //        std::cout << "dR^2/d" << changeable_symbol << " = "
-        //                  << value << std::endl;
+        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
     }
 
     if (!getSymbols().getChangeableNames(model::symbols::g_factor).empty()) {
@@ -323,7 +320,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
         double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
             model::symbols::g_factor);
         answer[g_name] = value;
-        //        std::cout << "dR^2/d" << g_name << " = " << value << std::endl;
+        //        std::cout << "dR^2/d" << g_name.get_name() << " = " << value << std::endl;
     }
 
     // Theta calculation:
@@ -333,12 +330,14 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
         double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
             model::symbols::Theta);
         answer[Theta_name] = value;
+        //        std::cout << "dR^2/d" << Theta_name.get_name() << " = " << value << std::endl;
     }
 
     return answer;
 }
 
-void Runner::minimizeResidualError() {
+void Runner::minimizeResidualError(
+    std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> solver) {
     std::vector<model::symbols::SymbolName> changeable_names = getSymbols().getChangeableNames();
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
@@ -346,30 +345,24 @@ void Runner::minimizeResidualError() {
         changeable_values.push_back(getSymbols().getValueOfName(name));
     }
 
-    // Function-adapter for STLBFGS library.
-    // It should calculate residual error and derivatives at a point of changeable_values.
-    std::function<void(const std::vector<double>&, double&, std::vector<double>&)> func_grad_eval =
+    // This function should calculate residual error and derivatives at a point of changeable_values
+    std::function<double(const std::vector<double>&, std::vector<double>&)> oneStepFunction =
         [this, capture0 = std::cref(changeable_names)](
             const std::vector<double>& changeable_values,
-            double& residual_error,
             std::vector<double>& gradient) {
-            stepOfRegression(capture0, changeable_values, residual_error, gradient);
+            return stepOfRegression(capture0, changeable_values, gradient);
         };
 
-    STLBFGS::Optimizer opt {func_grad_eval};
-    opt.verbose = false;
-    // Run calculation from initial guess. STLBFGS updates changeable_values every iteration.
-    opt.run(changeable_values);
+    solver->optimize(oneStepFunction, changeable_values);
 
     for (size_t i = 0; i < changeable_names.size(); ++i) {
-        //        std::cout << changeable_names[i] << ": " << changeable_values[i] << std::endl;
+        //        std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
     }
 }
 
-void Runner::stepOfRegression(
+double Runner::stepOfRegression(
     const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
-    double& residual_error,
     std::vector<double>& gradient) {
     // At first, update actual values in Symbols:
     for (size_t i = 0; i < changeable_names.size(); ++i) {
@@ -391,7 +384,9 @@ void Runner::stepOfRegression(
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
-    residual_error = magnetic_susceptibility_controller_.value().calculateResidualError();
+    double residual_error = magnetic_susceptibility_controller_.value().calculateResidualError();
+
+    //    std::cout << "R^2 = " << residual_error << std::endl;
 
     // Calculate derivatives...
     std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
@@ -399,6 +394,8 @@ void Runner::stepOfRegression(
         // ...and write it to external variable:
         gradient[i] = map_gradient[changeable_names[i]];
     }
+
+    return residual_error;
 }
 
 const magnetic_susceptibility::MagneticSusceptibilityController&
