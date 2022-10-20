@@ -24,3 +24,19 @@ if (Eigen3_FOUND)
     target_link_libraries(lbfgspp_adapter Eigen3::Eigen lbfgspp)
     target_link_libraries(nonlinear_solver lbfgspp_adapter)
 endif ()
+
+find_package(Armadillo)
+if (ARMADILLO_FOUND)
+    FetchContent_Declare(
+            optim
+            GIT_REPOSITORY https://github.com/kthohr/optim.git
+            GIT_TAG "34819e0e35fcfc8ddc9028b56b9cae2c6924ae37"
+    )
+    FetchContent_MakeAvailable(optim)
+    execute_process(COMMAND ./configure --header-only-version
+            WORKING_DIRECTORY ${optim_SOURCE_DIR}/)
+    include_directories(${optim_SOURCE_DIR}/header_only_version/)
+    add_library(optimNM_adapter optimNM/optimNMAdapter.cpp optimNM/optimNMAdapter.h)
+    target_link_libraries(optimNM_adapter ${ARMADILLO_LIBRARIES})
+    target_link_libraries(nonlinear_solver optimNM_adapter)
+endif ()

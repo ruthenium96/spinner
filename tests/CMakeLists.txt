@@ -38,7 +38,6 @@ find_package(Eigen3 3.3)
 if (ARMADILLO_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaIndividual_tests.cpp)
 endif ()
-
 if (Eigen3_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenIndividual_tests.cpp)
 endif ()
@@ -47,6 +46,10 @@ target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves
 if (Eigen3_FOUND)
     target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/LBFGSpp_tests.cpp)
 endif ()
+if (ARMADILLO_FOUND)
+    target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/optimNM_tests.cpp)
+endif ()
+
 
 if (ARMADILLO_FOUND AND Eigen3_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaEigenComparison_tests.cpp)
