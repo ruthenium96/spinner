@@ -1,6 +1,7 @@
 #ifndef SPINNER_RUNNER_H
 #define SPINNER_RUNNER_H
 
+#include <optional>
 #include <utility>
 
 #include "ConsistentModelOptimizationList.h"
@@ -94,7 +95,8 @@ class Runner {
     double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,
         const std::vector<double>&,
-        std::vector<double>&);
+        std::vector<double>&,
+        bool isGradientRequired);
 
     std::optional<magnetic_susceptibility::MagneticSusceptibilityController>
         magnetic_susceptibility_controller_;

@@ -6,7 +6,7 @@
 namespace nonlinear_solver {
 
 void optimNMAdapter::optimize(
-    std::function<double(const std::vector<double>&, std::vector<double>&)> oneStepFunction,
+    std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction,
     std::vector<double>& changeable_values) {
     auto adaptedSignatureFunction = adaptSignature(oneStepFunction);
     auto changeable_values_arma = convertFromSTLToArma(changeable_values);
@@ -18,7 +18,7 @@ void optimNMAdapter::optimize(
 
 std::function<double(const arma::vec& vals_inp, arma::vec* grad_out, void* opt_data)>
 optimNMAdapter::adaptSignature(
-    const std::function<double(const std::vector<double>&, std::vector<double>&)>&
+    const std::function<double(const std::vector<double>&, std::vector<double>&, bool)>&
         oneStepFunction) {
     // do nothing with opt_data
     auto adaptedSignatureFunction = [oneStepFunction](
@@ -28,7 +28,7 @@ optimNMAdapter::adaptSignature(
         std::vector<double> changeable_values_stl = convertFromArmaToSTL(changeable_values_arma);
         // we do not need gradients on NM method:
         std::vector<double> gradient_stl(changeable_values_stl.size(), 0);
-        double residual_error = oneStepFunction(changeable_values_stl, gradient_stl);
+        double residual_error = oneStepFunction(changeable_values_stl, gradient_stl, false);
         // do nothing with gradient_stl
         return residual_error;
     };

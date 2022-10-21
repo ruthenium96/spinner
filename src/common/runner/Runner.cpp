@@ -346,11 +346,12 @@ void Runner::minimizeResidualError(
     }
 
     // This function should calculate residual error and derivatives at a point of changeable_values
-    std::function<double(const std::vector<double>&, std::vector<double>&)> oneStepFunction =
+    std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction =
         [this, capture0 = std::cref(changeable_names)](
             const std::vector<double>& changeable_values,
-            std::vector<double>& gradient) {
-            return stepOfRegression(capture0, changeable_values, gradient);
+            std::vector<double>& gradient,
+            bool isGradientRequired) {
+            return stepOfRegression(capture0, changeable_values, gradient, isGradientRequired);
         };
 
     solver->optimize(oneStepFunction, changeable_values);
@@ -363,7 +364,8 @@ void Runner::minimizeResidualError(
 double Runner::stepOfRegression(
     const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
-    std::vector<double>& gradient) {
+    std::vector<double>& gradient,
+    bool isGradientRequired) {
     // At first, update actual values in Symbols:
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         // TODO: mutable use of Model/Symbols. Refactor it.
@@ -388,11 +390,13 @@ double Runner::stepOfRegression(
 
     //    std::cout << "R^2 = " << residual_error << std::endl;
 
-    // Calculate derivatives...
-    std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
-    for (size_t i = 0; i < changeable_names.size(); ++i) {
-        // ...and write it to external variable:
-        gradient[i] = map_gradient[changeable_names[i]];
+    if (isGradientRequired) {
+        // Calculate derivatives...
+        std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
+        for (size_t i = 0; i < changeable_names.size(); ++i) {
+            // ...and write it to external variable:
+            gradient[i] = map_gradient[changeable_names[i]];
+        }
     }
 
     return residual_error;

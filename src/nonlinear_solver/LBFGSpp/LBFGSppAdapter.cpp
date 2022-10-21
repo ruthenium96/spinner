@@ -4,7 +4,7 @@
 
 namespace nonlinear_solver {
 void LBFGSppAdapter::optimize(
-    std::function<double(const std::vector<double>&, std::vector<double>&)> oneStepFunction,
+    std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction,
     std::vector<double>& changeable_values) {
     auto adaptedSignatureFunction = adaptSignature(oneStepFunction);
     auto changeable_values_eigen = convertFromSTLToEigen(changeable_values);
@@ -20,14 +20,14 @@ void LBFGSppAdapter::optimize(
 }
 
 std::function<double(const Eigen::VectorXd&, Eigen::VectorXd&)> LBFGSppAdapter::adaptSignature(
-    const std::function<double(const std::vector<double>&, std::vector<double>&)>&
+    const std::function<double(const std::vector<double>&, std::vector<double>&, bool)>&
         oneStepFunction) {
     auto adaptedSignatureFunction = [oneStepFunction](
                                         const Eigen::VectorXd& changeable_values_eigen,
                                         Eigen::VectorXd& gradient_eigen) {
         std::vector<double> changeable_values_stl = convertFromEigenToSTL(changeable_values_eigen);
         std::vector<double> gradient_stl = convertFromEigenToSTL(gradient_eigen);
-        double residual_error = oneStepFunction(changeable_values_stl, gradient_stl);
+        double residual_error = oneStepFunction(changeable_values_stl, gradient_stl, true);
         gradient_eigen = convertFromSTLToEigen(gradient_stl);
         return residual_error;
     };

@@ -164,7 +164,7 @@ std::vector<SymbolName> Symbols::getChangeableNames(SymbolTypeEnum type_enum) co
 }
 
 bool Symbols::isAllGFactorsEqual() const {
-    if (symbolic_g_factors_.empty()) {
+    if (!isGFactorInitialized()) {
         throw std::length_error("g factor parameters have not been initialized");
     }
     for (size_t i = 1; i < symbolic_g_factors_.size(); ++i) {
