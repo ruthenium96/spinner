@@ -1,6 +1,7 @@
 #ifndef SPINNER_ABSTRACTWORKER_H
 #define SPINNER_ABSTRACTWORKER_H
 
+#include "src/common/Quantity.h"
 #include "src/entities/data_structures/AbstractVector.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/model/symbols/Symbols.h"
@@ -16,13 +17,11 @@ class AbstractWorker {
     virtual void setExperimentalValuesWorker(
         const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) = 0;
 
-    // Some values do not change <A> values, so d<A>/dvalue = 0. Function for this case:
+    // d<A>/dsymbol
     virtual std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const = 0;
-    // Some values change <A> values, so we need d<A>/dvalue. Function for this case:
-    virtual std::vector<ValueAtTemperature>
-    calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const = 0;
+        std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+            values_derivatives_map) const = 0;
 };
 }  // namespace magnetic_susceptibility::worker
 

@@ -18,29 +18,8 @@ double UniqueGOnlySSquaredWorker::calculateTheoreticalMuSquared(double temperatu
 
 std::vector<ValueAtTemperature> UniqueGOnlySSquaredWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const {
-    std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
-    std::vector<ValueAtTemperature> derivatives(temperatures.size());
-    if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
-        throw std::invalid_argument("g-factor should be passed without vector.");
-    } else {
-        // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/da = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
-        for (size_t i = 0; i < temperatures.size(); ++i) {
-            double first_term = ensemble_averager_.ensemble_average(s_squared_, temperatures[i])
-                * ensemble_averager_.ensemble_average(derivative_value, temperatures[i]);
-            double second_term = ensemble_averager_.ensemble_average(
-                s_squared_->element_wise_multiplication(derivative_value),
-                temperatures[i]);
-            // TODO: should we here divide by 3?
-            double value = g_unique_ * g_unique_ * (first_term - second_term) / temperatures[i];
-            derivatives[i] = {temperatures[i], value};
-        }
-    }
-    return derivatives;
-}
-
-std::vector<ValueAtTemperature>
-UniqueGOnlySSquaredWorker::calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const {
+    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+        values_derivatives_map) const {
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
     if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
@@ -52,7 +31,19 @@ UniqueGOnlySSquaredWorker::calculateDerivative(model::symbols::SymbolTypeEnum sy
             derivatives[i] = {temperatures[i], value};
         }
     } else {
-        throw std::invalid_argument("Only g-factor can be passed without vector.");
+        // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/da = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
+        const std::unique_ptr<quantum::linear_algebra::AbstractVector>& energy_derivative =
+            values_derivatives_map[common::Energy];
+        for (size_t i = 0; i < temperatures.size(); ++i) {
+            double first_term = ensemble_averager_.ensemble_average(s_squared_, temperatures[i])
+                * ensemble_averager_.ensemble_average(energy_derivative, temperatures[i]);
+            double second_term = ensemble_averager_.ensemble_average(
+                s_squared_->element_wise_multiplication(energy_derivative),
+                temperatures[i]);
+            // TODO: should we here divide by 3?
+            double value = g_unique_ * g_unique_ * (first_term - second_term) / temperatures[i];
+            derivatives[i] = {temperatures[i], value};
+        }
     }
     return derivatives;
 }

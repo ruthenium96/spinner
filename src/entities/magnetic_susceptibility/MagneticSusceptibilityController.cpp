@@ -34,21 +34,6 @@ double MagneticSusceptibilityController::multiplyExperimentalAndTheoreticalDeriv
     return derivative;
 }
 
-double MagneticSusceptibilityController::calculateTotalDerivative(
-    model::symbols::SymbolTypeEnum symbol_type,
-    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const {
-    std::vector<ValueAtTemperature> theoretical_derivative =
-        worker_->calculateDerivative(symbol_type, std::move(derivative_value));
-    return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
-}
-
-double MagneticSusceptibilityController::calculateTotalDerivative(
-    model::symbols::SymbolTypeEnum symbol_type) const {
-    std::vector<ValueAtTemperature> theoretical_derivative =
-        worker_->calculateDerivative(symbol_type);
-    return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
-}
-
 void MagneticSusceptibilityController::initializeExperimentalValues(
     const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) {
     worker_->setExperimentalValuesWorker(experimental_values_worker);
@@ -64,6 +49,15 @@ void MagneticSusceptibilityController::initializeExperimentalValues(
 
 double MagneticSusceptibilityController::calculateTheoreticalMuSquared(double temperature) const {
     return worker_->calculateTheoreticalMuSquared(temperature);
+}
+
+double MagneticSusceptibilityController::calculateTotalDerivative(
+    model::symbols::SymbolTypeEnum symbol_type,
+    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+        values_derivatives_map) const {
+    std::vector<ValueAtTemperature> theoretical_derivative =
+        worker_->calculateDerivative(symbol_type, std::move(values_derivatives_map));
+    return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
 }
 
 }  // namespace magnetic_susceptibility

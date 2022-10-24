@@ -22,12 +22,11 @@ class MagneticSusceptibilityController {
     double calculateTheoreticalMuSquared(double temperature) const;
     double calculateResidualError() const;
     // These functions just call suitable virtual function calculateDerivative.
-    // Some values change <A> values, so we need d<A>/dvalue. Function for this case:
+    // Calculates dR^2/dsymbol.
     double calculateTotalDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const;
-    // Some values do not change <A> values, so d<A>/dvalue = 0. Function for this case:
-    double calculateTotalDerivative(model::symbols::SymbolTypeEnum symbol_type) const;
+        std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+            values_derivatives_map) const;
 
   private:
     // dot product with some checks:

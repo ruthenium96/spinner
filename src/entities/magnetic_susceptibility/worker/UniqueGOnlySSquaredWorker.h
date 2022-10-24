@@ -15,15 +15,14 @@ class UniqueGOnlySSquaredWorker: public BasicWorker {
         double g_unique);
 
     double calculateTheoreticalMuSquared(double temperature) const override;
+    std::vector<ValueAtTemperature> calculateDerivative(
+        model::symbols::SymbolTypeEnum symbol_type,
+        std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+            values_derivatives_map) const override;
 
   private:
     double g_unique_;
     std::unique_ptr<quantum::linear_algebra::AbstractVector> s_squared_;
-    std::vector<ValueAtTemperature> calculateDerivative(
-        model::symbols::SymbolTypeEnum symbol_type,
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const override;
-    std::vector<ValueAtTemperature>
-    calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const override;
 };
 
 }  // namespace magnetic_susceptibility

@@ -19,16 +19,14 @@ class CurieWeissWorker: public AbstractWorker {
     std::shared_ptr<const ExperimentalValuesWorker> getExperimentalValuesWorker() const override;
     void setExperimentalValuesWorker(
         const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) override;
+    std::vector<ValueAtTemperature> calculateDerivative(
+        model::symbols::SymbolTypeEnum symbol_type,
+        std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+            values_derivatives_map) const override;
 
   protected:
     std::unique_ptr<AbstractWorker> worker_;
     std::shared_ptr<const double> Theta_;
-
-    std::vector<ValueAtTemperature> calculateDerivative(
-        model::symbols::SymbolTypeEnum symbol_type,
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& derivative_value) const override;
-    std::vector<ValueAtTemperature>
-    calculateDerivative(model::symbols::SymbolTypeEnum symbol_type) const override;
 };
 
 }  // namespace magnetic_susceptibility
