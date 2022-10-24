@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "Term.h"
+#include "src/model/operators/terms/Term.h"
 
 namespace model::operators {
 class Operator {
@@ -18,6 +18,9 @@ class Operator {
     ~Operator() = default;
 
     static Operator s_squared(lexicographic::IndexConverter converter);
+    static Operator g_sz_squared(
+        lexicographic::IndexConverter converter,
+        std::shared_ptr<const TwoDNumericalParameters<double>> parameters);
 
     bool empty() const;
     std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms();

@@ -1,7 +1,8 @@
 #include "Operator.h"
 
-#include "ConstantTerm.h"
-#include "ScalarProductTerm.h"
+#include "src/model/operators/terms/ConstantTerm.h"
+#include "src/model/operators/terms/ScalarProductTerm.h"
+#include "src/model/operators/terms/ZProjectionsProductTerm.h"
 
 namespace model::operators {
 Operator Operator::s_squared(lexicographic::IndexConverter converter) {

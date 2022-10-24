@@ -86,6 +86,7 @@ void ScalarProductTerm::add_scalar_product(
         projection_of_center_a,
         factor);
 }
+
 void ScalarProductTerm::add_scalar_product_nondiagonal_part(
     UnitarySparseMatrix& matrix,
     uint32_t index_of_vector,

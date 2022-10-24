@@ -1,6 +1,9 @@
 #ifndef SPINNER_RUNNER_H
 #define SPINNER_RUNNER_H
 
+#include <cmath>
+#include <cstdint>
+#include <memory>
 #include <optional>
 #include <utility>
 
@@ -8,8 +11,6 @@
 #include "src/common/Quantity.h"
 #include "src/entities/data_structures/AbstractFactory.h"
 #include "src/entities/magnetic_susceptibility/MagneticSusceptibilityController.h"
-#include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
-#include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"

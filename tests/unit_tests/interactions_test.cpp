@@ -4,8 +4,8 @@
 #include "src/common/lexicographic/IndexConverter.h"
 #include "src/entities/data_structures/AbstractFactory.h"
 #include "src/entities/matrix/Matrix.h"
-#include "src/model/operators/ConstantTerm.h"
-#include "src/model/operators/ScalarProductTerm.h"
+#include "src/model/operators/terms/ConstantTerm.h"
+#include "src/model/operators/terms/ScalarProductTerm.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
     std::vector<std::vector<int>> vector_of_mults =
