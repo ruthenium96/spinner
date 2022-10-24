@@ -1,10 +1,9 @@
-name: Google Tests
+name: Build Tests
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - "**"
 
 
 jobs:
