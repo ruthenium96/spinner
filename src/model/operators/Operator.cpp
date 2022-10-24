@@ -18,6 +18,15 @@ Operator Operator::s_squared(lexicographic::IndexConverter converter) {
     return s_squared_operator_;
 }
 
+Operator Operator::g_sz_squared(
+    lexicographic::IndexConverter converter,
+    std::shared_ptr<const TwoDNumericalParameters<double>> parameters) {
+    Operator g_sz_squared_operator_;
+    g_sz_squared_operator_.two_center_terms.emplace_back(
+        std::make_unique<const ZProjectionsProductTerm>(converter, parameters));
+    return g_sz_squared_operator_;
+}
+
 Operator::Operator(const Operator& rhs) {
     for (const std::unique_ptr<const ZeroCenterTerm>& el : rhs.zero_center_terms) {
         zero_center_terms.emplace_back(el->clone());

@@ -28,6 +28,7 @@ class Symbols {
     constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name);
     std::shared_ptr<const TwoDNumericalParameters<double>> getIsotropicExchangeParameters() const;
     std::shared_ptr<const OneDNumericalParameters<double>> getGFactorParameters() const;
+    std::shared_ptr<const TwoDNumericalParameters<double>> getGGFactorProductParameters() const;
     std::shared_ptr<const double> getThetaParameter() const;
 
     SymbolName getIsotropicExchangeSymbolName(size_t i, size_t j) const;
@@ -76,6 +77,7 @@ class Symbols {
 
     std::shared_ptr<TwoDNumericalParameters<double>> numeric_isotropic_exchanges_;
     std::shared_ptr<OneDNumericalParameters<double>> numeric_g_factors_;
+    std::shared_ptr<TwoDNumericalParameters<double>> numeric_g_g_factors_product_;
     std::shared_ptr<double> numeric_Theta_;
 
     std::vector<std::shared_ptr<TwoDNumericalParameters<double>>>

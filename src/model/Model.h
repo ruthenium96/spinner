@@ -15,8 +15,10 @@ class Model {
     Model& InitializeIsotropicExchange();
     Model& InitializeIsotropicExchangeDerivatives();
     Model& InitializeSSquared();
+    Model& InitializeGSzSquared();
 
     bool is_s_squared_initialized() const;
+    bool is_g_sz_squared_initialized() const;
     bool is_isotropic_exchange_derivatives_initialized() const;
 
     const lexicographic::IndexConverter& getIndexConverter() const;
@@ -32,6 +34,7 @@ class Model {
     struct OperatorsHistory {
         bool isotropic_exchange_in_hamiltonian = false;
         bool s_squared = false;
+        bool g_sz_squared = false;
         bool isotropic_exchange_derivatives = false;
     };
     // TODO: should we move it from here?
@@ -43,6 +46,7 @@ class Model {
     // or can we just separate Operator and Spectrum?
     operators::Operator energy_operator;
     std::optional<operators::Operator> s_squared_operator;
+    std::optional<operators::Operator> g_sz_squared_operator;
     std::map<symbols::SymbolName, operators::Operator>
         derivative_of_energy_wrt_exchange_parameters_operator;
 

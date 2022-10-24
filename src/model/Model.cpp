@@ -1,8 +1,8 @@
 #include "Model.h"
 
-#include <src/model/operators/ScalarProductTerm.h>
-
 #include <cassert>
+
+#include "src/model/operators/terms/ScalarProductTerm.h"
 
 namespace model {
 
@@ -18,6 +18,18 @@ Model& Model::InitializeSSquared() {
     s_squared_operator = operators::Operator::s_squared(converter_);
 
     operators_history_.s_squared = true;
+    return *this;
+}
+
+Model& Model::InitializeGSzSquared() {
+    if (operators_history_.g_sz_squared) {
+        return *this;
+    }
+
+    g_sz_squared_operator =
+        operators::Operator::g_sz_squared(converter_, symbols_.getGGFactorProductParameters());
+
+    operators_history_.g_sz_squared = true;
     return *this;
 }
 
@@ -70,6 +82,8 @@ const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum
         return energy_operator;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
         return s_squared_operator.value();
+    } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
+        return g_sz_squared_operator.value();
     }
     assert(0);
 }
@@ -92,6 +106,10 @@ bool Model::is_s_squared_initialized() const {
 
 bool Model::is_isotropic_exchange_derivatives_initialized() const {
     return operators_history_.isotropic_exchange_derivatives;
+}
+
+bool Model::is_g_sz_squared_initialized() const {
+    return operators_history_.g_sz_squared;
 }
 
 }  // namespace model

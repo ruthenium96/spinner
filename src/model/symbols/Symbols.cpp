@@ -110,12 +110,19 @@ SymbolName Symbols::addSymbol(const std::string& name_string, double initial_val
     return addSymbol(name_string, initial_value, true);
 }
 
-
 std::shared_ptr<const OneDNumericalParameters<double>> Symbols::getGFactorParameters() const {
     if (numeric_g_factors_ == nullptr) {
         throw std::invalid_argument("g-factors were not initialized");
     }
     return numeric_g_factors_;
+}
+
+std::shared_ptr<const TwoDNumericalParameters<double>>
+Symbols::getGGFactorProductParameters() const {
+    if (numeric_g_g_factors_product_ == nullptr) {
+        throw std::invalid_argument("g-factors were not initialized");
+    }
+    return numeric_g_g_factors_product_;
 }
 
 std::shared_ptr<const TwoDNumericalParameters<double>>
@@ -234,10 +241,22 @@ void Symbols::updateGFactorParameters() {
         numeric_g_factors_ =
             std::make_shared<OneDNumericalParameters<double>>(number_of_spins_, NAN);
     }
+    if (numeric_g_g_factors_product_ == nullptr) {
+        numeric_g_g_factors_product_ =
+            std::make_shared<TwoDNumericalParameters<double>>(number_of_spins_, NAN);
+    }
 
     for (size_t i = 0; i < number_of_spins_; ++i) {
         double value = symbolsMap[symbolic_g_factors_[i]].value;
         numeric_g_factors_->at(i) = value;
+    }
+
+    for (size_t i = 0; i < number_of_spins_; ++i) {
+        for (size_t j = 0; j < number_of_spins_; ++j) {
+            double value =
+                symbolsMap[symbolic_g_factors_[i]].value * symbolsMap[symbolic_g_factors_[j]].value;
+            numeric_g_g_factors_product_->at(i, j) = value;
+        }
     }
 }
 
