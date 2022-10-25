@@ -8,4 +8,4 @@ createConcreteSolver<nonlinear_solver::LBFGSppAdapter>() {
 };
 
 typedef testing::Types<nonlinear_solver::LBFGSppAdapter> LBFGSpp;
-INSTANTIATE_TYPED_TEST_SUITE_P(LBFGSppSolverTests, fitting_magnetic_susceptibility, LBFGSpp);
+INSTANTIATE_TYPED_TEST_SUITE_P(LBFGSppSolverTests, fitting_magnetic_susceptibility_simple, LBFGSpp);
