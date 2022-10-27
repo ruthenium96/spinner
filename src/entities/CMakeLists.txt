@@ -20,4 +20,6 @@ add_library(magnetic_susceptibility
         magnetic_susceptibility/worker/BasicWorker.cpp
         magnetic_susceptibility/worker/BasicWorker.h
         magnetic_susceptibility/MagneticSusceptibilityController.cpp
-        magnetic_susceptibility/worker/AbstractWorker.h)
+        magnetic_susceptibility/worker/AbstractWorker.h
+        magnetic_susceptibility/worker/GSzSquaredWorker.cpp
+        magnetic_susceptibility/worker/GSzSquaredWorker.h)
