@@ -7,6 +7,8 @@
 #include "src/common/runner/Runner.h"
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"
 
+#define RESIDUAL_ERROR_EPSILON 1e-3
+
 template<class T>
 std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> createConcreteSolver();
 
@@ -86,8 +88,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
             double Theta_range = std::abs(Theta_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(Theta_fitted, Theta_exact, Theta_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -170,8 +171,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -263,8 +263,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -352,8 +351,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -432,8 +430,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             double g_one_range = std::abs((g_one_fitted) / 1000);
             double g_two_range = std::abs((g_two_fitted) / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(g_one_fitted, g_one_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_two_exact, g_two_range);
         }
@@ -533,8 +530,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             double g_one_range = std::abs((g_one_fitted) / 1000);
             double g_two_range = std::abs((g_two_fitted) / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(g_one_fitted, g_one_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_two_exact, g_two_range);
         }

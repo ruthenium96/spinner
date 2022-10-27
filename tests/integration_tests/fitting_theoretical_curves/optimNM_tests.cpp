@@ -21,7 +21,7 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
         const double J_exact = J_dist(rng);
         const double g_one_exact = g_one_dist(rng);
         const double g_two_exact = g_two_dist(rng);
-        std::vector<int> mults = {3, 3, 2, 2};
+        std::vector<int> mults = {2, 2, 2, 2};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
@@ -45,9 +45,7 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
             model.InitializeGSzSquared();
-            model.InitializeGSzSquaredDerivatives();
             model.InitializeIsotropicExchange();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
 
@@ -83,9 +81,7 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
             }
 
             model.InitializeGSzSquared();
-            model.InitializeGSzSquaredDerivatives();
             model.InitializeIsotropicExchange();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(
@@ -104,8 +100,7 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
             double g_one_range = std::abs((g_one_fitted) / 1000);
             double g_two_range = std::abs((g_two_fitted) / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_one_fitted, g_one_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_two_exact, g_two_range);
@@ -144,7 +139,6 @@ TEST(
             }
             model.InitializeSSquared();
             model.InitializeIsotropicExchange();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
 
@@ -180,9 +174,7 @@ TEST(
             }
 
             model.InitializeGSzSquared();
-            model.InitializeGSzSquaredDerivatives();
             model.InitializeIsotropicExchange();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(
@@ -201,8 +193,7 @@ TEST(
             double g_one_range = std::abs((g_one_fitted) / 1000);
             double g_two_range = std::abs((g_two_fitted) / 1000);
 
-            // TODO: epsilon
-            EXPECT_NEAR(residual_error, 0, 1e-3);
+            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_one_fitted, g_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_exact, g_two_range);
