@@ -1,11 +1,11 @@
-#ifndef SPINNER_ZPROJECTIONSPRODUCTTERM_H
-#define SPINNER_ZPROJECTIONSPRODUCTTERM_H
+#ifndef SPINNER_SZSZTWOCENTERTERM_H
+#define SPINNER_SZSZTWOCENTERTERM_H
 
 #include "Term.h"
 namespace model::operators {
-class ZProjectionsProductTerm: public TwoCenterTerm {
+class SzSzTwoCenterTerm: public TwoCenterTerm {
   public:
-    ZProjectionsProductTerm(
+    SzSzTwoCenterTerm(
         lexicographic::IndexConverter converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> parameters);
     std::unique_ptr<TwoCenterTerm> clone() const override;
@@ -21,4 +21,4 @@ class ZProjectionsProductTerm: public TwoCenterTerm {
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
 };
 }  // namespace model::operators
-#endif  //SPINNER_ZPROJECTIONSPRODUCTTERM_H
+#endif  //SPINNER_SZSZTWOCENTERTERM_H

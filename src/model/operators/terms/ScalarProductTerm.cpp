@@ -48,6 +48,7 @@ std::shared_ptr<const TwoDNumericalParameters<double>> ScalarProductTerm::get_pa
 std::unique_ptr<TwoCenterTerm> ScalarProductTerm::clone() const {
     return std::make_unique<ScalarProductTerm>(converter_, coefficients_);
 }
+
 void ScalarProductTerm::add_scalar_product(
     UnitarySparseMatrix& matrix,
     uint32_t index_of_vector,
