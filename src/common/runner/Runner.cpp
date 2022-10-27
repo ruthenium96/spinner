@@ -467,9 +467,9 @@ void Runner::minimizeResidualError(
 
     solver->optimize(oneStepFunction, changeable_values);
 
-    for (size_t i = 0; i < changeable_names.size(); ++i) {
-        //        std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
-    }
+    //    for (size_t i = 0; i < changeable_names.size(); ++i) {
+    //        std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
+    //    }
 }
 
 double Runner::stepOfRegression(
@@ -485,6 +485,10 @@ double Runner::stepOfRegression(
             changeable_values[i]);
     }
 
+    //    for (size_t i = 0; i < changeable_names.size(); ++i) {
+    //        std::cout << changeable_names[i].get_name() << " = " << changeable_values[i] << std::endl;
+    //    }
+
     // Do some calculation stuff...
     if (matrix_history_.matrices_was_built) {
         // TODO: 1) it does not work now
@@ -499,7 +503,7 @@ double Runner::stepOfRegression(
     // Calculate residual error and write it to external variable:
     double residual_error = magnetic_susceptibility_controller_.value().calculateResidualError();
 
-    //    std::cout << "R^2 = " << residual_error << std::endl;
+    //std::cout << "R^2 = " << residual_error << std::endl << std::endl;
 
     if (isGradientRequired) {
         // Calculate derivatives...

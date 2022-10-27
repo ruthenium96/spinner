@@ -109,10 +109,6 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_one_fitted, g_one_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_two_exact, g_two_range);
-
-            std::cout << "J exact: " << J_exact << std::endl;
-            std::cout << "g1 exact: " << g_one_exact << std::endl;
-            std::cout << "g2 exact: " << g_two_exact << std::endl;
         }
     }
 }
@@ -210,9 +206,6 @@ TEST(
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_one_fitted, g_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_exact, g_two_range);
-
-            std::cout << "J exact: " << J_exact << std::endl;
-            std::cout << "g exact: " << g_exact << std::endl;
         }
     }
 }

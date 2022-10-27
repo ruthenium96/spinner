@@ -436,9 +436,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             EXPECT_NEAR(residual_error, 0, 1e-3);
             EXPECT_NEAR(g_one_fitted, g_one_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_two_exact, g_two_range);
-
-            std::cout << "g1 exact: " << g_one_exact << std::endl;
-            std::cout << "g2 exact: " << g_two_exact << std::endl;
         }
     }
 }
