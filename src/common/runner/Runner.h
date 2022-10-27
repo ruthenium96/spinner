@@ -90,8 +90,11 @@ class Runner {
 
     common::Quantity energy;
     std::optional<common::Quantity> s_squared;
+    std::optional<common::Quantity> g_sz_squared;
     std::map<model::symbols::SymbolName, common::Quantity>
         derivative_of_energy_wrt_exchange_parameters;
+    std::map<model::symbols::SymbolName, common::Quantity>
+        derivative_of_g_sz_squared_wrt_g_factor_parameters;
 
     double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,
