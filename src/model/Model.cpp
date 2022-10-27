@@ -3,6 +3,8 @@
 #include <cassert>
 
 #include "src/model/operators/terms/ScalarProductTerm.h"
+#include "src/model/operators/terms/SzSzOneCenterTerm.h"
+#include "src/model/operators/terms/SzSzTwoCenterTerm.h"
 
 namespace model {
 
@@ -26,8 +28,10 @@ Model& Model::InitializeGSzSquared() {
         return *this;
     }
 
-    g_sz_squared_operator =
-        operators::Operator::g_sz_squared(converter_, symbols_.getGGFactorProductParameters());
+    g_sz_squared_operator = operators::Operator::g_sz_squared(
+        converter_,
+        symbols_.getGGParameters().first,
+        symbols_.getGGParameters().second);
 
     operators_history_.g_sz_squared = true;
     return *this;
@@ -65,6 +69,29 @@ Model& Model::InitializeIsotropicExchangeDerivatives() {
     return *this;
 }
 
+Model& Model::InitializeGSzSquaredDerivatives() {
+    if (operators_history_.g_sz_squared_derivatives) {
+        return *this;
+    }
+
+    for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
+        operators::Operator operator_derivative = operators::Operator();
+        auto pair_of_parameters = symbols_.constructGGDerivativeParameters(symbol);
+        operator_derivative.getOneCenterTerms().emplace_back(
+            std::make_unique<operators::SzSzOneCenterTerm>(converter_, pair_of_parameters.first));
+        operator_derivative.getTwoCenterTerms().emplace_back(
+            std::make_unique<const operators::SzSzTwoCenterTerm>(
+                converter_,
+                pair_of_parameters.second));
+        derivative_of_g_sz_squared_wrt_g_factor_parameters_operator[symbol] =
+            std::move(operator_derivative);
+    }
+
+    operators_history_.g_sz_squared_derivatives = true;
+
+    return *this;
+}
+
 const lexicographic::IndexConverter& Model::getIndexConverter() const {
     return converter_;
 }
@@ -97,6 +124,11 @@ const operators::Operator& Model::getOperatorDerivative(
             return derivative_of_energy_wrt_exchange_parameters_operator.at(symbol);
         }
     }
+    if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
+        if (symbol_type == symbols::SymbolTypeEnum::g_factor) {
+            return derivative_of_g_sz_squared_wrt_g_factor_parameters_operator.at(symbol);
+        }
+    }
     assert(0);
 }
 
@@ -110,6 +142,10 @@ bool Model::is_isotropic_exchange_derivatives_initialized() const {
 
 bool Model::is_g_sz_squared_initialized() const {
     return operators_history_.g_sz_squared;
+}
+
+bool Model::is_g_sz_squared_derivatives_initialized() const {
+    return operators_history_.g_sz_squared_derivatives;
 }
 
 }  // namespace model

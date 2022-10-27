@@ -117,13 +117,30 @@ std::shared_ptr<const OneDNumericalParameters<double>> Symbols::getGFactorParame
     return numeric_g_factors_;
 }
 
-std::shared_ptr<const TwoDNumericalParameters<double>>
-Symbols::getGGFactorProductParameters() const {
-    if (numeric_g_g_factors_product_ == nullptr) {
+std::pair<
+    std::shared_ptr<const OneDNumericalParameters<double>>,
+    std::shared_ptr<const TwoDNumericalParameters<double>>>
+Symbols::getGGParameters() const {
+    if (numeric_g_g_.first == nullptr) {
         throw std::invalid_argument("g-factors were not initialized");
     }
-    return numeric_g_g_factors_product_;
+    return numeric_g_g_;
 }
+
+//std::shared_ptr<const OneDNumericalParameters<double>> Symbols::getGGDiagonalParameters() const {
+//    if (numeric_g_g_diagonal_ == nullptr) {
+//        throw std::invalid_argument("g-factors were not initialized");
+//    }
+//    return numeric_g_g_diagonal_;
+//}
+//
+//std::shared_ptr<const TwoDNumericalParameters<double>>
+//Symbols::getGGNondiagonalParameters() const {
+//    if (numeric_g_g_nondiagonal_ == nullptr) {
+//        throw std::invalid_argument("g-factors were not initialized");
+//    }
+//    return numeric_g_g_nondiagonal_;
+//}
 
 std::shared_ptr<const TwoDNumericalParameters<double>>
 Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name) {
@@ -137,7 +154,7 @@ Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol
     }
 
     if (symbolic_isotropic_exchanges_.empty()) {
-        throw std::length_error("Isotropic exchange parameters has not been initialized");
+        throw std::length_error("Isotropic exchange parameters have not been initialized");
     }
 
     auto ptr_to_derivative =
@@ -155,9 +172,41 @@ Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol
         }
     }
 
+    // TODO: Is it just storing of this pointer?
     numeric_isotropic_exchange_derivatives_.push_back(ptr_to_derivative);
 
     return ptr_to_derivative;
+}
+
+std::pair<
+    std::shared_ptr<const OneDNumericalParameters<double>>,
+    std::shared_ptr<const TwoDNumericalParameters<double>>>
+Symbols::constructGGDerivativeParameters(const SymbolName& symbol_name) {
+    if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
+        throw std::invalid_argument(symbol_name.get_name() + " name has not been initialized");
+    }
+
+    if (symbolsMap[symbol_name].type_enum != SymbolTypeEnum::g_factor) {
+        throw std::invalid_argument(
+            symbol_name.get_name() + " has been specified as not g factor parameter");
+    }
+
+    if (!isGFactorInitialized()) {
+        throw std::length_error("G factor parameters have not been initialized");
+    }
+
+    if (numeric_g_g_derivatives_.find(symbol_name) != numeric_g_g_derivatives_.end()) {
+        throw std::invalid_argument(
+            "Derivatives from GG for" + symbol_name.get_name() + " have been already constructed");
+    }
+
+    numeric_g_g_derivatives_[symbol_name] = {
+        std::make_shared<OneDNumericalParameters<double>>(number_of_spins_, 0),
+        std::make_shared<TwoDNumericalParameters<double>>(number_of_spins_, 0)};
+
+    updateGGFactorDerivativesParameters(symbol_name);
+
+    return numeric_g_g_derivatives_[symbol_name];
 }
 
 std::vector<SymbolName> Symbols::getChangeableNames(SymbolTypeEnum type_enum) const {
@@ -238,12 +287,12 @@ void Symbols::updateIsotropicExchangeParameters() {
 
 void Symbols::updateGFactorParameters() {
     if (numeric_g_factors_ == nullptr) {
-        numeric_g_factors_ =
-            std::make_shared<OneDNumericalParameters<double>>(number_of_spins_, NAN);
+        numeric_g_factors_ = std::make_shared<OneDNumericalParameters<double>>(number_of_spins_, 0);
     }
-    if (numeric_g_g_factors_product_ == nullptr) {
-        numeric_g_g_factors_product_ =
-            std::make_shared<TwoDNumericalParameters<double>>(number_of_spins_, NAN);
+    if (numeric_g_g_.first == nullptr) {
+        numeric_g_g_.first = std::make_shared<OneDNumericalParameters<double>>(number_of_spins_, 0);
+        numeric_g_g_.second =
+            std::make_shared<TwoDNumericalParameters<double>>(number_of_spins_, 0);
     }
 
     for (size_t i = 0; i < number_of_spins_; ++i) {
@@ -252,11 +301,23 @@ void Symbols::updateGFactorParameters() {
     }
 
     for (size_t i = 0; i < number_of_spins_; ++i) {
+        double value = symbolsMap[symbolic_g_factors_[i]].value;
+        numeric_g_g_.first->at(i) = value * value;
+    }
+
+    for (size_t i = 0; i < number_of_spins_; ++i) {
         for (size_t j = 0; j < number_of_spins_; ++j) {
+            if (i == j) {
+                continue;
+            }
             double value =
                 symbolsMap[symbolic_g_factors_[i]].value * symbolsMap[symbolic_g_factors_[j]].value;
-            numeric_g_g_factors_product_->at(i, j) = value;
+            numeric_g_g_.second->at(i, j) = value;
         }
+    }
+
+    for (auto& [symbol_name, _] : numeric_g_g_derivatives_) {
+        updateGGFactorDerivativesParameters(symbol_name);
     }
 }
 
@@ -267,6 +328,31 @@ void Symbols::updateThetaParameter() {
 
     double value = symbolsMap[symbolic_Theta_.value()].value;
     *numeric_Theta_ = value;
+}
+
+void Symbols::updateGGFactorDerivativesParameters(const SymbolName& symbol_name) {
+    auto pair_of_pointers = numeric_g_g_derivatives_[symbol_name];
+    for (size_t i = 0; i < number_of_spins_; ++i) {
+        if (symbolic_g_factors_[i] == symbol_name) {
+            pair_of_pointers.first->at(i) = 2 * numeric_g_factors_->at(i);
+        }
+    }
+
+    for (size_t i = 0; i < number_of_spins_; ++i) {
+        for (size_t j = 0; j < number_of_spins_; ++j) {
+            if (i == j) {
+                continue;
+            }
+            double value = 0;
+            if (symbolic_g_factors_[i] == symbol_name) {
+                value += numeric_g_factors_->at(j);
+            }
+            if (symbolic_g_factors_[j] == symbol_name) {
+                value += numeric_g_factors_->at(i);
+            }
+            pair_of_pointers.second->at(i, j) = value;
+        }
+    }
 }
 
 std::shared_ptr<const TwoDNumericalParameters<double>>

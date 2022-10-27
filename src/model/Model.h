@@ -16,9 +16,11 @@ class Model {
     Model& InitializeIsotropicExchangeDerivatives();
     Model& InitializeSSquared();
     Model& InitializeGSzSquared();
+    Model& InitializeGSzSquaredDerivatives();
 
     bool is_s_squared_initialized() const;
     bool is_g_sz_squared_initialized() const;
+    bool is_g_sz_squared_derivatives_initialized() const;
     bool is_isotropic_exchange_derivatives_initialized() const;
 
     const lexicographic::IndexConverter& getIndexConverter() const;
@@ -36,6 +38,7 @@ class Model {
         bool s_squared = false;
         bool g_sz_squared = false;
         bool isotropic_exchange_derivatives = false;
+        bool g_sz_squared_derivatives = false;
     };
     // TODO: should we move it from here?
     const lexicographic::IndexConverter converter_;
@@ -49,6 +52,8 @@ class Model {
     std::optional<operators::Operator> g_sz_squared_operator;
     std::map<symbols::SymbolName, operators::Operator>
         derivative_of_energy_wrt_exchange_parameters_operator;
+    std::map<symbols::SymbolName, operators::Operator>
+        derivative_of_g_sz_squared_wrt_g_factor_parameters_operator;
 
     OperatorsHistory operators_history_;
 };
