@@ -223,3 +223,89 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
         }
     }
 }
+
+TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> J_dist(-100, -10);
+    std::uniform_real_distribution<double> g_dist(1.8, 3.0);
+
+    for (size_t _ = 0; _ < 1; ++_) {
+        const double J_exact = J_dist(rng);
+        const double g_factor = g_dist(rng);
+
+        std::vector<int> mults = {3, 3, 3, 3};
+
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values_unique;
+
+        {
+            model::Model model(mults);
+            auto J = model.getSymbols().addSymbol("J", J_exact);
+            model.getSymbols()
+                .assignSymbolToIsotropicExchange(J, 0, 1)
+                .assignSymbolToIsotropicExchange(J, 1, 2)
+                .assignSymbolToIsotropicExchange(J, 2, 3)
+                .assignSymbolToIsotropicExchange(J, 3, 0);
+
+            auto g = model.getSymbols().addSymbol("g", g_factor);
+            for (size_t i = 0; i < mults.size(); ++i) {
+                model.getSymbols().assignSymbolToGFactor(g, i);
+            }
+            model.InitializeSSquared();
+
+            runner::Runner runner(model);
+
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            for (size_t i = 1; i < 301; ++i) {
+                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                    static_cast<double>(i),
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
+                values_unique.push_back(value_at_temperature);
+            }
+        }
+
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values_different;
+        {
+            model::Model model(mults);
+            auto J = model.getSymbols().addSymbol("J", J_exact);
+            model.getSymbols()
+                .assignSymbolToIsotropicExchange(J, 0, 1)
+                .assignSymbolToIsotropicExchange(J, 1, 2)
+                .assignSymbolToIsotropicExchange(J, 2, 3)
+                .assignSymbolToIsotropicExchange(J, 3, 0);
+            auto g_one = model.getSymbols().addSymbol("g1", g_factor);
+            auto g_two = model.getSymbols().addSymbol("g2", g_factor);
+            for (size_t i = 0; i < mults.size() / 2; ++i) {
+                model.getSymbols().assignSymbolToGFactor(g_one, i);
+            }
+            for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
+                model.getSymbols().assignSymbolToGFactor(g_two, i);
+            }
+            model.InitializeGSzSquared();
+
+            runner::Runner runner(model);
+
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            for (size_t i = 1; i < 301; ++i) {
+                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                    static_cast<double>(i),
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
+                values_different.push_back(value_at_temperature);
+            }
+        }
+
+        EXPECT_EQ(values_unique.size(), values_different.size());
+        for (size_t i = 0; i < values_unique.size(); ++i) {
+            const auto& [temperature_unique, value_unique] = values_unique[i];
+            const auto& [temperature_different, value_different] = values_different[i];
+            EXPECT_EQ(temperature_unique, temperature_different);
+            EXPECT_NEAR(value_unique, value_different, 1e-9);
+        }
+    }
+}
+
+// TODO: add tests for gradient of R^2: compare with finite difference scheme

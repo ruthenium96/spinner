@@ -480,9 +480,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
             model.InitializeGSzSquared();
-            model.InitializeGSzSquaredDerivatives();
             model.InitializeIsotropicExchange();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
 
