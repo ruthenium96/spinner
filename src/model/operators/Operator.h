@@ -20,7 +20,8 @@ class Operator {
     static Operator s_squared(lexicographic::IndexConverter converter);
     static Operator g_sz_squared(
         lexicographic::IndexConverter converter,
-        std::shared_ptr<const TwoDNumericalParameters<double>> parameters);
+        std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
+        std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters);
 
     bool empty() const;
     std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms();

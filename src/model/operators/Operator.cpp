@@ -2,7 +2,8 @@
 
 #include "src/model/operators/terms/ConstantTerm.h"
 #include "src/model/operators/terms/ScalarProductTerm.h"
-#include "src/model/operators/terms/ZProjectionsProductTerm.h"
+#include "src/model/operators/terms/SzSzOneCenterTerm.h"
+#include "src/model/operators/terms/SzSzTwoCenterTerm.h"
 
 namespace model::operators {
 Operator Operator::s_squared(lexicographic::IndexConverter converter) {
@@ -20,10 +21,13 @@ Operator Operator::s_squared(lexicographic::IndexConverter converter) {
 
 Operator Operator::g_sz_squared(
     lexicographic::IndexConverter converter,
-    std::shared_ptr<const TwoDNumericalParameters<double>> parameters) {
+    std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
+    std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) {
     Operator g_sz_squared_operator_;
+    g_sz_squared_operator_.one_center_terms.emplace_back(
+        std::make_unique<const SzSzOneCenterTerm>(converter, diagonal_parameters));
     g_sz_squared_operator_.two_center_terms.emplace_back(
-        std::make_unique<const ZProjectionsProductTerm>(converter, parameters));
+        std::make_unique<const SzSzTwoCenterTerm>(converter, nondiagonal_parameters));
     return g_sz_squared_operator_;
 }
 
