@@ -22,6 +22,8 @@ class AbstractWorker {
         model::symbols::SymbolTypeEnum symbol_type,
         std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
             values_derivatives_map) const = 0;
+
+    virtual ~AbstractWorker() = default;
 };
 }  // namespace magnetic_susceptibility::worker
 

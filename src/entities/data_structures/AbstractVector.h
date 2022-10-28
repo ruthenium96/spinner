@@ -28,6 +28,8 @@ class AbstractVector {
 
     virtual bool operator==(const std::unique_ptr<AbstractVector>& rhs) const = 0;
     virtual bool operator!=(const std::unique_ptr<AbstractVector>& rhs) const = 0;
+
+    virtual ~AbstractVector() = default;
 };
 }  // namespace quantum::linear_algebra
 

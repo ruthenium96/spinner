@@ -13,6 +13,8 @@ class AbstractFactory {
     // TODO: it is a temporary solution, fix it
     virtual std::vector<double>
     concatenate(const std::vector<std::unique_ptr<AbstractVector>>& vectors) = 0;
+
+    ~AbstractFactory() = default;
 };
 }  // namespace quantum::linear_algebra
 

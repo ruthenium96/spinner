@@ -34,6 +34,8 @@ class AbstractMatrix {
     virtual double at(uint32_t i, uint32_t j) const = 0;
 
     virtual void print(std::ostream& os) const = 0;
+
+    virtual ~AbstractMatrix() = default;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_ABSTRACTMATRIX_H

@@ -12,6 +12,8 @@ class AbstractNonlinearSolver {
         std::function<double(const std::vector<double>&, std::vector<double>&, bool)>
             oneStepFunction,
         std::vector<double>& changeable_values) = 0;
+
+    virtual ~AbstractNonlinearSolver() = default;
 };
 
 }  // namespace nonlinear_solver
