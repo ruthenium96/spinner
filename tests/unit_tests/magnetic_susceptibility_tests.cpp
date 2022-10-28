@@ -1,4 +1,5 @@
 #include <random>
+#include <utility>
 
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
@@ -230,7 +231,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
     std::uniform_real_distribution<double> J_dist(-100, -10);
     std::uniform_real_distribution<double> g_dist(1.8, 3.0);
 
-    for (size_t _ = 0; _ < 1; ++_) {
+    for (size_t _ = 0; _ < 10; ++_) {
         const double J_exact = J_dist(rng);
         const double g_factor = g_dist(rng);
 
@@ -308,4 +309,119 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
     }
 }
 
-// TODO: add tests for gradient of R^2: compare with finite difference scheme
+model::Model
+constructFourCenterModel_g_J(const std::vector<int>& mults, double J_value, double g_value) {
+    model::Model model(mults);
+    auto J = model.getSymbols().addSymbol("J", J_value);
+    model.getSymbols()
+        .assignSymbolToIsotropicExchange(J, 0, 1)
+        .assignSymbolToIsotropicExchange(J, 1, 2)
+        .assignSymbolToIsotropicExchange(J, 2, 3)
+        .assignSymbolToIsotropicExchange(J, 3, 0);
+
+    auto g = model.getSymbols().addSymbol("g", g_value);
+    for (size_t i = 0; i < mults.size(); ++i) {
+        model.getSymbols().assignSymbolToGFactor(g, i);
+    }
+    model.InitializeSSquared();
+    model.InitializeIsotropicExchange();
+    return model;
+}
+
+double calculateResidualError(
+    model::Model model,
+    const std::vector<magnetic_susceptibility::ValueAtTemperature>& values) {
+    runner::Runner runner(std::move(model));
+
+    runner.initializeExperimentalValues(
+        values,
+        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        1);
+
+    runner.BuildSpectra();
+    runner.BuildMuSquaredWorker();
+
+    return runner.getMagneticSusceptibilityController().calculateResidualError();
+}
+
+TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> J_dist(-100, -10);
+    std::uniform_real_distribution<double> g_dist(1.8, 3.0);
+
+    for (size_t _ = 0; _ < 20; ++_) {
+        const double J_exact = J_dist(rng);
+        const double g_factor = g_dist(rng);
+
+        std::vector<int> mults = {3, 3, 3, 3};
+
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        {
+            auto model = constructFourCenterModel_g_J(mults, J_exact, g_factor);
+            runner::Runner runner(model);
+
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            for (size_t i = 1; i < 301; ++i) {
+                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                    static_cast<double>(i),
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
+                values.push_back(value_at_temperature);
+            }
+        }
+
+        double J_value = -50;
+        double g_value = 2.0;
+
+        double analytical_dR2_wrt_dJ;
+        double analytical_dR2_wrt_dg;
+
+        double delta_J = 1e-5;
+        double delta_g = 1e-5;
+        double finite_difference_dR2_wrt_dJ;
+        double finite_difference_dR2_wrt_dg;
+
+        {
+            auto model = constructFourCenterModel_g_J(mults, J_value, g_value);
+            model.InitializeIsotropicExchangeDerivatives();
+
+            runner::Runner runner(model);
+
+            runner.initializeExperimentalValues(
+                values,
+                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                1);
+
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            auto J = runner.getSymbols().getChangeableNames(model::symbols::J)[0];
+            auto g = runner.getSymbols().getChangeableNames(model::symbols::g_factor)[0];
+
+            auto derivative_map = runner.calculateTotalDerivatives();
+            analytical_dR2_wrt_dJ = derivative_map[J];
+            analytical_dR2_wrt_dg = derivative_map[g];
+        }
+
+        {
+            auto model_initial = constructFourCenterModel_g_J(mults, J_value, g_value);
+            double initial_R2 = calculateResidualError(model_initial, values);
+
+            auto model_delta_J = constructFourCenterModel_g_J(mults, J_value + delta_J, g_value);
+            double delta_J_R2 = calculateResidualError(model_delta_J, values);
+            finite_difference_dR2_wrt_dJ = (delta_J_R2 - initial_R2) / delta_J;
+
+            auto model_delta_g = constructFourCenterModel_g_J(mults, J_value, g_value + delta_g);
+            double delta_g_R2 = calculateResidualError(model_delta_g, values);
+            finite_difference_dR2_wrt_dg = (delta_g_R2 - initial_R2) / delta_g;
+        }
+
+        double dR2_wrt_dJ_range = std::abs(analytical_dR2_wrt_dJ / 1000);
+        double dR2_wrt_dg_range = std::abs(analytical_dR2_wrt_dg / 1000);
+
+        EXPECT_NEAR(analytical_dR2_wrt_dJ, finite_difference_dR2_wrt_dJ, dR2_wrt_dJ_range);
+        EXPECT_NEAR(analytical_dR2_wrt_dg, finite_difference_dR2_wrt_dg, dR2_wrt_dg_range);
+    }
+}
