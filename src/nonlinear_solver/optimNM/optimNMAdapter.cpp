@@ -1,5 +1,7 @@
 #include "optimNMAdapter.h"
 
+// Do not use OpenMP in solver: it leads to race condition in Runner.
+#define OPTIM_DONT_USE_OPENMP
 #define OPTIM_ENABLE_ARMA_WRAPPERS
 #include <optim.hpp>
 
