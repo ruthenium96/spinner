@@ -37,8 +37,8 @@ void ModelOptimizationListConsistence::checkAllSymbolNamesGroupConsistence(
     const group::Group& group) {
     if (symbols.isIsotropicExchangeInitialized()) {
         for (const auto& element : group.getElements()) {
-            std::function<model::symbols::SymbolName(size_t, size_t)> getterFunction =
-                [ObjectPtr = &symbols](size_t i, size_t j) {
+            std::function<std::optional<model::symbols::SymbolName>(size_t, size_t)>
+                getterFunction = [ObjectPtr = &symbols](size_t i, size_t j) {
                     return ObjectPtr->getIsotropicExchangeSymbolName(i, j);
                 };
             if (!checkSymbolNamesGroupElementConsistence(getterFunction, element)) {
@@ -61,12 +61,12 @@ void ModelOptimizationListConsistence::checkAllSymbolNamesGroupConsistence(
 }
 
 bool ModelOptimizationListConsistence::checkSymbolNamesGroupElementConsistence(
-    const std::function<model::symbols::SymbolName(size_t, size_t)>& getter,
+    const std::function<std::optional<model::symbols::SymbolName>(size_t, size_t)>& getter,
     group::Permutation element) {
     // Construct here both initialSymbols and permutatedSymbols:
-    std::vector<std::vector<model::symbols::SymbolName>> initialSymbols(
+    std::vector<std::vector<std::optional<model::symbols::SymbolName>>> initialSymbols(
         element.size(),
-        std::vector<model::symbols::SymbolName>(element.size()));
+        std::vector<std::optional<model::symbols::SymbolName>>(element.size(), std::nullopt));
     auto permutatedSymbols = initialSymbols;
     for (size_t i = 0; i < element.size(); ++i) {
         for (size_t j = 0; j < element.size(); ++j) {

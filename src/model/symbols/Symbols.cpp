@@ -13,15 +13,15 @@ Symbols& Symbols::assignSymbolToIsotropicExchange(
     if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
         throw std::invalid_argument(symbol_name.get_name() + " name has not been initialized");
     }
-    if (symbolic_isotropic_exchanges_.empty()) {
-        symbolic_isotropic_exchanges_.resize(
+    if (!symbolic_isotropic_exchanges_.has_value()) {
+        symbolic_isotropic_exchanges_ = std::vector<std::vector<std::optional<SymbolName>>>(
             number_of_spins_,
-            std::vector<SymbolName>(number_of_spins_));
+            std::vector<std::optional<SymbolName>>(number_of_spins_, std::nullopt));
     }
     if (center_b == center_a) {
         throw std::invalid_argument("Isotropic exchange takes place between different centers");
     }
-    if (!symbolic_isotropic_exchanges_[center_a][center_b].get_name().empty()) {
+    if (symbolic_isotropic_exchanges_.value()[center_a][center_b].has_value()) {
         throw std::invalid_argument("This parameter has been already specified");
     }
 
@@ -34,8 +34,8 @@ Symbols& Symbols::assignSymbolToIsotropicExchange(
         symbolsMap[symbol_name].type_enum = SymbolTypeEnum::J;
     }
 
-    symbolic_isotropic_exchanges_[center_a][center_b] = symbol_name;
-    symbolic_isotropic_exchanges_[center_b][center_a] = symbol_name;
+    symbolic_isotropic_exchanges_.value()[center_a][center_b] = symbol_name;
+    symbolic_isotropic_exchanges_.value()[center_b][center_a] = symbol_name;
 
     updateIsotropicExchangeParameters();
 
@@ -153,7 +153,7 @@ Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol
             symbol_name.get_name() + " has been specified as not J parameter");
     }
 
-    if (symbolic_isotropic_exchanges_.empty()) {
+    if (!symbolic_isotropic_exchanges_.has_value()) {
         throw std::length_error("Isotropic exchange parameters have not been initialized");
     }
 
@@ -163,7 +163,7 @@ Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol
     for (size_t i = 0; i < number_of_spins_; ++i) {
         for (size_t j = 0; j < number_of_spins_; ++j) {
             double value;
-            if (symbolic_isotropic_exchanges_[i][j] != symbol_name) {
+            if (symbolic_isotropic_exchanges_.value()[i][j] != symbol_name) {
                 value = NAN;
             } else {
                 value = 1;
@@ -275,10 +275,10 @@ void Symbols::updateIsotropicExchangeParameters() {
     for (size_t i = 0; i < number_of_spins_; ++i) {
         for (size_t j = 0; j < number_of_spins_; ++j) {
             double value;
-            if (symbolic_isotropic_exchanges_[i][j].get_name().empty()) {
+            if (!symbolic_isotropic_exchanges_.value()[i][j].has_value()) {
                 value = NAN;
             } else {
-                value = symbolsMap[symbolic_isotropic_exchanges_[i][j]].value;
+                value = symbolsMap[symbolic_isotropic_exchanges_.value()[i][j].value()].value;
             }
             numeric_isotropic_exchanges_->at(i, j) = value;
         }
@@ -372,7 +372,7 @@ std::shared_ptr<const double> Symbols::getThetaParameter() const {
 }
 
 bool Symbols::isIsotropicExchangeInitialized() const {
-    return !symbolic_isotropic_exchanges_.empty();
+    return symbolic_isotropic_exchanges_.has_value();
 }
 
 bool Symbols::isGFactorInitialized() const {
@@ -383,8 +383,8 @@ bool Symbols::isThetaInitialized() const {
     return symbolic_Theta_.has_value();
 }
 
-SymbolName Symbols::getIsotropicExchangeSymbolName(size_t i, size_t j) const {
-    return symbolic_isotropic_exchanges_[i][j];
+std::optional<SymbolName> Symbols::getIsotropicExchangeSymbolName(size_t i, size_t j) const {
+    return symbolic_isotropic_exchanges_.value()[i][j];
 }
 
 SymbolName Symbols::getGFactorSymbolName(size_t i) const {

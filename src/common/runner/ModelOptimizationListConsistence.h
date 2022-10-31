@@ -23,7 +23,7 @@ class ModelOptimizationListConsistence {
     // This function checks if two-center SymbolNames set are invariant to element permutation.
     // It requires getter from Symbols, for example, getIsotropicExchangeSymbolName.
     static bool checkSymbolNamesGroupElementConsistence(
-        const std::function<model::symbols::SymbolName(size_t, size_t j)>& getter,
+        const std::function<std::optional<model::symbols::SymbolName>(size_t, size_t j)>& getter,
         group::Permutation element);
     // This function checks if one-center SymbolNames set are invariant to element permutation.
     // It requires getter from Symbols, for example, getGFactorSymbolName.

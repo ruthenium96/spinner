@@ -39,7 +39,7 @@ class Symbols {
     getGGParameters() const;
     std::shared_ptr<const double> getThetaParameter() const;
 
-    SymbolName getIsotropicExchangeSymbolName(size_t i, size_t j) const;
+    std::optional<SymbolName> getIsotropicExchangeSymbolName(size_t i, size_t j) const;
     SymbolName getGFactorSymbolName(size_t i) const;
     SymbolName getThetaSymbolName() const;
 
@@ -75,7 +75,8 @@ class Symbols {
         SymbolTypeEnum type_enum;
     };
 
-    std::vector<std::vector<SymbolName>> symbolic_isotropic_exchanges_;
+    std::optional<std::vector<std::vector<std::optional<SymbolName>>>>
+        symbolic_isotropic_exchanges_;
     std::vector<SymbolName> symbolic_g_factors_;
     std::optional<SymbolName> symbolic_Theta_;
 
