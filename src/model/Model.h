@@ -29,7 +29,6 @@ class Model {
     const operators::Operator& getOperator(common::QuantityEnum) const;
     const operators::Operator& getOperatorDerivative(
         common::QuantityEnum,
-        symbols::SymbolTypeEnum,
         const symbols::SymbolName&) const;
 
   private:
@@ -50,10 +49,8 @@ class Model {
     operators::Operator energy_operator;
     std::optional<operators::Operator> s_squared_operator;
     std::optional<operators::Operator> g_sz_squared_operator;
-    std::map<symbols::SymbolName, operators::Operator>
-        derivative_of_energy_wrt_exchange_parameters_operator;
-    std::map<symbols::SymbolName, operators::Operator>
-        derivative_of_g_sz_squared_wrt_g_factor_parameters_operator;
+    std::map<std::pair<common::QuantityEnum, symbols::SymbolName>, operators::Operator>
+        derivatives_map_;
 
     OperatorsHistory operators_history_;
 };

@@ -60,8 +60,7 @@ Model& Model::InitializeIsotropicExchangeDerivatives() {
             std::make_unique<const operators::ScalarProductTerm>(
                 converter_,
                 symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
-        derivative_of_energy_wrt_exchange_parameters_operator[symbol] =
-            std::move(operator_derivative);
+        derivatives_map_[{common::Energy, symbol}] = std::move(operator_derivative);
     }
 
     operators_history_.isotropic_exchange_derivatives = true;
@@ -83,8 +82,7 @@ Model& Model::InitializeGSzSquaredDerivatives() {
             std::make_unique<const operators::SzSzTwoCenterTerm>(
                 converter_,
                 pair_of_parameters.second));
-        derivative_of_g_sz_squared_wrt_g_factor_parameters_operator[symbol] =
-            std::move(operator_derivative);
+        derivatives_map_[{common::gSz_total_squared, symbol}] = std::move(operator_derivative);
     }
 
     operators_history_.g_sz_squared_derivatives = true;
@@ -117,19 +115,8 @@ const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum
 
 const operators::Operator& Model::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
-    symbols::SymbolTypeEnum symbol_type,
     const symbols::SymbolName& symbol) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == symbols::SymbolTypeEnum::J) {
-            return derivative_of_energy_wrt_exchange_parameters_operator.at(symbol);
-        }
-    }
-    if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
-        if (symbol_type == symbols::SymbolTypeEnum::g_factor) {
-            return derivative_of_g_sz_squared_wrt_g_factor_parameters_operator.at(symbol);
-        }
-    }
-    assert(0);
+    return derivatives_map_.at({quantity_enum, symbol});
 }
 
 bool Model::is_s_squared_initialized() const {
