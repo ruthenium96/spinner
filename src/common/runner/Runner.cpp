@@ -49,12 +49,12 @@ Runner::Runner(
     if (getModel().is_isotropic_exchange_derivatives_initialized()) {
         for (const auto& symbol :
              getSymbols().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
-            derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
+            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
         }
     }
     if (getModel().is_g_sz_squared_derivatives_initialized()) {
         for (const auto& symbol : getSymbols().getChangeableNames(model::symbols::g_factor)) {
-            derivative_of_g_sz_squared_wrt_g_factor_parameters[symbol] = common::Quantity();
+            derivatives_map_[{common::gSz_total_squared, symbol}] = common::Quantity();
         }
     }
 
@@ -93,19 +93,12 @@ void Runner::BuildMatrices() {
             getIndexConverter(),
             getAlgebraDataFactory());
     }
-    for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+    for (auto& [pair, derivative] : derivatives_map_) {
         // TODO: fix it!
+        auto [quantity_enum, symbol_name] = pair;
         derivative.matrix_ = Matrix(
             getSpace(),
-            getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
-            getIndexConverter(),
-            getAlgebraDataFactory());
-    }
-    for (auto& [symbol_name, derivative] : derivative_of_g_sz_squared_wrt_g_factor_parameters) {
-        // TODO: fix it!
-        derivative.matrix_ = Matrix(
-            getSpace(),
-            getOperatorDerivative(common::gSz_total_squared, model::symbols::g_factor, symbol_name),
+            getOperatorDerivative(quantity_enum, symbol_name),
             getIndexConverter(),
             getAlgebraDataFactory());
     }
@@ -128,11 +121,7 @@ void Runner::BuildSpectra() {
         g_sz_squared->spectrum_.blocks.clear();
         g_sz_squared->spectrum_.blocks.reserve(number_of_blocks);
     }
-    for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
-        derivative.spectrum_.blocks.clear();
-        derivative.spectrum_.blocks.reserve(number_of_blocks);
-    }
-    for (auto& [_, derivative] : derivative_of_g_sz_squared_wrt_g_factor_parameters) {
+    for (auto& [_, derivative] : derivatives_map_) {
         derivative.spectrum_.blocks.clear();
         derivative.spectrum_.blocks.reserve(number_of_blocks);
     }
@@ -162,12 +151,7 @@ void Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
                 unitary_transformation_matrix));
         }
 
-        for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
-            derivative.spectrum_.blocks.emplace_back(Subspectrum::non_energy(
-                derivative.matrix_.blocks[block],
-                unitary_transformation_matrix));
-        }
-        for (auto& [_, derivative] : derivative_of_g_sz_squared_wrt_g_factor_parameters) {
+        for (auto& [_, derivative] : derivatives_map_) {
             derivative.spectrum_.blocks.emplace_back(Subspectrum::non_energy(
                 derivative.matrix_.blocks[block],
                 unitary_transformation_matrix));
@@ -209,24 +193,12 @@ void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
         }
 
-        for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+        for (auto& [pair, derivative] : derivatives_map_) {
             // TODO: fix it
+            auto [quantity_enum, symbol_name] = pair;
             auto derivative_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
-                getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
-                getIndexConverter(),
-                getAlgebraDataFactory());
-            derivative.spectrum_.blocks.emplace_back(
-                Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
-        }
-        for (auto& [symbol_name, derivative] : derivative_of_g_sz_squared_wrt_g_factor_parameters) {
-            // TODO: fix it
-            auto derivative_submatrix = Submatrix(
-                getSpace().getBlocks()[block],
-                getOperatorDerivative(
-                    common::gSz_total_squared,
-                    model::symbols::g_factor,
-                    symbol_name),
+                getOperatorDerivative(quantity_enum, symbol_name),
                 getIndexConverter(),
                 getAlgebraDataFactory());
             derivative.spectrum_.blocks.emplace_back(
@@ -267,43 +239,20 @@ const lexicographic::IndexConverter& Runner::getIndexConverter() const {
 
 const model::operators::Operator& Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
-    model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
-    return getModel().getOperatorDerivative(quantity_enum, symbol_type, symbol);
+    return getModel().getOperatorDerivative(quantity_enum, symbol);
 }
 
 const Spectrum& Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
-    model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == model::symbols::SymbolTypeEnum::J) {
-            return derivative_of_energy_wrt_exchange_parameters.at(symbol).spectrum_;
-        }
-    }
-    if (quantity_enum == common::gSz_total_squared) {
-        if (symbol_type == model::symbols::g_factor) {
-            return derivative_of_g_sz_squared_wrt_g_factor_parameters.at(symbol).spectrum_;
-        }
-    }
-    assert(0);
+    return derivatives_map_.at({quantity_enum, symbol}).spectrum_;
 }
 
 const Matrix& Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
-    model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == model::symbols::SymbolTypeEnum::J) {
-            return derivative_of_energy_wrt_exchange_parameters.at(symbol).matrix_;
-        }
-    }
-    if (quantity_enum == common::gSz_total_squared) {
-        if (symbol_type == model::symbols::g_factor) {
-            return derivative_of_g_sz_squared_wrt_g_factor_parameters.at(symbol).matrix_;
-        }
-    }
-    assert(0);
+    return derivatives_map_.at({quantity_enum, symbol}).matrix_;
 }
 
 void Runner::BuildMuSquaredWorker() {
@@ -396,7 +345,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
     for (const auto& changeable_symbol : getSymbols().getChangeableNames(model::symbols::J)) {
         auto derivative_vector = algebraDataFactory_->createVector();
         for (const auto& subspectrum :
-             getSpectrumDerivative(common::Energy, model::symbols::J, changeable_symbol).blocks) {
+             getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
             derivative_vector->concatenate_with(subspectrum.raw_data);
         }
         auto derivative_map = std::
@@ -417,7 +366,6 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             auto derivative_vector = algebraDataFactory_->createVector();
             for (const auto& subspectrum : getSpectrumDerivative(
                                                common::gSz_total_squared,
-                                               model::symbols::g_factor,
                                                changeable_symbol)
                                                .blocks) {
                 derivative_vector->concatenate_with(subspectrum.raw_data);

@@ -58,15 +58,12 @@ class Runner {
     const Matrix& getMatrix(common::QuantityEnum) const;
     const model::operators::Operator& getOperatorDerivative(
         common::QuantityEnum,
-        model::symbols::SymbolTypeEnum,
         const model::symbols::SymbolName&) const;
     const Spectrum& getSpectrumDerivative(
         common::QuantityEnum,
-        model::symbols::SymbolTypeEnum,
         const model::symbols::SymbolName&) const;
     const Matrix& getMatrixDerivative(
         common::QuantityEnum,
-        model::symbols::SymbolTypeEnum,
         const model::symbols::SymbolName&) const;
     const magnetic_susceptibility::MagneticSusceptibilityController&
     getMagneticSusceptibilityController() const;
@@ -91,10 +88,8 @@ class Runner {
     common::Quantity energy;
     std::optional<common::Quantity> s_squared;
     std::optional<common::Quantity> g_sz_squared;
-    std::map<model::symbols::SymbolName, common::Quantity>
-        derivative_of_energy_wrt_exchange_parameters;
-    std::map<model::symbols::SymbolName, common::Quantity>
-        derivative_of_g_sz_squared_wrt_g_factor_parameters;
+    std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, common::Quantity>
+        derivatives_map_;
 
     double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,
