@@ -36,8 +36,4 @@ std::unique_ptr<TwoCenterTerm> SzSzTwoCenterTerm::clone() const {
     return std::make_unique<SzSzTwoCenterTerm>(converter_, coefficients_);
 }
 
-std::shared_ptr<const TwoDNumericalParameters<double>> SzSzTwoCenterTerm::get_parameters() const {
-    return coefficients_;
-}
-
 }  // namespace model::operators

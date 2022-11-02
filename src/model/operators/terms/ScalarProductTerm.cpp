@@ -41,10 +41,6 @@ void ScalarProductTerm::construct(
     }
 }
 
-std::shared_ptr<const TwoDNumericalParameters<double>> ScalarProductTerm::get_parameters() const {
-    return coefficients_;
-}
-
 std::unique_ptr<TwoCenterTerm> ScalarProductTerm::clone() const {
     return std::make_unique<ScalarProductTerm>(converter_, coefficients_);
 }

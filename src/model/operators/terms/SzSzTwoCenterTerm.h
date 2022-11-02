@@ -14,7 +14,6 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
         uint32_t index_of_vector,
         uint32_t center_a,
         uint32_t center_b) const override;
-    std::shared_ptr<const TwoDNumericalParameters<double>> get_parameters() const override;
 
   private:
     const lexicographic::IndexConverter converter_;
