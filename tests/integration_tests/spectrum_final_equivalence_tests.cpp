@@ -82,7 +82,10 @@ void expect_final_vectors_equivalence(const runner::Runner& simple, runner::Runn
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void initialize_four_centers_exchange_rectangle(model::Model& model, double first, double second) {
+void initialize_four_centers_exchange_rectangle(
+    model::ModelInput& model,
+    double first,
+    double second) {
     auto Jfirst = model.getSymbols().addSymbol("J1", first);
     model.getSymbols()
         .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
@@ -92,8 +95,6 @@ void initialize_four_centers_exchange_rectangle(model::Model& model, double firs
     model.getSymbols()
         .assignSymbolToIsotropicExchange(Jsecond, 1, 2)
         .assignSymbolToIsotropicExchange(Jsecond, 3, 0);
-
-    model.InitializeSSquared();
 }
 
 TEST(spectrum_final_equivalence, rectangle) {
@@ -106,7 +107,7 @@ TEST(spectrum_final_equivalence, rectangle) {
             group::Group first_direction(group::Group::S2, {{1, 0, 3, 2}});
             group::Group second_direction(group::Group::S2, {{3, 2, 1, 0}});
 
-            model::Model model(mults);
+            model::ModelInput model(mults);
             initialize_four_centers_exchange_rectangle(model, Jfirst, Jsecond);
 
             runner::Runner runner_simple(model);
@@ -185,14 +186,12 @@ TEST(spectrum_final_equivalence, rectangle) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void initialize_three_centers_exchange_triangle(model::Model& model, double first) {
+void initialize_three_centers_exchange_triangle(model::ModelInput& model, double first) {
     auto Jfirst = model.getSymbols().addSymbol("J1", first);
     model.getSymbols()
         .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
         .assignSymbolToIsotropicExchange(Jfirst, 1, 2)
         .assignSymbolToIsotropicExchange(Jfirst, 2, 0);
-
-    model.InitializeSSquared();
 }
 
 TEST(spectrum_final_equivalence, triangle) {
@@ -202,7 +201,7 @@ TEST(spectrum_final_equivalence, triangle) {
     for (const auto& mults : multss) {
         for (auto Jfirst : js) {
             group::Group triangle(group::Group::S3, {{2, 0, 1}, {0, 2, 1}});
-            model::Model model(mults);
+            model::ModelInput model(mults);
             initialize_three_centers_exchange_triangle(model, Jfirst);
 
             runner::Runner runner_simple(model);

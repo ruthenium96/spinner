@@ -73,8 +73,7 @@ TEST(
         {{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
-        model.InitializeSSquared();
+        model::ModelInput model(mults);
 
         runner::Runner runner(model);
         lexicographic::IndexConverter converter(mults);

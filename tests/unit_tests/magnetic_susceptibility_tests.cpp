@@ -67,7 +67,7 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_empty_experimenta
 TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
     std::vector<int> mults = {2, 2};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.getSymbols().addSymbol("J", J_value);
     model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
@@ -76,8 +76,6 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
     for (size_t i = 0; i < mults.size(); ++i) {
         model.getSymbols().assignSymbolToGFactor(g, i);
     }
-    model.InitializeSSquared();
-    model.InitializeIsotropicExchangeDerivatives();
 
     runner::Runner runner(model);
 
@@ -93,7 +91,7 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
 TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
     std::vector<int> mults = {2, 2};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.getSymbols().addSymbol("J", J_value);
     model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
@@ -102,8 +100,6 @@ TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
     for (size_t i = 0; i < mults.size(); ++i) {
         model.getSymbols().assignSymbolToGFactor(g, i);
     }
-    model.InitializeSSquared();
-    model.InitializeIsotropicExchangeDerivatives();
 
     runner::Runner runner(model);
 
@@ -169,12 +165,11 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_unique;
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             auto g = model.getSymbols().addSymbol("g", g_factor);
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
 
             runner::Runner runner(model);
 
@@ -191,7 +186,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_different;
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             auto g_one = model.getSymbols().addSymbol("g1", g_factor);
             auto g_two = model.getSymbols().addSymbol("g2", g_factor);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
@@ -200,7 +195,6 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-            model.InitializeGSzSquared();
 
             runner::Runner runner(model);
 
@@ -240,7 +234,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_unique;
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             auto J = model.getSymbols().addSymbol("J", J_exact);
             model.getSymbols()
                 .assignSymbolToIsotropicExchange(J, 0, 1)
@@ -252,7 +246,6 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
 
             runner::Runner runner(model);
 
@@ -269,7 +262,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_different;
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             auto J = model.getSymbols().addSymbol("J", J_exact);
             model.getSymbols()
                 .assignSymbolToIsotropicExchange(J, 0, 1)
@@ -284,7 +277,6 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-            model.InitializeGSzSquared();
 
             runner::Runner runner(model);
 
@@ -309,9 +301,9 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
     }
 }
 
-model::Model
+model::ModelInput
 constructFourCenterModel_g_J(const std::vector<int>& mults, double J_value, double g_value) {
-    model::Model model(mults);
+    model::ModelInput model(mults);
     auto J = model.getSymbols().addSymbol("J", J_value);
     model.getSymbols()
         .assignSymbolToIsotropicExchange(J, 0, 1)
@@ -323,13 +315,11 @@ constructFourCenterModel_g_J(const std::vector<int>& mults, double J_value, doub
     for (size_t i = 0; i < mults.size(); ++i) {
         model.getSymbols().assignSymbolToGFactor(g, i);
     }
-    model.InitializeSSquared();
-    model.InitializeIsotropicExchange();
     return model;
 }
 
 double calculateResidualError(
-    model::Model model,
+    model::ModelInput model,
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& values) {
     runner::Runner runner(std::move(model));
 
@@ -385,7 +375,6 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
 
         {
             auto model = constructFourCenterModel_g_J(mults, J_value, g_value);
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
 
@@ -394,6 +383,7 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
+            runner.initializeDerivatives();
             runner.BuildSpectra();
             runner.BuildMuSquaredWorker();
 

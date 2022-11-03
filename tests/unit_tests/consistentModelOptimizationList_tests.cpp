@@ -3,7 +3,7 @@
 
 TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
     std::vector<int> mults = {4, 4, 4};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
 
@@ -14,7 +14,7 @@ TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
 
 TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicities) {
     std::vector<int> mults = {4, 4, 4, 3};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
 
@@ -25,7 +25,7 @@ TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicit
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_symmetry) {
     std::vector<int> mults = {2, 2, 2, 2};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     double J_value = 10;
     auto tripledJ = model.getSymbols().addSymbol("3J", 3 * J_value);
     auto J = model.getSymbols().addSymbol("J", J_value);
@@ -48,7 +48,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_sy
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symmetry) {
     std::vector<int> mults = {2, 2, 2, 2};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     double J = 10;
     auto firstJ = model.getSymbols().addSymbol("J1", J);
     auto secondJ = model.getSymbols().addSymbol("J2", J);
@@ -70,7 +70,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symm
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symmetry) {
     std::vector<int> mults = {2, 2, 2, 2};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.getSymbols().addSymbol("J", J_value);
     auto firstg = model.getSymbols().addSymbol("g1", 2.0);
@@ -97,7 +97,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symm
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmetry) {
     std::vector<int> mults = {2, 2, 2, 2};
-    model::Model model(mults);
+    model::ModelInput model(mults);
     double J_value = 10;
     double g_value = 2.0;
     auto J = model.getSymbols().addSymbol("J", J_value);

@@ -1,5 +1,5 @@
 add_library(model
-        Model.h Model.cpp
+        ModelInput.h ModelInput.cpp
         operators/Operator.h operators/Operator.cpp
         operators/terms/ConstantTerm.h operators/terms/ConstantTerm.cpp
         operators/terms/ScalarProductTerm.h operators/terms/ScalarProductTerm.cpp
@@ -8,6 +8,6 @@ add_library(model
         operators/terms/Term.h
         symbols/Symbols.h symbols/Symbols.cpp
         symbols/SymbolName.h symbols/SymbolName.cpp
-        )
+        Model.cpp Model.h)
 
 target_link_libraries(model group)

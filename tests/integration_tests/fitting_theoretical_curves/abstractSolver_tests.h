@@ -36,7 +36,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
 
         {
             std::vector<int> mults = {2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = Theta_exact;
             auto Theta = model.getSymbols().addSymbol("Theta", J_value);
             model.getSymbols().assignSymbolToTheta(Theta);
@@ -45,7 +45,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
 
             runner::Runner runner(model);
 
@@ -62,7 +61,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
 
         {
             std::vector<int> mults = {2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double Theta_value = -10.0;
             auto Theta = model.getSymbols().addSymbol("Theta", Theta_value);
             model.getSymbols().assignSymbolToTheta(Theta);
@@ -71,7 +70,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(
@@ -109,7 +107,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
 
         {
             std::vector<int> mults = {2, 2, 2, 2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -122,8 +120,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
 
@@ -140,7 +136,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
 
         {
             std::vector<int> mults = {2, 2, 2, 2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = -10.0;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -153,8 +149,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(
@@ -192,7 +186,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
         {
             std::vector<int> mults = {2, 2, 2, 2, 2, 2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -209,9 +203,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
 
-            model.InitializeSSquared();
-            model.InitializeIsotropicExchangeDerivatives();
-
             runner::Runner runner(model);
 
             runner.BuildSpectra();
@@ -227,7 +218,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
         {
             std::vector<int> mults = {2, 2, 2, 2, 2, 2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = -10.0;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -243,9 +234,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-
-            model.InitializeSSquared();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
 
@@ -284,7 +272,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
         {
             std::vector<int> mults = {2, 2, 2, 2, 2, 2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -300,8 +288,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
             runner.BuildSpectra();
@@ -317,7 +303,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
         {
             std::vector<int> mults = {2, 2, 2, 2, 2, 2};
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = 40;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -333,8 +319,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(
@@ -372,7 +356,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double g_one_value = g_one_exact;
             double g_two_value = g_two_exact;
             auto g_one = model.getSymbols().addSymbol("g1", g_one_value);
@@ -383,9 +367,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-
-            model.InitializeGSzSquared();
-            model.InitializeGSzSquaredDerivatives();
 
             runner::Runner runner(model);
 
@@ -401,7 +382,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         }
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double g_two_value = 3.0;
             auto g_one = model.getSymbols().addSymbol("g1", g_one_exact, false);
             auto g_two = model.getSymbols().addSymbol("g2", g_two_value);
@@ -411,9 +392,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-
-            model.InitializeGSzSquared();
-            model.InitializeGSzSquaredDerivatives();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(
@@ -453,7 +431,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -473,8 +451,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-            model.InitializeGSzSquared();
-            model.InitializeIsotropicExchange();
 
             runner::Runner runner(model);
 
@@ -490,7 +466,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         }
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = -10.0;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -509,11 +485,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-
-            model.InitializeGSzSquared();
-            model.InitializeGSzSquaredDerivatives();
-            model.InitializeIsotropicExchange();
-            model.InitializeIsotropicExchangeDerivatives();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(

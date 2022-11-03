@@ -65,7 +65,7 @@
 //
 //TEST(nonAbelianSimplifier, 333_S3) {
 //    std::vector<int> mults = {3, 3, 3};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -80,7 +80,7 @@
 //
 //TEST(nonAbelianSimplifier, 333_doubleS3) {
 //    std::vector<int> mults = {3, 3, 3};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -97,7 +97,7 @@
 //
 //TEST(nonAbelianSimplifier, 333_doubleS3_tricky) {
 //    std::vector<int> mults = {3, 3, 3};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -114,7 +114,7 @@
 //
 //TEST(nonAbelianSimplifier, 333333_S3) {
 //    std::vector<int> mults = {3, 3, 3, 3, 3, 3};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -129,7 +129,7 @@
 //
 //TEST(nonAbelianSimplifier, 333333_S3xS2_after_both) {
 //    std::vector<int> mults = {3, 3, 3, 3, 3, 3};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -146,7 +146,7 @@
 //
 //TEST(nonAbelianSimplifier, 333333_S3xS2_after_first) {
 //    std::vector<int> mults = {3, 3, 3, 3, 3, 3};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -163,7 +163,7 @@
 //
 //TEST(nonAbelianSimplifier, 222222222_after_second_S3xS3) {
 //    std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -188,7 +188,7 @@
 //
 //TEST(nonAbelianSimplifier, 222222222_after_first_S3xS3) {
 //    std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -215,7 +215,7 @@
 //
 //TEST(nonAbelianSimplifier, 222222222_after_both_S3xS3) {
 //    std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -243,7 +243,7 @@
 //
 //TEST(nonAbelianSimplifier, 333333333_after_second_S3xS3) {
 //    std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -278,7 +278,7 @@
 //        3,
 //        3,
 //    };
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);
@@ -315,7 +315,7 @@
 //        3,
 //        3,
 //    };
-//    model::Model model(mults);
+//    model::ModelInput model(mults);
 //
 //    runner::Runner runner_full(model);
 //    runner::Runner runner_simplified(model);

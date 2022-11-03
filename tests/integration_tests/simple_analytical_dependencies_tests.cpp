@@ -26,13 +26,12 @@ TEST(simple_analytical_dependencies, nothing) {
             std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
             {
-                model::Model model(mults);
+                model::ModelInput model(mults);
                 double g_value = g_exact;
                 auto g = model.getSymbols().addSymbol("g", g_value);
                 for (size_t i = 0; i < mults.size(); ++i) {
                     model.getSymbols().assignSymbolToGFactor(g, i);
                 }
-                model.InitializeSSquared();
 
                 runner::Runner runner(model);
 
@@ -70,7 +69,7 @@ TEST(simple_analytical_dependencies, Theta) {
             std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
             {
-                model::Model model(mults);
+                model::ModelInput model(mults);
                 auto Theta = model.getSymbols().addSymbol("Theta", Theta_exact);
                 model.getSymbols().assignSymbolToTheta(Theta);
                 double g_value = g_exact;
@@ -78,7 +77,6 @@ TEST(simple_analytical_dependencies, Theta) {
                 for (size_t i = 0; i < mults.size(); ++i) {
                     model.getSymbols().assignSymbolToGFactor(g, i);
                 }
-                model.InitializeSSquared();
 
                 runner::Runner runner(model);
 

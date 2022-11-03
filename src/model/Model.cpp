@@ -1,93 +1,115 @@
 #include "Model.h"
 
 #include <cassert>
+#include <utility>
 
 #include "src/model/operators/terms/ScalarProductTerm.h"
 #include "src/model/operators/terms/SzSzOneCenterTerm.h"
 #include "src/model/operators/terms/SzSzTwoCenterTerm.h"
 
 namespace model {
-
-Model::Model(const std::vector<int>& mults) : symbols_(mults.size()), converter_(mults) {
+Model::Model(ModelInput modelInput) :
+    modelInput_(std::move(modelInput)),
+    converter_(modelInput_.getMults()) {
     energy_operator = operators::Operator();
+    // TODO: this strange check need only because some tests do not initialize g factors,
+    //  but want to calculate S^2 values. Fix it.
+    if (getSymbols().isGFactorInitialized() && !getSymbols().isAllGFactorsEqual()) {
+        InitializeGSzSquared();
+        // TODO: when there is no Sz <-> -Sz symmetry, also \sum g_aS_{az} required
+    } else {
+        InitializeSSquared();
+    }
+
+    if (getSymbols().isZFSInitialized()) {
+        InitializeZeroFieldSplitting();
+    }
+
+    if (getSymbols().isIsotropicExchangeInitialized()) {
+        InitializeIsotropicExchange();
+    }
 }
 
-Model& Model::InitializeSSquared() {
+void Model::InitializeDerivatives() {
+    if (!getSymbols().isAllGFactorsEqual()) {
+        InitializeGSzSquaredDerivatives();
+    }
+
+    if (getSymbols().isIsotropicExchangeInitialized()) {
+        InitializeIsotropicExchangeDerivatives();
+    }
+}
+
+void Model::InitializeSSquared() {
     if (operators_history_.s_squared) {
-        return *this;
+        return;
     }
 
     s_squared_operator = operators::Operator::s_squared(converter_);
 
     operators_history_.s_squared = true;
-    return *this;
 }
 
-Model& Model::InitializeGSzSquared() {
+void Model::InitializeGSzSquared() {
     if (operators_history_.g_sz_squared) {
-        return *this;
+        return;
     }
 
     g_sz_squared_operator = operators::Operator::g_sz_squared(
         converter_,
-        symbols_.getGGParameters().first,
-        symbols_.getGGParameters().second);
+        getSymbols().getGGParameters().first,
+        getSymbols().getGGParameters().second);
 
     operators_history_.g_sz_squared = true;
-    return *this;
 }
 
-Model& Model::InitializeIsotropicExchange() {
+void Model::InitializeIsotropicExchange() {
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
-        return *this;
+        return;
     }
     energy_operator.getTwoCenterTerms().emplace_back(
         std::make_unique<const operators::ScalarProductTerm>(
             converter_,
-            symbols_.getIsotropicExchangeParameters()));
+            getSymbols().getIsotropicExchangeParameters()));
     operators_history_.isotropic_exchange_in_hamiltonian = true;
-    return *this;
 }
 
-Model& Model::InitializeZeroFieldSplitting() {
+void Model::InitializeZeroFieldSplitting() {
     if (operators_history_.zfs_in_hamiltonian) {
-        return *this;
+        return;
     }
     energy_operator.getOneCenterTerms().emplace_back(
         std::make_unique<const operators::SzSzOneCenterTerm>(
             converter_,
-            symbols_.getZFSParameters().first));
+            getSymbols().getZFSParameters().first));
     operators_history_.zfs_in_hamiltonian = true;
-    return *this;
 }
 
-Model& Model::InitializeIsotropicExchangeDerivatives() {
+void Model::InitializeIsotropicExchangeDerivatives() {
     if (operators_history_.isotropic_exchange_derivatives) {
-        return *this;
+        return;
     }
 
-    for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
+    for (const auto& symbol : getSymbols().getChangeableNames(symbols::SymbolTypeEnum::J)) {
         operators::Operator operator_derivative = operators::Operator();
         operator_derivative.getTwoCenterTerms().emplace_back(
             std::make_unique<const operators::ScalarProductTerm>(
                 converter_,
-                symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
+                getSymbols().constructIsotropicExchangeDerivativeParameters(symbol)));
         derivatives_map_[{common::Energy, symbol}] = std::move(operator_derivative);
     }
 
     operators_history_.isotropic_exchange_derivatives = true;
-
-    return *this;
 }
 
-Model& Model::InitializeGSzSquaredDerivatives() {
+void Model::InitializeGSzSquaredDerivatives() {
     if (operators_history_.g_sz_squared_derivatives) {
-        return *this;
+        return;
     }
 
-    for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
+    for (const auto& symbol : getSymbols().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
         operators::Operator operator_derivative = operators::Operator();
-        auto pair_of_parameters = symbols_.constructGGDerivativeParameters(symbol);
+        auto pair_of_parameters = getSymbols().constructGGDerivativeParameters(symbol);
         operator_derivative.getOneCenterTerms().emplace_back(
             std::make_unique<operators::SzSzOneCenterTerm>(converter_, pair_of_parameters.first));
         operator_derivative.getTwoCenterTerms().emplace_back(
@@ -98,20 +120,10 @@ Model& Model::InitializeGSzSquaredDerivatives() {
     }
 
     operators_history_.g_sz_squared_derivatives = true;
-
-    return *this;
 }
 
 const lexicographic::IndexConverter& Model::getIndexConverter() const {
     return converter_;
-}
-
-const symbols::Symbols& Model::getSymbols() const {
-    return symbols_;
-}
-
-symbols::Symbols& Model::getSymbols() {
-    return symbols_;
 }
 
 const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum) const {
@@ -151,4 +163,11 @@ bool Model::is_zero_field_splitting_initialized() const {
     return operators_history_.zfs_in_hamiltonian;
 }
 
+const symbols::Symbols& Model::getSymbols() const {
+    return modelInput_.getSymbols();
+}
+
+symbols::Symbols& Model::getSymbols() {
+    return modelInput_.getSymbols();
+}
 }  // namespace model

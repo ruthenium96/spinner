@@ -10,14 +10,14 @@
 
 namespace runner {
 
-Runner::Runner(model::Model model) :
+Runner::Runner(model::ModelInput model) :
     Runner(
         std::move(model),
         common::physical_optimization::OptimizationList(),
         quantum::linear_algebra::AbstractFactory::defaultFactory()) {}
 
 Runner::Runner(
-    model::Model model,
+    model::ModelInput model,
     common::physical_optimization::OptimizationList optimizationList) :
     Runner(
         std::move(model),
@@ -25,7 +25,7 @@ Runner::Runner(
         quantum::linear_algebra::AbstractFactory::defaultFactory()) {}
 
 Runner::Runner(
-    model::Model model,
+    model::ModelInput model,
     std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory) :
     Runner(
         std::move(model),
@@ -33,7 +33,7 @@ Runner::Runner(
         std::move(algebraDataFactory)) {}
 
 Runner::Runner(
-    model::Model model,
+    model::ModelInput model,
     common::physical_optimization::OptimizationList optimizationList,
     std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory) :
     consistentModelOptimizationList_(std::move(model), std::move(optimizationList)),
@@ -45,25 +45,6 @@ Runner::Runner(
     }
     if (getModel().is_g_sz_squared_initialized()) {
         g_sz_squared = common::Quantity();
-    }
-    if (getModel().is_isotropic_exchange_derivatives_initialized()) {
-        for (const auto& symbol :
-             getSymbols().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
-            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
-        }
-    }
-    if (getModel().is_g_sz_squared_derivatives_initialized()) {
-        for (const auto& symbol : getSymbols().getChangeableNames(model::symbols::g_factor)) {
-            derivatives_map_[{common::gSz_total_squared, symbol}] = common::Quantity();
-        }
-    }
-
-    if (getSymbols().isIsotropicExchangeInitialized()) {
-        getModel().InitializeIsotropicExchange();
-    }
-
-    if (getSymbols().isZFSInitialized()) {
-        getModel().InitializeZeroFieldSplitting();
     }
 
     //    if (!symbols_.isGFactorInitialized()) {
@@ -408,6 +389,10 @@ void Runner::minimizeResidualError(
         changeable_values.push_back(getSymbols().getValueOfName(name));
     }
 
+    if (solver->doesGradientsRequired()) {
+        initializeDerivatives();
+    }
+
     // This function should calculate residual error and derivatives at a point of changeable_values
     std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction =
         [this, capture0 = std::cref(changeable_names)](
@@ -467,6 +452,21 @@ double Runner::stepOfRegression(
     }
 
     return residual_error;
+}
+
+void Runner::initializeDerivatives() {
+    consistentModelOptimizationList_.getModel().InitializeDerivatives();
+    if (getModel().is_isotropic_exchange_derivatives_initialized()) {
+        for (const auto& symbol :
+             getSymbols().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
+            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
+        }
+    }
+    if (getModel().is_g_sz_squared_derivatives_initialized()) {
+        for (const auto& symbol : getSymbols().getChangeableNames(model::symbols::g_factor)) {
+            derivatives_map_[{common::gSz_total_squared, symbol}] = common::Quantity();
+        }
+    }
 }
 
 const magnetic_susceptibility::MagneticSusceptibilityController&

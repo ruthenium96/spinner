@@ -20,11 +20,11 @@ ConsistentModelOptimizationList::getOptimizationList() const {
 }
 
 ConsistentModelOptimizationList::ConsistentModelOptimizationList(
-    model::Model model,
+    model::ModelInput modelInput,
     common::physical_optimization::OptimizationList optimizationList) :
-    model_(std::move(model)),
+    model_(model::Model(std::move(modelInput))),
     optimizationList_(std::move(optimizationList)) {
-    // this function throw an exception if Model and OptimizationList are inconsistent
+    // this function throw an exception if ModelInput and OptimizationList are inconsistent
     ModelOptimizationListConsistence::check(model_, optimizationList_);
 }
 }  // namespace runner

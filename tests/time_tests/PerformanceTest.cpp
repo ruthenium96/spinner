@@ -34,7 +34,7 @@ TEST(performanceTest, simple2ComponentSchema) {
 
     PerformanceTest(
         [&mults]() {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             common::physical_optimization::OptimizationList optimizationList;
             optimizationList
                 .Symmetrize(

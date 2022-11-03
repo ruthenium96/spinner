@@ -26,7 +26,7 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -44,8 +44,6 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-            model.InitializeGSzSquared();
-            model.InitializeIsotropicExchange();
 
             runner::Runner runner(model);
 
@@ -61,7 +59,7 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
         }
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = -45.0;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -79,9 +77,6 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-
-            model.InitializeGSzSquared();
-            model.InitializeIsotropicExchange();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(
@@ -124,7 +119,7 @@ TEST(
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -137,8 +132,6 @@ TEST(
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g, i);
             }
-            model.InitializeSSquared();
-            model.InitializeIsotropicExchange();
 
             runner::Runner runner(model);
 
@@ -154,7 +147,7 @@ TEST(
         }
 
         {
-            model::Model model(mults);
+            model::ModelInput model(mults);
             double J_value = -45.0;
             auto J = model.getSymbols().addSymbol("J", J_value);
             model.getSymbols()
@@ -172,9 +165,6 @@ TEST(
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
                 model.getSymbols().assignSymbolToGFactor(g_two, i);
             }
-
-            model.InitializeGSzSquared();
-            model.InitializeIsotropicExchange();
 
             runner::Runner runner(model);
             runner.initializeExperimentalValues(

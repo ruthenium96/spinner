@@ -40,10 +40,18 @@ bool orthogonality_of_basis(const space::Space& space) {
     return answer;
 }
 
+size_t calculateTotalSpaceSize(const std::vector<int>& mults) {
+    size_t acc = 1;
+    for (const auto& mult : mults) {
+        acc *= mult;
+    }
+    return acc;
+}
+
 TEST(symmetrizer, 4444) {
     std::vector<int> mults = {4, 4, 4, 4};
-    model::Model model(mults);
-    uint32_t totalSpaceSize = model.getIndexConverter().get_total_space_size();
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     // S2 group
     {
@@ -68,8 +76,8 @@ TEST(symmetrizer, 4444) {
 
 TEST(symmetrizer, 333) {
     std::vector<int> mults = {3, 3, 3};
-    model::Model model(mults);
-    uint32_t totalSpaceSize = model.getIndexConverter().get_total_space_size();
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     // S3
     {
@@ -107,8 +115,8 @@ TEST(symmetrizer, 333) {
 
 TEST(symmetrizer, 333333) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3};
-    model::Model model(mults);
-    uint32_t totalSpaceSize = model.getIndexConverter().get_total_space_size();
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     // S3
     {
@@ -160,8 +168,8 @@ TEST(symmetrizer, 333333) {
 
 TEST(symmetrizer, 222222222_S3xS3) {
     std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
-    model::Model model(mults);
-    uint32_t totalSpaceSize = model.getIndexConverter().get_total_space_size();
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList
@@ -176,8 +184,8 @@ TEST(symmetrizer, 222222222_S3xS3) {
 
 TEST(symmetrizer, 333333333_S3xS3) {
     std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
-    model::Model model(mults);
-    uint32_t totalSpaceSize = model.getIndexConverter().get_total_space_size();
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList

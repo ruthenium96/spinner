@@ -20,17 +20,22 @@ namespace runner {
 class Runner {
   public:
     Runner(
-        model::Model model,
+        model::ModelInput model,
         common::physical_optimization::OptimizationList optimizationList,
         std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory);
     // constructor for Runner with default algebra package:
-    Runner(model::Model model, common::physical_optimization::OptimizationList optimizationList);
+    Runner(
+        model::ModelInput model,
+        common::physical_optimization::OptimizationList optimizationList);
     // constructor for Runner with no optimizations:
     Runner(
-        model::Model model,
+        model::ModelInput model,
         std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory);
     // constructor for Runner with no optimizations and default algebra package:
-    explicit Runner(model::Model model);
+    explicit Runner(model::ModelInput model);
+
+    // TODO: This function is public only for tests. Fix it?
+    void initializeDerivatives();
 
     // SPACE OPERATIONS
 

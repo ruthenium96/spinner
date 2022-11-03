@@ -76,12 +76,11 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
 
         double J_value = 10;
         auto J = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-        model.InitializeSSquared();
         //
         {
             runner::Runner runner(model);
@@ -110,7 +109,7 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
         double J_value = 10;
         auto J = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols()
@@ -119,7 +118,6 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
             .assignSymbolToIsotropicExchange(J, 2, 3)
             .assignSymbolToIsotropicExchange(J, 3, 0);
 
-        model.InitializeSSquared();
         // S2_S2_symmetrize
         {
             common::physical_optimization::OptimizationList optimizationList;
@@ -156,14 +154,13 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
         double J_value = 10;
         auto J = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols()
             .assignSymbolToIsotropicExchange(J, 0, 1)
             .assignSymbolToIsotropicExchange(J, 1, 2)
             .assignSymbolToIsotropicExchange(J, 2, 0);
-        model.InitializeSSquared();
         // S3_SYMMETRIZE
         {
             common::physical_optimization::OptimizationList optimizationList;
@@ -302,11 +299,10 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
         double J_value = 10;
         auto J = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-        model.InitializeSSquared();
         //
         {
             runner::Runner runner_without_matrices(model);
@@ -355,7 +351,7 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
         double J_value = 10;
         auto J = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols()
@@ -363,7 +359,6 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
             .assignSymbolToIsotropicExchange(J, 1, 2)
             .assignSymbolToIsotropicExchange(J, 2, 3)
             .assignSymbolToIsotropicExchange(J, 3, 0);
-        model.InitializeSSquared();
 
         // S2_S2_SYMMETRIZE
         {
@@ -421,14 +416,13 @@ TEST(
     std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
         double J_value = 10;
         auto J = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols()
             .assignSymbolToIsotropicExchange(J, 0, 1)
             .assignSymbolToIsotropicExchange(J, 1, 2)
             .assignSymbolToIsotropicExchange(J, 2, 0);
-        model.InitializeSSquared();
         // S3_SYMMETRIZE
         {
             common::physical_optimization::OptimizationList optimizationList;
@@ -560,11 +554,10 @@ TEST(spectrum_builder_apply_to_entity, spectra_equivalence_22_333_4444_23456) {
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
         double J_value = 10;
         auto J = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
-        model.InitializeSSquared();
 
         runner::Runner runner_without_matrices(model);
         runner::Runner runner_to_manually_call_apply_to_entity(model);
@@ -596,11 +589,10 @@ TEST(
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
+        model::ModelInput model(mults);
         double J_value = 10;
         auto J_tz_sorted = model.getSymbols().addSymbol("J", J_value);
         model.getSymbols().assignSymbolToIsotropicExchange(J_tz_sorted, 0, 1);
-        model.InitializeSSquared();
 
         common::physical_optimization::OptimizationList optimizationList;
         optimizationList.TzSort();
