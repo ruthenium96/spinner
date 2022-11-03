@@ -62,6 +62,10 @@ Runner::Runner(
         getModel().InitializeIsotropicExchange();
     }
 
+    if (getSymbols().isZFSInitialized()) {
+        getModel().InitializeZeroFieldSplitting();
+    }
+
     //    if (!symbols_.isGFactorInitialized()) {
     //        throw std::length_error("g factor parameters have not been initialized");
     //    }

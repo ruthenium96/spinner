@@ -88,6 +88,31 @@ Symbols& Symbols::assignSymbolToTheta(const SymbolName& symbol_name) {
     return *this;
 }
 
+Symbols& Symbols::assignSymbolToZFSNoAnisotropy(const SymbolName& symbol_name, size_t center_a) {
+    if (symbolsMap.find(symbol_name) == symbolsMap.end()) {
+        throw std::invalid_argument(symbol_name.get_name() + " name has not been initialized");
+    }
+
+    if (symbolsMap[symbol_name].type_enum != SymbolTypeEnum::not_specified
+        && symbolsMap[symbol_name].type_enum != SymbolTypeEnum::D) {
+        throw std::invalid_argument(
+            symbol_name.get_name() + " has been already specified as not D parameter");
+    }
+    if (symbolsMap[symbol_name].type_enum == SymbolTypeEnum::not_specified) {
+        symbolsMap[symbol_name].type_enum = SymbolTypeEnum::D;
+    }
+
+    if (!symbolic_ZFS_.has_value()) {
+        symbolic_ZFS_ = std::vector<std::optional<ZFSSymbols>>(number_of_spins_, std::nullopt);
+    }
+
+    symbolic_ZFS_.value()[center_a] = {symbol_name, std::nullopt};
+
+    updateZFSParameters();
+
+    return *this;
+}
+
 SymbolName Symbols::addSymbol(
     const std::string& name_string,
     double initial_value,
@@ -126,21 +151,6 @@ Symbols::getGGParameters() const {
     }
     return numeric_g_g_;
 }
-
-//std::shared_ptr<const OneDNumericalParameters<double>> Symbols::getGGDiagonalParameters() const {
-//    if (numeric_g_g_diagonal_ == nullptr) {
-//        throw std::invalid_argument("g-factors were not initialized");
-//    }
-//    return numeric_g_g_diagonal_;
-//}
-//
-//std::shared_ptr<const TwoDNumericalParameters<double>>
-//Symbols::getGGNondiagonalParameters() const {
-//    if (numeric_g_g_nondiagonal_ == nullptr) {
-//        throw std::invalid_argument("g-factors were not initialized");
-//    }
-//    return numeric_g_g_nondiagonal_;
-//}
 
 std::shared_ptr<const TwoDNumericalParameters<double>>
 Symbols::constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name) {
@@ -260,6 +270,8 @@ Symbols& Symbols::setNewValueToChangeableSymbol(const SymbolName& symbol_name, d
         updateGFactorParameters();
     } else if (symbol_data.type_enum == symbols::SymbolTypeEnum::Theta) {
         updateThetaParameter();
+    } else if (symbol_data.type_enum == symbols::SymbolTypeEnum::D) {
+        updateZFSParameters();
     }
     // and other things
 
@@ -321,6 +333,22 @@ void Symbols::updateGFactorParameters() {
     }
 }
 
+void Symbols::updateZFSParameters() {
+    if (numeric_ZFS_.first == nullptr) {
+        numeric_ZFS_.first =
+            std::make_shared<OneDNumericalParameters<double>>(number_of_spins_, NAN);
+    }
+
+    for (size_t i = 0; i < number_of_spins_; ++i) {
+        auto mb_symbol = symbolic_ZFS_.value()[i];
+        if (mb_symbol.has_value()) {
+            numeric_ZFS_.first->at(i) = symbolsMap[mb_symbol.value().D].value;
+        } else {
+            numeric_ZFS_.first->at(i) = NAN;
+        }
+    }
+}
+
 void Symbols::updateThetaParameter() {
     if (numeric_Theta_ == nullptr) {
         numeric_Theta_ = std::make_shared<double>(NAN);
@@ -364,6 +392,16 @@ Symbols::getIsotropicExchangeParameters() const {
     return numeric_isotropic_exchanges_;
 }
 
+std::pair<
+    std::shared_ptr<OneDNumericalParameters<double>>,
+    std::optional<std::shared_ptr<OneDNumericalParameters<double>>>>
+Symbols::getZFSParameters() const {
+    if (numeric_ZFS_.first == nullptr) {
+        throw std::invalid_argument("Zero field splitting was not initialized");
+    }
+    return numeric_ZFS_;
+}
+
 std::shared_ptr<const double> Symbols::getThetaParameter() const {
     if (numeric_Theta_ == nullptr) {
         throw std::invalid_argument("Theta was not initialized");
@@ -391,8 +429,16 @@ SymbolName Symbols::getGFactorSymbolName(size_t i) const {
     return symbolic_g_factors_[i];
 }
 
-SymbolName Symbols::getThetaSymbolName() const {
-    return symbolic_Theta_.value();
+std::optional<ZFSSymbols> Symbols::getZFSSymbolNames(size_t i) const {
+    return symbolic_ZFS_.value()[i];
+}
+
+std::optional<SymbolName> Symbols::getThetaSymbolName() const {
+    return symbolic_Theta_;
+}
+
+bool Symbols::isZFSInitialized() const {
+    return symbolic_ZFS_.has_value();
 }
 
 }  // namespace symbols

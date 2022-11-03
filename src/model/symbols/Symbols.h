@@ -12,8 +12,12 @@
 
 namespace model::symbols {
 
-enum SymbolTypeEnum { not_specified, J, g_factor, Theta };
+enum SymbolTypeEnum { not_specified, J, g_factor, Theta, D };
 
+struct ZFSSymbols {
+    SymbolName D;
+    std::optional<SymbolName> E;
+};
 // TODO: Can we separate "model" part and "optimize-values" part?
 class Symbols {
   public:
@@ -23,31 +27,19 @@ class Symbols {
     bool isGFactorInitialized() const;
     bool isIsotropicExchangeInitialized() const;
     bool isThetaInitialized() const;
-
-    std::shared_ptr<const TwoDNumericalParameters<double>>
-    constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name);
-    std::pair<
-        std::shared_ptr<const OneDNumericalParameters<double>>,
-        std::shared_ptr<const TwoDNumericalParameters<double>>>
-    constructGGDerivativeParameters(const SymbolName& symbol_name);
-
-    std::shared_ptr<const TwoDNumericalParameters<double>> getIsotropicExchangeParameters() const;
-    std::shared_ptr<const OneDNumericalParameters<double>> getGFactorParameters() const;
-    std::pair<
-        std::shared_ptr<const OneDNumericalParameters<double>>,
-        std::shared_ptr<const TwoDNumericalParameters<double>>>
-    getGGParameters() const;
-    std::shared_ptr<const double> getThetaParameter() const;
+    bool isZFSInitialized() const;
 
     std::optional<SymbolName> getIsotropicExchangeSymbolName(size_t i, size_t j) const;
     SymbolName getGFactorSymbolName(size_t i) const;
-    SymbolName getThetaSymbolName() const;
+    std::optional<SymbolName> getThetaSymbolName() const;
+    std::optional<ZFSSymbols> getZFSSymbolNames(size_t i) const;
 
     Symbols& assignSymbolToIsotropicExchange(
         const SymbolName& symbol_name,
         size_t center_a,
         size_t center_b);
     Symbols& assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a);
+    Symbols& assignSymbolToZFSNoAnisotropy(const SymbolName& symbol_name, size_t center_a);
     Symbols& assignSymbolToTheta(const SymbolName& symbol_name);
 
     SymbolName addSymbol(
@@ -79,14 +71,43 @@ class Symbols {
         symbolic_isotropic_exchanges_;
     std::vector<SymbolName> symbolic_g_factors_;
     std::optional<SymbolName> symbolic_Theta_;
+    std::optional<std::vector<std::optional<ZFSSymbols>>> symbolic_ZFS_;
 
+    std::map<SymbolName, SymbolData> symbolsMap;
+
+  public:
+    std::shared_ptr<const TwoDNumericalParameters<double>>
+    constructIsotropicExchangeDerivativeParameters(const SymbolName& symbol_name);
+    std::pair<
+        std::shared_ptr<const OneDNumericalParameters<double>>,
+        std::shared_ptr<const TwoDNumericalParameters<double>>>
+    constructGGDerivativeParameters(const SymbolName& symbol_name);
+
+    std::shared_ptr<const TwoDNumericalParameters<double>> getIsotropicExchangeParameters() const;
+    std::shared_ptr<const OneDNumericalParameters<double>> getGFactorParameters() const;
+    std::pair<
+        std::shared_ptr<const OneDNumericalParameters<double>>,
+        std::shared_ptr<const TwoDNumericalParameters<double>>>
+    getGGParameters() const;
+    std::shared_ptr<const double> getThetaParameter() const;
+    std::pair<
+        std::shared_ptr<OneDNumericalParameters<double>>,
+        std::optional<std::shared_ptr<OneDNumericalParameters<double>>>>
+    getZFSParameters() const;
+
+  private:
     void updateIsotropicExchangeParameters();
     void updateGFactorParameters();
+    void updateZFSParameters();
     void updateGGFactorDerivativesParameters(const SymbolName& symbol_name);
     void updateThetaParameter();
 
     std::shared_ptr<TwoDNumericalParameters<double>> numeric_isotropic_exchanges_;
     std::shared_ptr<OneDNumericalParameters<double>> numeric_g_factors_;
+    std::pair<
+        std::shared_ptr<OneDNumericalParameters<double>>,
+        std::optional<std::shared_ptr<OneDNumericalParameters<double>>>>
+        numeric_ZFS_;
     std::shared_ptr<double> numeric_Theta_;
 
     std::pair<
@@ -102,8 +123,6 @@ class Symbols {
 
     std::vector<std::shared_ptr<TwoDNumericalParameters<double>>>
         numeric_isotropic_exchange_derivatives_;
-
-    std::map<SymbolName, SymbolData> symbolsMap;
 };
 
 }  // namespace model::symbols
