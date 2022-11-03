@@ -13,6 +13,9 @@ class optimNMAdapter: public AbstractNonlinearSolver {
         std::function<double(const std::vector<double>&, std::vector<double>&, bool)>
             oneStepFunction,
         std::vector<double>& changeable_values) override;
+    bool doesGradientsRequired() const override {
+        return false;
+    };
 
   private:
     std::function<double(const arma::vec& vals_inp, arma::vec* grad_out, void* opt_data)>

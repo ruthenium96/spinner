@@ -11,6 +11,9 @@ class stlbfgsAdapter: public AbstractNonlinearSolver {
         std::function<double(const std::vector<double>&, std::vector<double>&, bool)>
             oneStepFunction,
         std::vector<double>& changeable_values) override;
+    bool doesGradientsRequired() const override {
+        return true;
+    };
 
   private:
     std::function<void(const std::vector<double>&, double&, std::vector<double>&)> adaptSignature(

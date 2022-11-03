@@ -27,6 +27,7 @@ std::function<double(const Eigen::VectorXd&, Eigen::VectorXd&)> LBFGSppAdapter::
                                         Eigen::VectorXd& gradient_eigen) {
         std::vector<double> changeable_values_stl = convertFromEigenToSTL(changeable_values_eigen);
         std::vector<double> gradient_stl = convertFromEigenToSTL(gradient_eigen);
+        // the last boolean is doesGradientsRequired
         double residual_error = oneStepFunction(changeable_values_stl, gradient_stl, true);
         gradient_eigen = convertFromSTLToEigen(gradient_stl);
         return residual_error;

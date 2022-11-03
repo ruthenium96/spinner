@@ -13,6 +13,9 @@ class LBFGSppAdapter: public AbstractNonlinearSolver {
         std::function<double(const std::vector<double>&, std::vector<double>&, bool)>
             oneStepFunction,
         std::vector<double>& changeable_values) override;
+    bool doesGradientsRequired() const override {
+        return true;
+    };
 
   private:
     std::function<double(const Eigen::VectorXd&, Eigen::VectorXd&)> adaptSignature(

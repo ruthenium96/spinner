@@ -13,6 +13,8 @@ class AbstractNonlinearSolver {
             oneStepFunction,
         std::vector<double>& changeable_values) = 0;
 
+    virtual bool doesGradientsRequired() const = 0;
+
     virtual ~AbstractNonlinearSolver() = default;
 };
 

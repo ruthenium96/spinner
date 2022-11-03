@@ -21,6 +21,7 @@ stlbfgsAdapter::adaptSignature(
                                         const std::vector<double>& changeable_values,
                                         double& residual_error,
                                         std::vector<double>& gradient) {
+        // the last boolean is doesGradientsRequired
         residual_error = oneStepFunction(changeable_values, gradient, true);
     };
     return adaptedSignatureFunction;
