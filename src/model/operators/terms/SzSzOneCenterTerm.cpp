@@ -1,5 +1,6 @@
 #include "SzSzOneCenterTerm.h"
 
+#include <cmath>
 #include <utility>
 
 namespace model::operators {
@@ -12,16 +13,19 @@ void SzSzOneCenterTerm::construct(
     uint32_t index_of_vector,
     uint32_t center_a) const {
     double factor = coefficients_->at(center_a);
-    uint32_t projection_of_center_a =
-        converter_.convert_lex_index_to_one_sz_projection(index_of_vector, center_a);
 
-    // Saz Saz
-    double diagonal_value = (projection_of_center_a - converter_.get_spins()[center_a])
-        * (projection_of_center_a - converter_.get_spins()[center_a]) * factor;
-    matrix_in_lexicografical_basis.add_to_position(
-        diagonal_value,
-        index_of_vector,
-        index_of_vector);
+    if (!std::isnan(factor)) {
+        uint32_t projection_of_center_a =
+            converter_.convert_lex_index_to_one_sz_projection(index_of_vector, center_a);
+
+        // Saz Saz
+        double diagonal_value = (projection_of_center_a - converter_.get_spins()[center_a])
+            * (projection_of_center_a - converter_.get_spins()[center_a]) * factor;
+        matrix_in_lexicografical_basis.add_to_position(
+            diagonal_value,
+            index_of_vector,
+            index_of_vector);
+    }
 }
 
 SzSzOneCenterTerm::SzSzOneCenterTerm(
