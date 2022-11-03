@@ -49,6 +49,18 @@ Model& Model::InitializeIsotropicExchange() {
     return *this;
 }
 
+Model& Model::InitializeZeroFieldSplitting() {
+    if (operators_history_.zfs_in_hamiltonian) {
+        return *this;
+    }
+    energy_operator.getOneCenterTerms().emplace_back(
+        std::make_unique<const operators::SzSzOneCenterTerm>(
+            converter_,
+            symbols_.getZFSParameters().first));
+    operators_history_.zfs_in_hamiltonian = true;
+    return *this;
+}
+
 Model& Model::InitializeIsotropicExchangeDerivatives() {
     if (operators_history_.isotropic_exchange_derivatives) {
         return *this;
@@ -133,6 +145,10 @@ bool Model::is_g_sz_squared_initialized() const {
 
 bool Model::is_g_sz_squared_derivatives_initialized() const {
     return operators_history_.g_sz_squared_derivatives;
+}
+
+bool Model::is_zero_field_splitting_initialized() const {
+    return operators_history_.zfs_in_hamiltonian;
 }
 
 }  // namespace model

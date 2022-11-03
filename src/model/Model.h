@@ -14,6 +14,7 @@ class Model {
 
     Model& InitializeIsotropicExchange();
     Model& InitializeIsotropicExchangeDerivatives();
+    Model& InitializeZeroFieldSplitting();
     Model& InitializeSSquared();
     Model& InitializeGSzSquared();
     Model& InitializeGSzSquaredDerivatives();
@@ -22,6 +23,7 @@ class Model {
     bool is_g_sz_squared_initialized() const;
     bool is_g_sz_squared_derivatives_initialized() const;
     bool is_isotropic_exchange_derivatives_initialized() const;
+    bool is_zero_field_splitting_initialized() const;
 
     const lexicographic::IndexConverter& getIndexConverter() const;
     const symbols::Symbols& getSymbols() const;
@@ -38,6 +40,7 @@ class Model {
         bool g_sz_squared = false;
         bool isotropic_exchange_derivatives = false;
         bool g_sz_squared_derivatives = false;
+        bool zfs_in_hamiltonian = false;
     };
     // TODO: should we move it from here?
     const lexicographic::IndexConverter converter_;
