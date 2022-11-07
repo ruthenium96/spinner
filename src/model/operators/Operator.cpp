@@ -27,7 +27,8 @@ Operator Operator::g_sz_squared(
     g_sz_squared_operator_.one_center_terms.emplace_back(
         std::make_unique<const SzSzOneCenterTerm>(converter, diagonal_parameters));
     g_sz_squared_operator_.two_center_terms.emplace_back(
-        std::make_unique<const SzSzTwoCenterTerm>(converter, nondiagonal_parameters));
+        std::make_unique<const SzSzTwoCenterTerm>(converter, nondiagonal_parameters, 2));
+    // this two from summation in Submatrix: \sum_{a=1}^N \sum_{b=a+1}^N
     return g_sz_squared_operator_;
 }
 

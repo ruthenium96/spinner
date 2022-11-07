@@ -10,14 +10,20 @@ SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     converter_(std::move(converter)),
     coefficients_(std::move(parameters)) {}
 
+SzSzTwoCenterTerm::SzSzTwoCenterTerm(
+    lexicographic::IndexConverter converter,
+    std::shared_ptr<const TwoDNumericalParameters<double>> parameters,
+    double prefactor) :
+    converter_(std::move(converter)),
+    coefficients_(std::move(parameters)),
+    prefactor_(prefactor) {}
+
 void SzSzTwoCenterTerm::construct(
     UnitarySparseMatrix& matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a,
     uint32_t center_b) const {
-    // todo: move this two from here.
-    //  this two from summation in Submatrix: \sum_{a=1}^N \sum_{b=a+1}^N
-    double factor = 2 * coefficients_->at(center_a, center_b);
+    double factor = prefactor_ * coefficients_->at(center_a, center_b);
     uint32_t projection_of_center_a =
         converter_.convert_lex_index_to_one_sz_projection(index_of_vector, center_a);
     uint32_t projection_of_center_b =

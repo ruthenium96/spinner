@@ -7,6 +7,10 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
   public:
     SzSzTwoCenterTerm(
         lexicographic::IndexConverter converter,
+        std::shared_ptr<const TwoDNumericalParameters<double>> parameters,
+        double prefactor);
+    SzSzTwoCenterTerm(
+        lexicographic::IndexConverter converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> parameters);
     std::unique_ptr<TwoCenterTerm> clone() const override;
     void construct(
@@ -18,6 +22,7 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
   private:
     const lexicographic::IndexConverter converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
+    double prefactor_ = 1;
 };
 }  // namespace model::operators
 #endif  //SPINNER_SZSZTWOCENTERTERM_H

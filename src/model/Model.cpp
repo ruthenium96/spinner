@@ -115,7 +115,9 @@ void Model::InitializeGSzSquaredDerivatives() {
         operator_derivative.getTwoCenterTerms().emplace_back(
             std::make_unique<const operators::SzSzTwoCenterTerm>(
                 converter_,
-                pair_of_parameters.second));
+                pair_of_parameters.second,
+                2));
+        // this two from summation in Submatrix: \sum_{a=1}^N \sum_{b=a+1}^N
         derivatives_map_[{common::gSz_total_squared, symbol}] = std::move(operator_derivative);
     }
 
