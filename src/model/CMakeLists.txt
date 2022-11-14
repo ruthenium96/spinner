@@ -5,6 +5,7 @@ add_library(model
         operators/terms/ScalarProductTerm.h operators/terms/ScalarProductTerm.cpp
         operators/terms/SzSzTwoCenterTerm.cpp operators/terms/SzSzTwoCenterTerm.h
         operators/terms/SzSzOneCenterTerm.cpp operators/terms/SzSzOneCenterTerm.h
+        operators/terms/LocalSSquaredOneCenterTerm.cpp operators/terms/LocalSSquaredOneCenterTerm.h
         operators/terms/Term.h
         symbols/Symbols.h symbols/Symbols.cpp
         symbols/SymbolName.h symbols/SymbolName.cpp
