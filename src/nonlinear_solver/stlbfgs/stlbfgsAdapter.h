@@ -14,11 +14,6 @@ class stlbfgsAdapter: public AbstractNonlinearSolver {
     bool doesGradientsRequired() const override {
         return true;
     };
-
-  private:
-    std::function<void(const std::vector<double>&, double&, std::vector<double>&)> adaptSignature(
-        const std::function<double(const std::vector<double>&, std::vector<double>&, bool)>&
-            oneStepFunction);
 };
 
 }  // namespace nonlinear_solver

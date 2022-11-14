@@ -2,6 +2,21 @@
 
 #include <stlbfgs.h>
 
+namespace {
+std::function<void(const std::vector<double>&, double&, std::vector<double>&)>
+adaptSignature(const std::function<double(const std::vector<double>&, std::vector<double>&, bool)>&
+                   oneStepFunction) {
+    auto adaptedSignatureFunction = [oneStepFunction](
+                                        const std::vector<double>& changeable_values,
+                                        double& residual_error,
+                                        std::vector<double>& gradient) {
+        // the last boolean is doesGradientsRequired
+        residual_error = oneStepFunction(changeable_values, gradient, true);
+    };
+    return adaptedSignatureFunction;
+}
+}  // namespace
+
 namespace nonlinear_solver {
 void stlbfgsAdapter::optimize(
     std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction,
@@ -12,19 +27,4 @@ void stlbfgsAdapter::optimize(
     // Run calculation from initial guess. STLBFGS updates changeable_values every iteration.
     optimizer.run(changeable_values);
 }
-
-std::function<void(const std::vector<double>&, double&, std::vector<double>&)>
-stlbfgsAdapter::adaptSignature(
-    const std::function<double(const std::vector<double>&, std::vector<double>&, bool)>&
-        oneStepFunction) {
-    auto adaptedSignatureFunction = [oneStepFunction](
-                                        const std::vector<double>& changeable_values,
-                                        double& residual_error,
-                                        std::vector<double>& gradient) {
-        // the last boolean is doesGradientsRequired
-        residual_error = oneStepFunction(changeable_values, gradient, true);
-    };
-    return adaptedSignatureFunction;
-}
-
 }  // namespace nonlinear_solver
