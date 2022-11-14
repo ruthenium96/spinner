@@ -8,9 +8,9 @@
 namespace model::operators {
 Operator Operator::s_squared(lexicographic::IndexConverter converter) {
     Operator s_squared_operator_;
-    double sum_of_s_squared = 0;
+    auto sum_of_s_squared = std::make_shared<double>(0);
     for (double spin : converter.get_spins()) {
-        sum_of_s_squared += spin * (spin + 1);
+        *sum_of_s_squared += spin * (spin + 1);
     }
     s_squared_operator_.zero_center_terms.emplace_back(
         std::make_unique<const ConstantTerm>(sum_of_s_squared));

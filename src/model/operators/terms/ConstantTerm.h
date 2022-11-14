@@ -6,7 +6,7 @@
 namespace model::operators {
 class ConstantTerm: public ZeroCenterTerm {
   public:
-    explicit ConstantTerm(double constant);
+    explicit ConstantTerm(std::shared_ptr<const double> constant);
 
     std::unique_ptr<ZeroCenterTerm> clone() const override;
 
@@ -14,7 +14,7 @@ class ConstantTerm: public ZeroCenterTerm {
         const override;
 
   private:
-    double constant_;
+    std::shared_ptr<const double> constant_;
 };
 }  // namespace model::operators
 

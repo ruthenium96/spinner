@@ -21,10 +21,11 @@ TEST(constant_operator, 2222_333_2345_44444) {
         auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
 
         for (int constant = 0; constant < 100; constant += 11) {
+            auto constant_ptr = std::make_shared<double>(constant);
             // Construct Operator
             model::operators::Operator operator_;
             operator_.getZeroCenterTerms().emplace_back(
-                std::make_unique<model::operators::ConstantTerm>(constant));
+                std::make_unique<model::operators::ConstantTerm>(constant_ptr));
 
             // Build Matrix
             Matrix matrix = Matrix(space_, operator_, converter, factory_);
