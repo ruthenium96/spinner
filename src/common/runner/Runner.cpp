@@ -322,7 +322,6 @@ void Runner::initializeExperimentalValues(
 }
 
 std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {
-    // TODO: ony s_squared-based calculation supported
     // TODO: it is awful. Fix it somehow, this code should be moved from Runner.
 
     std::map<model::symbols::SymbolName, double> answer;
@@ -345,15 +344,30 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
     }
 
     for (const auto& changeable_symbol :
-         getSymbols().getChangeableNames(model::symbols::g_factor)) {
+         getSymbolicWorker().getChangeableNames(model::symbols::D)) {
+        auto derivative_vector = algebraDataFactory_->createVector();
+        for (const auto& subspectrum :
+             getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
+            derivative_vector->concatenate_with(subspectrum.raw_data);
+        }
+        auto derivative_map = std::
+            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>();
+        derivative_map[common::Energy] = std::move(derivative_vector);
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+            model::symbols::D,
+            std::move(derivative_map));
+        answer[changeable_symbol] = value;
+        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+    }
+
+    for (const auto& changeable_symbol :
+         getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
         auto map = std::
             map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>();
         if (consistentModelOptimizationList_.getModel().is_g_sz_squared_derivatives_initialized()) {
             auto derivative_vector = algebraDataFactory_->createVector();
-            for (const auto& subspectrum : getSpectrumDerivative(
-                                               common::gSz_total_squared,
-                                               changeable_symbol)
-                                               .blocks) {
+            for (const auto& subspectrum :
+                 getSpectrumDerivative(common::gSz_total_squared, changeable_symbol).blocks) {
                 derivative_vector->concatenate_with(subspectrum.raw_data);
             }
             map[common::gSz_total_squared] = std::move(derivative_vector);
@@ -467,6 +481,11 @@ void Runner::initializeDerivatives() {
         for (const auto& symbol :
              getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
             derivatives_map_[{common::gSz_total_squared, symbol}] = common::Quantity();
+        }
+    }
+    if (getModel().is_zero_field_splitting_initialized()) {
+        for (const auto& symbol : getSymbolicWorker().getChangeableNames(model::symbols::D)) {
+            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
         }
     }
 }

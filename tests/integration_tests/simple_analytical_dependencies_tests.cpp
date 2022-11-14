@@ -11,6 +11,8 @@ double sum_of_s_squared(const lexicographic::IndexConverter& indexConverter) {
     return sum_of_s_squared;
 }
 
+// mu_2 = g^2 \sum_a s_a (s_a + 1)
+
 TEST(simple_analytical_dependencies, nothing) {
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -52,6 +54,8 @@ TEST(simple_analytical_dependencies, nothing) {
         }
     }
 }
+
+// mu_2 = T/(T-Theta) g^2 \sum_a s_a (s_a + 1)
 
 TEST(simple_analytical_dependencies, Theta) {
     std::random_device dev;

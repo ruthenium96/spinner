@@ -38,12 +38,14 @@ class Model {
         bool isotropic_exchange_derivatives = false;
         bool g_sz_squared_derivatives = false;
         bool zfs_in_hamiltonian = false;
+        bool zfs_derivative = false;
     };
     OperatorsHistory operators_history_;
 
     void InitializeIsotropicExchange();
     void InitializeIsotropicExchangeDerivatives();
     void InitializeZeroFieldSplitting();
+    void InitializeZeroFieldSplittingDerivative();
     void InitializeSSquared();
     void InitializeGSzSquared();
     void InitializeGSzSquaredDerivatives();

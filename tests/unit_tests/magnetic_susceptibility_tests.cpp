@@ -415,3 +415,110 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
         EXPECT_NEAR(analytical_dR2_wrt_dg, finite_difference_dR2_wrt_dg, dR2_wrt_dg_range);
     }
 }
+
+model::ModelInput constructRingModel_J_g_D(
+    const std::vector<int>& mults,
+    double J_value,
+    double g_value,
+    double D_value) {
+    model::ModelInput model(mults);
+    auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+    size_t size = mults.size();
+    for (size_t i = 0; i < size; ++i) {
+        model.modifySymbolicWorker().assignSymbolToIsotropicExchange(J, i, (i + 1) % size);
+    }
+
+    auto D = model.modifySymbolicWorker().addSymbol("D", D_value);
+    model.modifySymbolicWorker().assignSymbolToZFSNoAnisotropy(D, 0);
+
+    auto g = model.modifySymbolicWorker().addSymbol("g", g_value, false);
+    for (size_t i = 0; i < mults.size(); ++i) {
+        model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+    }
+    return model;
+}
+
+TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g_D) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> J_dist(-100, -10);
+    std::uniform_real_distribution<double> D_dist(-10, -50);
+
+    for (size_t _ = 0; _ < 20; ++_) {
+        const double J_exact = J_dist(rng);
+        const double D_exact = D_dist(rng);
+        const double g_factor = 2.0;
+
+        std::vector<int> mults = {3, 3, 3, 3};
+
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        {
+            auto model = constructRingModel_J_g_D(mults, J_exact, g_factor, D_exact);
+            runner::Runner runner(model);
+
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            for (size_t i = 1; i < 301; ++i) {
+                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                    static_cast<double>(i),
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
+                values.push_back(value_at_temperature);
+            }
+        }
+
+        double J_value = -50;
+        double D_value = 0.1;
+
+        double analytical_dR2_wrt_dJ;
+        double analytical_dR2_wrt_dD;
+
+        double delta_J = 1e-5;
+        double delta_D = 1e-5;
+        double finite_difference_dR2_wrt_dJ;
+        double finite_difference_dR2_wrt_dD;
+
+        {
+            auto model = constructRingModel_J_g_D(mults, J_value, g_factor, D_value);
+
+            runner::Runner runner(model);
+
+            runner.initializeExperimentalValues(
+                values,
+                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                1);
+
+            runner.initializeDerivatives();
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
+
+            auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
+            auto D = runner.getSymbolicWorker().getChangeableNames(model::symbols::D)[0];
+
+            auto derivative_map = runner.calculateTotalDerivatives();
+            analytical_dR2_wrt_dJ = derivative_map[J];
+            analytical_dR2_wrt_dD = derivative_map[D];
+        }
+
+        {
+            auto model_initial = constructRingModel_J_g_D(mults, J_value, g_factor, D_value);
+            double initial_R2 = calculateResidualError(model_initial, values);
+
+            auto model_delta_J =
+                constructRingModel_J_g_D(mults, J_value + delta_J, g_factor, D_value);
+            double delta_J_R2 = calculateResidualError(model_delta_J, values);
+            finite_difference_dR2_wrt_dJ = (delta_J_R2 - initial_R2) / delta_J;
+
+            auto model_delta_D =
+                constructRingModel_J_g_D(mults, J_value, g_factor, D_value + delta_D);
+            double delta_D_R2 = calculateResidualError(model_delta_D, values);
+            finite_difference_dR2_wrt_dD = (delta_D_R2 - initial_R2) / delta_D;
+        }
+
+        double dR2_wrt_dJ_range = std::abs(analytical_dR2_wrt_dJ / 1000);
+        double dR2_wrt_dD_range = std::abs(analytical_dR2_wrt_dD / 100);
+
+        EXPECT_NEAR(analytical_dR2_wrt_dJ, finite_difference_dR2_wrt_dJ, dR2_wrt_dJ_range);
+        EXPECT_NEAR(analytical_dR2_wrt_dD, finite_difference_dR2_wrt_dD, dR2_wrt_dD_range);
+    }
+}
