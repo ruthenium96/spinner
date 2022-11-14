@@ -13,6 +13,8 @@ if (ARMADILLO_FOUND)
             arma/ArmaMatrix.cpp arma/ArmaMatrix.h
             arma/ArmaVector.cpp arma/ArmaVector.h
             )
+    # This include is requested sometimes:
+    include_directories(${ARMADILLO_INCLUDE_DIRS})
     target_link_libraries(arma_structures ${ARMADILLO_LIBRARIES})
     target_link_libraries(data_structures arma_structures)
 else ()

@@ -36,6 +36,8 @@ if (ARMADILLO_FOUND)
     execute_process(COMMAND ./configure --header-only-version
             WORKING_DIRECTORY ${optim_SOURCE_DIR}/)
     include_directories(${optim_SOURCE_DIR}/header_only_version/)
+    # This include is requested sometimes:
+    include_directories(${ARMADILLO_INCLUDE_DIRS})
     add_library(optimNM_adapter optimNM/optimNMAdapter.cpp optimNM/optimNMAdapter.h)
     target_link_libraries(optimNM_adapter ${ARMADILLO_LIBRARIES})
     target_link_libraries(nonlinear_solver optimNM_adapter)
