@@ -86,13 +86,13 @@ void initialize_four_centers_exchange_rectangle(
     model::ModelInput& model,
     double first,
     double second) {
-    auto Jfirst = model.getSymbols().addSymbol("J1", first);
-    model.getSymbols()
+    auto Jfirst = model.modifySymbolicWorker().addSymbol("J1", first);
+    model.modifySymbolicWorker()
         .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
         .assignSymbolToIsotropicExchange(Jfirst, 2, 3);
 
-    auto Jsecond = model.getSymbols().addSymbol("J2", second);
-    model.getSymbols()
+    auto Jsecond = model.modifySymbolicWorker().addSymbol("J2", second);
+    model.modifySymbolicWorker()
         .assignSymbolToIsotropicExchange(Jsecond, 1, 2)
         .assignSymbolToIsotropicExchange(Jsecond, 3, 0);
 }
@@ -187,8 +187,8 @@ TEST(spectrum_final_equivalence, rectangle) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initialize_three_centers_exchange_triangle(model::ModelInput& model, double first) {
-    auto Jfirst = model.getSymbols().addSymbol("J1", first);
-    model.getSymbols()
+    auto Jfirst = model.modifySymbolicWorker().addSymbol("J1", first);
+    model.modifySymbolicWorker()
         .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
         .assignSymbolToIsotropicExchange(Jfirst, 1, 2)
         .assignSymbolToIsotropicExchange(Jfirst, 2, 0);
@@ -253,41 +253,11 @@ TEST(spectrum_final_equivalence, triangle) {
                 runner::Runner runner(model, optimizationList);
                 expect_final_vectors_equivalence(runner_simple, runner);
             }
-            //            // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
-            //            {
-            //                runner::Runner runner_symmetrized_simplified(mults);
-            //                runner_symmetrized_simplified.Symmetrize(triangle);
-            //                runner_symmetrized_simplified.NonAbelianSimplify();
-            //                initialize_three_centers_exchange_triangle(runner_symmetrized_simplified, Jfirst);
-            //                expect_final_vectors_equivalence(runner_simple, runner_symmetrized_simplified);
-            //            }
-            //            // TZ_SORTER + SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
-            //            {
-            //                runner::Runner runner_tz_sorted_symmetrized_simplified(mults);
-            //                runner_tz_sorted_symmetrized_simplified.TzSort();
-            //                runner_tz_sorted_symmetrized_simplified.Symmetrize(triangle);
-            //                runner_tz_sorted_symmetrized_simplified.NonAbelianSimplify();
-            //                initialize_three_centers_exchange_triangle(runner_tz_sorted_symmetrized_simplified, Jfirst);
-            //                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_symmetrized_simplified);
-            //            }
-            //            // SYMMETRIZER + TZ_SORTER + NON_ABELIAN_SIMPLIFIER
-            //            {
-            //                runner::Runner runner_tz_sorted_symmetrized_simplified(mults);
-            //                runner_tz_sorted_symmetrized_simplified.Symmetrize(triangle);
-            //                runner_tz_sorted_symmetrized_simplified.TzSort();
-            //                runner_tz_sorted_symmetrized_simplified.NonAbelianSimplify();
-            //                initialize_three_centers_exchange_triangle(runner_tz_sorted_symmetrized_simplified, Jfirst);
-            //                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_symmetrized_simplified);
-            //            }
-            //            // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER + TZ_SORTER
-            //            {
-            //                runner::Runner runner_tz_sorted_symmetrized_simplified(mults);
-            //                runner_tz_sorted_symmetrized_simplified.Symmetrize(triangle);
-            //                runner_tz_sorted_symmetrized_simplified.NonAbelianSimplify();
-            //                runner_tz_sorted_symmetrized_simplified.TzSort();
-            //                initialize_three_centers_exchange_triangle(runner_tz_sorted_symmetrized_simplified, Jfirst);
-            //                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted_symmetrized_simplified);
-            //            }
+            // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
+            {}  // TZ_SORTER + SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
+            {}  // SYMMETRIZER + TZ_SORTER + NON_ABELIAN_SIMPLIFIER
+            {}  // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER + TZ_SORTER
+            {}
         }
     }
 }

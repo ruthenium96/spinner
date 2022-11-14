@@ -9,7 +9,7 @@ void ModelOptimizationListConsistence::check(
         // ...if spins invariant to group elements:
         checkMultiplicitiesGroupConsistence(model.getIndexConverter().get_mults(), group);
         // ...if Hamiltonian terms invariant to group elements:
-        checkAllSymbolNamesGroupConsistence(model.getSymbols(), group);
+        checkAllSymbolNamesGroupConsistence(model.getSymbolicWorker(), group);
     }
 }
 
@@ -33,7 +33,7 @@ void ModelOptimizationListConsistence::checkMultiplicitiesGroupConsistence(
 }
 
 void ModelOptimizationListConsistence::checkAllSymbolNamesGroupConsistence(
-    const model::symbols::Symbols& symbols,
+    const model::symbols::SymbolicWorker& symbols,
     const group::Group& group) {
     if (symbols.isIsotropicExchangeInitialized()) {
         for (const auto& element : group.getElements()) {

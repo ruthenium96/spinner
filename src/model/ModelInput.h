@@ -5,19 +5,19 @@
 
 #include "src/common/Quantity.h"
 #include "src/model/operators/Operator.h"
-#include "src/model/symbols/Symbols.h"
+#include "src/model/symbols/SymbolicWorker.h"
 namespace model {
-// class ModelInput is responsible for user input: Symbols and Multiplicities
+// class ModelInput is responsible for user input: SymbolicWorker and Multiplicities
 class ModelInput {
   public:
     explicit ModelInput(const std::vector<int>& mults);
 
-    const symbols::Symbols& getSymbols() const;
-    symbols::Symbols& getSymbols();
+    const symbols::SymbolicWorker& getSymbolicWorker() const;
+    symbols::SymbolicWorker& modifySymbolicWorker();
     const std::vector<int>& getMults() const;
 
   private:
-    symbols::Symbols symbols_;
+    symbols::SymbolicWorker symbols_;
     std::vector<int> mults_;
 };
 }  // namespace model

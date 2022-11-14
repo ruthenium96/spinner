@@ -254,10 +254,10 @@ void Runner::BuildMuSquaredWorker() {
 
     std::unique_ptr<magnetic_susceptibility::worker::AbstractWorker> magnetic_susceptibility_worker;
 
-    if (getSymbols().isAllGFactorsEqual()) {
+    if (getSymbolicWorker().isAllGFactorsEqual() && !getSymbolicWorker().isZFSInitialized()) {
         // and there is no field
         // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
-        double g_factor = getSymbols().getGFactorParameters()->at(0);
+        double g_factor = getModel().getNumericalWorker().getGFactorParameters()->at(0);
         auto s_squared_vector = algebraDataFactory_->createVector();
 
         // TODO: check if s_squared has been initialized
@@ -285,11 +285,11 @@ void Runner::BuildMuSquaredWorker() {
                 std::move(g_sz_squared_vector));
     }
 
-    if (getSymbols().isThetaInitialized()) {
+    if (getSymbolicWorker().isThetaInitialized()) {
         magnetic_susceptibility_worker =
             std::make_unique<magnetic_susceptibility::worker::CurieWeissWorker>(
                 std::move(magnetic_susceptibility_worker),
-                getSymbols().getThetaParameter());
+                getModel().getNumericalWorker().getThetaParameter());
     }
 
     magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
@@ -327,7 +327,8 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
 
     std::map<model::symbols::SymbolName, double> answer;
 
-    for (const auto& changeable_symbol : getSymbols().getChangeableNames(model::symbols::J)) {
+    for (const auto& changeable_symbol :
+         getSymbolicWorker().getChangeableNames(model::symbols::J)) {
         auto derivative_vector = algebraDataFactory_->createVector();
         for (const auto& subspectrum :
              getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
@@ -365,9 +366,9 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
     }
 
     // Theta calculation:
-    if (!getSymbols().getChangeableNames(model::symbols::Theta).empty()) {
+    if (!getSymbolicWorker().getChangeableNames(model::symbols::Theta).empty()) {
         model::symbols::SymbolName Theta_name =
-            getSymbols().getChangeableNames(model::symbols::Theta)[0];
+            getSymbolicWorker().getChangeableNames(model::symbols::Theta)[0];
         auto empty_map = std::
             map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>();
         double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
@@ -382,11 +383,12 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
 
 void Runner::minimizeResidualError(
     std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> solver) {
-    std::vector<model::symbols::SymbolName> changeable_names = getSymbols().getChangeableNames();
+    std::vector<model::symbols::SymbolName> changeable_names =
+        getSymbolicWorker().getChangeableNames();
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
     for (const model::symbols::SymbolName& name : changeable_names) {
-        changeable_values.push_back(getSymbols().getValueOfName(name));
+        changeable_values.push_back(getSymbolicWorker().getValueOfName(name));
     }
 
     if (solver->doesGradientsRequired()) {
@@ -414,10 +416,9 @@ double Runner::stepOfRegression(
     const std::vector<double>& changeable_values,
     std::vector<double>& gradient,
     bool isGradientRequired) {
-    // At first, update actual values in Symbols:
+    // At first, update actual values in SymbolicWorker:
     for (size_t i = 0; i < changeable_names.size(); ++i) {
-        // TODO: mutable use of Model/Symbols. Refactor it.
-        getModel().getSymbols().setNewValueToChangeableSymbol(
+        getModel().getNumericalWorker().setNewValueToChangeableSymbol(
             changeable_names[i],
             changeable_values[i]);
     }
@@ -438,7 +439,7 @@ double Runner::stepOfRegression(
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
-    double residual_error = magnetic_susceptibility_controller_.value().calculateResidualError();
+    double residual_error = getMagneticSusceptibilityController().calculateResidualError();
 
     //std::cout << "R^2 = " << residual_error << std::endl << std::endl;
 
@@ -458,12 +459,13 @@ void Runner::initializeDerivatives() {
     consistentModelOptimizationList_.getModel().InitializeDerivatives();
     if (getModel().is_isotropic_exchange_derivatives_initialized()) {
         for (const auto& symbol :
-             getSymbols().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
+             getSymbolicWorker().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
             derivatives_map_[{common::Energy, symbol}] = common::Quantity();
         }
     }
     if (getModel().is_g_sz_squared_derivatives_initialized()) {
-        for (const auto& symbol : getSymbols().getChangeableNames(model::symbols::g_factor)) {
+        for (const auto& symbol :
+             getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
             derivatives_map_[{common::gSz_total_squared, symbol}] = common::Quantity();
         }
     }
@@ -474,8 +476,8 @@ Runner::getMagneticSusceptibilityController() const {
     return magnetic_susceptibility_controller_.value();
 }
 
-const model::symbols::Symbols& Runner::getSymbols() const {
-    return getModel().getSymbols();
+const model::symbols::SymbolicWorker& Runner::getSymbolicWorker() const {
+    return getModel().getSymbolicWorker();
 }
 
 const model::Model& Runner::getModel() const {

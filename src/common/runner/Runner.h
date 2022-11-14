@@ -37,10 +37,6 @@ class Runner {
     // TODO: This function is public only for tests. Fix it?
     void initializeDerivatives();
 
-    // SPACE OPERATIONS
-
-    // SYMBOLS OPERATIONS
-
     // MATRIX OPERATIONS
     void BuildMatrices();
 
@@ -72,7 +68,7 @@ class Runner {
         const model::symbols::SymbolName&) const;
     const magnetic_susceptibility::MagneticSusceptibilityController&
     getMagneticSusceptibilityController() const;
-    const model::symbols::Symbols& getSymbols() const;
+    const model::symbols::SymbolicWorker& getSymbolicWorker() const;
 
     std::shared_ptr<quantum::linear_algebra::AbstractFactory> getAlgebraDataFactory() const;
 

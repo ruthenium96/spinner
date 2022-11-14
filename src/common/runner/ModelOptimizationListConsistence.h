@@ -16,17 +16,17 @@ class ModelOptimizationListConsistence {
     // This function checks if multiplicities are invariant to all elements from the group.
     static void
     checkMultiplicitiesGroupConsistence(const std::vector<int>&, const group::Group& group);
-    // This function checks if all SymbolNames from Symbols are invariant to all elements from the group.
+    // This function checks if all SymbolNames from SymbolicWorker are invariant to all elements from the group.
     static void checkAllSymbolNamesGroupConsistence(
-        const model::symbols::Symbols& symbols,
+        const model::symbols::SymbolicWorker& symbols,
         const group::Group& group);
     // This function checks if two-center SymbolNames set are invariant to element permutation.
-    // It requires getter from Symbols, for example, getIsotropicExchangeSymbolName.
+    // It requires getter from SymbolicWorker, for example, getIsotropicExchangeSymbolName.
     static bool checkSymbolNamesGroupElementConsistence(
         const std::function<std::optional<model::symbols::SymbolName>(size_t, size_t j)>& getter,
         group::Permutation element);
     // This function checks if one-center SymbolNames set are invariant to element permutation.
-    // It requires getter from Symbols, for example, getGFactorSymbolName.
+    // It requires getter from SymbolicWorker, for example, getGFactorSymbolName.
     static bool checkSymbolNamesGroupElementConsistence(
         const std::function<model::symbols::SymbolName(size_t)>& getter,
         group::Permutation element);

@@ -28,9 +28,9 @@ TEST(simple_analytical_dependencies, nothing) {
             {
                 model::ModelInput model(mults);
                 double g_value = g_exact;
-                auto g = model.getSymbols().addSymbol("g", g_value);
+                auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
                 for (size_t i = 0; i < mults.size(); ++i) {
-                    model.getSymbols().assignSymbolToGFactor(g, i);
+                    model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
                 }
 
                 runner::Runner runner(model);
@@ -70,12 +70,12 @@ TEST(simple_analytical_dependencies, Theta) {
 
             {
                 model::ModelInput model(mults);
-                auto Theta = model.getSymbols().addSymbol("Theta", Theta_exact);
-                model.getSymbols().assignSymbolToTheta(Theta);
+                auto Theta = model.modifySymbolicWorker().addSymbol("Theta", Theta_exact);
+                model.modifySymbolicWorker().assignSymbolToTheta(Theta);
                 double g_value = g_exact;
-                auto g = model.getSymbols().addSymbol("g", g_value);
+                auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
                 for (size_t i = 0; i < mults.size(); ++i) {
-                    model.getSymbols().assignSymbolToGFactor(g, i);
+                    model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
                 }
 
                 runner::Runner runner(model);

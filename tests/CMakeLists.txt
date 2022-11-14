@@ -27,10 +27,10 @@ add_executable(spinner_test
         unit_tests/interactions_test.cpp
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
-        matrix_and_spectrum_builders_tests.cpp
+        unit_tests/matrix_and_spectrum_builders_tests.cpp
         non_hamiltonian_operators_tests.cpp
         unit_tests/magnetic_susceptibility_tests.cpp
-        )
+        integration_tests/spectrum_builder_tests.cpp)
 
 find_package(Armadillo)
 find_package(Eigen3 3.3)

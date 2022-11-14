@@ -7,7 +7,8 @@ add_library(model
         operators/terms/SzSzOneCenterTerm.cpp operators/terms/SzSzOneCenterTerm.h
         operators/terms/LocalSSquaredOneCenterTerm.cpp operators/terms/LocalSSquaredOneCenterTerm.h
         operators/terms/Term.h
-        symbols/Symbols.h symbols/Symbols.cpp
+        symbols/SymbolicWorker.h symbols/SymbolicWorker.cpp
+        symbols/NumericalWorker.cpp symbols/NumericalWorker.h
         symbols/SymbolName.h symbols/SymbolName.cpp
         Model.cpp Model.h)
 

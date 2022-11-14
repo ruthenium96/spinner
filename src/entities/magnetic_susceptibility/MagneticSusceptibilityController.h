@@ -3,7 +3,7 @@
 
 #include "src/entities/data_structures/AbstractVector.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
-#include "src/model/symbols/Symbols.h"
+#include "src/model/symbols/SymbolicWorker.h"
 #include "worker/AbstractWorker.h"
 
 // TODO: is it true?

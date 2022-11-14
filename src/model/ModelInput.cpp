@@ -6,11 +6,11 @@ namespace model {
 
 ModelInput::ModelInput(const std::vector<int>& mults) : symbols_(mults.size()), mults_(mults) {}
 
-const symbols::Symbols& ModelInput::getSymbols() const {
+const symbols::SymbolicWorker& ModelInput::getSymbolicWorker() const {
     return symbols_;
 }
 
-symbols::Symbols& ModelInput::getSymbols() {
+symbols::SymbolicWorker& ModelInput::modifySymbolicWorker() {
     return symbols_;
 }
 const std::vector<int>& ModelInput::getMults() const {

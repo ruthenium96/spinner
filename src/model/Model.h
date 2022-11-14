@@ -2,6 +2,7 @@
 #define SPINNER_MODEL_H
 
 #include "ModelInput.h"
+#include "symbols/NumericalWorker.h"
 
 namespace model {
 
@@ -12,7 +13,9 @@ class Model {
     void InitializeDerivatives();
 
     // TODO: remove it?
-    const symbols::Symbols& getSymbols() const;
+    const symbols::SymbolicWorker& getSymbolicWorker() const;
+    const symbols::NumericalWorker& getNumericalWorker() const;
+    symbols::NumericalWorker& getNumericalWorker();
 
     bool is_s_squared_initialized() const;
     bool is_g_sz_squared_initialized() const;
@@ -26,8 +29,7 @@ class Model {
     const lexicographic::IndexConverter& getIndexConverter() const;
 
   private:
-    // TODO: make it const
-    ModelInput modelInput_;
+    symbols::NumericalWorker numericalWorker_;
     const lexicographic::IndexConverter converter_;
     struct OperatorsHistory {
         bool isotropic_exchange_in_hamiltonian = false;
@@ -38,8 +40,6 @@ class Model {
         bool zfs_in_hamiltonian = false;
     };
     OperatorsHistory operators_history_;
-
-    symbols::Symbols& getSymbols();
 
     void InitializeIsotropicExchange();
     void InitializeIsotropicExchangeDerivatives();

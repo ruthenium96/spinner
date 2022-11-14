@@ -4,13 +4,12 @@
 #include "src/common/Quantity.h"
 #include "src/entities/data_structures/AbstractVector.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
-#include "src/model/symbols/Symbols.h"
+#include "src/model/symbols/SymbolicWorker.h"
 
 namespace magnetic_susceptibility::worker {
 class AbstractWorker {
   public:
     // Different cases lead to different approaches of calculating <S2>.
-    // TODO: is <S2> required in all cases?
     virtual double calculateTheoreticalMuSquared(double temperature) const = 0;
     virtual std::shared_ptr<ExperimentalValuesWorker> getExperimentalValuesWorker() = 0;
     virtual std::shared_ptr<const ExperimentalValuesWorker> getExperimentalValuesWorker() const = 0;

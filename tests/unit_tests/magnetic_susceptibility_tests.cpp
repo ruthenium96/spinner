@@ -69,12 +69,12 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
     std::vector<int> mults = {2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
-    auto J = model.getSymbols().addSymbol("J", J_value);
-    model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+    model.modifySymbolicWorker().assignSymbolToIsotropicExchange(J, 0, 1);
     double g_value = 2.0;
-    auto g = model.getSymbols().addSymbol("g", g_value);
+    auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
     for (size_t i = 0; i < mults.size(); ++i) {
-        model.getSymbols().assignSymbolToGFactor(g, i);
+        model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
     }
 
     runner::Runner runner(model);
@@ -93,12 +93,12 @@ TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
     std::vector<int> mults = {2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
-    auto J = model.getSymbols().addSymbol("J", J_value);
-    model.getSymbols().assignSymbolToIsotropicExchange(J, 0, 1);
+    auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+    model.modifySymbolicWorker().assignSymbolToIsotropicExchange(J, 0, 1);
     double g_value = 2.0;
-    auto g = model.getSymbols().addSymbol("g", g_value);
+    auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
     for (size_t i = 0; i < mults.size(); ++i) {
-        model.getSymbols().assignSymbolToGFactor(g, i);
+        model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
     }
 
     runner::Runner runner(model);
@@ -166,9 +166,9 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
 
         {
             model::ModelInput model(mults);
-            auto g = model.getSymbols().addSymbol("g", g_factor);
+            auto g = model.modifySymbolicWorker().addSymbol("g", g_factor);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.getSymbols().assignSymbolToGFactor(g, i);
+                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -187,13 +187,13 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_different;
         {
             model::ModelInput model(mults);
-            auto g_one = model.getSymbols().addSymbol("g1", g_factor);
-            auto g_two = model.getSymbols().addSymbol("g2", g_factor);
+            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_factor);
+            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_factor);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.getSymbols().assignSymbolToGFactor(g_one, i);
+                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.getSymbols().assignSymbolToGFactor(g_two, i);
+                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);
@@ -235,16 +235,16 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
 
         {
             model::ModelInput model(mults);
-            auto J = model.getSymbols().addSymbol("J", J_exact);
-            model.getSymbols()
+            auto J = model.modifySymbolicWorker().addSymbol("J", J_exact);
+            model.modifySymbolicWorker()
                 .assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
 
-            auto g = model.getSymbols().addSymbol("g", g_factor);
+            auto g = model.modifySymbolicWorker().addSymbol("g", g_factor);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.getSymbols().assignSymbolToGFactor(g, i);
+                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -263,19 +263,19 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_different;
         {
             model::ModelInput model(mults);
-            auto J = model.getSymbols().addSymbol("J", J_exact);
-            model.getSymbols()
+            auto J = model.modifySymbolicWorker().addSymbol("J", J_exact);
+            model.modifySymbolicWorker()
                 .assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
-            auto g_one = model.getSymbols().addSymbol("g1", g_factor);
-            auto g_two = model.getSymbols().addSymbol("g2", g_factor);
+            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_factor);
+            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_factor);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.getSymbols().assignSymbolToGFactor(g_one, i);
+                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.getSymbols().assignSymbolToGFactor(g_two, i);
+                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);
@@ -304,16 +304,16 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
 model::ModelInput
 constructFourCenterModel_g_J(const std::vector<int>& mults, double J_value, double g_value) {
     model::ModelInput model(mults);
-    auto J = model.getSymbols().addSymbol("J", J_value);
-    model.getSymbols()
+    auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+    model.modifySymbolicWorker()
         .assignSymbolToIsotropicExchange(J, 0, 1)
         .assignSymbolToIsotropicExchange(J, 1, 2)
         .assignSymbolToIsotropicExchange(J, 2, 3)
         .assignSymbolToIsotropicExchange(J, 3, 0);
 
-    auto g = model.getSymbols().addSymbol("g", g_value);
+    auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
     for (size_t i = 0; i < mults.size(); ++i) {
-        model.getSymbols().assignSymbolToGFactor(g, i);
+        model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
     }
     return model;
 }
@@ -387,8 +387,8 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
             runner.BuildSpectra();
             runner.BuildMuSquaredWorker();
 
-            auto J = runner.getSymbols().getChangeableNames(model::symbols::J)[0];
-            auto g = runner.getSymbols().getChangeableNames(model::symbols::g_factor)[0];
+            auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
+            auto g = runner.getSymbolicWorker().getChangeableNames(model::symbols::g_factor)[0];
 
             auto derivative_map = runner.calculateTotalDerivatives();
             analytical_dR2_wrt_dJ = derivative_map[J];
