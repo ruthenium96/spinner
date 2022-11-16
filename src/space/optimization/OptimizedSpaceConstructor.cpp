@@ -61,7 +61,7 @@ Space OptimizedSpaceConstructor::construct(
     if (!spaceIsNormalized) {
         for (auto& subspace : space.getBlocks()) {
             // TODO: maybe, we can implement normalize as Space method
-            subspace.decomposition.normalize();
+            subspace.decomposition->normalize();
         }
     }
 

@@ -244,7 +244,7 @@ void Runner::BuildMuSquaredWorker() {
     auto energy_vector = algebraDataFactory_->createVector();
     auto degeneracy_vector = algebraDataFactory_->createVector();
 
-    for (const auto& subspectrum : energy.spectrum_.blocks) {
+    for (const auto& subspectrum : getSpectrum(common::Energy).blocks) {
         energy_vector->concatenate_with(subspectrum.raw_data);
         degeneracy_vector->add_identical_values(
             subspectrum.raw_data->size(),
@@ -261,7 +261,7 @@ void Runner::BuildMuSquaredWorker() {
         auto s_squared_vector = algebraDataFactory_->createVector();
 
         // TODO: check if s_squared has been initialized
-        for (const auto& subspectrum : s_squared->spectrum_.blocks) {
+        for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
             s_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 
@@ -274,7 +274,7 @@ void Runner::BuildMuSquaredWorker() {
     } else {
         auto g_sz_squared_vector = algebraDataFactory_->createVector();
         // TODO: check if g_sz_squared has been initialized
-        for (const auto& subspectrum : g_sz_squared->spectrum_.blocks) {
+        for (const auto& subspectrum : getSpectrum(common::gSz_total_squared).blocks) {
             g_sz_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 

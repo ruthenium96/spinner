@@ -15,7 +15,8 @@ class LocalSSquaredOneCenterTerm: public OneCenterTerm {
         double prefactor);
     std::unique_ptr<OneCenterTerm> clone() const override;
     void construct(
-        UnitarySparseMatrix& matrix_in_lexicografical_basis,
+        std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>&
+            matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
         uint32_t center_a) const override;
 

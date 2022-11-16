@@ -5,29 +5,30 @@
 size_t number_of_vectors(const space::Space& space) {
     size_t acc = 0;
     for (const auto& subspace : space.getBlocks()) {
-        acc += subspace.decomposition.size();
+        acc += subspace.decomposition->size();
     }
     return acc;
 }
 
 bool orthogonality_of_basis(const space::Space& space) {
-    UnitarySparseMatrix unitary_matrix;
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix> unitary_matrix =
+        quantum::linear_algebra::AbstractSparseMatrix::defaultSparseMatrix();
     for (const auto& subspace : space.getBlocks()) {
-        unitary_matrix.copy_all_from(subspace.decomposition);
+        unitary_matrix->copy_all_from(subspace.decomposition);
     }
     bool answer = true;
 #pragma omp parallel for shared(space, unitary_matrix, answer) default(none)
-    for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix.size();
+    for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix->size();
          ++index_of_vector_i) {
         for (size_t index_of_vector_j = index_of_vector_i + 1;
-             index_of_vector_j < unitary_matrix.size();
+             index_of_vector_j < unitary_matrix->size();
              ++index_of_vector_j) {
             double accumulator = 0;
-            auto iterator = unitary_matrix.GetNewIterator(index_of_vector_i);
+            auto iterator = unitary_matrix->GetNewIterator(index_of_vector_i);
             while (iterator->hasNext()) {
                 auto item = iterator->getNext();
-                if (!unitary_matrix.is_zero(index_of_vector_j, item.index)) {
-                    accumulator += item.value * unitary_matrix(index_of_vector_j, item.index);
+                if (!unitary_matrix->is_zero(index_of_vector_j, item.index)) {
+                    accumulator += item.value * unitary_matrix->at(index_of_vector_j, item.index);
                 }
             }
             // TODO: epsilon
@@ -100,7 +101,7 @@ TEST(symmetrizer, 333) {
         EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
         EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
     }
-    // S3 * the same S3 (tricky)
+    // S3 * the same S3 (but different generators)
     {
         common::physical_optimization::OptimizationList optimizationList;
         optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}})
@@ -158,7 +159,7 @@ TEST(symmetrizer, 333333) {
                         == subspace_second.properties.representation[1]
                     && subspace_first.properties.representation[1]
                         == subspace_second.properties.representation[0]) {
-                    EXPECT_TRUE(subspace_first.decomposition.is_equal_up_to_vector_order(
+                    EXPECT_TRUE(subspace_first.decomposition->is_equal_up_to_vector_order(
                         subspace_second.decomposition));
                 }
             }

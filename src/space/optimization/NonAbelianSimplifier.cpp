@@ -21,10 +21,10 @@ Space NonAbelianSimplifier::apply(Space&& space) const {
         block_properties.degeneracy *= old_dimensionality;
         vector_result[i].properties = block_properties;
 
-        for (size_t j = 0; j < subspace_parent.decomposition.size(); j = j + old_dimensionality) {
-            vector_result[i].decomposition.move_vector_from(j, subspace_parent.decomposition);
+        for (size_t j = 0; j < subspace_parent.decomposition->size(); j = j + old_dimensionality) {
+            vector_result[i].decomposition->move_vector_from(j, subspace_parent.decomposition);
         }
-        subspace_parent.decomposition.clear();
+        subspace_parent.decomposition->clear();
     }
     return Space(std::move(vector_result));
 }

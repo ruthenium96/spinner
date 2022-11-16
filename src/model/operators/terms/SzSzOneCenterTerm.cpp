@@ -9,7 +9,7 @@ std::unique_ptr<OneCenterTerm> SzSzOneCenterTerm::clone() const {
 }
 
 void SzSzOneCenterTerm::construct(
-    UnitarySparseMatrix& matrix_in_lexicografical_basis,
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a) const {
     double factor = coefficients_->at(center_a);
@@ -21,7 +21,7 @@ void SzSzOneCenterTerm::construct(
         // Saz Saz
         double diagonal_value = (projection_of_center_a - converter_.get_spins()[center_a])
             * (projection_of_center_a - converter_.get_spins()[center_a]) * factor;
-        matrix_in_lexicografical_basis.add_to_position(
+        matrix_in_lexicografical_basis->add_to_position(
             diagonal_value,
             index_of_vector,
             index_of_vector);

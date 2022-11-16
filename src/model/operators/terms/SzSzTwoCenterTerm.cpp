@@ -19,7 +19,7 @@ SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     prefactor_(prefactor) {}
 
 void SzSzTwoCenterTerm::construct(
-    UnitarySparseMatrix& matrix_in_lexicografical_basis,
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a,
     uint32_t center_b) const {
@@ -32,7 +32,7 @@ void SzSzTwoCenterTerm::construct(
     // Saz Sbz
     double diagonal_value = (projection_of_center_a - converter_.get_spins()[center_a])
         * (projection_of_center_b - converter_.get_spins()[center_b]) * factor;
-    matrix_in_lexicografical_basis.add_to_position(
+    matrix_in_lexicografical_basis->add_to_position(
         diagonal_value,
         index_of_vector,
         index_of_vector);

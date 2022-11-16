@@ -1,5 +1,7 @@
+# TODO: implement other sparse matrices:
 add_library(data_structures
-        std/UnitarySparseMatrix_std-vector_of_std-maps.cpp
+        std/StdSparseMatrix.cpp
+        std/StdSparseAsDefault.cpp
         )
 
 message("Trying to find packages of linear algebra...")

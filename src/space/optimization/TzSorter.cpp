@@ -18,17 +18,17 @@ Space TzSorter::apply(Space&& space) const {
             vector_result[(max_ntz_proj + 1) * i + ntz_proj].properties = block_properties;
         }
 
-        for (uint32_t l = 0; l < subspace_parent.decomposition.size(); ++l) {
+        for (uint32_t l = 0; l < subspace_parent.decomposition->size(); ++l) {
             // Value of total projection is calculated from the first index of map.
             // NB: there is no validation of the fact, that all indexes of decomposition
             // correspond to the same projection value, user should check it yourself.
-            uint32_t index = subspace_parent.decomposition.GetNewIterator(l)->getNext().index;
+            uint32_t index = subspace_parent.decomposition->GetNewIterator(l)->getNext().index;
             uint8_t ntz_proj = converter_.convert_lex_index_to_tz_projection(index);
             size_t j = (max_ntz_proj + 1) * i + ntz_proj;
-            vector_result[j].decomposition.move_vector_from(l, subspace_parent.decomposition);
+            vector_result[j].decomposition->move_vector_from(l, subspace_parent.decomposition);
         }
 
-        subspace_parent.decomposition.clear();
+        subspace_parent.decomposition->clear();
     }
 
     return Space(std::move(vector_result));

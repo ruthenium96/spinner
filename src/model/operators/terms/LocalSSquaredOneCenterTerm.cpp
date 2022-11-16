@@ -9,7 +9,7 @@ std::unique_ptr<OneCenterTerm> LocalSSquaredOneCenterTerm::clone() const {
     return std::make_unique<LocalSSquaredOneCenterTerm>(converter_, coefficients_, prefactor_);
 }
 void LocalSSquaredOneCenterTerm::construct(
-    UnitarySparseMatrix& matrix_in_lexicografical_basis,
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a) const {
     double factor = coefficients_->at(center_a) * prefactor_;
@@ -18,7 +18,7 @@ void LocalSSquaredOneCenterTerm::construct(
         double spin = converter_.get_spins()[center_a];
 
         double diagonal_value = factor * spin * (spin + 1);
-        matrix_in_lexicografical_basis.add_to_position(
+        matrix_in_lexicografical_basis->add_to_position(
             diagonal_value,
             index_of_vector,
             index_of_vector);

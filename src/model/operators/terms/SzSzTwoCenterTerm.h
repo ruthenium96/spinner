@@ -14,7 +14,8 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
         std::shared_ptr<const TwoDNumericalParameters<double>> parameters);
     std::unique_ptr<TwoCenterTerm> clone() const override;
     void construct(
-        UnitarySparseMatrix& matrix_in_lexicografical_basis,
+        std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>&
+            matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
         uint32_t center_a,
         uint32_t center_b) const override;

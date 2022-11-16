@@ -13,18 +13,19 @@ Submatrix::Submatrix(
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter,
     const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
-    UnitarySparseMatrix matrix_in_lexicografical_basis;
-    matrix_in_lexicografical_basis.resize(converter.get_total_space_size());
+    auto matrix_in_lexicografical_basis =
+        quantum::linear_algebra::AbstractSparseMatrix::defaultSparseMatrix();
+    matrix_in_lexicografical_basis->resize(converter.get_total_space_size());
     std::unordered_set<unsigned int> built_lexicografical_vectors;
 
-    size_t matrix_in_space_basis_size = subspace.decomposition.size();
+    size_t matrix_in_space_basis_size = subspace.decomposition->size();
     properties = subspace.properties;
     raw_data = factory->createMatrix();
     raw_data->resize(matrix_in_space_basis_size, matrix_in_space_basis_size);
 
     for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size;
          ++index_of_space_vector_i) {
-        auto outer_iterator = subspace.decomposition.GetNewIterator(index_of_space_vector_i);
+        auto outer_iterator = subspace.decomposition->GetNewIterator(index_of_space_vector_i);
         while (outer_iterator->hasNext()) {
             auto outer_item = outer_iterator->getNext();
             uint32_t index_of_lexicographic_vector_k = outer_item.index;
@@ -60,13 +61,14 @@ Submatrix::Submatrix(
                  index_of_space_vector_j < matrix_in_space_basis_size;
                  ++index_of_space_vector_j) {
                 auto inner_iterator =
-                    subspace.decomposition.GetNewIterator(index_of_space_vector_j);
+                    subspace.decomposition->GetNewIterator(index_of_space_vector_j);
                 while (inner_iterator->hasNext()) {
                     auto inner_item = inner_iterator->getNext();
                     uint32_t index_of_lexicographic_vector_l = inner_item.index;
-                    double value_in_matrix_in_lexicografical_basis = matrix_in_lexicografical_basis(
-                        index_of_lexicographic_vector_k,
-                        index_of_lexicographic_vector_l);
+                    double value_in_matrix_in_lexicografical_basis =
+                        matrix_in_lexicografical_basis->at(
+                            index_of_lexicographic_vector_k,
+                            index_of_lexicographic_vector_l);
                     if (value_in_matrix_in_lexicografical_basis != 0) {
                         raw_data->add_to_position(
                             outer_item.value * value_in_matrix_in_lexicografical_basis
