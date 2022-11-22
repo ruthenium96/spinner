@@ -4,13 +4,13 @@
 #include <src/entities/data_structures/AbstractFactory.h>
 
 #include "src/entities/BlockProperties.h"
-#include "src/entities/data_structures/AbstractMatrix.h"
+#include "src/entities/data_structures/AbstractDenseMatrix.h"
 #include "src/model/operators/Operator.h"
 #include "src/space/Subspace.h"
 
 struct Submatrix {
     BlockProperties properties;
-    std::unique_ptr<quantum::linear_algebra::AbstractMatrix> raw_data;
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix> raw_data;
 
     Submatrix() = delete;
 

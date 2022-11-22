@@ -400,7 +400,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_222222_JAF_g_fixed_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
-    std::uniform_real_distribution<double> J_dist(-200, -0.1);
+    std::uniform_real_distribution<double> J_dist(-100, -10);
     std::uniform_real_distribution<double> g_one_dist(1.8, 2.0);
     std::uniform_real_distribution<double> g_two_dist(2.8, 3.0);
 
@@ -443,7 +443,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
         {
             model::ModelInput model(mults);
-            double J_value = -10.0;
+            double J_value = -50.0;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
             this->initializeJRing(model, J);
             double g_two_value = 3.0;
@@ -481,7 +481,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_3333_JAF_D_fixed_g) {
     std::random_device dev;
     std::mt19937 rng(dev());
-    std::uniform_real_distribution<double> J_dist(-200, -0.1);
+    std::uniform_real_distribution<double> J_dist(-100, -10);
     std::uniform_real_distribution<double> D_dist(5, +50);
     std::uniform_real_distribution<double> g_dist(1.8, 3.0);
 
@@ -521,7 +521,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_3333_
 
         {
             model::ModelInput model(mults);
-            double J_value = -10.0;
+            double J_value = -50.0;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
             this->initializeJRing(model, J);
             double D_value = 20;

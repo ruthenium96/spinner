@@ -369,7 +369,7 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
         double analytical_dR2_wrt_dg;
 
         double delta_J = 1e-5;
-        double delta_g = 1e-5;
+        double delta_g = 1e-8;
         double finite_difference_dR2_wrt_dJ;
         double finite_difference_dR2_wrt_dg;
 
@@ -411,8 +411,12 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
         double dR2_wrt_dJ_range = std::abs(analytical_dR2_wrt_dJ / 1000);
         double dR2_wrt_dg_range = std::abs(analytical_dR2_wrt_dg / 1000);
 
-        EXPECT_NEAR(analytical_dR2_wrt_dJ, finite_difference_dR2_wrt_dJ, dR2_wrt_dJ_range);
-        EXPECT_NEAR(analytical_dR2_wrt_dg, finite_difference_dR2_wrt_dg, dR2_wrt_dg_range);
+        EXPECT_NEAR(analytical_dR2_wrt_dJ, finite_difference_dR2_wrt_dJ, dR2_wrt_dJ_range)
+            << "J_exact = " << J_exact << "\n"
+            << "g_exact = " << g_factor << "\n";
+        EXPECT_NEAR(analytical_dR2_wrt_dg, finite_difference_dR2_wrt_dg, dR2_wrt_dg_range)
+            << "J_exact = " << J_exact << "\n"
+            << "g_exact = " << g_factor << "\n";
     }
 }
 
