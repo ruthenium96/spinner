@@ -2,7 +2,7 @@
 #define SPINNER_ABSTRACTWORKER_H
 
 #include "src/common/Quantity.h"
-#include "src/entities/data_structures/AbstractVector.h"
+#include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/model/symbols/SymbolicWorker.h"
 
@@ -19,8 +19,9 @@ class AbstractWorker {
     // d<A>/dsymbol
     virtual std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
-            values_derivatives_map) const = 0;
+        std::
+            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
+                values_derivatives_map) const = 0;
 
     virtual ~AbstractWorker() = default;
 };

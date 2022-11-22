@@ -9,20 +9,21 @@ namespace magnetic_susceptibility::worker {
 class UniqueGOnlySSquaredWorker: public BasicWorker {
   public:
     UniqueGOnlySSquaredWorker(
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy,
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& s_squared,
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy,
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& s_squared,
         double g_unique);
 
     double calculateTheoreticalMuSquared(double temperature) const override;
     std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
-            values_derivatives_map) const override;
+        std::
+            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
+                values_derivatives_map) const override;
 
   private:
     double g_unique_;
-    std::unique_ptr<quantum::linear_algebra::AbstractVector> s_squared_;
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> s_squared_;
 };
 
 }  // namespace magnetic_susceptibility

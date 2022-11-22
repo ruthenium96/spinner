@@ -2,16 +2,16 @@
 #define SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H
 
 #include "gtest/gtest.h"
-#include "src/entities/data_structures/AbstractFactory.h"
+#include "src/entities/data_structures/AbstractDenseFactory.h"
 
 template<class T>
-std::shared_ptr<quantum::linear_algebra::AbstractFactory> createConcreteFactory();
+std::shared_ptr<quantum::linear_algebra::AbstractDenseFactory> createConcreteFactory();
 
 template<class T>
 class AbstractFactoryIndividualTest: public testing::Test {
   protected:
     AbstractFactoryIndividualTest() : factory_(createConcreteFactory<T>()) {}
-    std::shared_ptr<quantum::linear_algebra::AbstractFactory> const factory_;
+    std::shared_ptr<quantum::linear_algebra::AbstractDenseFactory> const factory_;
 };
 
 TYPED_TEST_SUITE_P(AbstractFactoryIndividualTest);

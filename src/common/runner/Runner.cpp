@@ -333,8 +333,9 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
              getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
             derivative_vector->concatenate_with(subspectrum.raw_data);
         }
-        auto derivative_map = std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>();
+        auto derivative_map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
         derivative_map[common::Energy] = std::move(derivative_vector);
         double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
             model::symbols::J,
@@ -350,8 +351,9 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
              getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
             derivative_vector->concatenate_with(subspectrum.raw_data);
         }
-        auto derivative_map = std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>();
+        auto derivative_map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
         derivative_map[common::Energy] = std::move(derivative_vector);
         double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
             model::symbols::D,
@@ -362,8 +364,9 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
 
     for (const auto& changeable_symbol :
          getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
-        auto map = std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>();
+        auto map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
         if (consistentModelOptimizationList_.getModel().is_g_sz_squared_derivatives_initialized()) {
             auto derivative_vector = algebraDataFactory_->createVector();
             for (const auto& subspectrum :
@@ -383,8 +386,9 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
     if (!getSymbolicWorker().getChangeableNames(model::symbols::Theta).empty()) {
         model::symbols::SymbolName Theta_name =
             getSymbolicWorker().getChangeableNames(model::symbols::Theta)[0];
-        auto empty_map = std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>();
+        auto empty_map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
         double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
             model::symbols::Theta,
             std::move(empty_map));

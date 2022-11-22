@@ -3,23 +3,24 @@
 
 #include <cmath>
 
-#include "src/entities/data_structures/AbstractVector.h"
+#include "src/entities/data_structures/AbstractDenseVector.h"
 
 // Calculates ensemble-averaged values using Boltzmann distribution.
 namespace magnetic_susceptibility {
 class EnsembleAverager {
   public:
     EnsembleAverager(
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
-        std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy);
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy);
     double ensemble_average(
-        const std::unique_ptr<quantum::linear_algebra::AbstractVector>& value,
+        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& value,
         double temperature) const;
 
   private:
-    std::unique_ptr<quantum::linear_algebra::AbstractVector> energy_;
-    const std::unique_ptr<quantum::linear_algebra::AbstractVector> degeneracy_;
-    mutable std::unique_ptr<quantum::linear_algebra::AbstractVector> divided_and_wise_exped_energy;
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> energy_;
+    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> degeneracy_;
+    mutable std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>
+        divided_and_wise_exped_energy;
     mutable double partition_function = NAN;
     mutable double last_temperature = NAN;
 };

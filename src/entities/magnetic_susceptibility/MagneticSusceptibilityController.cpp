@@ -53,7 +53,7 @@ double MagneticSusceptibilityController::calculateTheoreticalMuSquared(double te
 
 double MagneticSusceptibilityController::calculateTotalDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
         values_derivatives_map) const {
     std::vector<ValueAtTemperature> theoretical_derivative =
         worker_->calculateDerivative(symbol_type, std::move(values_derivatives_map));

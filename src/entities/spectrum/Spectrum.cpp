@@ -12,7 +12,7 @@ Spectrum::Spectrum(std::vector<Subspectrum>&& m) : blocks(std::move(m)) {}
 
 Spectrum Spectrum::non_energy(
     const Matrix& non_hamiltonian_matrix,
-    const std::vector<std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>&
+    const std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>&
         unitary_transformation_matrices) {
     std::vector<Subspectrum> vector_result;
     vector_result.reserve(non_hamiltonian_matrix.blocks.size());
@@ -30,10 +30,10 @@ Spectrum Spectrum::non_energy(
     return Spectrum(std::move(vector_result));
 }
 
-std::pair<Spectrum, std::vector<std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>>
+std::pair<Spectrum, std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>>
 Spectrum::energy(const Matrix& hamiltonian_matrix) {
     std::vector<Subspectrum> vector_subspectrum_result;
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>
+    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
         vector_unitary_transformation_matrices_result;
     vector_subspectrum_result.reserve(hamiltonian_matrix.blocks.size());
     vector_unitary_transformation_matrices_result.reserve(hamiltonian_matrix.blocks.size());
@@ -46,7 +46,7 @@ Spectrum::energy(const Matrix& hamiltonian_matrix) {
             std::move(unitary_transformation_matrix));
     }
 
-    std::pair<Spectrum, std::vector<std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>>
+    std::pair<Spectrum, std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>>
         answer = {
             Spectrum(std::move(vector_subspectrum_result)),
             std::move(vector_unitary_transformation_matrices_result)};

@@ -32,7 +32,7 @@ void CurieWeissWorker::setExperimentalValuesWorker(
 
 std::vector<ValueAtTemperature> CurieWeissWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
         values_derivatives_map) const {
     if (symbol_type == model::symbols::Theta) {
         std::vector<double> temperatures = getExperimentalValuesWorker()->getTemperatures();

@@ -1,28 +1,28 @@
-#ifndef SPINNER_ARMAMATRIX_H
-#define SPINNER_ARMAMATRIX_H
+#ifndef SPINNER_ARMADENSEMATRIX_H
+#define SPINNER_ARMADENSEMATRIX_H
 
 #include <armadillo>
 #include <cstdint>
 
-#include "ArmaVector.h"
-#include "src/entities/data_structures/AbstractMatrix.h"
+#include "ArmaDenseVector.h"
+#include "src/entities/data_structures/AbstractDenseMatrix.h"
 
 namespace quantum::linear_algebra {
-class ArmaFactory;
-class ArmaMatrix: public AbstractMatrix {
-    friend ArmaFactory;
+class ArmaDenseFactory;
+class ArmaDenseMatrix: public AbstractDenseMatrix {
+    friend ArmaDenseFactory;
 
   public:
     void add_to_position(double value, uint32_t i, uint32_t j) override;
     void assign_to_position(double value, uint32_t i, uint32_t j) override;
     void
     resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) override;
-    std::unique_ptr<AbstractMatrix>
-    unitary_transform(const std::unique_ptr<AbstractMatrix>& matrix_to_transform) const override;
+    std::unique_ptr<AbstractDenseMatrix> unitary_transform(
+        const std::unique_ptr<AbstractDenseMatrix>& matrix_to_transform) const override;
 
     EigenCouple diagonalizeValuesVectors() const override;
-    std::unique_ptr<AbstractVector> diagonalizeValues() const override;
-    std::unique_ptr<AbstractVector> return_main_diagonal() const override;
+    std::unique_ptr<AbstractDenseVector> diagonalizeValues() const override;
+    std::unique_ptr<AbstractDenseVector> return_main_diagonal() const override;
 
     uint32_t size() const override;
     uint32_t size_rows() const override;
@@ -33,7 +33,7 @@ class ArmaMatrix: public AbstractMatrix {
   private:
     arma::dmat matrix_;
     // c-like pointers are necessary to avoid double-free error
-    static const ArmaMatrix* downcast_ptr(const std::unique_ptr<AbstractMatrix>& ptr);
+    static const ArmaDenseMatrix* downcast_ptr(const std::unique_ptr<AbstractDenseMatrix>& ptr);
 };
 }  // namespace quantum::linear_algebra
-#endif  //SPINNER_ARMAMATRIX_H
+#endif  //SPINNER_ARMADENSEMATRIX_H

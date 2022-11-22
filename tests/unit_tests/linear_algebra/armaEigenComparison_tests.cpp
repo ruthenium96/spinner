@@ -1,11 +1,11 @@
 #include <random>
 
 #include "gtest/gtest.h"
-#include "src/entities/data_structures/arma/ArmaFactory.h"
-#include "src/entities/data_structures/eigen/EigenFactory.h"
+#include "src/entities/data_structures/arma/ArmaDenseFactory.h"
+#include "src/entities/data_structures/eigen/EigenDenseFactory.h"
 
 void multiplyColumnByMinusOne(
-    std::unique_ptr<quantum::linear_algebra::AbstractMatrix>& rhs,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& rhs,
     size_t column) {
     for (size_t i = 0; i < rhs->size_rows(); ++i) {
         rhs->assign_to_position(-rhs->at(i, column), i, column);
@@ -13,8 +13,8 @@ void multiplyColumnByMinusOne(
 }
 
 void makeUnitaryMatrixSame(
-    const std::unique_ptr<quantum::linear_algebra::AbstractMatrix>& lhs,
-    std::unique_ptr<quantum::linear_algebra::AbstractMatrix>& rhs) {
+    const std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& lhs,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& rhs) {
     for (size_t column = 0; column < lhs->size_cols(); ++column) {
         if (std::abs(lhs->at(0, column) - (-rhs->at(0, column))) < 1e-6) {
             multiplyColumnByMinusOne(rhs, column);
@@ -25,14 +25,14 @@ void makeUnitaryMatrixSame(
 // TODO: I guess, it will be better to return std::vector<> or something like that
 
 std::pair<
-    std::unique_ptr<quantum::linear_algebra::AbstractMatrix>,
-    std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
 generatePairSymmetricMatrices(
     size_t size,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
-    auto armaFactory = std::make_shared<quantum::linear_algebra::ArmaFactory>();
-    auto eigenFactory = std::make_shared<quantum::linear_algebra::EigenFactory>();
+    auto armaFactory = std::make_shared<quantum::linear_algebra::ArmaDenseFactory>();
+    auto eigenFactory = std::make_shared<quantum::linear_algebra::EigenDenseFactory>();
 
     // construct identical matrices:
     auto armaMatrix = armaFactory->createMatrix();
@@ -50,8 +50,8 @@ generatePairSymmetricMatrices(
         }
     }
     std::pair<
-        std::unique_ptr<quantum::linear_algebra::AbstractMatrix>,
-        std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
         answer;
     answer.first = std::move(armaMatrix);
     answer.second = std::move(eigenMatrix);
@@ -60,8 +60,8 @@ generatePairSymmetricMatrices(
 }
 
 std::pair<
-    std::unique_ptr<quantum::linear_algebra::AbstractMatrix>,
-    std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
 generatePairUnitaryMatrix(
     size_t size,
     std::uniform_real_distribution<double> dist,
@@ -77,8 +77,8 @@ generatePairUnitaryMatrix(
     makeUnitaryMatrixSame(armaUnitaryMatrix, eigenUnitaryMatrix);
 
     std::pair<
-        std::unique_ptr<quantum::linear_algebra::AbstractMatrix>,
-        std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
         answer;
     answer.first = std::move(armaUnitaryMatrix);
     answer.second = std::move(eigenUnitaryMatrix);

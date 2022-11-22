@@ -84,7 +84,7 @@ TEST(
             runner.getIndexConverter(),
             runner.getAlgebraDataFactory());
 
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractVector>> s_squared_values;
+        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> s_squared_values;
         s_squared_values.reserve(s_squared_matrix.blocks.size());
         for (size_t i = 0; i < s_squared_matrix.blocks.size(); ++i) {
             s_squared_values.emplace_back(s_squared_matrix.blocks[i].raw_data->diagonalizeValues());

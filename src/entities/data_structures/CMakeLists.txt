@@ -11,9 +11,9 @@ find_package(Armadillo)
 if (ARMADILLO_FOUND)
     message(" * Armadillo was found")
     add_library(arma_structures
-            arma/ArmaFactory.cpp arma/ArmaFactory.h
-            arma/ArmaMatrix.cpp arma/ArmaMatrix.h
-            arma/ArmaVector.cpp arma/ArmaVector.h
+            arma/ArmaDenseFactory.cpp arma/ArmaDenseFactory.h
+            arma/ArmaDenseMatrix.cpp arma/ArmaDenseMatrix.h
+            arma/ArmaDenseVector.cpp arma/ArmaDenseVector.h
             )
     # This include is requested sometimes:
     include_directories(${ARMADILLO_INCLUDE_DIRS})
@@ -28,9 +28,9 @@ find_package(Eigen3 3.3)
 if (Eigen3_FOUND)
     message(" * Eigen3 was found")
     add_library(eigen_structures
-            eigen/EigenFactory.cpp eigen/EigenFactory.h
-            eigen/EigenMatrix.cpp eigen/EigenMatrix.h
-            eigen/EigenVector.cpp eigen/EigenVector.h)
+            eigen/EigenDenseFactory.cpp eigen/EigenDenseFactory.h
+            eigen/EigenDenseMatrix.cpp eigen/EigenDenseMatrix.h
+            eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h)
     target_link_libraries(eigen_structures Eigen3::Eigen)
     target_link_libraries(data_structures eigen_structures)
 else ()
@@ -39,10 +39,10 @@ endif ()
 
 if (ARMADILLO_FOUND)
     message(" *** Armadillo will be used as default linear algebra package")
-    target_sources(data_structures PRIVATE arma/ArmaAsDefault.cpp)
+    target_sources(data_structures PRIVATE arma/ArmaDenseAsDefault.cpp)
 elseif (Eigen3_FOUND)
     message(" *** Eigen3 will be used as default linear algebra package")
-    target_sources(data_structures PRIVATE eigen/EigenAsDefault.cpp)
+    target_sources(data_structures PRIVATE eigen/EigenDenseAsDefault.cpp)
 else ()
     message(FATAL_ERROR "At least one linear algebra package must be installed")
 endif ()

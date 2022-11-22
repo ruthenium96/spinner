@@ -1,21 +1,21 @@
-#include "EigenFactory.h"
+#include "EigenDenseFactory.h"
 
-#include "EigenMatrix.h"
-#include "EigenVector.h"
+#include "EigenDenseMatrix.h"
+#include "EigenDenseVector.h"
 
 namespace quantum::linear_algebra {
-std::unique_ptr<AbstractMatrix> EigenFactory::createMatrix() {
-    auto matrix = std::make_unique<EigenMatrix>();
+std::unique_ptr<AbstractDenseMatrix> EigenDenseFactory::createMatrix() {
+    auto matrix = std::make_unique<EigenDenseMatrix>();
     return matrix;
 }
 
-std::unique_ptr<AbstractVector> EigenFactory::createVector() {
-    auto vector = std::make_unique<EigenVector>();
+std::unique_ptr<AbstractDenseVector> EigenDenseFactory::createVector() {
+    auto vector = std::make_unique<EigenDenseVector>();
     return vector;
 }
 
 std::vector<double>
-EigenFactory::concatenate(const std::vector<std::unique_ptr<AbstractVector>>& vectors) {
+EigenDenseFactory::concatenate(const std::vector<std::unique_ptr<AbstractDenseVector>>& vectors) {
     size_t size = 0;
     for (const auto& dense_vector : vectors) {
         size += dense_vector->size();
@@ -23,7 +23,7 @@ EigenFactory::concatenate(const std::vector<std::unique_ptr<AbstractVector>>& ve
     std::vector<double> result_vector;
     result_vector.reserve(size);
     for (auto& vector : vectors) {
-        auto vector_ = EigenVector::downcast_ptr(vector);
+        auto vector_ = EigenDenseVector::downcast_ptr(vector);
         // Until Eigen 3.4:
         result_vector.insert(
             result_vector.end(),

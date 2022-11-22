@@ -3,13 +3,13 @@
 namespace magnetic_susceptibility {
 
 EnsembleAverager::EnsembleAverager(
-    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
-    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy) :
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy) :
     energy_(std::move(energy)),
     degeneracy_(std::move(degeneracy)) {}
 
 double EnsembleAverager::ensemble_average(
-    const std::unique_ptr<quantum::linear_algebra::AbstractVector>& value,
+    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& value,
     double temperature) const {
     if (last_temperature != temperature) {
         divided_and_wise_exped_energy = energy_->divide_and_wise_exp(-1 * temperature);

@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 #include "src/common/lexicographic/IndexConverter.h"
-#include "src/entities/data_structures/AbstractFactory.h"
+#include "src/entities/data_structures/AbstractDenseFactory.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/model/operators/terms/ConstantTerm.h"
 #include "src/model/operators/terms/ScalarProductTerm.h"
@@ -18,7 +18,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
         space::Space space_(converter.get_total_space_size());
 
         // Create Factory:
-        auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
+        auto factory_ = quantum::linear_algebra::AbstractDenseFactory::defaultFactory();
 
         for (int constant = 0; constant < 100; constant += 11) {
             auto constant_ptr = std::make_shared<double>(constant);
@@ -64,7 +64,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
             std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
 
         // Create Factory:
-        auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
+        auto factory_ = quantum::linear_algebra::AbstractDenseFactory::defaultFactory();
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter, factory_);
@@ -111,7 +111,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
             std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
 
         // Create Factory:
-        auto factory_ = quantum::linear_algebra::AbstractFactory::defaultFactory();
+        auto factory_ = quantum::linear_algebra::AbstractDenseFactory::defaultFactory();
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter, factory_);

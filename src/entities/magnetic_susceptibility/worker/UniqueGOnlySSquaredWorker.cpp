@@ -2,9 +2,9 @@
 namespace magnetic_susceptibility::worker {
 
 UniqueGOnlySSquaredWorker::UniqueGOnlySSquaredWorker(
-    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& energy,
-    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& degeneracy,
-    std::unique_ptr<quantum::linear_algebra::AbstractVector>&& s_squared,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy,
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& s_squared,
     double g_unique) :
     BasicWorker(std::move(energy), std::move(degeneracy)),
     s_squared_(std::move(s_squared)),
@@ -18,7 +18,7 @@ double UniqueGOnlySSquaredWorker::calculateTheoreticalMuSquared(double temperatu
 
 std::vector<ValueAtTemperature> UniqueGOnlySSquaredWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractVector>>
+    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
         values_derivatives_map) const {
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
@@ -32,7 +32,7 @@ std::vector<ValueAtTemperature> UniqueGOnlySSquaredWorker::calculateDerivative(
         }
     } else {
         // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/da = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
-        const std::unique_ptr<quantum::linear_algebra::AbstractVector>& energy_derivative =
+        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_derivative =
             values_derivatives_map[common::Energy];
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double first_term = ensemble_averager_.ensemble_average(s_squared_, temperatures[i])

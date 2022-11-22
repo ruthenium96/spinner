@@ -13,11 +13,11 @@ struct Spectrum {
     explicit Spectrum(std::vector<Subspectrum>&& m);
 
     static std::
-        pair<Spectrum, std::vector<std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>>
+        pair<Spectrum, std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>>
         energy(const Matrix& hamiltonian_matrix);
     static Spectrum non_energy(
         const Matrix& non_hamiltonian_matrix,
-        const std::vector<std::unique_ptr<quantum::linear_algebra::AbstractMatrix>>&
+        const std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>&
             unitary_transformation_matrices);
 };
 
