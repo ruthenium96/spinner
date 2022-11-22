@@ -6,16 +6,7 @@
 #include "src/space/Space.h"
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TzSorter.h"
-
-void PerformanceTest(std::function<void(void)> f, int cycles = 1) {
-    auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < cycles; ++i) {
-        f();
-    }
-    auto finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed_once = (finish - start) / cycles;
-    std::cout << "Elapsed time: " << elapsed_once.count() << " s\n";
-}
+#include "tests/tools/MeanAndDeviation.h"
 
 TEST(performanceTest, simple2ComponentSchema) {
     std::vector<int> mults = {

@@ -1,99 +1,20 @@
 #include <random>
 
 #include "gtest/gtest.h"
-#include "src/entities/data_structures/arma/ArmaDenseFactory.h"
-#include "src/entities/data_structures/eigen/EigenDenseFactory.h"
-
-void multiplyColumnByMinusOne(
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& rhs,
-    size_t column) {
-    for (size_t i = 0; i < rhs->size_rows(); ++i) {
-        rhs->assign_to_position(-rhs->at(i, column), i, column);
-    }
-}
-
-void makeUnitaryMatrixSame(
-    const std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& lhs,
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& rhs) {
-    for (size_t column = 0; column < lhs->size_cols(); ++column) {
-        if (std::abs(lhs->at(0, column) - (-rhs->at(0, column))) < 1e-6) {
-            multiplyColumnByMinusOne(rhs, column);
-        }
-    }
-}
-
-// TODO: I guess, it will be better to return std::vector<> or something like that
-
-std::pair<
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
-generatePairSymmetricMatrices(
-    size_t size,
-    std::uniform_real_distribution<double> dist,
-    std::mt19937 rng) {
-    auto armaFactory = std::make_shared<quantum::linear_algebra::ArmaDenseFactory>();
-    auto eigenFactory = std::make_shared<quantum::linear_algebra::EigenDenseFactory>();
-
-    // construct identical matrices:
-    auto armaMatrix = armaFactory->createMatrix();
-    auto eigenMatrix = eigenFactory->createMatrix();
-    armaMatrix->resize(size, size);
-    eigenMatrix->resize(size, size);
-
-    for (size_t i = 0; i < size; ++i) {
-        for (size_t j = 0; j <= i; ++j) {
-            double value = dist(rng);
-            armaMatrix->assign_to_position(value, i, j);
-            armaMatrix->assign_to_position(value, j, i);
-            eigenMatrix->assign_to_position(value, i, j);
-            eigenMatrix->assign_to_position(value, j, i);
-        }
-    }
-    std::pair<
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
-        answer;
-    answer.first = std::move(armaMatrix);
-    answer.second = std::move(eigenMatrix);
-
-    return answer;
-}
-
-std::pair<
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
-generatePairUnitaryMatrix(
-    size_t size,
-    std::uniform_real_distribution<double> dist,
-    std::mt19937 rng) {
-    // construct symmetrical matrix:
-    auto [armaSymmetricalMatrix, eigenSymmetricalMatrix] =
-        generatePairSymmetricMatrices(size, dist, rng);
-
-    // construct unitary matrix as eigenvectors matrix:
-    auto armaUnitaryMatrix = armaSymmetricalMatrix->diagonalizeValuesVectors().eigenvectors;
-    auto eigenUnitaryMatrix = eigenSymmetricalMatrix->diagonalizeValuesVectors().eigenvectors;
-
-    makeUnitaryMatrixSame(armaUnitaryMatrix, eigenUnitaryMatrix);
-
-    std::pair<
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>,
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
-        answer;
-    answer.first = std::move(armaUnitaryMatrix);
-    answer.second = std::move(eigenUnitaryMatrix);
-
-    return answer;
-}
+#include "tests/tools/GenerateSameDenseMatrix.h"
 
 TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
-    auto [armaUnitaryMatrix, eigenUnitaryMatrix] = generatePairUnitaryMatrix(10, dist, rng);
-    auto [armaSymmetricMatrix, eigenSymmetricMatrix] = generatePairSymmetricMatrices(10, dist, rng);
+    auto unitaryMatrices = generateUnitaryMatrix(10, constructAllDenseFactories(), dist, rng);
+    auto symmetricMatrices = generateSymmetricMatrices(10, constructAllDenseFactories(), dist, rng);
 
+    auto armaUnitaryMatrix = std::move(unitaryMatrices[0]);
+    auto eigenUnitaryMatrix = std::move(unitaryMatrices[1]);
+    auto armaSymmetricMatrix = std::move(symmetricMatrices[0]);
+    auto eigenSymmetricMatrix = std::move(symmetricMatrices[1]);
     // unitary_transform
     EXPECT_ANY_THROW(eigenUnitaryMatrix->unitary_transform(armaSymmetricMatrix));
     EXPECT_ANY_THROW(armaUnitaryMatrix->unitary_transform(eigenSymmetricMatrix));
@@ -130,7 +51,9 @@ TEST(linearAlgebraFactories, eigendecomposition) {
 
     for (size_t size = 2; size < 100; ++size) {
         // construct identical symmetrical matrix:
-        auto [armaMatrix, eigenMatrix] = generatePairSymmetricMatrices(size, dist, rng);
+        auto matrices = generateSymmetricMatrices(size, constructAllDenseFactories(), dist, rng);
+        auto armaMatrix = std::move(matrices[0]);
+        auto eigenMatrix = std::move(matrices[1]);
         // only-values-eigendecomposition:
         {
             // decomposition
@@ -174,14 +97,15 @@ TEST(linearAlgebraFactories, unitary_transformation) {
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
     for (size_t size = 2; size < 100; ++size) {
-        auto [armaUnitaryMatrix, eigenUnitaryMatrix] = generatePairUnitaryMatrix(size, dist, rng);
-        auto [armaSymmetricMatrix, eigenSymmetricMatrix] =
-            generatePairSymmetricMatrices(size, dist, rng);
+        auto symmetricMatrices =
+            generateUnitaryMatrix(size, constructAllDenseFactories(), dist, rng);
+        auto unitaryMatrices =
+            generateSymmetricMatrices(size, constructAllDenseFactories(), dist, rng);
 
         auto armaSymmetricMatrixTransformed =
-            armaUnitaryMatrix->unitary_transform(armaSymmetricMatrix);
+            unitaryMatrices[0]->unitary_transform(symmetricMatrices[0]);
         auto eigenSymmetricMatrixTransformed =
-            eigenUnitaryMatrix->unitary_transform(eigenSymmetricMatrix);
+            unitaryMatrices[1]->unitary_transform(symmetricMatrices[1]);
 
         // check equality:
         for (size_t i = 0; i < size; ++i) {
@@ -190,7 +114,7 @@ TEST(linearAlgebraFactories, unitary_transformation) {
                 EXPECT_NEAR(
                     armaSymmetricMatrixTransformed->at(i, j),
                     eigenSymmetricMatrixTransformed->at(i, j),
-                    1e-6);
+                    1e-5);
             }
         }
     }

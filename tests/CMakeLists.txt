@@ -15,9 +15,17 @@ else ()
     message(" ***  GTest was downloaded")
 endif ()
 
+add_library(tests_tools
+        tools/AllDenseFactories.cpp
+        tools/MeanAndDeviation.cpp
+        tools/GenerateSameDenseMatrix.cpp)
+
+add_executable(spinner_time_test
+        time_tests/PerformanceTest.cpp
+        )
+
 add_executable(spinner_test
         main.cpp
-        time_tests/PerformanceTest.cpp
         integration_tests/spectrum_final_equivalence_tests.cpp
         integration_tests/simple_analytical_dependencies_tests.cpp
         unit_tests/group_test.cpp
@@ -53,7 +61,11 @@ endif ()
 
 if (ARMADILLO_FOUND AND Eigen3_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaEigenComparison_tests.cpp)
+    target_sources(spinner_time_test PRIVATE time_tests/linear_algebra/armaEigenPerfomance_tests.cpp)
 endif ()
 
-target_link_libraries(spinner_test gtest gtest_main
+target_link_libraries(spinner_test gtest gtest_main tests_tools
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
+
+target_link_libraries(spinner_time_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
