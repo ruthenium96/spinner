@@ -18,7 +18,7 @@ TYPED_TEST_SUITE_P(AbstractFactoryIndividualTest);
 
 // TODO: implement tests for abstract factory, abstract matrix and abstract vector
 TYPED_TEST_P(AbstractFactoryIndividualTest, NonNullptrObjects) {
-    EXPECT_FALSE(this->factory_->createMatrix() == nullptr);
+    EXPECT_FALSE(this->factory_->createMatrix(0, 0) == nullptr);
     EXPECT_FALSE(this->factory_->createVector() == nullptr);
 }
 

@@ -12,8 +12,6 @@ class EigenDenseMatrix: public AbstractDenseMatrix {
   public:
     void add_to_position(double value, uint32_t i, uint32_t j) override;
     void assign_to_position(double value, uint32_t i, uint32_t j) override;
-    void
-    resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) override;
     EigenCouple diagonalizeValuesVectors() const override;
     std::unique_ptr<AbstractDenseVector> diagonalizeValues() const override;
     std::unique_ptr<AbstractDenseVector> return_main_diagonal() const override;
@@ -24,6 +22,10 @@ class EigenDenseMatrix: public AbstractDenseMatrix {
     uint32_t size_cols() const override;
     double at(uint32_t i, uint32_t j) const override;
     void print(std::ostream& os) const override;
+
+  protected:
+    void
+    resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) override;
 
   private:
     friend EigenDenseFactory;

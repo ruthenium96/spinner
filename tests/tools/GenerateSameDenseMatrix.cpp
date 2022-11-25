@@ -9,14 +9,9 @@ generateSymmetricMatrices(
     std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>> answer;
     answer.reserve(factories.size());
 
-    // create empty matrices:
+    // create zero matrices:
     for (const auto& factory : factories) {
-        answer.emplace_back(factory->createMatrix());
-    }
-
-    // resize it:
-    for (auto& matrix : answer) {
-        matrix->resize(size, size);
+        answer.emplace_back(factory->createMatrix(size, size));
     }
 
     // fill it with identical values:

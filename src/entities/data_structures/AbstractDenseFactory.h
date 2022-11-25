@@ -8,7 +8,8 @@ namespace quantum::linear_algebra {
 class AbstractDenseFactory {
   public:
     static std::shared_ptr<AbstractDenseFactory> defaultFactory();
-    virtual std::unique_ptr<AbstractDenseMatrix> createMatrix() = 0;
+    virtual std::unique_ptr<AbstractDenseMatrix>
+    createMatrix(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) = 0;
     virtual std::unique_ptr<AbstractDenseVector> createVector() = 0;
     // TODO: it is a temporary solution, fix it
     virtual std::vector<double>

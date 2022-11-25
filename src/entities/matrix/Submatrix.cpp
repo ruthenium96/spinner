@@ -20,8 +20,7 @@ Submatrix::Submatrix(
 
     size_t matrix_in_space_basis_size = subspace.decomposition->size();
     properties = subspace.properties;
-    raw_data = factory->createMatrix();
-    raw_data->resize(matrix_in_space_basis_size, matrix_in_space_basis_size);
+    raw_data = factories.createMatrix(matrix_in_space_basis_size, matrix_in_space_basis_size);
 
     for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size;
          ++index_of_space_vector_i) {

@@ -30,6 +30,10 @@ class ArmaDenseMatrix: public AbstractDenseMatrix {
     double at(uint32_t i, uint32_t j) const override;
     void print(std::ostream& os) const override;
 
+  protected:
+    void
+    resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) override;
+
   private:
     arma::dmat matrix_;
     // c-like pointers are necessary to avoid double-free error

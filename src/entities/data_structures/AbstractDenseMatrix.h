@@ -18,8 +18,6 @@ class AbstractDenseMatrix {
   public:
     virtual void add_to_position(double value, uint32_t i, uint32_t j) = 0;
     virtual void assign_to_position(double value, uint32_t i, uint32_t j) = 0;
-    virtual void
-    resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) = 0;
     virtual EigenCouple diagonalizeValuesVectors() const = 0;
     virtual std::unique_ptr<AbstractDenseVector> diagonalizeValues() const = 0;
     virtual std::unique_ptr<AbstractDenseVector> return_main_diagonal() const = 0;
@@ -36,6 +34,11 @@ class AbstractDenseMatrix {
     virtual void print(std::ostream& os) const = 0;
 
     virtual ~AbstractDenseMatrix() = default;
+
+  protected:
+    // TODO: can we remove it from this abstract class?
+    virtual void
+    resize(uint32_t matrix_in_space_basis_size_i, uint32_t matrix_in_space_basis_size_j) = 0;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_ABSTRACTDENSEMATRIX_H

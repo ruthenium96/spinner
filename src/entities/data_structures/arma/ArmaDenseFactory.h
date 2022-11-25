@@ -6,7 +6,9 @@
 namespace quantum::linear_algebra {
 class ArmaDenseFactory: public AbstractDenseFactory {
   public:
-    std::unique_ptr<AbstractDenseMatrix> createMatrix() override;
+    std::unique_ptr<AbstractDenseMatrix> createMatrix(
+        uint32_t matrix_in_space_basis_size_i,
+        uint32_t matrix_in_space_basis_size_j) override;
     std::unique_ptr<AbstractDenseVector> createVector() override;
     std::vector<double>
     concatenate(const std::vector<std::unique_ptr<AbstractDenseVector>>& vectors) override;
