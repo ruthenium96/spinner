@@ -9,7 +9,6 @@ namespace quantum::linear_algebra {
 class AbstractDenseMatrix;
 class AbstractDenseVector {
   public:
-    virtual void assign_to_position(double value, uint32_t i) = 0;
     virtual void resize(uint32_t new_size) = 0;
 
     virtual void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) = 0;

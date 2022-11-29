@@ -13,7 +13,6 @@ class EigenDenseVector: public AbstractDenseVector {
     friend EigenDenseMatrix;
 
   public:
-    void assign_to_position(double value, uint32_t i) override;
     void resize(uint32_t new_size) override;
     void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) override;
     void add_identical_values(size_t number, double value) override;

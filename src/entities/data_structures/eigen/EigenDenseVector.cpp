@@ -2,10 +2,6 @@
 
 namespace quantum::linear_algebra {
 
-void EigenDenseVector::assign_to_position(double value, uint32_t i) {
-    vector_(i) = value;
-}
-
 void EigenDenseVector::resize(uint32_t new_size) {
     vector_.resize(new_size);
 }
