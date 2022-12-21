@@ -59,16 +59,6 @@ double ArmaDenseVector::at(uint32_t i) const {
     return vector_.at(i);
 }
 
-bool ArmaDenseVector::operator==(const std::unique_ptr<AbstractDenseVector>& rhs) const {
-    auto rhs_ = downcast_ptr(rhs);
-
-    return arma::approx_equal(vector_, rhs_->vector_, "absdiff", 0);
-}
-
-bool ArmaDenseVector::operator!=(const std::unique_ptr<AbstractDenseVector>& rhs) const {
-    return !(*this == rhs);
-}
-
 const ArmaDenseVector*
 ArmaDenseVector::downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr) {
     auto answer = dynamic_cast<const ArmaDenseVector*>(ptr.get());

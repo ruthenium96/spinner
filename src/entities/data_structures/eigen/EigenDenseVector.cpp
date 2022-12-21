@@ -69,16 +69,6 @@ void EigenDenseVector::print(std::ostream& os) const {
     os << vector_ << std::endl;
 }
 
-bool EigenDenseVector::operator==(const std::unique_ptr<AbstractDenseVector>& rhs) const {
-    auto rhs_ = downcast_ptr(rhs);
-
-    return vector_ == rhs_->vector_;
-}
-
-bool EigenDenseVector::operator!=(const std::unique_ptr<AbstractDenseVector>& rhs) const {
-    return !(*this == rhs);
-}
-
 const EigenDenseVector*
 EigenDenseVector::downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr) {
     auto answer = dynamic_cast<const EigenDenseVector*>(ptr.get());

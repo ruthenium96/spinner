@@ -17,7 +17,7 @@ class ArmaDenseVector: public AbstractDenseVector {
     friend ArmaSparseMatrix;
 
   public:
-    void resize(uint32_t new_size) override;
+    void resize(uint32_t new_size);
     void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) override;
     void add_identical_values(size_t number, double value) override;
     void subtract_minimum() override;
@@ -27,8 +27,6 @@ class ArmaDenseVector: public AbstractDenseVector {
     element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
     uint32_t size() const override;
     double at(uint32_t i) const override;
-    bool operator==(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
-    bool operator!=(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
     void print(std::ostream& os) const override;
 
   private:

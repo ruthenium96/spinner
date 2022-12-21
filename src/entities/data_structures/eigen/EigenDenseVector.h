@@ -13,7 +13,7 @@ class EigenDenseVector: public AbstractDenseVector {
     friend EigenDenseMatrix;
 
   public:
-    void resize(uint32_t new_size) override;
+    void resize(uint32_t new_size);
     void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) override;
     void add_identical_values(size_t number, double value) override;
     void subtract_minimum() override;
@@ -24,9 +24,6 @@ class EigenDenseVector: public AbstractDenseVector {
     uint32_t size() const override;
     double at(uint32_t i) const override;
     void print(std::ostream& os) const override;
-
-    bool operator==(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
-    bool operator!=(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
 
   private:
     Eigen::VectorXd vector_;

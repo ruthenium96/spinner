@@ -6,11 +6,8 @@
 #include <vector>
 
 namespace quantum::linear_algebra {
-class AbstractDenseMatrix;
 class AbstractDenseVector {
   public:
-    virtual void resize(uint32_t new_size) = 0;
-
     virtual void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) = 0;
     virtual void add_identical_values(size_t number, double value) = 0;
     virtual void subtract_minimum() = 0;
@@ -24,9 +21,6 @@ class AbstractDenseVector {
     virtual double at(uint32_t i) const = 0;
 
     virtual void print(std::ostream& os) const = 0;
-
-    virtual bool operator==(const std::unique_ptr<AbstractDenseVector>& rhs) const = 0;
-    virtual bool operator!=(const std::unique_ptr<AbstractDenseVector>& rhs) const = 0;
 
     virtual ~AbstractDenseVector() = default;
 };

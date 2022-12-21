@@ -35,7 +35,10 @@ size_t size_of_spectrum_with_degeneracy(const Spectrum& spectrum) {
 
 void expect_spectrum_equivalence(const Spectrum& first, const Spectrum& second) {
     for (size_t i = 0; i < first.blocks.size(); ++i) {
-        EXPECT_EQ(*(first.blocks[i].raw_data), second.blocks[i].raw_data);
+        ASSERT_EQ(first.blocks[i].raw_data->size(), second.blocks[i].raw_data->size());
+        for (size_t j = 0; j < first.blocks[i].raw_data->size(); ++j) {
+            EXPECT_EQ(first.blocks[i].raw_data->at(j), second.blocks[i].raw_data->at(j));
+        }
     }
 }
 
