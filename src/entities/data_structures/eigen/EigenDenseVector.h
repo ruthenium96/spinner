@@ -6,11 +6,15 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
 namespace quantum::linear_algebra {
-class EigenDenseFactory;
+class EigenSymmetricMatrixFactory;
 class EigenDenseMatrix;
+class EigenDenseSymmetricMatrix;
+class EigenDenseSemiunitaryMatrix;
 class EigenDenseVector: public AbstractDenseVector {
-    friend EigenDenseFactory;
+    friend EigenSymmetricMatrixFactory;
     friend EigenDenseMatrix;
+    friend EigenDenseSemiunitaryMatrix;
+    friend EigenDenseSymmetricMatrix;
 
   public:
     void resize(uint32_t new_size);
