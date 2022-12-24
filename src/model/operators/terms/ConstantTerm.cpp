@@ -4,7 +4,8 @@
 
 namespace model::operators {
 void ConstantTerm::construct(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix_in_lexicografical_basis,
+    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>&
+        matrix_in_lexicografical_basis,
     uint32_t index_of_vector) const {
     matrix_in_lexicografical_basis->add_to_position(*constant_, index_of_vector, index_of_vector);
 }

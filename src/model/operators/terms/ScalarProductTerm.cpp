@@ -26,7 +26,8 @@ ScalarProductTerm::ScalarProductTerm(
     coefficients_(std::move(parameters)) {}
 
 void ScalarProductTerm::construct(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix_in_lexicografical_basis,
+    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>&
+        matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a,
     uint32_t center_b) const {
@@ -46,7 +47,7 @@ std::unique_ptr<TwoCenterTerm> ScalarProductTerm::clone() const {
 }
 
 void ScalarProductTerm::add_scalar_product(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix,
+    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>& matrix,
     uint32_t index_of_vector,
     uint32_t center_a,
     uint32_t center_b,
@@ -85,7 +86,7 @@ void ScalarProductTerm::add_scalar_product(
 }
 
 void ScalarProductTerm::add_scalar_product_nondiagonal_part(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix,
+    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>& matrix,
     uint32_t index_of_vector,
     uint32_t plus_center,
     uint32_t minus_center,

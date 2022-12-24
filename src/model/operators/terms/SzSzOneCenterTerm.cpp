@@ -9,7 +9,8 @@ std::unique_ptr<OneCenterTerm> SzSzOneCenterTerm::clone() const {
 }
 
 void SzSzOneCenterTerm::construct(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& matrix_in_lexicografical_basis,
+    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>&
+        matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a) const {
     double factor = coefficients_->at(center_a);
