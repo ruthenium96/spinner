@@ -1,8 +1,9 @@
 # TODO: implement other sparse matrices:
 add_library(data_structures
-        std/StdSparseMatrix.cpp
-        std/StdSparseAsDefault.cpp
-        )
+        std/StdSparseSemiunitaryMatrix.cpp
+        std/as_default/StdSparseSemiunitaryAsDefault.cpp
+        std/StdFactories.cpp
+        FactoriesList.cpp)
 
 message("Trying to find packages of linear algebra...")
 
@@ -11,10 +12,13 @@ find_package(Armadillo)
 if (ARMADILLO_FOUND)
     message(" * Armadillo was found")
     add_library(arma_structures
-            arma/ArmaDenseFactory.cpp arma/ArmaDenseFactory.h
-            arma/ArmaDenseMatrix.cpp arma/ArmaDenseMatrix.h
+            arma/ArmaFactories.cpp arma/ArmaFactories.h
             arma/ArmaDenseVector.cpp arma/ArmaDenseVector.h
-            )
+            arma/ArmaSparseSymmetricMatrix.cpp
+            arma/ArmaDenseSemiunitaryMatrix.cpp arma/ArmaDenseSemiunitaryMatrix.h
+            arma/ArmaDenseSymmetricMatrix.cpp arma/ArmaDenseSymmetricMatrix.h
+            arma/ArmaLogic.cpp arma/ArmaLogic.h
+            arma/ArmaSparseSemiunitaryMatrix.cpp arma/ArmaSparseSemiunitaryMatrix.h)
     # This include is requested sometimes:
     include_directories(${ARMADILLO_INCLUDE_DIRS})
     target_link_libraries(arma_structures ${ARMADILLO_LIBRARIES})
@@ -28,9 +32,11 @@ find_package(Eigen3 3.3)
 if (Eigen3_FOUND)
     message(" * Eigen3 was found")
     add_library(eigen_structures
-            eigen/EigenDenseFactory.cpp eigen/EigenDenseFactory.h
-            eigen/EigenDenseMatrix.cpp eigen/EigenDenseMatrix.h
-            eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h)
+            eigen/EigenFactories.cpp eigen/EigenFactories.h
+            eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h
+            eigen/EigenDenseSymmetricMatrix.cpp eigen/EigenDenseSymmetricMatrix.h
+            eigen/EigenDenseSemiunitaryMatrix.cpp eigen/EigenDenseSemiunitaryMatrix.h
+            )
     target_link_libraries(eigen_structures Eigen3::Eigen)
     target_link_libraries(data_structures eigen_structures)
 else ()
@@ -39,10 +45,15 @@ endif ()
 
 if (ARMADILLO_FOUND)
     message(" *** Armadillo will be used as default linear algebra package")
-    target_sources(data_structures PRIVATE arma/ArmaDenseAsDefault.cpp)
+    target_sources(data_structures PRIVATE
+            arma/as_default/ArmaSymmetricMatrixAsDefault.cpp
+            arma/as_default/ArmaDenseVectorAsDefault.cpp)
 elseif (Eigen3_FOUND)
     message(" *** Eigen3 will be used as default linear algebra package")
-    target_sources(data_structures PRIVATE eigen/EigenDenseAsDefault.cpp)
+    target_sources(data_structures PRIVATE
+            eigen/as_default/EigenSymmetricMatrixAsDefault.cpp
+            eigen/as_default/EigenDenseVectorAsDefault.cpp
+            )
 else ()
     message(FATAL_ERROR "At least one linear algebra package must be installed")
 endif ()
