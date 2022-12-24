@@ -14,7 +14,7 @@ Runner::Runner(model::ModelInput model) :
     Runner(
         std::move(model),
         common::physical_optimization::OptimizationList(),
-        quantum::linear_algebra::AbstractFactory::defaultFactory()) {}
+        quantum::linear_algebra::FactoriesList()) {}
 
 Runner::Runner(
     model::ModelInput model,
@@ -22,24 +22,25 @@ Runner::Runner(
     Runner(
         std::move(model),
         std::move(optimizationList),
-        quantum::linear_algebra::AbstractFactory::defaultFactory()) {}
+        quantum::linear_algebra::FactoriesList()) {}
 
 Runner::Runner(
     model::ModelInput model,
-    std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory) :
+    quantum::linear_algebra::FactoriesList dataStructuresFactories) :
     Runner(
         std::move(model),
         common::physical_optimization::OptimizationList(),
-        std::move(algebraDataFactory)) {}
+        std::move(dataStructuresFactories)) {}
 
 Runner::Runner(
     model::ModelInput model,
     common::physical_optimization::OptimizationList optimizationList,
-    std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory) :
+    quantum::linear_algebra::FactoriesList dataStructuresFactories) :
     consistentModelOptimizationList_(std::move(model), std::move(optimizationList)),
-    algebraDataFactory_(std::move(algebraDataFactory)),
+    dataStructuresFactories_(std::move(dataStructuresFactories)),
     space_(space::optimization::OptimizedSpaceConstructor::construct(
-        consistentModelOptimizationList_)) {
+        consistentModelOptimizationList_,
+        dataStructuresFactories)) {
     if (getModel().is_s_squared_initialized()) {
         s_squared = common::Quantity();
     }
@@ -62,21 +63,21 @@ void Runner::BuildMatrices() {
             getSpace(),
             getOperator(common::Energy),
             getIndexConverter(),
-            getAlgebraDataFactory());
+            getDataStructuresFactories());
     }
     if (s_squared.has_value()) {
         s_squared->matrix_ = Matrix(
             getSpace(),
             getOperator(common::S_total_squared),
             getIndexConverter(),
-            getAlgebraDataFactory());
+            getDataStructuresFactories());
     }
     if (g_sz_squared.has_value()) {
         g_sz_squared->matrix_ = Matrix(
             getSpace(),
             getOperator(common::gSz_total_squared),
             getIndexConverter(),
-            getAlgebraDataFactory());
+            getDataStructuresFactories());
     }
     for (auto& [pair, derivative] : derivatives_map_) {
         // TODO: fix it!
@@ -85,7 +86,7 @@ void Runner::BuildMatrices() {
             getSpace(),
             getOperatorDerivative(quantity_enum, symbol_name),
             getIndexConverter(),
-            getAlgebraDataFactory());
+            getDataStructuresFactories());
     }
 
     matrix_history_.matrices_was_built = true;
@@ -146,13 +147,15 @@ void Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
 
 void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
-        auto unitary_transformation_matrix = algebraDataFactory_->createMatrix();
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
+            unitary_transformation_matrix;
+
         {
             auto hamiltonian_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
                 getOperator(common::Energy),
                 getIndexConverter(),
-                getAlgebraDataFactory());
+                getDataStructuresFactories());
             auto pair = Subspectrum::energy(hamiltonian_submatrix);
             energy.spectrum_.blocks.emplace_back(std::move(pair.first));
             unitary_transformation_matrix = std::move(pair.second);
@@ -163,7 +166,7 @@ void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
                 getSpace().getBlocks()[block],
                 getOperator(common::S_total_squared),
                 getIndexConverter(),
-                getAlgebraDataFactory());
+                getDataStructuresFactories());
             s_squared->spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
         }
@@ -173,7 +176,7 @@ void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
                 getSpace().getBlocks()[block],
                 getOperator(common::gSz_total_squared),
                 getIndexConverter(),
-                getAlgebraDataFactory());
+                getDataStructuresFactories());
             g_sz_squared->spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
         }
@@ -185,7 +188,7 @@ void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
                 getSpace().getBlocks()[block],
                 getOperatorDerivative(quantity_enum, symbol_name),
                 getIndexConverter(),
-                getAlgebraDataFactory());
+                getDataStructuresFactories());
             derivative.spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
         }
@@ -241,8 +244,8 @@ const Matrix& Runner::getMatrixDerivative(
 }
 
 void Runner::BuildMuSquaredWorker() {
-    auto energy_vector = algebraDataFactory_->createVector();
-    auto degeneracy_vector = algebraDataFactory_->createVector();
+    auto energy_vector = dataStructuresFactories_.createVector();
+    auto degeneracy_vector = dataStructuresFactories_.createVector();
 
     for (const auto& subspectrum : getSpectrum(common::Energy).blocks) {
         energy_vector->concatenate_with(subspectrum.raw_data);
@@ -258,7 +261,7 @@ void Runner::BuildMuSquaredWorker() {
         // and there is no field
         // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
         double g_factor = getModel().getNumericalWorker().getGFactorParameters()->at(0);
-        auto s_squared_vector = algebraDataFactory_->createVector();
+        auto s_squared_vector = dataStructuresFactories_.createVector();
 
         // TODO: check if s_squared has been initialized
         for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
@@ -272,7 +275,7 @@ void Runner::BuildMuSquaredWorker() {
                 std::move(s_squared_vector),
                 g_factor);
     } else {
-        auto g_sz_squared_vector = algebraDataFactory_->createVector();
+        auto g_sz_squared_vector = dataStructuresFactories_.createVector();
         // TODO: check if g_sz_squared has been initialized
         for (const auto& subspectrum : getSpectrum(common::gSz_total_squared).blocks) {
             g_sz_squared_vector->concatenate_with(subspectrum.raw_data);
@@ -328,7 +331,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
 
     for (const auto& changeable_symbol :
          getSymbolicWorker().getChangeableNames(model::symbols::J)) {
-        auto derivative_vector = algebraDataFactory_->createVector();
+        auto derivative_vector = dataStructuresFactories_.createVector();
         for (const auto& subspectrum :
              getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
             derivative_vector->concatenate_with(subspectrum.raw_data);
@@ -346,7 +349,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
 
     for (const auto& changeable_symbol :
          getSymbolicWorker().getChangeableNames(model::symbols::D)) {
-        auto derivative_vector = algebraDataFactory_->createVector();
+        auto derivative_vector = dataStructuresFactories_.createVector();
         for (const auto& subspectrum :
              getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
             derivative_vector->concatenate_with(subspectrum.raw_data);
@@ -368,7 +371,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             common::QuantityEnum,
             std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
         if (consistentModelOptimizationList_.getModel().is_g_sz_squared_derivatives_initialized()) {
-            auto derivative_vector = algebraDataFactory_->createVector();
+            auto derivative_vector = dataStructuresFactories_.createVector();
             for (const auto& subspectrum :
                  getSpectrumDerivative(common::gSz_total_squared, changeable_symbol).blocks) {
                 derivative_vector->concatenate_with(subspectrum.raw_data);
@@ -515,7 +518,7 @@ const common::physical_optimization::OptimizationList& Runner::getOptimizationLi
     return consistentModelOptimizationList_.getOptimizationList();
 }
 
-std::shared_ptr<quantum::linear_algebra::AbstractFactory> Runner::getAlgebraDataFactory() const {
-    return algebraDataFactory_;
+quantum::linear_algebra::FactoriesList Runner::getDataStructuresFactories() const {
+    return dataStructuresFactories_;
 }
 }  // namespace runner

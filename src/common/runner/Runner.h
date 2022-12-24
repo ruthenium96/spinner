@@ -9,7 +9,7 @@
 
 #include "ConsistentModelOptimizationList.h"
 #include "src/common/Quantity.h"
-#include "src/entities/data_structures/AbstractFactory.h"
+#include "src/entities/data_structures/FactoriesList.h"
 #include "src/entities/magnetic_susceptibility/MagneticSusceptibilityController.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
@@ -22,15 +22,13 @@ class Runner {
     Runner(
         model::ModelInput model,
         common::physical_optimization::OptimizationList optimizationList,
-        std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory);
+        quantum::linear_algebra::FactoriesList dataStructuresFactories);
     // constructor for Runner with default algebra package:
     Runner(
         model::ModelInput model,
         common::physical_optimization::OptimizationList optimizationList);
     // constructor for Runner with no optimizations:
-    Runner(
-        model::ModelInput model,
-        std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory);
+    Runner(model::ModelInput model, quantum::linear_algebra::FactoriesList dataStructuresFactories);
     // constructor for Runner with no optimizations and default algebra package:
     explicit Runner(model::ModelInput model);
 
@@ -70,13 +68,12 @@ class Runner {
     getMagneticSusceptibilityController() const;
     const model::symbols::SymbolicWorker& getSymbolicWorker() const;
 
-    std::shared_ptr<quantum::linear_algebra::AbstractFactory> getAlgebraDataFactory() const;
+    quantum::linear_algebra::FactoriesList getDataStructuresFactories() const;
 
   private:
     ConsistentModelOptimizationList consistentModelOptimizationList_;
     const space::Space space_;
-    // TODO: rename it.
-    std::shared_ptr<quantum::linear_algebra::AbstractFactory> algebraDataFactory_;
+    quantum::linear_algebra::FactoriesList dataStructuresFactories_;
 
     const model::Model& getModel() const;
     model::Model& getModel();
