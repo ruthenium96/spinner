@@ -14,11 +14,10 @@ Matrix::Matrix(
     const space::Space& space,
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter,
-    const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory) {
+    const quantum::linear_algebra::FactoriesList& factories) {
     blocks.reserve(space.getBlocks().size());
-    //    blocks.resize(space.getBlocks().size());
 
     for (const auto& subspace : space.getBlocks()) {
-        blocks.emplace_back(Submatrix(subspace, new_operator, converter, factory));
+        blocks.emplace_back(Submatrix(subspace, new_operator, converter, factories));
     }
 }

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Submatrix.h"
-#include "src/entities/data_structures/AbstractFactory.h"
+#include "src/entities/data_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
 struct Matrix {
@@ -14,7 +14,7 @@ struct Matrix {
         const space::Space& space,
         const model::operators::Operator& new_operator,
         const lexicographic::IndexConverter& converter,
-        const std::shared_ptr<quantum::linear_algebra::AbstractFactory>& factory);
+        const quantum::linear_algebra::FactoriesList& factories);
 
     std::vector<Submatrix> blocks;
     explicit Matrix(std::vector<Submatrix>&& m);
