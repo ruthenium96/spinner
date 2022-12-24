@@ -72,4 +72,12 @@ void ArmaDenseVector::print(std::ostream& os) const {
     os << vector_ << std::endl;
 }
 
+arma::dvec& ArmaDenseVector::modifyDenseVector() {
+    return vector_;
+}
+
+const arma::dvec& ArmaDenseVector::getDenseVector() {
+    return vector_;
+}
+
 }  // namespace quantum::linear_algebra

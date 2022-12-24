@@ -8,13 +8,7 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
 namespace quantum::linear_algebra {
-class ArmaDenseFactory;
-class ArmaDenseMatrix;
-class ArmaSparseMatrix;
 class ArmaDenseVector: public AbstractDenseVector {
-    friend ArmaDenseFactory;
-    friend ArmaDenseMatrix;
-    friend ArmaSparseMatrix;
 
   public:
     void resize(uint32_t new_size);
@@ -28,6 +22,9 @@ class ArmaDenseVector: public AbstractDenseVector {
     uint32_t size() const override;
     double at(uint32_t i) const override;
     void print(std::ostream& os) const override;
+
+    arma::dvec& modifyDenseVector();
+    const arma::dvec& getDenseVector();
 
   private:
     // c-like pointers are necessary to avoid double-free error
