@@ -1,17 +1,27 @@
 #include "Symmetrizer.h"
 
+#include <cassert>
 #include <utility>
 
 namespace space::optimization {
 
-Symmetrizer::Symmetrizer(lexicographic::IndexConverter converter, group::Group group) :
+Symmetrizer::Symmetrizer(
+    lexicographic::IndexConverter converter,
+    group::Group group,
+    quantum::linear_algebra::FactoriesList factories) :
     converter_(std::move(converter)),
-    group_(std::move(group)) {
-}
+    group_(std::move(group)),
+    factories_(std::move(factories)) {}
 
 Space Symmetrizer::apply(Space&& space) const {
+    assert(!space.getBlocks().empty());
+    auto totalSpaceSize = space.getBlocks()[0].decomposition->size_rows();
     std::vector<Subspace> vector_result;
-    vector_result.resize(space.getBlocks().size() * group_.properties.number_of_representations);
+    vector_result.reserve(space.getBlocks().size() * group_.properties.number_of_representations);
+    for (size_t i = 0; i < space.getBlocks().size() * group_.properties.number_of_representations;
+         ++i) {
+        vector_result.emplace_back(factories_.createSparseSemiunitaryMatrix(0, totalSpaceSize));
+    }
 
 #pragma omp parallel for shared(space, vector_result) default(none)
     for (size_t i = 0; i < space.getBlocks().size(); ++i) {
@@ -31,14 +41,15 @@ Space Symmetrizer::apply(Space&& space) const {
         std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> added(
             group_.properties.number_of_representations);
 
-        for (uint32_t l = 0; l < subspace_parent.decomposition->size(); ++l) {
+        for (uint32_t l = 0; l < subspace_parent.decomposition->size_cols(); ++l) {
             uint8_t dimension_of_parent = subspace_parent.properties.dimensionality;
             // when we work with basi, we actually do all work for the orbit of basi,
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
             if (count_how_many_orbit_was_visited(subspace_parent.decomposition, l, visited)
                 < dimension_of_parent) {
-                std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>>
+                std::vector<
+                    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
                     projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
                 increment_visited(projected_basi[0], 0, visited);
                 for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
@@ -72,17 +83,16 @@ Space Symmetrizer::apply(Space&& space) const {
     return Space(std::move(vector_result));
 }
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>>
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
 Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32_t index_of_vector)
     const {
     // it is a set (partitioned by representations) of all projected decompositions:
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>> projections;
+    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
+        projections;
     for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
-        projections.emplace_back(
-            std::move(quantum::linear_algebra::AbstractSparseMatrix::defaultSparseMatrix()));
-    }
-    for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
-        projections[repr]->resize(group_.properties.number_of_projectors_of_representation[repr]);
+        projections.emplace_back(std::move(factories_.createSparseSemiunitaryMatrix(
+            group_.properties.number_of_projectors_of_representation[repr],
+            converter_.get_total_space_size())));
     }
 
     auto iterator = subspace.decomposition->GetNewIterator(index_of_vector);
@@ -110,13 +120,13 @@ Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32
 
     // this function deletes all pairs (key, value) with value = 0.0 from projections
     for (auto& v : projections) {
-        v->erase_if_zero();
+        v->eraseExplicitZeros();
     }
     return projections;
 }
 
 void Symmetrizer::increment_visited(
-    const std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& decomposition,
+    const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition,
     uint32_t index_of_vector,
     std::unordered_map<uint32_t, uint8_t>& hs) {
     auto iterator = decomposition->GetNewIterator(index_of_vector);
@@ -131,7 +141,7 @@ void Symmetrizer::increment_visited(
 }
 
 uint8_t Symmetrizer::count_how_many_orbit_was_visited(
-    const std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& decomposition,
+    const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition,
     uint32_t index_of_vector,
     std::unordered_map<uint32_t, uint8_t>& hs) {
     uint8_t maximum = 0;
@@ -146,7 +156,8 @@ uint8_t Symmetrizer::count_how_many_orbit_was_visited(
 }
 
 bool Symmetrizer::is_orthogonal_to_others(
-    const std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& decomposition_from,
+    const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
+        decomposition_from,
     uint32_t index_of_vector,
     std::unordered_map<uint32_t, std::vector<size_t>>& hs,
     const Subspace& subspace_to) {
@@ -183,17 +194,17 @@ bool Symmetrizer::is_orthogonal_to_others(
 }
 
 void Symmetrizer::move_vector_and_remember_it(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseMatrix>& decomposition_from,
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
     uint32_t index_of_vector,
     std::unordered_map<uint32_t, std::vector<size_t>>& hs,
     Subspace& subspace_to) {
     // if we reach this line -- DecompositionMap is okay, we can add it
     subspace_to.decomposition->move_vector_from(index_of_vector, decomposition_from);
     auto iterator =
-        subspace_to.decomposition->GetNewIterator(subspace_to.decomposition->size() - 1);
+        subspace_to.decomposition->GetNewIterator(subspace_to.decomposition->size_cols() - 1);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
-        hs[item.index].emplace_back(subspace_to.decomposition->size() - 1);
+        hs[item.index].emplace_back(subspace_to.decomposition->size_cols() - 1);
     }
 }
 }  // namespace space::optimization

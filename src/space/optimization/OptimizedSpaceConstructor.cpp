@@ -8,19 +8,21 @@
 namespace space::optimization {
 
 Space OptimizedSpaceConstructor::construct(
-    const runner::ConsistentModelOptimizationList& consistentModelOptimizationList) {
+    const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
+    const quantum::linear_algebra::FactoriesList& factories) {
     const lexicographic::IndexConverter& indexConverter =
         consistentModelOptimizationList.getModel().getIndexConverter();
     const common::physical_optimization::OptimizationList& optimizationList =
         consistentModelOptimizationList.getOptimizationList();
 
     Space space = Space(
-        consistentModelOptimizationList.getModel().getIndexConverter().get_total_space_size());
+        consistentModelOptimizationList.getModel().getIndexConverter().get_total_space_size(),
+        factories);
 
     bool spaceIsNormalized = true;
 
     if (optimizationList.isTzSorted()) {
-        TzSorter tz_sorter(indexConverter);
+        TzSorter tz_sorter(indexConverter, factories);
         space = tz_sorter.apply(std::move(space));
     }
     if (optimizationList.isPositiveProjectionsEliminated()) {
@@ -38,7 +40,7 @@ Space OptimizedSpaceConstructor::construct(
         //                "Symmetrization after using of non-Abelian simplifier causes bugs.");
         //        }
 
-        space::optimization::Symmetrizer symmetrizer(indexConverter, group);
+        space::optimization::Symmetrizer symmetrizer(indexConverter, group, factories);
         space = symmetrizer.apply(std::move(space));
 
         //        if (!new_group.properties.is_abelian) {
@@ -53,14 +55,13 @@ Space OptimizedSpaceConstructor::construct(
     //            "Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
     //            "currently is not allowed.");
     //    }
-    //    space::optimization::NonAbelianSimplifier nonAbelianSimplifier;
+    //    space::optimization::NonAbelianSimplifier nonAbelianSimplifier(factories);
     //    space_ = nonAbelianSimplifier.apply(std::move(space_));
     //    space_history_.number_of_non_simplified_abelian_groups = 0;
     //    space_history_.isNonAbelianSimplified = true;
 
     if (!spaceIsNormalized) {
         for (auto& subspace : space.getBlocks()) {
-            // TODO: maybe, we can implement normalize as Space method
             subspace.decomposition->normalize();
         }
     }
