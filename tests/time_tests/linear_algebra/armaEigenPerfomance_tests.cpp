@@ -15,7 +15,8 @@ TEST(DenseFactoriesPerfomance, eigendecomposition) {
         size_t cycles = 2048 * 8 / size;
         std::cout << "SIZE = " << size << std::endl;
         // construct identical symmetrical matrix:
-        auto matrices = generateSymmetricMatrices(size, constructAllDenseFactories(), dist, rng);
+        auto matrices =
+            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
         auto armaMatrix = std::move(matrices[0]);
         auto eigenMatrix = std::move(matrices[1]);
         // only-values-eigendecomposition:
@@ -58,16 +59,16 @@ TEST(DenseFactoriesPerfomance, unitary_transformation) {
         size_t cycles = 2048 * 16 / size;
         std::cout << "SIZE = " << size << std::endl;
         auto symmetricMatrices =
-            generateUnitaryMatrix(size, constructAllDenseFactories(), dist, rng);
+            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
         auto unitaryMatrices =
-            generateSymmetricMatrices(size, constructAllDenseFactories(), dist, rng);
+            generateUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
 
         // unitary transformation
         std::function<void(void)> armaUnitaryTransformation = [&]() {
-            unitaryMatrices[0]->unitary_transform(symmetricMatrices[0]);
+            unitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[0]);
         };
         std::function<void(void)> eigenUnitaryTransformation = [&]() {
-            unitaryMatrices[1]->unitary_transform(symmetricMatrices[1]);
+            unitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[1]);
         };
         std::cout << "Armadillo:" << std::endl;
         PerformanceTest(armaUnitaryTransformation, cycles);

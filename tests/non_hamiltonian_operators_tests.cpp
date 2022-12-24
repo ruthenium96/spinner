@@ -82,19 +82,18 @@ TEST(
             runner.getSpace(),
             runner.getOperator(common::QuantityEnum::S_total_squared),
             runner.getIndexConverter(),
-            runner.getAlgebraDataFactory());
+            runner.getDataStructuresFactories());
 
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> s_squared_values;
-        s_squared_values.reserve(s_squared_matrix.blocks.size());
+        auto s_squared_vector = runner.getDataStructuresFactories().createVector();
+
         for (size_t i = 0; i < s_squared_matrix.blocks.size(); ++i) {
-            s_squared_values.emplace_back(s_squared_matrix.blocks[i].raw_data->diagonalizeValues());
+            s_squared_vector->concatenate_with(
+                s_squared_matrix.blocks[i].raw_data->diagonalizeValues());
         }
-        std::vector<double> s_squared_vector =
-            runner.getAlgebraDataFactory()->concatenate(s_squared_values);
 
-        std::vector<int> total_multiplicities(s_squared_vector.size());
+        std::vector<int> total_multiplicities(s_squared_vector->size());
         for (size_t i = 0; i < total_multiplicities.size(); ++i) {
-            total_multiplicities[i] = (int)round(sqrt(1 + 4 * s_squared_vector[i]));
+            total_multiplicities[i] = (int)round(sqrt(1 + 4 * s_squared_vector->at(i)));
         }
         std::sort(total_multiplicities.begin(), total_multiplicities.end());
 

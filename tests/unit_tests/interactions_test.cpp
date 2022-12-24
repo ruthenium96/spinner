@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 #include "src/common/lexicographic/IndexConverter.h"
-#include "src/entities/data_structures/AbstractDenseFactory.h"
+#include "src/entities/data_structures/AbstractFactories.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/model/operators/terms/ConstantTerm.h"
 #include "src/model/operators/terms/ScalarProductTerm.h"
@@ -14,11 +14,10 @@ TEST(constant_operator, 2222_333_2345_44444) {
         // Construct Converter
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
-        // Construct Space
-        space::Space space_(converter.get_total_space_size());
+        auto factories_ = quantum::linear_algebra::FactoriesList();
 
-        // Create Factory:
-        auto factory_ = quantum::linear_algebra::AbstractDenseFactory::defaultFactory();
+        // Construct Space
+        space::Space space_(converter.get_total_space_size(), factories_);
 
         for (int constant = 0; constant < 100; constant += 11) {
             auto constant_ptr = std::make_shared<double>(constant);
@@ -28,7 +27,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
                 std::make_unique<model::operators::ConstantTerm>(constant_ptr));
 
             // Build Matrix
-            Matrix matrix = Matrix(space_, operator_, converter, factory_);
+            Matrix matrix = Matrix(space_, operator_, converter, factories_);
 
             // Check results:
             for (const auto& matrix_block : matrix.blocks) {
@@ -55,19 +54,18 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         // Construct Converter
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
+        auto factories_ = quantum::linear_algebra::FactoriesList();
+
         // Construct Space
-        space::Space space_(converter.get_total_space_size());
+        space::Space space_(converter.get_total_space_size(), factories_);
 
         // Construct Operator
         model::operators::Operator operator_;
         operator_.getTwoCenterTerms().emplace_back(
             std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
 
-        // Create Factory:
-        auto factory_ = quantum::linear_algebra::AbstractDenseFactory::defaultFactory();
-
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter, factory_);
+        Matrix matrix = Matrix(space_, operator_, converter, factories_);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {
@@ -102,8 +100,10 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         // Construct Converter
         lexicographic::IndexConverter converter = lexicographic::IndexConverter(mults);
 
+        auto factories_ = quantum::linear_algebra::FactoriesList();
+
         // Construct Space
-        space::Space space_(converter.get_total_space_size());
+        space::Space space_(converter.get_total_space_size(), factories_);
 
         // Construct Operator
         model::operators::Operator operator_;
@@ -111,10 +111,10 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
             std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
 
         // Create Factory:
-        auto factory_ = quantum::linear_algebra::AbstractDenseFactory::defaultFactory();
+        auto factory_ = quantum::linear_algebra::AbstractSymmetricMatrixFactory::defaultFactory();
 
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter, factory_);
+        Matrix matrix = Matrix(space_, operator_, converter, factories_);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {

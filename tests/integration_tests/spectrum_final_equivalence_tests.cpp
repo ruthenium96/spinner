@@ -25,10 +25,10 @@ struct EnergyAndSSquared {
 std::vector<EnergyAndSSquared> construct_final_vector(const runner::Runner& runner) {
     std::vector<EnergyAndSSquared> vector;
 
-    auto factory = runner.getAlgebraDataFactory();
-    auto energy_vector = factory->createVector();
-    auto s_squared_vector = factory->createVector();
-    auto degeneracy_vector = factory->createVector();
+    auto factory = runner.getDataStructuresFactories();
+    auto energy_vector = factory.createVector();
+    auto s_squared_vector = factory.createVector();
+    auto degeneracy_vector = factory.createVector();
 
     for (const auto& subspectrum : runner.getSpectrum(common::Energy).blocks) {
         energy_vector->concatenate_with(subspectrum.raw_data);
