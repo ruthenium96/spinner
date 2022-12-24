@@ -1,17 +1,18 @@
 #include "GenerateSameDenseMatrix.h"
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
 generateSymmetricMatrices(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseFactory>>& factories,
+    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+        factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>> answer;
+    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>> answer;
     answer.reserve(factories.size());
 
     // create zero matrices:
     for (const auto& factory : factories) {
-        answer.emplace_back(factory->createMatrix(size, size));
+        answer.emplace_back(factory->createSymmetricMatrix(size));
     }
 
     // fill it with identical values:
@@ -19,8 +20,8 @@ generateSymmetricMatrices(
         for (size_t j = 0; j <= i; ++j) {
             double value = dist(rng);
             for (auto& matrix : answer) {
-                matrix->assign_to_position(value, i, j);
-                matrix->assign_to_position(value, j, i);
+                matrix->add_to_position(value, i, j);
+                matrix->add_to_position(value, j, i);
             }
         }
     }
@@ -28,43 +29,23 @@ generateSymmetricMatrices(
     return answer;
 }
 
-void multiplyColumnByMinusOne(
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& rhs,
-    size_t column) {
-    for (size_t i = 0; i < rhs->size_rows(); ++i) {
-        rhs->assign_to_position(-rhs->at(i, column), i, column);
-    }
-}
-
-void makeUnitaryMatrixSame(
-    const std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& lhs,
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>& rhs) {
-    for (size_t column = 0; column < lhs->size_cols(); ++column) {
-        if (std::abs(lhs->at(0, column) - (-rhs->at(0, column))) < 1e-6) {
-            multiplyColumnByMinusOne(rhs, column);
-        }
-    }
-}
-
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>> generateUnitaryMatrix(
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+generateUnitaryMatrix(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseFactory>>& factories,
+    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+        factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
     // construct symmetrical matrix:
     auto symmetricMatrices = generateSymmetricMatrices(size, factories, dist, rng);
 
     auto unitaryMatrices =
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseMatrix>>(
+        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>(
             symmetricMatrices.size());
 
     // construct unitary matrix as eigenvectors matrix:
     for (size_t i = 0; i < symmetricMatrices.size(); ++i) {
         unitaryMatrices[i] = symmetricMatrices[i]->diagonalizeValuesVectors().eigenvectors;
-    }
-
-    for (size_t i = 1; i < unitaryMatrices.size(); ++i) {
-        makeUnitaryMatrixSame(unitaryMatrices[0], unitaryMatrices[i]);
     }
 
     return unitaryMatrices;
