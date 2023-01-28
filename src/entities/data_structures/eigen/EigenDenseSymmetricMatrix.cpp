@@ -15,9 +15,9 @@ EigenCouple EigenDenseSymmetricMatrix::diagonalizeValuesVectors() const {
     es.compute(denseSymmetricMatrix_, Eigen::ComputeEigenvectors);
 
     auto eigenvalues_ = std::make_unique<EigenDenseVector>();
-    eigenvalues_->vector_ = es.eigenvalues();
+    eigenvalues_->modifyDenseVector() = es.eigenvalues();
     auto eigenvectors_ = std::make_unique<EigenDenseSemiunitaryMatrix>();
-    eigenvectors_->denseSemiunitaryMatrix_ = es.eigenvectors();
+    eigenvectors_->modifyDenseSemiunitaryMatrix() = es.eigenvectors();
 
     EigenCouple answer = {std::move(eigenvalues_), std::move(eigenvectors_)};
 
@@ -29,7 +29,7 @@ std::unique_ptr<AbstractDenseVector> EigenDenseSymmetricMatrix::diagonalizeValue
     es.compute(denseSymmetricMatrix_, Eigen::EigenvaluesOnly);
 
     auto eigenvalues_ = std::make_unique<EigenDenseVector>();
-    eigenvalues_->vector_ = es.eigenvalues();
+    eigenvalues_->modifyDenseVector() = es.eigenvalues();
 
     return eigenvalues_;
 }
@@ -48,5 +48,13 @@ void EigenDenseSymmetricMatrix::print(std::ostream& os) const {
 void EigenDenseSymmetricMatrix::resize(uint32_t matrix_in_space_basis_size_i) {
     denseSymmetricMatrix_.resize(matrix_in_space_basis_size_i, matrix_in_space_basis_size_i);
     denseSymmetricMatrix_.fill(0);
+}
+
+const Eigen::MatrixXd& EigenDenseSymmetricMatrix::getDenseSymmetricMatrix() const {
+    return denseSymmetricMatrix_;
+}
+
+Eigen::MatrixXd& EigenDenseSymmetricMatrix::modifyDenseSymmetricMatrix() {
+    return denseSymmetricMatrix_;
 }
 }  // namespace quantum::linear_algebra

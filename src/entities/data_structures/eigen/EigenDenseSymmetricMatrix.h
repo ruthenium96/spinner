@@ -6,10 +6,7 @@
 #include "src/entities/data_structures/AbstractSymmetricMatrix.h"
 
 namespace quantum::linear_algebra {
-class EigenDenseSemiunitaryMatrix;
 class EigenDenseSymmetricMatrix: public AbstractSymmetricMatrix {
-    friend EigenDenseSemiunitaryMatrix;
-
   public:
     void add_to_position(double value, uint32_t i, uint32_t j) override;
     EigenCouple diagonalizeValuesVectors() const override;
@@ -18,6 +15,9 @@ class EigenDenseSymmetricMatrix: public AbstractSymmetricMatrix {
     double at(uint32_t i, uint32_t j) const override;
     void print(std::ostream& os) const override;
     void resize(uint32_t matrix_in_space_basis_size_i);
+
+    const Eigen::MatrixXd& getDenseSymmetricMatrix() const;
+    Eigen::MatrixXd& modifyDenseSymmetricMatrix();
 
   private:
     Eigen::MatrixXd denseSymmetricMatrix_;

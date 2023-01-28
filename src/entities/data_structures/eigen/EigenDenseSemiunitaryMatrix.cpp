@@ -35,12 +35,20 @@ EigenDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
         dynamic_cast<const EigenDenseSymmetricMatrix*>(matrix_to_transform.get());
     if (matrix_to_transform_dense != nullptr) {
         Eigen::MatrixXd transformed_matrix = denseSemiunitaryMatrix_.transpose()
-            * matrix_to_transform_dense->denseSymmetricMatrix_.transpose()
+            * matrix_to_transform_dense->getDenseSymmetricMatrix().transpose()
             * denseSemiunitaryMatrix_;
 
-        answer->vector_ = transformed_matrix.diagonal();
+        answer->modifyDenseVector() = transformed_matrix.diagonal();
         return answer;
     }
     throw std::bad_cast();
+}
+
+const Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {
+    return denseSemiunitaryMatrix_;
+}
+
+Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
+    return denseSemiunitaryMatrix_;
 }
 }  // namespace quantum::linear_algebra

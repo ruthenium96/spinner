@@ -69,6 +69,14 @@ void EigenDenseVector::print(std::ostream& os) const {
     os << vector_ << std::endl;
 }
 
+Eigen::VectorXd& EigenDenseVector::modifyDenseVector() {
+    return vector_;
+}
+
+const Eigen::VectorXd& EigenDenseVector::getDenseVector() {
+    return vector_;
+}
+
 const EigenDenseVector*
 EigenDenseVector::downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr) {
     auto answer = dynamic_cast<const EigenDenseVector*>(ptr.get());

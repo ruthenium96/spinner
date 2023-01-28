@@ -6,16 +6,7 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
 namespace quantum::linear_algebra {
-class EigenSymmetricMatrixFactory;
-class EigenDenseMatrix;
-class EigenDenseSymmetricMatrix;
-class EigenDenseSemiunitaryMatrix;
 class EigenDenseVector: public AbstractDenseVector {
-    friend EigenSymmetricMatrixFactory;
-    friend EigenDenseMatrix;
-    friend EigenDenseSemiunitaryMatrix;
-    friend EigenDenseSymmetricMatrix;
-
   public:
     void resize(uint32_t new_size);
     void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) override;
@@ -28,6 +19,9 @@ class EigenDenseVector: public AbstractDenseVector {
     uint32_t size() const override;
     double at(uint32_t i) const override;
     void print(std::ostream& os) const override;
+
+    Eigen::VectorXd& modifyDenseVector();
+    const Eigen::VectorXd& getDenseVector();
 
   private:
     Eigen::VectorXd vector_;

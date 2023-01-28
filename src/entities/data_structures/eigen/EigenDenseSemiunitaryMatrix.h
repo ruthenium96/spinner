@@ -6,10 +6,7 @@
 #include "src/entities/data_structures/AbstractDenseSemiunitaryMatrix.h"
 
 namespace quantum::linear_algebra {
-class EigenDenseSymmetricMatrix;
 class EigenDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
-    friend EigenDenseSymmetricMatrix;
-
   public:
     uint32_t size_rows() const override;
     uint32_t size_cols() const override;
@@ -18,6 +15,9 @@ class EigenDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     void print(std::ostream& os) const override;
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
         const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const override;
+
+    const Eigen::MatrixXd& getDenseSemiunitaryMatrix() const;
+    Eigen::MatrixXd& modifyDenseSemiunitaryMatrix();
 
   private:
     Eigen::MatrixXd denseSemiunitaryMatrix_;
