@@ -13,30 +13,23 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic::diagonalizeValues(
 
 std::unique_ptr<AbstractDenseVector>
 ArmaLogic::diagonalizeValues(const AbstractSymmetricMatrix& symmetricMatrix) const {
-    // TODO: refactor this code
-    auto eigenvalues = std::make_unique<ArmaDenseVector>();
+    auto eigenvalues_ = std::make_unique<ArmaDenseVector>();
 
-    auto maybeDenseSymmetricMatrix =
-        dynamic_cast<const ArmaDenseSymmetricMatrix*>(&symmetricMatrix);
-    if (maybeDenseSymmetricMatrix != nullptr) {
+    if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const ArmaDenseSymmetricMatrix*>(&symmetricMatrix)) {
         arma::eig_sym(
-            eigenvalues->modifyDenseVector(),
+            eigenvalues_->modifyDenseVector(),
             maybeDenseSymmetricMatrix->getDenseSymmetricMatrix());
-        return eigenvalues;
+    } else if (
+        auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const ArmaSparseSymmetricMatrix*>(&symmetricMatrix)) {
+        auto sparseToDenseCopy = arma::dmat(maybeSparseSymmetricMatrix->getSparseSymmetricMatrix());
+        arma::eig_sym(eigenvalues_->modifyDenseVector(), sparseToDenseCopy);
+    } else {
+        throw std::bad_cast();
     }
 
-    auto maybeSparseSymmetricMatrix =
-        dynamic_cast<const ArmaSparseSymmetricMatrix*>(&symmetricMatrix);
-    if (maybeSparseSymmetricMatrix != nullptr) {
-        size_t size = maybeSparseSymmetricMatrix->size();
-        arma::eigs_sym(
-            eigenvalues->modifyDenseVector(),
-            maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
-            size - 1,
-            "la");
-        return eigenvalues;
-    }
-    throw std::bad_cast();
+    return eigenvalues_;
 }
 
 EigenCouple ArmaLogic::diagonalizeValuesVectors(
@@ -49,38 +42,28 @@ ArmaLogic::diagonalizeValuesVectors(const AbstractSymmetricMatrix& symmetricMatr
     auto eigenvalues_ = std::make_unique<ArmaDenseVector>();
     auto eigenvectors_ = std::make_unique<ArmaDenseSemiunitaryMatrix>();
 
-    auto maybeDenseSymmetricMatrix =
-        dynamic_cast<const ArmaDenseSymmetricMatrix*>(&symmetricMatrix);
-    if (maybeDenseSymmetricMatrix != nullptr) {
+    if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const ArmaDenseSymmetricMatrix*>(&symmetricMatrix)) {
         arma::eig_sym(
             eigenvalues_->modifyDenseVector(),
             eigenvectors_->modifyDenseSemiunitaryMatrix(),
             maybeDenseSymmetricMatrix->getDenseSymmetricMatrix());
-
-        EigenCouple answer;
-        answer.eigenvalues = std::move(eigenvalues_);
-        answer.eigenvectors = std::move(eigenvectors_);
-        return answer;
-    }
-
-    auto maybeSparseSymmetricMatrix =
-        dynamic_cast<const ArmaSparseSymmetricMatrix*>(&symmetricMatrix);
-    if (maybeSparseSymmetricMatrix != nullptr) {
-        size_t size = maybeSparseSymmetricMatrix->size();
-        arma::eigs_sym(
+    } else if (
+        auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const ArmaSparseSymmetricMatrix*>(&symmetricMatrix)) {
+        auto sparseToDenseCopy = arma::dmat(maybeSparseSymmetricMatrix->getSparseSymmetricMatrix());
+        arma::eig_sym(
             eigenvalues_->modifyDenseVector(),
             eigenvectors_->modifyDenseSemiunitaryMatrix(),
-            maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
-            size - 1,
-            "la");
-
-        EigenCouple answer;
-        answer.eigenvalues = std::move(eigenvalues_);
-        answer.eigenvectors = std::move(eigenvectors_);
-        return answer;
+            sparseToDenseCopy);
+    } else {
+        throw std::bad_cast();
     }
 
-    throw std::bad_cast();
+    EigenCouple answer;
+    answer.eigenvalues = std::move(eigenvalues_);
+    answer.eigenvectors = std::move(eigenvectors_);
+    return answer;
 }
 
 std::unique_ptr<AbstractDenseVector> ArmaLogic::unitaryTransformAndReturnMainDiagonal(
@@ -100,23 +83,39 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic::unitaryTransformAndReturnMainDia
         throw std::bad_cast();
     }
 
-    auto maybeSparseSymmetricMatrix =
-        dynamic_cast<const ArmaSparseSymmetricMatrix*>(symmetricMatrix.get());
-    if (maybeSparseSymmetricMatrix != nullptr) {
-        arma::dmat transformed_matrix = maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
-            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix().t()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
-        main_diagonal->modifyDenseVector() = transformed_matrix.diag();
+    if (auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const ArmaSparseSymmetricMatrix*>(symmetricMatrix.get())) {
+        arma::dmat firstMultiplicationResult =
+            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix();
+        main_diagonal->resize(maybeSparseSymmetricMatrix->size());
+#pragma omp parallel for shared( \
+    main_diagonal, \
+    firstMultiplicationResult, \
+    maybeDenseSemiunitaryMatrix) default(none)
+        for (size_t i = 0; i < main_diagonal->size(); ++i) {
+            auto value = firstMultiplicationResult.row(i)
+                * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
+            main_diagonal->modifyDenseVector().at(i) = as_scalar(value);
+        }
         return std::move(main_diagonal);
     }
 
-    auto maybeDenseSymmetricMatrix =
-        dynamic_cast<const ArmaDenseSymmetricMatrix*>(symmetricMatrix.get());
-    if (maybeDenseSymmetricMatrix != nullptr) {
-        arma::dmat transformed_matrix = maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
-            * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
-        main_diagonal->modifyDenseVector() = transformed_matrix.diag();
+    if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const ArmaDenseSymmetricMatrix*>(symmetricMatrix.get())) {
+        arma::dmat firstMultiplicationResult =
+            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix();
+        main_diagonal->resize(maybeDenseSymmetricMatrix->size());
+#pragma omp parallel for shared( \
+    main_diagonal, \
+    firstMultiplicationResult, \
+    maybeDenseSemiunitaryMatrix) default(none)
+        for (size_t i = 0; i < main_diagonal->size(); ++i) {
+            auto value = firstMultiplicationResult.row(i)
+                * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
+            main_diagonal->modifyDenseVector().at(i) = as_scalar(value);
+        }
         return std::move(main_diagonal);
     }
 
