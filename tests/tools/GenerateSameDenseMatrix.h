@@ -15,6 +15,14 @@ generateSymmetricMatrices(
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng);
 
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
+generateSparseSymmetricMatrices(
+    size_t size,
+    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+        factories,
+    std::uniform_real_distribution<double> dist,
+    std::mt19937 rng);
+
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
 generateUnitaryMatrix(
     size_t size,
