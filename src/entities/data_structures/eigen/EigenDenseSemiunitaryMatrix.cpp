@@ -2,6 +2,7 @@
 
 #include "EigenDenseSymmetricMatrix.h"
 #include "EigenDenseVector.h"
+#include "EigenLogic.h"
 
 namespace quantum::linear_algebra {
 
@@ -29,19 +30,9 @@ void EigenDenseSemiunitaryMatrix::print(std::ostream& os) const {
 std::unique_ptr<AbstractDenseVector>
 EigenDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
-    auto answer = std::make_unique<EigenDenseVector>();
+    EigenLogic eigenLogic;
 
-    auto matrix_to_transform_dense =
-        dynamic_cast<const EigenDenseSymmetricMatrix*>(matrix_to_transform.get());
-    if (matrix_to_transform_dense != nullptr) {
-        Eigen::MatrixXd transformed_matrix = denseSemiunitaryMatrix_.transpose()
-            * matrix_to_transform_dense->getDenseSymmetricMatrix().transpose()
-            * denseSemiunitaryMatrix_;
-
-        answer->modifyDenseVector() = transformed_matrix.diagonal();
-        return answer;
-    }
-    throw std::bad_cast();
+    return eigenLogic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
 }
 
 const Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {

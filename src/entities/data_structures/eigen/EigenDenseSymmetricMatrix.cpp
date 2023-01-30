@@ -1,9 +1,7 @@
 #include "EigenDenseSymmetricMatrix.h"
 
-#include <Eigen/Dense>
+#include "EigenLogic.h"
 
-#include "EigenDenseSemiunitaryMatrix.h"
-#include "EigenDenseVector.h"
 namespace quantum::linear_algebra {
 
 void EigenDenseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
@@ -11,27 +9,15 @@ void EigenDenseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32
 }
 
 EigenCouple EigenDenseSymmetricMatrix::diagonalizeValuesVectors() const {
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es;
-    es.compute(denseSymmetricMatrix_, Eigen::ComputeEigenvectors);
+    EigenLogic eigenLogic;
 
-    auto eigenvalues_ = std::make_unique<EigenDenseVector>();
-    eigenvalues_->modifyDenseVector() = es.eigenvalues();
-    auto eigenvectors_ = std::make_unique<EigenDenseSemiunitaryMatrix>();
-    eigenvectors_->modifyDenseSemiunitaryMatrix() = es.eigenvectors();
-
-    EigenCouple answer = {std::move(eigenvalues_), std::move(eigenvectors_)};
-
-    return answer;
+    return eigenLogic.diagonalizeValuesVectors(*this);
 }
 
 std::unique_ptr<AbstractDenseVector> EigenDenseSymmetricMatrix::diagonalizeValues() const {
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es;
-    es.compute(denseSymmetricMatrix_, Eigen::EigenvaluesOnly);
+    EigenLogic eigenLogic;
 
-    auto eigenvalues_ = std::make_unique<EigenDenseVector>();
-    eigenvalues_->modifyDenseVector() = es.eigenvalues();
-
-    return eigenvalues_;
+    return eigenLogic.diagonalizeValues(*this);
 }
 
 uint32_t EigenDenseSymmetricMatrix::size() const {

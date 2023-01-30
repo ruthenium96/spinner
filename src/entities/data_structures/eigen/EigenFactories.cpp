@@ -3,6 +3,7 @@
 #include "EigenDenseSemiunitaryMatrix.h"
 #include "EigenDenseSymmetricMatrix.h"
 #include "EigenDenseVector.h"
+#include "EigenSparseSymmetricMatrix.h"
 
 namespace quantum::linear_algebra {
 
@@ -15,8 +16,9 @@ EigenSymmetricMatrixFactory::createDenseSymmetricMatrix(uint32_t size) {
 
 std::unique_ptr<AbstractSymmetricMatrix>
 EigenSymmetricMatrixFactory::createSparseSymmetricMatrix(uint32_t size) {
-    // TODO: implement it ASAP
-    throw std::logic_error("Not implemented");
+    auto matrix = std::make_unique<EigenSparseSymmetricMatrix>();
+    matrix->resize(size);
+    return matrix;
 }
 
 std::unique_ptr<AbstractDenseVector> EigenDenseVectorFactory::createVector() {
