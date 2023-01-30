@@ -36,7 +36,8 @@ if (Eigen3_FOUND)
             eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h
             eigen/EigenDenseSymmetricMatrix.cpp eigen/EigenDenseSymmetricMatrix.h
             eigen/EigenDenseSemiunitaryMatrix.cpp eigen/EigenDenseSemiunitaryMatrix.h
-            )
+            eigen/EigenSparseSymmetricMatrix.cpp eigen/EigenSparseSymmetricMatrix.h
+            eigen/EigenLogic.cpp eigen/EigenLogic.h)
     target_link_libraries(eigen_structures Eigen3::Eigen)
     target_link_libraries(data_structures eigen_structures)
 else ()
