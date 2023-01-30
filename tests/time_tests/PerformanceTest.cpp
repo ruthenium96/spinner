@@ -1,11 +1,10 @@
 #include <chrono>
 
 #include "gtest/gtest.h"
-#include "src/common/Logger.h"
 #include "src/common/runner/Runner.h"
 #include "src/space/Space.h"
 #include "src/space/optimization/Symmetrizer.h"
-#include "src/space/optimization/TzSorter.h"
+#include "tests/tools/AllSparseSemiunitaryMatrixFactories.h"
 #include "tests/tools/MeanAndDeviation.h"
 
 TEST(performanceTest, simple2ComponentSchema) {
