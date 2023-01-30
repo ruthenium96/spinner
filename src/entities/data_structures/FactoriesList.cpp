@@ -11,8 +11,9 @@ FactoriesList::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const
     return sparseSemiunitaryMatrixFactory_->createSparseSemiunitaryMatrix(cols, rows);
 }
 
-std::unique_ptr<AbstractSymmetricMatrix> FactoriesList::createSymmetricMatrix(uint32_t size) const {
-    return symmetricMatrixFactory_->createSymmetricMatrix(size);
+std::unique_ptr<AbstractSymmetricMatrix>
+FactoriesList::createDenseSymmetricMatrix(uint32_t size) const {
+    return symmetricMatrixFactory_->createDenseSymmetricMatrix(size);
 }
 
 std::unique_ptr<AbstractSymmetricMatrix>

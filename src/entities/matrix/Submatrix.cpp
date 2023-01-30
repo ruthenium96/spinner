@@ -54,7 +54,7 @@ Submatrix::Submatrix(
     }
 
     properties = subspace.properties;
-    raw_data = factories.createSymmetricMatrix(matrix_in_space_basis_size);
+    raw_data = factories.createDenseSymmetricMatrix(matrix_in_space_basis_size);
 
     subspace.decomposition->unitaryTransform(matrix_in_lexicografical_basis, raw_data);
 }

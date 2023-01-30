@@ -6,7 +6,7 @@
 namespace quantum::linear_algebra {
 class ArmaSymmetricMatrixFactory: public AbstractSymmetricMatrixFactory {
   public:
-    std::unique_ptr<AbstractSymmetricMatrix> createSymmetricMatrix(uint32_t size) override;
+    std::unique_ptr<AbstractSymmetricMatrix> createDenseSymmetricMatrix(uint32_t size) override;
     std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) override;
 };
 

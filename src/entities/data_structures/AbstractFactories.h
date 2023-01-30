@@ -9,7 +9,7 @@ namespace quantum::linear_algebra {
 class AbstractSymmetricMatrixFactory {
   public:
     static std::shared_ptr<AbstractSymmetricMatrixFactory> defaultFactory();
-    virtual std::unique_ptr<AbstractSymmetricMatrix> createSymmetricMatrix(uint32_t size) = 0;
+    virtual std::unique_ptr<AbstractSymmetricMatrix> createDenseSymmetricMatrix(uint32_t size) = 0;
     virtual std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) = 0;
 
     ~AbstractSymmetricMatrixFactory() = default;

@@ -9,7 +9,7 @@
 namespace quantum::linear_algebra {
 
 std::unique_ptr<AbstractSymmetricMatrix>
-ArmaSymmetricMatrixFactory::createSymmetricMatrix(uint32_t size) {
+ArmaSymmetricMatrixFactory::createDenseSymmetricMatrix(uint32_t size) {
     auto matrix = std::make_unique<ArmaDenseSymmetricMatrix>();
     matrix->resize(size);
     return matrix;
