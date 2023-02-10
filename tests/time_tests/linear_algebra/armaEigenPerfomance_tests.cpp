@@ -2,6 +2,7 @@
 #include <random>
 
 #include "gtest/gtest.h"
+#include "tests/tools/AllSymmetricMatrixFactories.h"
 #include "tests/tools/GenerateSameDenseMatrix.h"
 #include "tests/tools/MeanAndDeviation.h"
 

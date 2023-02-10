@@ -16,8 +16,6 @@ else ()
 endif ()
 
 add_library(tests_tools
-        tools/AllSymmetricMatrixFactories.cpp
-        tools/AllSparseSemiunitaryMatrixFactories.cpp
         tools/MeanAndDeviation.cpp
         tools/GenerateSameDenseMatrix.cpp)
 
@@ -61,6 +59,10 @@ endif ()
 
 
 if (ARMADILLO_FOUND AND Eigen3_FOUND)
+    target_sources(tests_tools PRIVATE
+            tools/AllSymmetricMatrixFactories.cpp
+            tools/AllSparseSemiunitaryMatrixFactories.cpp
+            )
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaEigenComparison_tests.cpp)
     target_sources(spinner_time_test PRIVATE
             time_tests/linear_algebra/armaEigenPerfomance_tests.cpp

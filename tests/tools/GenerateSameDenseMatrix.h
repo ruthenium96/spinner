@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "src/entities/data_structures/AbstractFactories.h"
-#include "tests/tools/AllSymmetricMatrixFactories.h"
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
 generateSymmetricMatrices(

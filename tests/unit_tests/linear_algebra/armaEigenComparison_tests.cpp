@@ -1,6 +1,7 @@
 #include <random>
 
 #include "gtest/gtest.h"
+#include "tests/tools/AllSymmetricMatrixFactories.h"
 #include "tests/tools/GenerateSameDenseMatrix.h"
 
 TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
