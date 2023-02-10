@@ -19,7 +19,8 @@ add_library(tests_tools
         tools/MeanAndDeviation.cpp
         tools/GenerateSameDenseMatrix.cpp)
 
-add_executable(spinner_time_test)
+add_executable(spinner_time_test
+        time_tests/main.cpp)
 
 add_executable(spinner_test
         main.cpp
