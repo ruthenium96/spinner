@@ -48,22 +48,26 @@ if (Eigen3_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenIndividual_tests.cpp)
 endif ()
 
-target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/stlbfgs_tests.cpp)
+target_sources(spinner_test PRIVATE
+        integration_tests/fitting_theoretical_curves/stlbfgs_tests.cpp
+        integration_tests/fitting_theoretical_curves/optimNM_tests.cpp
+        )
 if (Eigen3_FOUND)
     target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/LBFGSpp_tests.cpp)
 endif ()
+
 if (ARMADILLO_FOUND)
-    target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/optimNM_tests.cpp)
     target_sources(spinner_time_test PRIVATE
             time_tests/PerformanceTest.cpp
             )
+    target_sources(tests_tools PRIVATE
+            tools/AllSparseSemiunitaryMatrixFactories.cpp
+            )
 endif ()
-
 
 if (ARMADILLO_FOUND AND Eigen3_FOUND)
     target_sources(tests_tools PRIVATE
             tools/AllSymmetricMatrixFactories.cpp
-            tools/AllSparseSemiunitaryMatrixFactories.cpp
             )
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaEigenComparison_tests.cpp)
     target_sources(spinner_time_test PRIVATE
