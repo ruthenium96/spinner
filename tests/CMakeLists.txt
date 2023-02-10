@@ -19,9 +19,7 @@ add_library(tests_tools
         tools/MeanAndDeviation.cpp
         tools/GenerateSameDenseMatrix.cpp)
 
-add_executable(spinner_time_test
-        time_tests/PerformanceTest.cpp
-        )
+add_executable(spinner_time_test)
 
 add_executable(spinner_test
         main.cpp
@@ -55,6 +53,9 @@ if (Eigen3_FOUND)
 endif ()
 if (ARMADILLO_FOUND)
     target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/optimNM_tests.cpp)
+    target_sources(spinner_time_test PRIVATE
+            time_tests/PerformanceTest.cpp
+            )
 endif ()
 
 
