@@ -26,7 +26,7 @@ if (Eigen3_FOUND)
 endif ()
 
 find_package(Armadillo)
-if (ARMADILLO_FOUND)
+if (ARMADILLO_FOUND OR Eigen3_FOUND)
     FetchContent_Declare(
             optim
             GIT_REPOSITORY https://github.com/kthohr/optim.git
@@ -36,9 +36,14 @@ if (ARMADILLO_FOUND)
     execute_process(COMMAND ./configure --header-only-version
             WORKING_DIRECTORY ${optim_SOURCE_DIR}/)
     include_directories(${optim_SOURCE_DIR}/header_only_version/)
-    # This include is requested sometimes:
-    include_directories(${ARMADILLO_INCLUDE_DIRS})
-    add_library(optimNM_adapter optimNM/optimNMAdapter.cpp optimNM/optimNMAdapter.h)
-    target_link_libraries(optimNM_adapter ${ARMADILLO_LIBRARIES})
+    if (ARMADILLO_FOUND)
+        # This include is requested sometimes:
+        include_directories(${ARMADILLO_INCLUDE_DIRS})
+        add_library(optimNM_adapter optimNM/optimNMAdapterArma.cpp optimNM/optimNMAdapter.h)
+        target_link_libraries(optimNM_adapter ${ARMADILLO_LIBRARIES})
+    elseif (Eigen3_FOUND)
+        add_library(optimNM_adapter optimNM/optimNMAdapterEigen.cpp optimNM/optimNMAdapter.h)
+        target_link_libraries(optimNM_adapter Eigen3::Eigen)
+    endif ()
     target_link_libraries(nonlinear_solver optimNM_adapter)
 endif ()
