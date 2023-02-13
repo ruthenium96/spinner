@@ -88,16 +88,8 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic::unitaryTransformAndReturnMainDia
         arma::dmat firstMultiplicationResult =
             maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
             * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix();
-        main_diagonal->resize(maybeSparseSymmetricMatrix->size());
-#pragma omp parallel for shared( \
-    main_diagonal, \
-    firstMultiplicationResult, \
-    maybeDenseSemiunitaryMatrix) default(none)
-        for (size_t i = 0; i < main_diagonal->size(); ++i) {
-            auto value = firstMultiplicationResult.row(i)
-                * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
-            main_diagonal->modifyDenseVector().at(i) = as_scalar(value);
-        }
+        main_diagonal->modifyDenseVector() = arma::diagvec(
+            firstMultiplicationResult * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix());
         return std::move(main_diagonal);
     }
 
@@ -106,16 +98,8 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic::unitaryTransformAndReturnMainDia
         arma::dmat firstMultiplicationResult =
             maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
             * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix();
-        main_diagonal->resize(maybeDenseSymmetricMatrix->size());
-#pragma omp parallel for shared( \
-    main_diagonal, \
-    firstMultiplicationResult, \
-    maybeDenseSemiunitaryMatrix) default(none)
-        for (size_t i = 0; i < main_diagonal->size(); ++i) {
-            auto value = firstMultiplicationResult.row(i)
-                * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
-            main_diagonal->modifyDenseVector().at(i) = as_scalar(value);
-        }
+        main_diagonal->modifyDenseVector() = arma::diagvec(
+            firstMultiplicationResult * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix());
         return std::move(main_diagonal);
     }
 
