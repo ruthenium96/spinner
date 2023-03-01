@@ -40,8 +40,6 @@ class AbstractSparseSemiunitaryMatrix {
     virtual void move_vector_from(
         uint32_t i,
         std::unique_ptr<AbstractSparseSemiunitaryMatrix>& subspace_from) = 0;
-    // TODO: can also be moved to Factory
-    virtual void resize(uint32_t cols, uint32_t rows) = 0;
 
     virtual void add_to_position(double value, uint32_t i, uint32_t j) = 0;
     virtual double at(uint32_t i, uint32_t j) const = 0;

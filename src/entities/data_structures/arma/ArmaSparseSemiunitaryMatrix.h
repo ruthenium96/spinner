@@ -19,7 +19,7 @@ class ArmaSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
     void move_vector_from(
         uint32_t i,
         std::unique_ptr<AbstractSparseSemiunitaryMatrix>& subspace_from) override;
-    void resize(uint32_t cols, uint32_t rows) override;
+    void resize(uint32_t cols, uint32_t rows);
     void add_to_position(double value, uint32_t i, uint32_t j) override;
     double at(uint32_t i, uint32_t j) const override;
     void normalize() override;
