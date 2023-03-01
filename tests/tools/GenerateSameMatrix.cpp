@@ -1,4 +1,4 @@
-#include "GenerateSameDenseMatrix.h"
+#include "GenerateSameMatrix.h"
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
 generateSymmetricMatrices(

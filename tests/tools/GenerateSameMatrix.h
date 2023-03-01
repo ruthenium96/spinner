@@ -1,5 +1,5 @@
-#ifndef SPINNER_GENERATESAMEDENSEMATRIX_H
-#define SPINNER_GENERATESAMEDENSEMATRIX_H
+#ifndef SPINNER_GENERATESAMEMATRIX_H
+#define SPINNER_GENERATESAMEMATRIX_H
 
 #include <random>
 #include <vector>
@@ -34,4 +34,4 @@ void makeUnitaryMatrixSame(
     const std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>& lhs,
     std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>& rhs);
 
-#endif  //SPINNER_GENERATESAMEDENSEMATRIX_H
+#endif  //SPINNER_GENERATESAMEMATRIX_H

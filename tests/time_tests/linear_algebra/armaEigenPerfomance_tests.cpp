@@ -3,7 +3,7 @@
 
 #include "gtest/gtest.h"
 #include "tests/tools/AllSymmetricMatrixFactories.h"
-#include "tests/tools/GenerateSameDenseMatrix.h"
+#include "tests/tools/GenerateSameMatrix.h"
 #include "tests/tools/MeanAndDeviation.h"
 
 // Compare time of eigendecomposition of the same matrix:

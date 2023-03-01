@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 #include "tests/tools/AllSymmetricMatrixFactories.h"
-#include "tests/tools/GenerateSameDenseMatrix.h"
+#include "tests/tools/GenerateSameMatrix.h"
 
 TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
     std::random_device dev;
