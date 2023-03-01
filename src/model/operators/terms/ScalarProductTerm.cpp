@@ -101,6 +101,13 @@ void ScalarProductTerm::add_scalar_product_nondiagonal_part(
         converter_.ladder_projection(index_of_vector, plus_center, +1),
         minus_center,
         -1);
+    if (index_of_new_vector < index_of_vector) {
+        // For index_of_vector we add to (index_of_vector, index_of_new_vector).
+        // If there will be no breaking return, lately index_of_new_vector
+        // will add to (index_of_new_vector, index_of_vector), and it will lead to double adding
+        // because of the properties of assign_to_position (it adds to both (i,j) and (j,i)).
+        return;
+    }
 
     // projection m = number n - spin S
     // so S(S+1)-m(m+1) = (2S-n)(n+1)
@@ -113,7 +120,7 @@ void ScalarProductTerm::add_scalar_product_nondiagonal_part(
     // TODO: I do not know, why we need here 0.25 instead of 0.5.
     //  I guess, there is some double-addition.
     matrix->add_to_position(
-        0.25 * sqrt(factor_a * factor_b) * factor,
+        0.5 * sqrt(factor_a * factor_b) * factor,
         index_of_vector,
         index_of_new_vector);
 }
