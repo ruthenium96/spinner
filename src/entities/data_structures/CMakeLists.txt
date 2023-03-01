@@ -3,6 +3,7 @@ add_library(data_structures
         std/StdSparseSemiunitaryMatrix.cpp
         std/as_default/StdSparseSemiunitaryAsDefault.cpp
         std/StdFactories.cpp
+        AbstractSparseSemiunitaryMatrix.cpp
         FactoriesList.cpp)
 
 message("Trying to find packages of linear algebra...")
