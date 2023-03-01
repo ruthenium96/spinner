@@ -12,8 +12,7 @@ void AbstractSparseSemiunitaryMatrix::unitaryTransform(
         while (outer_iterator->hasNext()) {
             auto outer_item = outer_iterator->getNext();
             uint32_t index_of_lexicographic_vector_k = outer_item.index;
-            // TODO: can we start index_of_space_vector_j from index_of_space_vector_i?
-            for (uint32_t index_of_space_vector_j = 0;
+            for (uint32_t index_of_space_vector_j = index_of_space_vector_i;
                  index_of_space_vector_j < matrix_in_space_basis_size;
                  ++index_of_space_vector_j) {
                 auto inner_iterator = this->GetNewIterator(index_of_space_vector_j);

@@ -6,7 +6,9 @@ namespace quantum::linear_algebra {
 
 void EigenSparseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     sparseSymmetricMatrix_.coeffRef(i, j) += value;
-    //    sparseSymmetricMatrix_.insert(i, j) = value;
+    if (i != j) {
+        sparseSymmetricMatrix_.coeffRef(j, i) += value;
+    }
 }
 
 EigenCouple EigenSparseSymmetricMatrix::diagonalizeValuesVectors() const {

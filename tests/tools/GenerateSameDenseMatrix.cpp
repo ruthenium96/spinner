@@ -21,7 +21,6 @@ generateSymmetricMatrices(
             double value = dist(rng);
             for (auto& matrix : answer) {
                 matrix->add_to_position(value, i, j);
-                matrix->add_to_position(value, j, i);
             }
         }
     }
@@ -57,7 +56,6 @@ generateSparseSymmetricMatrices(
                 double value = dist(rng);
                 for (auto& matrix : answer) {
                     matrix->add_to_position(value, i, j);
-                    matrix->add_to_position(value, j, i);
                 }
                 addedValues++;
             }

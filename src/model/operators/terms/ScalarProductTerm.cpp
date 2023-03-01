@@ -110,9 +110,10 @@ void ScalarProductTerm::add_scalar_product_nondiagonal_part(
     double factor_b = projection_of_minus_center
         * (2 * converter_.get_spins()[minus_center] + 1 - projection_of_minus_center);
 
-    // TODO: fix plus-minus
+    // TODO: I do not know, why we need here 0.25 instead of 0.5.
+    //  I guess, there is some double-addition.
     matrix->add_to_position(
-        0.5 * sqrt(factor_a * factor_b) * factor,
+        0.25 * sqrt(factor_a * factor_b) * factor,
         index_of_vector,
         index_of_new_vector);
 }

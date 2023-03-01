@@ -6,6 +6,9 @@ namespace quantum::linear_algebra {
 
 void ArmaSparseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     sparseSymmetricMatrix_.at(i, j) += value;
+    if (i != j) {
+        sparseSymmetricMatrix_(j, i) += value;
+    }
 }
 
 void ArmaSparseSymmetricMatrix::resize(uint32_t matrix_in_space_basis_size_i) {

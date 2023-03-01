@@ -6,6 +6,9 @@ namespace quantum::linear_algebra {
 
 void EigenDenseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     denseSymmetricMatrix_(i, j) += value;
+    if (i != j) {
+        denseSymmetricMatrix_(j, i) += value;
+    }
 }
 
 EigenCouple EigenDenseSymmetricMatrix::diagonalizeValuesVectors() const {
