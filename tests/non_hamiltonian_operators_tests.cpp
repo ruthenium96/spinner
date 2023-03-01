@@ -73,8 +73,7 @@ TEST(
         {{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        model::Model model(mults);
-        model.InitializeSSquared();
+        model::ModelInput model(mults);
 
         runner::Runner runner(model);
         lexicographic::IndexConverter converter(mults);
@@ -82,17 +81,19 @@ TEST(
         Matrix s_squared_matrix = Matrix(
             runner.getSpace(),
             runner.getOperator(common::QuantityEnum::S_total_squared),
-            runner.getIndexConverter());
+            runner.getIndexConverter(),
+            runner.getDataStructuresFactories());
 
-        std::vector<DenseVector> s_squared_values(s_squared_matrix.blocks.size());
-        for (size_t i = 0; i < s_squared_values.size(); ++i) {
-            s_squared_matrix.blocks[i].raw_data.diagonalize(s_squared_values[i]);
+        auto s_squared_vector = runner.getDataStructuresFactories().createVector();
+
+        for (size_t i = 0; i < s_squared_matrix.blocks.size(); ++i) {
+            s_squared_vector->concatenate_with(
+                s_squared_matrix.blocks[i].raw_data->diagonalizeValues());
         }
-        std::vector<double> s_squared_vector = concatenate(s_squared_values);
 
-        std::vector<int> total_multiplicities(s_squared_vector.size());
+        std::vector<int> total_multiplicities(s_squared_vector->size());
         for (size_t i = 0; i < total_multiplicities.size(); ++i) {
-            total_multiplicities[i] = (int)round(sqrt(1 + 4 * s_squared_vector[i]));
+            total_multiplicities[i] = (int)round(sqrt(1 + 4 * s_squared_vector->at(i)));
         }
         std::sort(total_multiplicities.begin(), total_multiplicities.end());
 

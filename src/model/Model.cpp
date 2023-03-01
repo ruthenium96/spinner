@@ -1,64 +1,162 @@
 #include "Model.h"
 
-#include <src/model/operators/ScalarProductTerm.h>
+#include <cassert>
+#include <utility>
+
+#include "src/model/operators/terms/LocalSSquaredOneCenterTerm.h"
+#include "src/model/operators/terms/ScalarProductTerm.h"
+#include "src/model/operators/terms/SzSzOneCenterTerm.h"
+#include "src/model/operators/terms/SzSzTwoCenterTerm.h"
 
 namespace model {
-
-Model::Model(const std::vector<int>& mults) : symbols_(mults.size()), converter_(mults) {
+Model::Model(ModelInput modelInput) :
+    numericalWorker_(modelInput.modifySymbolicWorker(), modelInput.getMults().size()),
+    converter_(modelInput.getMults()) {
     energy_operator = operators::Operator();
-}
-
-Model& Model::InitializeSSquared() {
-    if (operators_history_.s_squared) {
-        return *this;
+    // TODO: this strange check need only because some tests do not initialize g factors,
+    //  but want to calculate S^2 values. Fix it.
+    if (getSymbolicWorker().isGFactorInitialized()
+        && (!getSymbolicWorker().isAllGFactorsEqual() || getSymbolicWorker().isZFSInitialized())) {
+        InitializeGSzSquared();
+        // TODO: when there is no Sz <-> -Sz symmetry, also \sum g_aS_{az} required
+    } else {
+        InitializeSSquared();
     }
 
-    s_squared_operator = operators::Operator::s_squared(converter_.get_spins());
+    if (getSymbolicWorker().isZFSInitialized()) {
+        InitializeZeroFieldSplitting();
+    }
 
-    operators_history_.s_squared = true;
-    return *this;
+    if (getSymbolicWorker().isIsotropicExchangeInitialized()) {
+        InitializeIsotropicExchange();
+    }
 }
 
-Model& Model::InitializeIsotropicExchange() {
+void Model::InitializeDerivatives() {
+    if (!getSymbolicWorker().isAllGFactorsEqual()) {
+        InitializeGSzSquaredDerivatives();
+    }
+
+    if (getSymbolicWorker().isIsotropicExchangeInitialized()) {
+        InitializeIsotropicExchangeDerivatives();
+    }
+
+    if (getSymbolicWorker().isZFSInitialized()) {
+        InitializeZeroFieldSplittingDerivative();
+    }
+}
+
+void Model::InitializeSSquared() {
+    if (operators_history_.s_squared) {
+        return;
+    }
+
+    s_squared_operator = operators::Operator::s_squared(converter_);
+
+    operators_history_.s_squared = true;
+}
+
+void Model::InitializeGSzSquared() {
+    if (operators_history_.g_sz_squared) {
+        return;
+    }
+
+    g_sz_squared_operator = operators::Operator::g_sz_squared(
+        converter_,
+        getNumericalWorker().getGGParameters().first,
+        getNumericalWorker().getGGParameters().second);
+
+    operators_history_.g_sz_squared = true;
+}
+
+void Model::InitializeIsotropicExchange() {
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
-        return *this;
+        return;
     }
     energy_operator.getTwoCenterTerms().emplace_back(
         std::make_unique<const operators::ScalarProductTerm>(
-            symbols_.getIsotropicExchangeParameters()));
+            converter_,
+            getNumericalWorker().getIsotropicExchangeParameters()));
     operators_history_.isotropic_exchange_in_hamiltonian = true;
-    return *this;
 }
 
-Model& Model::InitializeIsotropicExchangeDerivatives() {
+void Model::InitializeZeroFieldSplitting() {
+    if (operators_history_.zfs_in_hamiltonian) {
+        return;
+    }
+    auto D_parameters = getNumericalWorker().getZFSParameters().first;
+    energy_operator.getOneCenterTerms().emplace_back(
+        std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
+            converter_,
+            D_parameters,
+            -1.0 / 3.0));
+    energy_operator.getOneCenterTerms().emplace_back(
+        std::make_unique<const operators::SzSzOneCenterTerm>(converter_, D_parameters));
+    operators_history_.zfs_in_hamiltonian = true;
+}
+
+void Model::InitializeIsotropicExchangeDerivatives() {
     if (operators_history_.isotropic_exchange_derivatives) {
-        return *this;
+        return;
     }
 
-    for (const auto& symbol : symbols_.getChangeableNames(symbols::SymbolTypeEnum::J)) {
+    for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::J)) {
         operators::Operator operator_derivative = operators::Operator();
         operator_derivative.getTwoCenterTerms().emplace_back(
             std::make_unique<const operators::ScalarProductTerm>(
-                symbols_.constructIsotropicExchangeDerivativeParameters(symbol)));
-        derivative_of_energy_wrt_exchange_parameters_operator[symbol] =
-            std::move(operator_derivative);
+                converter_,
+                getNumericalWorker().constructIsotropicExchangeDerivativeParameters(symbol)));
+        derivatives_map_[{common::Energy, symbol}] = std::move(operator_derivative);
     }
 
     operators_history_.isotropic_exchange_derivatives = true;
+}
 
-    return *this;
+void Model::InitializeZeroFieldSplittingDerivative() {
+    if (operators_history_.zfs_derivative) {
+        return;
+    }
+    for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::D)) {
+        operators::Operator operator_derivative = operators::Operator();
+        auto derivative_parameters = getNumericalWorker().constructZFSDerivativeParameters(symbol);
+        operator_derivative.getOneCenterTerms().emplace_back(
+            std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
+                converter_,
+                derivative_parameters,
+                -1.0 / 3.0));
+        operator_derivative.getOneCenterTerms().emplace_back(
+            std::make_unique<const operators::SzSzOneCenterTerm>(
+                converter_,
+                derivative_parameters));
+        derivatives_map_[{common::Energy, symbol}] = std::move(operator_derivative);
+    }
+}
+
+void Model::InitializeGSzSquaredDerivatives() {
+    if (operators_history_.g_sz_squared_derivatives) {
+        return;
+    }
+
+    for (const auto& symbol :
+         getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
+        operators::Operator operator_derivative = operators::Operator();
+        auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
+        operator_derivative.getOneCenterTerms().emplace_back(
+            std::make_unique<operators::SzSzOneCenterTerm>(converter_, pair_of_parameters.first));
+        operator_derivative.getTwoCenterTerms().emplace_back(
+            std::make_unique<const operators::SzSzTwoCenterTerm>(
+                converter_,
+                pair_of_parameters.second,
+                2));
+        // this two from summation in Submatrix: \sum_{a=1}^N \sum_{b=a+1}^N
+        derivatives_map_[{common::gSz_total_squared, symbol}] = std::move(operator_derivative);
+    }
+
+    operators_history_.g_sz_squared_derivatives = true;
 }
 
 const lexicographic::IndexConverter& Model::getIndexConverter() const {
     return converter_;
-}
-
-const symbols::Symbols& Model::getSymbols() const {
-    return symbols_;
-}
-
-symbols::Symbols& Model::getSymbols() {
-    return symbols_;
 }
 
 const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum) const {
@@ -66,24 +164,47 @@ const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum
         return energy_operator;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
         return s_squared_operator.value();
+    } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
+        return g_sz_squared_operator.value();
     }
+    assert(0);
 }
 
 const operators::Operator& Model::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
-    symbols::SymbolTypeEnum symbol_type,
     const symbols::SymbolName& symbol) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == symbols::SymbolTypeEnum::J) {
-            return derivative_of_energy_wrt_exchange_parameters_operator.at(symbol);
-        }
-    }
+    return derivatives_map_.at({quantity_enum, symbol});
 }
+
 bool Model::is_s_squared_initialized() const {
     return operators_history_.s_squared;
 }
+
 bool Model::is_isotropic_exchange_derivatives_initialized() const {
     return operators_history_.isotropic_exchange_derivatives;
 }
 
+bool Model::is_g_sz_squared_initialized() const {
+    return operators_history_.g_sz_squared;
+}
+
+bool Model::is_g_sz_squared_derivatives_initialized() const {
+    return operators_history_.g_sz_squared_derivatives;
+}
+
+bool Model::is_zero_field_splitting_initialized() const {
+    return operators_history_.zfs_in_hamiltonian;
+}
+
+const symbols::SymbolicWorker& Model::getSymbolicWorker() const {
+    return numericalWorker_.getSymbolicWorker();
+}
+
+symbols::NumericalWorker& Model::getNumericalWorker() {
+    return numericalWorker_;
+}
+
+const symbols::NumericalWorker& Model::getNumericalWorker() const {
+    return numericalWorker_;
+}
 }  // namespace model

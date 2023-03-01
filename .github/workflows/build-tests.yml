@@ -1,0 +1,74 @@
+name: Build Tests
+
+on:
+  push:
+    branches:
+      - "**"
+
+
+jobs:
+
+  build-tests:
+    name: Build all.
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        linear-algebra: [ eigen3, armadillo ]
+        compiler-c: [ gcc, clang ]
+        include:
+          - compiler-cpp: g++
+            compiler-c: gcc
+          - compiler-cpp: clang++
+            compiler-c: clang
+    env:
+      CC: ${{ matrix.compiler-c }}
+      CXX: ${{ matrix.compiler-cpp }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libboost-all-dev \
+            libopenblas-dev \
+            liblapack-dev \
+            libarpack2-dev \
+            libsuperlu-dev \
+            lib${{ matrix.linear-algebra }}-dev \
+            gfortran \
+            libomp-dev \
+      - name: Build project
+        run: |
+          mkdir ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          cmake ..
+          cmake --build .
+
+  build-with-system-gtest:
+    name: Build all with system Gtest.
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libboost-all-dev \
+            libopenblas-dev \
+            liblapack-dev \
+            libarpack2-dev \
+            libsuperlu-dev \
+            libeigen3-dev \
+            libarmadillo-dev \
+            libgtest-dev \
+            gfortran \
+            libomp-dev \
+      - name: Build project
+        run: |
+          mkdir ${{github.workspace}}/build
+          cd ${{github.workspace}}/build
+          cmake ..
+          cmake --build .

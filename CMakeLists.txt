@@ -7,34 +7,13 @@ project(spinner)
 
 include(FetchContent)
 FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG        "release-1.11.0"
-)
-FetchContent_MakeAvailable(googletest)
-include_directories(${CMAKE_SOURCE_DIR}/libs/googletest/googletest/include)
-
-FetchContent_Declare(
         wignersymbols
         GIT_REPOSITORY https://github.com/joeydumont/wignerSymbols.git
         GIT_TAG "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
 )
-FetchContent_MakeAvailable(wignersymbols)
-include_directories(${wignersymbols_SOURCE_DIR}/include/)
-
-FetchContent_Declare(
-        stlbfgs
-        GIT_REPOSITORY https://github.com/ssloy/stlbfgs.git
-        GIT_TAG "0dedf926faf66cf95fffbdc3ff5c3e0067b70296"
-)
-FetchContent_MakeAvailable(stlbfgs)
-include_directories(${stlbfgs_SOURCE_DIR}/)
-
-find_package(Boost)
-include_directories(${Boost_INCLUDE_DIRS})
-
-find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
+# TODO: do not build tests of wignersymbols
+#FetchContent_MakeAvailable(wignersymbols)
+#include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)

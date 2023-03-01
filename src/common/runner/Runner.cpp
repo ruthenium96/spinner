@@ -1,36 +1,51 @@
 #include "Runner.h"
 
-#include <stlbfgs.h>
-
+#include <cassert>
 #include <utility>
 
-#include "src/model/operators/ConstantTerm.h"
-#include "src/model/operators/ScalarProductTerm.h"
+#include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
+#include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
+#include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
 
 namespace runner {
 
-Runner::Runner(model::Model model) :
-    Runner(std::move(model), common::physical_optimization::OptimizationList()) {}
+Runner::Runner(model::ModelInput model) :
+    Runner(
+        std::move(model),
+        common::physical_optimization::OptimizationList(),
+        quantum::linear_algebra::FactoriesList()) {}
 
 Runner::Runner(
-    model::Model model,
+    model::ModelInput model,
     common::physical_optimization::OptimizationList optimizationList) :
+    Runner(
+        std::move(model),
+        std::move(optimizationList),
+        quantum::linear_algebra::FactoriesList()) {}
+
+Runner::Runner(
+    model::ModelInput model,
+    quantum::linear_algebra::FactoriesList dataStructuresFactories) :
+    Runner(
+        std::move(model),
+        common::physical_optimization::OptimizationList(),
+        std::move(dataStructuresFactories)) {}
+
+Runner::Runner(
+    model::ModelInput model,
+    common::physical_optimization::OptimizationList optimizationList,
+    quantum::linear_algebra::FactoriesList dataStructuresFactories) :
     consistentModelOptimizationList_(std::move(model), std::move(optimizationList)),
+    dataStructuresFactories_(std::move(dataStructuresFactories)),
     space_(space::optimization::OptimizedSpaceConstructor::construct(
-        consistentModelOptimizationList_)) {
+        consistentModelOptimizationList_,
+        dataStructuresFactories)) {
     if (getModel().is_s_squared_initialized()) {
         s_squared = common::Quantity();
     }
-    if (getModel().is_isotropic_exchange_derivatives_initialized()) {
-        for (const auto& symbol :
-             getSymbols().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
-            derivative_of_energy_wrt_exchange_parameters[symbol] = common::Quantity();
-        }
-    }
-
-    if (getSymbols().isIsotropicExchangeInitialized()) {
-        getModel().InitializeIsotropicExchange();
+    if (getModel().is_g_sz_squared_initialized()) {
+        g_sz_squared = common::Quantity();
     }
 
     //    if (!symbols_.isGFactorInitialized()) {
@@ -44,18 +59,34 @@ const space::Space& runner::Runner::getSpace() const {
 
 void Runner::BuildMatrices() {
     if (!getOperator(common::Energy).empty()) {
-        energy.matrix_ = Matrix(getSpace(), getOperator(common::Energy), getIndexConverter());
+        energy.matrix_ = Matrix(
+            getSpace(),
+            getOperator(common::Energy),
+            getIndexConverter(),
+            getDataStructuresFactories());
     }
     if (s_squared.has_value()) {
-        s_squared->matrix_ =
-            Matrix(getSpace(), getOperator(common::S_total_squared), getIndexConverter());
+        s_squared->matrix_ = Matrix(
+            getSpace(),
+            getOperator(common::S_total_squared),
+            getIndexConverter(),
+            getDataStructuresFactories());
     }
-    for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+    if (g_sz_squared.has_value()) {
+        g_sz_squared->matrix_ = Matrix(
+            getSpace(),
+            getOperator(common::gSz_total_squared),
+            getIndexConverter(),
+            getDataStructuresFactories());
+    }
+    for (auto& [pair, derivative] : derivatives_map_) {
         // TODO: fix it!
+        auto [quantity_enum, symbol_name] = pair;
         derivative.matrix_ = Matrix(
             getSpace(),
-            getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
-            getIndexConverter());
+            getOperatorDerivative(quantity_enum, symbol_name),
+            getIndexConverter(),
+            getDataStructuresFactories());
     }
 
     matrix_history_.matrices_was_built = true;
@@ -64,17 +95,21 @@ void Runner::BuildMatrices() {
 void Runner::BuildSpectra() {
     size_t number_of_blocks = getSpace().getBlocks().size();
 
-    if (!getOperator(common::Energy).empty()) {
+    if (!getOperator(common::Energy).empty() || !energy.spectrum_.blocks.empty()) {
         energy.spectrum_.blocks.clear();
-        energy.spectrum_.blocks.resize(number_of_blocks);
+        energy.spectrum_.blocks.reserve(number_of_blocks);
     }
     if (s_squared.has_value()) {
         s_squared->spectrum_.blocks.clear();
-        s_squared->spectrum_.blocks.resize(number_of_blocks);
+        s_squared->spectrum_.blocks.reserve(number_of_blocks);
     }
-    for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+    if (g_sz_squared.has_value()) {
+        g_sz_squared->spectrum_.blocks.clear();
+        g_sz_squared->spectrum_.blocks.reserve(number_of_blocks);
+    }
+    for (auto& [_, derivative] : derivatives_map_) {
         derivative.spectrum_.blocks.clear();
-        derivative.spectrum_.blocks.resize(number_of_blocks);
+        derivative.spectrum_.blocks.reserve(number_of_blocks);
     }
 
     if (matrix_history_.matrices_was_built) {
@@ -86,53 +121,76 @@ void Runner::BuildSpectra() {
 
 void Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
-        DenseMatrix unitary_transformation_matrix;
-        energy.spectrum_.blocks[block] =
-            Subspectrum::energy(energy.matrix_.blocks[block], unitary_transformation_matrix);
+        auto [subspectrum_energy, unitary_transformation_matrix] =
+            Subspectrum::energy(energy.matrix_.blocks[block]);
+        energy.spectrum_.blocks.emplace_back(std::move(subspectrum_energy));
 
         if (s_squared.has_value()) {
-            s_squared->spectrum_.blocks[block] = Subspectrum::non_energy(
+            s_squared->spectrum_.blocks.emplace_back(Subspectrum::non_energy(
                 s_squared->matrix_.blocks[block],
-                unitary_transformation_matrix);
+                unitary_transformation_matrix));
         }
 
-        for (auto& [_, derivative] : derivative_of_energy_wrt_exchange_parameters) {
-            derivative.spectrum_.blocks[block] = Subspectrum::non_energy(
+        if (g_sz_squared.has_value()) {
+            g_sz_squared->spectrum_.blocks.emplace_back(Subspectrum::non_energy(
+                g_sz_squared->matrix_.blocks[block],
+                unitary_transformation_matrix));
+        }
+
+        for (auto& [_, derivative] : derivatives_map_) {
+            derivative.spectrum_.blocks.emplace_back(Subspectrum::non_energy(
                 derivative.matrix_.blocks[block],
-                unitary_transformation_matrix);
+                unitary_transformation_matrix));
         }
     }
 }
 
 void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
-        DenseMatrix unitary_transformation_matrix;
+        std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
+            unitary_transformation_matrix;
+
         {
             auto hamiltonian_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
                 getOperator(common::Energy),
-                getIndexConverter());
-            energy.spectrum_.blocks[block] =
-                Subspectrum::energy(hamiltonian_submatrix, unitary_transformation_matrix);
+                getIndexConverter(),
+                getDataStructuresFactories());
+            auto pair = Subspectrum::energy(hamiltonian_submatrix);
+            energy.spectrum_.blocks.emplace_back(std::move(pair.first));
+            unitary_transformation_matrix = std::move(pair.second);
         }
 
         if (s_squared.has_value()) {
             auto non_hamiltonian_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
                 getOperator(common::S_total_squared),
-                getIndexConverter());
-            s_squared->spectrum_.blocks[block] =
-                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix);
+                getIndexConverter(),
+                getDataStructuresFactories());
+            s_squared->spectrum_.blocks.emplace_back(
+                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
         }
 
-        for (auto& [symbol_name, derivative] : derivative_of_energy_wrt_exchange_parameters) {
+        if (g_sz_squared.has_value()) {
+            auto non_hamiltonian_submatrix = Submatrix(
+                getSpace().getBlocks()[block],
+                getOperator(common::gSz_total_squared),
+                getIndexConverter(),
+                getDataStructuresFactories());
+            g_sz_squared->spectrum_.blocks.emplace_back(
+                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
+        }
+
+        for (auto& [pair, derivative] : derivatives_map_) {
             // TODO: fix it
+            auto [quantity_enum, symbol_name] = pair;
             auto derivative_submatrix = Submatrix(
                 getSpace().getBlocks()[block],
-                getOperatorDerivative(common::Energy, model::symbols::J, symbol_name),
-                getIndexConverter());
-            derivative.spectrum_.blocks[block] =
-                Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix);
+                getOperatorDerivative(quantity_enum, symbol_name),
+                getIndexConverter(),
+                getDataStructuresFactories());
+            derivative.spectrum_.blocks.emplace_back(
+                Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
         }
     }
 }
@@ -142,7 +200,10 @@ const Matrix& Runner::getMatrix(common::QuantityEnum quantity_enum) const {
         return energy.matrix_;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
         return s_squared->matrix_;
+    } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
+        return g_sz_squared->matrix_;
     }
+    assert(0);
 }
 
 const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
@@ -150,7 +211,10 @@ const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
         return energy.spectrum_;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
         return s_squared->spectrum_;
+    } else if (quantity_enum == common::gSz_total_squared) {
+        return g_sz_squared->spectrum_;
     }
+    assert(0);
 }
 
 const model::operators::Operator& Runner::getOperator(common::QuantityEnum quantity_enum) const {
@@ -163,67 +227,79 @@ const lexicographic::IndexConverter& Runner::getIndexConverter() const {
 
 const model::operators::Operator& Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
-    model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
-    return getModel().getOperatorDerivative(quantity_enum, symbol_type, symbol);
+    return getModel().getOperatorDerivative(quantity_enum, symbol);
 }
 
 const Spectrum& Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
-    model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == model::symbols::SymbolTypeEnum::J) {
-            return derivative_of_energy_wrt_exchange_parameters.at(symbol).spectrum_;
-        }
-    }
+    return derivatives_map_.at({quantity_enum, symbol}).spectrum_;
 }
 
 const Matrix& Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
-    model::symbols::SymbolTypeEnum symbol_type,
     const model::symbols::SymbolName& symbol) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        if (symbol_type == model::symbols::SymbolTypeEnum::J) {
-            return derivative_of_energy_wrt_exchange_parameters.at(symbol).matrix_;
-        }
-    }
+    return derivatives_map_.at({quantity_enum, symbol}).matrix_;
 }
 
 void Runner::BuildMuSquaredWorker() {
-    DenseVector energy_vector;
-    DenseVector degeneracy_vector;
+    auto energy_vector = dataStructuresFactories_.createVector();
+    auto degeneracy_vector = dataStructuresFactories_.createVector();
 
-    for (const auto& subspectrum : energy.spectrum_.blocks) {
-        energy_vector.concatenate_with(subspectrum.raw_data);
-        degeneracy_vector.add_identical_values(
-            subspectrum.raw_data.size(),
+    for (const auto& subspectrum : getSpectrum(common::Energy).blocks) {
+        energy_vector->concatenate_with(subspectrum.raw_data);
+        degeneracy_vector->add_identical_values(
+            subspectrum.raw_data->size(),
             subspectrum.properties.degeneracy);
     }
-    energy_vector.subtract_minimum();
+    energy_vector->subtract_minimum();
 
-    if (getSymbols().isAllGFactorsEqual()) {
+    std::unique_ptr<magnetic_susceptibility::worker::AbstractWorker> magnetic_susceptibility_worker;
+
+    if (getSymbolicWorker().isAllGFactorsEqual() && !getSymbolicWorker().isZFSInitialized()) {
         // and there is no field
-        double g_factor = getSymbols().getGFactorParameters()->operator()(0);
-        DenseVector s_squared_vector;
+        // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
+        double g_factor = getModel().getNumericalWorker().getGFactorParameters()->at(0);
+        auto s_squared_vector = dataStructuresFactories_.createVector();
 
         // TODO: check if s_squared has been initialized
-        for (const auto& subspectrum : s_squared->spectrum_.blocks) {
-            s_squared_vector.concatenate_with(subspectrum.raw_data);
+        for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
+            s_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 
-        mu_squared_worker =
-            std::make_unique<magnetic_susceptibility::UniqueGOnlySSquaredMuSquaredWorker>(
+        magnetic_susceptibility_worker =
+            std::make_unique<magnetic_susceptibility::worker::UniqueGOnlySSquaredWorker>(
                 std::move(energy_vector),
                 std::move(degeneracy_vector),
                 std::move(s_squared_vector),
                 g_factor);
     } else {
-        throw std::invalid_argument("Different g factors are not supported now.");
+        auto g_sz_squared_vector = dataStructuresFactories_.createVector();
+        // TODO: check if g_sz_squared has been initialized
+        for (const auto& subspectrum : getSpectrum(common::gSz_total_squared).blocks) {
+            g_sz_squared_vector->concatenate_with(subspectrum.raw_data);
+        }
+
+        magnetic_susceptibility_worker =
+            std::make_unique<magnetic_susceptibility::worker::GSzSquaredWorker>(
+                std::move(energy_vector),
+                std::move(degeneracy_vector),
+                std::move(g_sz_squared_vector));
     }
 
+    if (getSymbolicWorker().isThetaInitialized()) {
+        magnetic_susceptibility_worker =
+            std::make_unique<magnetic_susceptibility::worker::CurieWeissWorker>(
+                std::move(magnetic_susceptibility_worker),
+                getModel().getNumericalWorker().getThetaParameter());
+    }
+
+    magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
+        std::move(magnetic_susceptibility_worker));
+
     if (experimental_values_worker_.has_value()) {
-        mu_squared_worker.value()->initializeExperimentalValues(
+        magnetic_susceptibility_controller_.value().initializeExperimentalValues(
             experimental_values_worker_.value());
     }
 }
@@ -242,82 +318,135 @@ void Runner::initializeExperimentalValues(
             experimental_quantity_type,
             number_of_centers_ratio);
 
-    if (mu_squared_worker.has_value()) {
-        mu_squared_worker.value()->initializeExperimentalValues(
+    if (magnetic_susceptibility_controller_.has_value()) {
+        magnetic_susceptibility_controller_.value().initializeExperimentalValues(
             experimental_values_worker_.value());
     }
 }
 
 std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {
-    // TODO: ony s_squared-based calculation supported
+    // TODO: it is awful. Fix it somehow, this code should be moved from Runner.
 
     std::map<model::symbols::SymbolName, double> answer;
 
-    for (const auto& changeable_symbol : getSymbols().getChangeableNames(model::symbols::J)) {
-        DenseVector derivative_vector;
+    for (const auto& changeable_symbol :
+         getSymbolicWorker().getChangeableNames(model::symbols::J)) {
+        auto derivative_vector = dataStructuresFactories_.createVector();
         for (const auto& subspectrum :
-             getSpectrumDerivative(common::Energy, model::symbols::J, changeable_symbol).blocks) {
-            derivative_vector.concatenate_with(subspectrum.raw_data);
+             getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
+            derivative_vector->concatenate_with(subspectrum.raw_data);
         }
-        double value = mu_squared_worker.value()->calculateTotalDerivative(
+        auto derivative_map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
+        derivative_map[common::Energy] = std::move(derivative_vector);
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
             model::symbols::J,
-            std::move(derivative_vector));
+            std::move(derivative_map));
         answer[changeable_symbol] = value;
-        //        std::cout << "dR^2/d" << changeable_symbol << " = "
-        //                  << value << std::endl;
+        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
     }
 
-    if (!getSymbols().getChangeableNames(model::symbols::g_factor).empty()) {
-        model::symbols::SymbolName g_name =
-            getSymbols().getChangeableNames(model::symbols::g_factor)[0];
-        double value =
-            mu_squared_worker.value()->calculateTotalDerivative(model::symbols::g_factor);
-        answer[g_name] = value;
-        //        std::cout << "dR^2/d" << g_name << " = " << value << std::endl;
+    for (const auto& changeable_symbol :
+         getSymbolicWorker().getChangeableNames(model::symbols::D)) {
+        auto derivative_vector = dataStructuresFactories_.createVector();
+        for (const auto& subspectrum :
+             getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
+            derivative_vector->concatenate_with(subspectrum.raw_data);
+        }
+        auto derivative_map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
+        derivative_map[common::Energy] = std::move(derivative_vector);
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+            model::symbols::D,
+            std::move(derivative_map));
+        answer[changeable_symbol] = value;
+        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
     }
+
+    for (const auto& changeable_symbol :
+         getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
+        auto map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
+        if (consistentModelOptimizationList_.getModel().is_g_sz_squared_derivatives_initialized()) {
+            auto derivative_vector = dataStructuresFactories_.createVector();
+            for (const auto& subspectrum :
+                 getSpectrumDerivative(common::gSz_total_squared, changeable_symbol).blocks) {
+                derivative_vector->concatenate_with(subspectrum.raw_data);
+            }
+            map[common::gSz_total_squared] = std::move(derivative_vector);
+        }
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+            model::symbols::g_factor,
+            std::move(map));
+        answer[changeable_symbol] = value;
+        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+    }
+
+    // Theta calculation:
+    if (!getSymbolicWorker().getChangeableNames(model::symbols::Theta).empty()) {
+        model::symbols::SymbolName Theta_name =
+            getSymbolicWorker().getChangeableNames(model::symbols::Theta)[0];
+        auto empty_map = std::map<
+            common::QuantityEnum,
+            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
+        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+            model::symbols::Theta,
+            std::move(empty_map));
+        answer[Theta_name] = value;
+        //        std::cout << "dR^2/d" << Theta_name.get_name() << " = " << value << std::endl;
+    }
+
     return answer;
 }
 
-void Runner::minimizeResidualError() {
-    std::vector<model::symbols::SymbolName> changeable_names = getSymbols().getChangeableNames();
+void Runner::minimizeResidualError(
+    std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> solver) {
+    std::vector<model::symbols::SymbolName> changeable_names =
+        getSymbolicWorker().getChangeableNames();
     std::vector<double> changeable_values;
     changeable_values.reserve(changeable_names.size());
     for (const model::symbols::SymbolName& name : changeable_names) {
-        changeable_values.push_back(getSymbols().getValueOfName(name));
+        changeable_values.push_back(getSymbolicWorker().getValueOfName(name));
     }
 
-    // Function-adapter for STLBFGS library.
-    // It should calculate residual error and derivatives at a point of changeable_values.
-    std::function<void(const std::vector<double>&, double&, std::vector<double>&)> func_grad_eval =
+    if (solver->doesGradientsRequired()) {
+        initializeDerivatives();
+    }
+
+    // This function should calculate residual error and derivatives at a point of changeable_values
+    std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction =
         [this, capture0 = std::cref(changeable_names)](
             const std::vector<double>& changeable_values,
-            double& residual_error,
-            std::vector<double>& gradient) {
-            stepOfRegression(capture0, changeable_values, residual_error, gradient);
+            std::vector<double>& gradient,
+            bool isGradientRequired) {
+            return stepOfRegression(capture0, changeable_values, gradient, isGradientRequired);
         };
 
-    STLBFGS::Optimizer opt {func_grad_eval};
-    opt.verbose = false;
-    // Run calculation from initial guess. STLBFGS updates changeable_values every iteration.
-    opt.run(changeable_values);
+    solver->optimize(oneStepFunction, changeable_values);
 
-    for (size_t i = 0; i < changeable_names.size(); ++i) {
-        //        std::cout << changeable_names[i] << ": " << changeable_values[i] << std::endl;
-    }
+    //    for (size_t i = 0; i < changeable_names.size(); ++i) {
+    //        std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
+    //    }
 }
 
-void Runner::stepOfRegression(
+double Runner::stepOfRegression(
     const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
-    double& residual_error,
-    std::vector<double>& gradient) {
-    // At first, update actual values in Symbols:
+    std::vector<double>& gradient,
+    bool isGradientRequired) {
+    // At first, update actual values in SymbolicWorker:
     for (size_t i = 0; i < changeable_names.size(); ++i) {
-        // TODO: mutable use of Model/Symbols. Refactor it.
-        getModel().getSymbols().setNewValueToChangeableSymbol(
+        getModel().getNumericalWorker().setNewValueToChangeableSymbol(
             changeable_names[i],
             changeable_values[i]);
     }
+
+    //    for (size_t i = 0; i < changeable_names.size(); ++i) {
+    //        std::cout << changeable_names[i].get_name() << " = " << changeable_values[i] << std::endl;
+    //    }
 
     // Do some calculation stuff...
     if (matrix_history_.matrices_was_built) {
@@ -331,22 +460,50 @@ void Runner::stepOfRegression(
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
-    residual_error = mu_squared_worker.value()->calculateResidualError();
+    double residual_error = getMagneticSusceptibilityController().calculateResidualError();
 
-    // Calculate derivatives...
-    std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
-    for (size_t i = 0; i < changeable_names.size(); ++i) {
-        // ...and write it to external variable:
-        gradient[i] = map_gradient[changeable_names[i]];
+    //std::cout << "R^2 = " << residual_error << std::endl << std::endl;
+
+    if (isGradientRequired) {
+        // Calculate derivatives...
+        std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
+        for (size_t i = 0; i < changeable_names.size(); ++i) {
+            // ...and write it to external variable:
+            gradient[i] = map_gradient[changeable_names[i]];
+        }
+    }
+
+    return residual_error;
+}
+
+void Runner::initializeDerivatives() {
+    consistentModelOptimizationList_.getModel().InitializeDerivatives();
+    if (getModel().is_isotropic_exchange_derivatives_initialized()) {
+        for (const auto& symbol :
+             getSymbolicWorker().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
+            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
+        }
+    }
+    if (getModel().is_g_sz_squared_derivatives_initialized()) {
+        for (const auto& symbol :
+             getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
+            derivatives_map_[{common::gSz_total_squared, symbol}] = common::Quantity();
+        }
+    }
+    if (getModel().is_zero_field_splitting_initialized()) {
+        for (const auto& symbol : getSymbolicWorker().getChangeableNames(model::symbols::D)) {
+            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
+        }
     }
 }
 
-const magnetic_susceptibility::MuSquaredWorker& Runner::getMuSquaredWorker() const {
-    return *mu_squared_worker.value();
+const magnetic_susceptibility::MagneticSusceptibilityController&
+Runner::getMagneticSusceptibilityController() const {
+    return magnetic_susceptibility_controller_.value();
 }
 
-const model::symbols::Symbols& Runner::getSymbols() const {
-    return getModel().getSymbols();
+const model::symbols::SymbolicWorker& Runner::getSymbolicWorker() const {
+    return getModel().getSymbolicWorker();
 }
 
 const model::Model& Runner::getModel() const {
@@ -359,5 +516,9 @@ model::Model& Runner::getModel() {
 
 const common::physical_optimization::OptimizationList& Runner::getOptimizationList() const {
     return consistentModelOptimizationList_.getOptimizationList();
+}
+
+quantum::linear_algebra::FactoriesList Runner::getDataStructuresFactories() const {
+    return dataStructuresFactories_;
 }
 }  // namespace runner

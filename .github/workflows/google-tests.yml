@@ -2,15 +2,15 @@ name: Google Tests
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - "**"
 
 
 jobs:
 
   google-tests:
-    runs-on: ubuntu-20.04
+    name: Run all google tests
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v2
@@ -24,13 +24,14 @@ jobs:
             libarpack2-dev \
             libsuperlu-dev \
             libarmadillo-dev \
+            libeigen3-dev \
             gfortran \
             libomp-dev \
       - name: Build project
         run: |
           mkdir ${{github.workspace}}/build
           cd ${{github.workspace}}/build
-          cmake ..
+          cmake .. -DCMAKE_BUILD_TYPE=Release
           cmake --build .
       - name: Run google Tests
         run: ${{github.workspace}}/build/tests/spinner_test

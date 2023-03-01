@@ -9,7 +9,9 @@ namespace runner {
 // If inconsistent pair was passed to constructor, it throws a suitable exception.
 class ConsistentModelOptimizationList {
   public:
-    ConsistentModelOptimizationList(model::Model, common::physical_optimization::OptimizationList);
+    ConsistentModelOptimizationList(
+        model::ModelInput,
+        common::physical_optimization::OptimizationList);
     const model::Model& getModel() const;
     model::Model& getModel();
     const common::physical_optimization::OptimizationList& getOptimizationList() const;

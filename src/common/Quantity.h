@@ -10,8 +10,7 @@
 namespace common {
 enum QuantityEnum {
     Energy,
-    S_total_squared,
-};
+    S_total_squared, gSz_total_squared };
 
 std::string get_quantity_name(common::QuantityEnum);
 

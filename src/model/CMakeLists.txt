@@ -1,9 +1,15 @@
 add_library(model
-        Model.h Model.cpp
+        ModelInput.h ModelInput.cpp
         operators/Operator.h operators/Operator.cpp
-        operators/ConstantTerm.h operators/ConstantTerm.cpp
-        operators/ScalarProductTerm.h operators/ScalarProductTerm.cpp
-        operators/Term.h
-        symbols/Symbols.h symbols/Symbols.cpp
+        operators/terms/ConstantTerm.h operators/terms/ConstantTerm.cpp
+        operators/terms/ScalarProductTerm.h operators/terms/ScalarProductTerm.cpp
+        operators/terms/SzSzTwoCenterTerm.cpp operators/terms/SzSzTwoCenterTerm.h
+        operators/terms/SzSzOneCenterTerm.cpp operators/terms/SzSzOneCenterTerm.h
+        operators/terms/LocalSSquaredOneCenterTerm.cpp operators/terms/LocalSSquaredOneCenterTerm.h
+        operators/terms/Term.h
+        symbols/SymbolicWorker.h symbols/SymbolicWorker.cpp
+        symbols/NumericalWorker.cpp symbols/NumericalWorker.h
         symbols/SymbolName.h symbols/SymbolName.cpp
-        )
+        Model.cpp Model.h)
+
+target_link_libraries(model group)

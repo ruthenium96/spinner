@@ -4,16 +4,14 @@
 #include <ostream>
 
 #include "src/entities/BlockProperties.h"
-#include "src/entities/data_structures/UnitarySparseMatrix.h"
+#include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 
 namespace space {
 struct Subspace {
     BlockProperties properties;
-    UnitarySparseMatrix decomposition;
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix> decomposition;
 
-    explicit Subspace(UnitarySparseMatrix&&);
-    Subspace() = default;
-
+    explicit Subspace(std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&&);
     friend std::ostream& operator<<(std::ostream& os, const Subspace& subspace);
 };
 }  // namespace space

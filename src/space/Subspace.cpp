@@ -3,11 +3,12 @@
 namespace space {
 std::ostream& operator<<(std::ostream& os, const Subspace& subspace) {
     os << subspace.properties;
-    os << subspace.decomposition;
+    subspace.decomposition->print(os);
     os << std::endl;
     return os;
 }
 
-Subspace::Subspace(UnitarySparseMatrix&& new_basis_decomposition) :
+Subspace::Subspace(std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&&
+                       new_basis_decomposition) :
     decomposition(std::move(new_basis_decomposition)) {}
 }  // namespace space
