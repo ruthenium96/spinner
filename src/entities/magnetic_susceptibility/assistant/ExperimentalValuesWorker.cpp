@@ -27,6 +27,11 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
         for (ValueAtTemperature& v : experimental_values) {
             v.value /= mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol;
         }
+    } else if (experimental_values_type == chi_in_cm_cubed_per_mol) {
+        for (ValueAtTemperature& v : experimental_values) {
+            v.value = v.value * v.temperature
+                / mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol;
+        }
     }
 
     for (ValueAtTemperature& v : experimental_values) {
@@ -96,6 +101,11 @@ std::vector<ValueAtTemperature> ExperimentalValuesWorker::getTheoreticalValues()
     } else if (experimental_values_type_ == chiT_in_cm_cubed_kelvin_per_mol) {
         for (ValueAtTemperature& v : theoretical_values) {
             v.value *= mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol;
+        }
+    } else if (experimental_values_type_ == chi_in_cm_cubed_per_mol) {
+        for (ValueAtTemperature& v : theoretical_values) {
+            v.value = v.value / v.temperature
+                * mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol;
         }
     }
     return theoretical_values;

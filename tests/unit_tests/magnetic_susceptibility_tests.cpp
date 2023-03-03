@@ -126,7 +126,8 @@ TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
     std::vector<magnetic_susceptibility::ExperimentalValuesEnum> values_enum = {
         magnetic_susceptibility::mu_in_bohr_magnetons,
         magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
-        magnetic_susceptibility::chiT_in_cm_cubed_kelvin_per_mol};
+        magnetic_susceptibility::chiT_in_cm_cubed_kelvin_per_mol,
+        magnetic_susceptibility::chi_in_cm_cubed_per_mol};
 
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -134,7 +135,7 @@ TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
 
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values;
 
-    for (size_t i = 0; i < 300; ++i) {
+    for (size_t i = 1; i < 300; ++i) {
         magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
             static_cast<double>(i),
             static_cast<double>(dist(rng))};

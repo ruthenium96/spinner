@@ -17,6 +17,7 @@ enum ExperimentalValuesEnum {
     mu_in_bohr_magnetons,
     mu_squared_in_bohr_magnetons_squared,
     chiT_in_cm_cubed_kelvin_per_mol,
+    chi_in_cm_cubed_per_mol
 };
 
 // Stores experimental data and calculates all values, depending on it.
