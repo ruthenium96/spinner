@@ -18,7 +18,7 @@ using Spinner.
 ![3D-NIT2](10.1039_B414284E/3d-nit2.png)
 
 Spinner results: $J = -48.3 K$, $g = 1.986$, $\Theta = -24.7$
-Fit of $\chi T(T)$ from the article: $J = -47,5 K$, $Theta = -25 K$.
+Fit of $\chi T(T)$ from the article: $J = -47,5 K$, $\Theta = -25 K$.
 ESR data: $g = 2.0065$, $J = -43 K$.
 
 ![DTD-NIT2](10.1039_B414284E/dtd-nit2.png)
