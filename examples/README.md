@@ -38,7 +38,7 @@ These complexes include six paramagnetic centers.
 
 ![manganese-cocrystal](10.1039_D0DT03184D/manganese_cocrystal.png)
 
-The second temperature dependence was recorded for a crystal of two nickel complex.
+The second temperature dependence was recorded for a crystal of the nickel complex.
 It has a similar magnetic motif to manganese complexes.
 
 ![nickel-crystal](10.1039_D0DT03184D/nickel_crystal.png)
