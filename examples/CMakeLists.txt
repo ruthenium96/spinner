@@ -10,3 +10,10 @@ add_executable(10.1039_B414284E
         10.1039_B414284E/main.cpp)
 
 target_link_libraries(10.1039_B414284E common)
+
+add_executable(10.1039_D0DT03184D
+        10.1039_D0DT03184D/manganese_cocrystal.h
+        10.1039_D0DT03184D/nickel_crystal.h
+        10.1039_D0DT03184D/main.cpp)
+
+target_link_libraries(10.1039_D0DT03184D common)

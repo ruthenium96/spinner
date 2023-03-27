@@ -27,3 +27,18 @@ Spinner results: $J = -36.6 K$, $g = 2.062$.
 Fit of $\chi T(T)$ from the article: $J = -37,5 K$.
 ESR data: $g = 2.0066$.
 
+# Binuclear complexes of 3d-metals (Mn, Ni) with organic diradicals DR$^1$ and DR$^2$.
+
+Fitting temperature dependencies of magnetic susceptibility
+from [Kadilenko E.M. et al.](https://doi.org/10.1039/d0dt03184d)
+using Spinner.
+
+The first temperature dependence was recorded for a cocrystal of two manganese complexes.
+These complexes include six paramagnetic centers.
+
+![manganese-cocrystal](10.1039_D0DT03184D/manganese_cocrystal.png)
+
+The second temperature dependence was recorded for a crystal of two nickel complex.
+It has a similar magnetic motif to manganese complexes.
+
+![nickel-crystal](10.1039_D0DT03184D/nickel_crystal.png)
