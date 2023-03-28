@@ -3,31 +3,21 @@
 
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
+#include "src/spin_algebra/MultiplicityDirectSum.h"
 
-std::deque<int> spin_addition(const std::vector<int>& mults) {
-    std::deque<int> total_multiplicities;
-
-    total_multiplicities.push_back(1);
-
-    for (auto mult_of_center : mults) {
-        size_t old_size = total_multiplicities.size();
-        for (size_t i = 0; i < old_size; ++i) {
-            int current_multiplicity = total_multiplicities.front();
-            for (int new_multiplicity = std::abs(current_multiplicity - mult_of_center) + 1;
-                 new_multiplicity < current_multiplicity + mult_of_center;
-                 new_multiplicity += 2) {
-                total_multiplicities.push_back(new_multiplicity);
-            }
-            total_multiplicities.pop_front();
-        }
-    }
-    std::stable_sort(total_multiplicities.begin(), total_multiplicities.end());
-    return total_multiplicities;
+spin_algebra::MultiplicityDirectSum
+spin_addition(const std::vector<spin_algebra::MultiplicityDirectSum>& mults) {
+    return std::accumulate(
+        mults.begin(),
+        mults.end(),
+        spin_algebra::MultiplicityDirectSum(1),  // Identity element of spin addition: S=0.
+        std::multiplies<>());
 }
 
-std::vector<int> duplicate_multiplicity_multiplicity_times(const std::deque<int>& multiplicities) {
-    std::vector<int> duplicated_multiplicities;
-    for (auto mult : multiplicities) {
+std::vector<uint16_t> duplicate_multiplicity_multiplicity_times(
+    const spin_algebra::MultiplicityDirectSum& multiplicities) {
+    std::vector<uint16_t> duplicated_multiplicities;
+    for (auto mult : multiplicities.getMultiplicities()) {
         for (size_t j = 0; j < mult; ++j) {
             duplicated_multiplicities.push_back(mult);
         }
@@ -37,32 +27,38 @@ std::vector<int> duplicate_multiplicity_multiplicity_times(const std::deque<int>
 }
 
 TEST(spin_addition, 22) {
-    std::vector<int> mults = {2, 2};
-    std::deque<int> expected_total_multiplicities = {1, 3};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 2};
+    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 222) {
-    std::vector<int> mults = {2, 2, 2};
-    std::deque<int> expected_total_multiplicities = {2, 2, 4};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 2, 2};
+    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 2, 4};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 2222) {
-    std::vector<int> mults = {2, 2, 2, 2};
-    std::deque<int> expected_total_multiplicities = {1, 1, 3, 3, 3, 5};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 2, 2, 2};
+    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 1, 3, 3, 3, 5};
+    EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
+}
+
+TEST(spin_addition, 23) {
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 3};
+    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 4};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 33) {
-    std::vector<int> mults = {3, 3};
-    std::deque<int> expected_total_multiplicities = {1, 3, 5};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {3, 3};
+    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 44) {
-    std::vector<int> mults = {4, 4};
-    std::deque<int> expected_total_multiplicities = {1, 3, 5, 7};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {4, 4};
+    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5, 7};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
@@ -86,19 +82,25 @@ TEST(
 
         auto s_squared_vector = runner.getDataStructuresFactories().createVector();
 
-        for (size_t i = 0; i < s_squared_matrix.blocks.size(); ++i) {
-            s_squared_vector->concatenate_with(
-                s_squared_matrix.blocks[i].raw_data->diagonalizeValues());
+        for (auto& block : s_squared_matrix.blocks) {
+            s_squared_vector->concatenate_with(block.raw_data->diagonalizeValues());
         }
 
-        std::vector<int> total_multiplicities(s_squared_vector->size());
+        std::vector<uint16_t> total_multiplicities(s_squared_vector->size());
         for (size_t i = 0; i < total_multiplicities.size(); ++i) {
-            total_multiplicities[i] = (int)round(sqrt(1 + 4 * s_squared_vector->at(i)));
+            total_multiplicities[i] = (uint16_t)round(sqrt(1 + 4 * s_squared_vector->at(i)));
         }
         std::sort(total_multiplicities.begin(), total_multiplicities.end());
 
+        // TODO: refactor it!
+        std::vector<spin_algebra::MultiplicityDirectSum> copied_mults;
+        copied_mults.reserve(mults.size());
+        for (const auto& i : mults) {
+            copied_mults.emplace_back(i);
+        }
+
         EXPECT_EQ(
             total_multiplicities,
-            duplicate_multiplicity_multiplicity_times(spin_addition(mults)));
+            duplicate_multiplicity_multiplicity_times(spin_addition(copied_mults)));
     }
 }

@@ -76,7 +76,7 @@ if (ARMADILLO_FOUND AND Eigen3_FOUND)
 endif ()
 
 target_link_libraries(spinner_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra)
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
