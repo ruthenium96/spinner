@@ -1,12 +1,11 @@
 #ifndef SPINNER_MULTIPLICITYDIRECTSUM_H
 #define SPINNER_MULTIPLICITYDIRECTSUM_H
 
-#include <cstdint>
 #include <vector>
 
-namespace spin_algebra {
+#include "Multiplicity.h"
 
-using Multiplicity = uint16_t;
+namespace spin_algebra {
 
 class MultiplicityDirectSum {
   private:
@@ -14,7 +13,7 @@ class MultiplicityDirectSum {
 
   public:
     MultiplicityDirectSum() = default;
-    MultiplicityDirectSum(Multiplicity single_multiplicity);  // allow implicit conversions
+    explicit MultiplicityDirectSum(Multiplicity single_multiplicity);
     explicit MultiplicityDirectSum(std::vector<Multiplicity> multiplicities);
     MultiplicityDirectSum(std::initializer_list<Multiplicity> l);
 

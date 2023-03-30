@@ -18,7 +18,7 @@ TEST(simple_analytical_dependencies, nothing) {
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> Theta_dist(-100, -1.0);
 
-    std::vector<std::vector<int>> mults_cases =
+    std::vector<std::vector<spin_algebra::Multiplicity>> mults_cases =
         {{2}, {3}, {4}, {5}, {2, 2}, {2, 2, 2, 2}, {2, 3, 4, 5}};
 
     for (const auto& mults : mults_cases) {
@@ -62,7 +62,7 @@ TEST(simple_analytical_dependencies, Theta) {
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> Theta_dist(-100, -1.0);
 
-    std::vector<std::vector<int>> mults_cases =
+    std::vector<std::vector<spin_algebra::Multiplicity>> mults_cases =
         {{2}, {3}, {4}, {5}, {2, 2}, {2, 2, 2, 2}, {2, 3, 4, 5}};
 
     for (const auto& mults : mults_cases) {

@@ -10,15 +10,15 @@ namespace model {
 // class ModelInput is responsible for user input: SymbolicWorker and Multiplicities
 class ModelInput {
   public:
-    explicit ModelInput(const std::vector<int>& mults);
+    explicit ModelInput(const std::vector<spin_algebra::Multiplicity>& mults);
 
     const symbols::SymbolicWorker& getSymbolicWorker() const;
     symbols::SymbolicWorker& modifySymbolicWorker();
-    const std::vector<int>& getMults() const;
+    const std::vector<spin_algebra::Multiplicity>& getMults() const;
 
   private:
     symbols::SymbolicWorker symbols_;
-    std::vector<int> mults_;
+    std::vector<spin_algebra::Multiplicity> mults_;
 };
 }  // namespace model
 

@@ -8,7 +8,7 @@
 #include "tests/tools/MeanAndDeviation.h"
 
 TEST(performanceTest, simple2ComponentSchema) {
-    std::vector<int> mults = {4, 4, 4, 4, 4, 4, 4, 4, 4};
+    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 4, 4, 4, 4, 4, 4};
 
     lexicographic::IndexConverter converter(mults);
 

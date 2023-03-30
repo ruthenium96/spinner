@@ -98,7 +98,10 @@ void initialize_four_centers_exchange_rectangle(
 }
 
 TEST(spectrum_final_equivalence, rectangle) {
-    std::vector<std::vector<int>> multss = {{2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2},
+        {3, 3, 3, 3},
+        {4, 4, 4, 4}};
     std::vector<std::pair<double, double>> js =
         {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
 
@@ -195,7 +198,7 @@ void initialize_three_centers_exchange_triangle(model::ModelInput& model, double
 }
 
 TEST(spectrum_final_equivalence, triangle) {
-    std::vector<std::vector<int>> multss = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
     std::vector<double> js = {10, 17.17, 33};
 
     for (const auto& mults : multss) {

@@ -16,7 +16,7 @@ void three_d_nit_two() {
         {205.405, 0.579}, {195.135, 0.569}, {185.405, 0.561}, {174.595, 0.552}, {164.865, 0.541},
         {154.595, 0.527}, {144.865, 0.515}};
     // There are only two paramagnetic centers.
-    std::vector<int> mults = {2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2};
     model::ModelInput model(mults);
     // Start from reasonable guess:
     double J_initial = -50.0;

@@ -2,7 +2,7 @@
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 
 TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
-    std::vector<int> mults = {4, 4, 4};
+    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4};
     model::ModelInput model(mults);
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
@@ -13,7 +13,7 @@ TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
 }
 
 TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicities) {
-    std::vector<int> mults = {4, 4, 4, 3};
+    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 3};
     model::ModelInput model(mults);
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
@@ -24,7 +24,7 @@ TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicit
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     auto tripledJ = model.modifySymbolicWorker().addSymbol("3J", 3 * J_value);
@@ -47,7 +47,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_sy
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J = 10;
     auto firstJ = model.modifySymbolicWorker().addSymbol("J1", J);
@@ -69,7 +69,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symm
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -96,7 +96,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symm
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     double g_value = 2.0;

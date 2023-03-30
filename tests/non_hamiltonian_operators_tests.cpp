@@ -27,37 +27,37 @@ std::vector<uint16_t> duplicate_multiplicity_multiplicity_times(
 }
 
 TEST(spin_addition, 22) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 2};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}};
     spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 222) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 2, 2};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}, {2}};
     spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 2, 4};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 2222) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}, {2}, {2}};
     spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 1, 3, 3, 3, 5};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 23) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {2, 3};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {3}};
     spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 4};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 33) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {3, 3};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{3}, {3}};
     spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 44) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {4, 4};
+    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{4}, {4}};
     spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5, 7};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
@@ -65,7 +65,7 @@ TEST(spin_addition, 44) {
 TEST(
     initialize_s_squared,
     eigenvalues_of_s_squared_matrix_correspond_to_spin_addition_1_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults =
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
         {{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {

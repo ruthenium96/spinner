@@ -15,7 +15,7 @@ TEST(symbolic_worker, throw_assign_the_same_exchange) {
 }
 
 TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_initialized) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
 
     model::ModelInput modelInput(mults);
 
@@ -35,7 +35,7 @@ TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_initialized) {
 }
 
 TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_not_initialized) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
 
     model::ModelInput modelInput(mults);
 

@@ -2,7 +2,7 @@
 #include "src/common/runner/Runner.h"
 
 TEST(hamiltonian_operator, throw_isotropic_exchange_same_center_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults =
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
@@ -16,7 +16,7 @@ TEST(hamiltonian_operator, throw_isotropic_exchange_same_center_22_333_4444_2345
 }
 
 TEST(hamiltonian_operator, exchange_interaction_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults =
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {

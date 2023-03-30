@@ -4,7 +4,7 @@
 TEST(
     spectrum_builder_apply_to_entity,
     throw_size_inconsistent_non_energy_matrix_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults =
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {

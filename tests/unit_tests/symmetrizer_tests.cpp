@@ -78,7 +78,7 @@ bool orthogonality_of_basis(const space::Space& space) {
     return answer;
 }
 
-size_t calculateTotalSpaceSize(const std::vector<int>& mults) {
+size_t calculateTotalSpaceSize(const std::vector<spin_algebra::Multiplicity>& mults) {
     size_t acc = 1;
     for (const auto& mult : mults) {
         acc *= mult;
@@ -116,7 +116,7 @@ bool isEqualUpToVectorOrder(
 }
 
 TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
@@ -135,7 +135,7 @@ TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
 }
 
 TEST(symmetrizer, 4444) {
-    std::vector<int> mults = {4, 4, 4, 4};
+    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 4};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
@@ -163,7 +163,7 @@ TEST(symmetrizer, 4444) {
 }
 
 TEST(symmetrizer, 333) {
-    std::vector<int> mults = {3, 3, 3};
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
@@ -205,7 +205,7 @@ TEST(symmetrizer, 333) {
 }
 
 TEST(symmetrizer, 333333) {
-    std::vector<int> mults = {3, 3, 3, 3, 3, 3};
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
@@ -262,7 +262,7 @@ TEST(symmetrizer, 333333) {
 }
 
 TEST(symmetrizer, 222222222_S3xS3) {
-    std::vector<int> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
@@ -279,7 +279,7 @@ TEST(symmetrizer, 222222222_S3xS3) {
 }
 
 TEST(symmetrizer, 333333333_S3xS3) {
-    std::vector<int> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 

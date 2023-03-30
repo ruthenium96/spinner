@@ -19,7 +19,7 @@ void manganese_cocrystall() {
         {220.0149, 4.66605}, {220.0116, 4.66656}, {240.0039, 4.86564}, {240.0156, 4.86623},
         {260.0213, 5.08483}, {260.0122, 5.08365}, {280.0255, 5.27514}, {280.0201, 5.27526},
         {300.0085, 5.4826},  {299.9866, 5.48317}};
-    std::vector<int> mults = {6, 2, 2, 6, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {6, 2, 2, 6, 2, 2};
     model::ModelInput model(mults);
 
     // Magnetic motif:

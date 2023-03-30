@@ -14,7 +14,7 @@ void ModelOptimizationListConsistence::check(
 }
 
 void ModelOptimizationListConsistence::checkMultiplicitiesGroupConsistence(
-    const std::vector<int>& mults,
+    const std::vector<spin_algebra::Multiplicity>& mults,
     const group::Group& group) {
     // TODO: split code above (maybe rewrite checkSymbolNamesGroupElementConsistence with templates?)
     if (mults.size() != group.getElements()[0].size()) {
@@ -22,7 +22,7 @@ void ModelOptimizationListConsistence::checkMultiplicitiesGroupConsistence(
             "The size of group elements does not equal to the number of spins.");
     }
     for (const auto& el : group.getElements()) {
-        std::vector<int> permutated_mults(mults);
+        std::vector<spin_algebra::Multiplicity> permutated_mults(mults);
         for (size_t i = 0; i < group.getElements()[0].size(); ++i) {
             permutated_mults[i] = mults[el[i]];
         }
