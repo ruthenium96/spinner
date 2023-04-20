@@ -1,13 +1,11 @@
-<span style="font-variant:small-caps;">Spinner</span> is a magnetochemical software package.
+Spinner is a magnetochemical software package.
 It uses the Spin-Hamiltonian approach and statistical physics to describe the magnetism of molecular systems.
-At the moment, <span style="font-variant:small-caps;">Spinner</span> works only with the temperature dependence of the
+At the moment, Spinner works only with the temperature dependence of the
 magnetic susceptibility.
-
-Examples
 
 ## Build
 
-### 1. Clone <span style="font-variant:small-caps;">Spinner</span>:
+### 1. Clone Spinner:
 
 ```shell
 git clone https://github.com/ruthenium96/spinner.git
