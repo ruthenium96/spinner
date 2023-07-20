@@ -13,6 +13,8 @@ struct BlockProperties {
     uint32_t dimensionality = 1;
     uint32_t degeneracy = 1;
     std::vector<uint32_t> representation;
+
+    bool operator==(const BlockProperties&) const = default;
 };
 
 // TODO: consider moving all the printing code out of the domain classes
