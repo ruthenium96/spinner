@@ -31,6 +31,14 @@ ArmaDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
 
     return logic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
 }
+
+std::unique_ptr<AbstractSymmetricMatrix> ArmaDenseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+    ArmaLogic logic;
+
+    return logic.unitaryTransform(matrix_to_transform, *this);
+}
+
 const arma::dmat& ArmaDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {
     return denseSemiunitaryMatrix_;
 }

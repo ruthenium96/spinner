@@ -17,6 +17,8 @@ class EigenDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     void print(std::ostream& os) const override;
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
         const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const override;
+    std::unique_ptr<AbstractSymmetricMatrix> unitaryTransform(
+        const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const override;
 
     const Eigen::MatrixXd& getDenseSemiunitaryMatrix() const;
     Eigen::MatrixXd& modifyDenseSemiunitaryMatrix();

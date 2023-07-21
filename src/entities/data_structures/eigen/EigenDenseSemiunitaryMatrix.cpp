@@ -35,6 +35,13 @@ EigenDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
     return eigenLogic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
 }
 
+std::unique_ptr<AbstractSymmetricMatrix> EigenDenseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+    EigenLogic eigenLogic;
+
+    return eigenLogic.unitaryTransform(matrix_to_transform, *this);
+}
+
 const Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {
     return denseSemiunitaryMatrix_;
 }
