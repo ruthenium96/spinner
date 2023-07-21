@@ -3,7 +3,7 @@
 namespace quantum::linear_algebra {
 void AbstractSparseSemiunitaryMatrix::unitaryTransform(
     const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
-    std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToAdd) {
+    std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToAdd) const {
     size_t matrix_in_space_basis_size = this->size_cols();
 
     for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size;
