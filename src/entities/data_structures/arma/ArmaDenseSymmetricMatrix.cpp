@@ -32,7 +32,7 @@ double ArmaDenseSymmetricMatrix::at(uint32_t i, uint32_t j) const {
 }
 
 void ArmaDenseSymmetricMatrix::print(std::ostream& os) const {
-    os << denseSymmetricMatrix_;
+    os << denseSymmetricMatrix_ << std::endl;
 }
 
 void ArmaDenseSymmetricMatrix::resize(uint32_t matrix_in_space_basis_size_i) {
