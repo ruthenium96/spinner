@@ -42,4 +42,7 @@ const Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() 
 Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
     return denseSemiunitaryMatrix_;
 }
+void EigenDenseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
+    denseSemiunitaryMatrix_(i, j) += value;
+}
 }  // namespace quantum::linear_algebra
