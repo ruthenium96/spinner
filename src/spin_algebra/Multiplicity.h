@@ -4,7 +4,7 @@
 #include <cstdint>
 
 namespace spin_algebra {
-using Multiplicity = uint16_t;
+using Multiplicity = uint32_t;
 }
 
 #endif  //SPINNER_MULTIPLICITY_H
