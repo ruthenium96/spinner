@@ -11,6 +11,12 @@ void ModelOptimizationListConsistence::check(
         // ...if Hamiltonian terms invariant to group elements:
         checkAllSymbolNamesGroupConsistence(model.getSymbolicWorker(), group);
     }
+    // S2-transformation can be applied only for HDvV-Hamiltionian:
+    if (optimizationList.isSSquaredTransformed()) {
+        if (model.is_zero_field_splitting_initialized()) {
+            throw std::invalid_argument("S2-transformation cannot be applied to ZFS-Hamiltonian");
+        }
+    }
 }
 
 void ModelOptimizationListConsistence::checkMultiplicitiesGroupConsistence(
