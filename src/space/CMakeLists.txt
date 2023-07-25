@@ -18,6 +18,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(wignersymbols)
 include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
-target_link_libraries(space wignerSymbols)
+target_link_libraries(space wignerSymbols spin_algebra)
 
 target_link_libraries(space data_structures)
