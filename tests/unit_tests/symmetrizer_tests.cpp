@@ -130,7 +130,7 @@ TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
             subspace.decomposition->add_to_position(1, 0, 0);
         }
         EXPECT_FALSE(orthogonality_of_basis(space)) << "These tests does not work "
-                                                       "and always returns true";
+                                                       "and, probably, always returns true";
     }
 }
 

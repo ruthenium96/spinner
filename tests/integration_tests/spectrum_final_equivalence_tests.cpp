@@ -183,6 +183,14 @@ TEST(spectrum_final_equivalence, rectangle) {
                 runner::Runner runner(model, optimizationList);
                 expect_final_vectors_equivalence(runner_simple, runner);
             }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
         }
     }
 }
@@ -260,7 +268,14 @@ TEST(spectrum_final_equivalence, triangle) {
             {}  // TZ_SORTER + SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
             {}  // SYMMETRIZER + TZ_SORTER + NON_ABELIAN_SIMPLIFIER
             {}  // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER + TZ_SORTER
-            {}
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
         }
     }
 }

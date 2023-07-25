@@ -2,11 +2,14 @@
 
 #include "src/space/optimization/NonAbelianSimplifier.h"
 #include "src/space/optimization/PositiveProjectionsEliminator.h"
+#include "src/space/optimization/S2Transformer.h"
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TzSorter.h"
 
 namespace space::optimization {
 
+// TODO: if Space/Subspace will be transformed into classes,
+//  it should be static constructor of Space.
 Space OptimizedSpaceConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
     const quantum::linear_algebra::FactoriesList& factories) {
@@ -40,7 +43,7 @@ Space OptimizedSpaceConstructor::construct(
         //                "Symmetrization after using of non-Abelian simplifier causes bugs.");
         //        }
 
-        space::optimization::Symmetrizer symmetrizer(indexConverter, group, factories);
+        Symmetrizer symmetrizer(indexConverter, group, factories);
         space = symmetrizer.apply(std::move(space));
 
         //        if (!new_group.properties.is_abelian) {
@@ -59,6 +62,11 @@ Space OptimizedSpaceConstructor::construct(
     //    space_ = nonAbelianSimplifier.apply(std::move(space_));
     //    space_history_.number_of_non_simplified_abelian_groups = 0;
     //    space_history_.isNonAbelianSimplified = true;
+
+    if (optimizationList.isSSquaredTransformed()) {
+        S2Transformer transformer(indexConverter, factories);
+        space = transformer.apply(std::move(space));
+    }
 
     if (!spaceIsNormalized) {
         for (auto& subspace : space.getBlocks()) {
