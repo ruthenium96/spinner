@@ -1,3 +1,5 @@
 add_library(spin_algebra
         MultiplicityDirectSum.cpp
-        MultiplicityDirectSum.h)
+        MultiplicityDirectSum.h
+        SSquaredState.cpp
+        SSquaredState.h)
