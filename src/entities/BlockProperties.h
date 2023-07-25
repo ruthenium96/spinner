@@ -10,8 +10,10 @@ struct BlockProperties {
     std::string get_representation_name() const;
 
     std::optional<uint32_t> n_proj = std::nullopt;
+    std::optional<uint32_t> total_mult = std::nullopt;
     uint32_t dimensionality = 1;
-    uint32_t degeneracy = 1;
+    // TODO: double instead int for cases with TzSorter and without PositiveProjectionsEliminator:
+    double degeneracy = 1;
     std::vector<uint32_t> representation;
 
     bool operator==(const BlockProperties&) const = default;
