@@ -22,6 +22,13 @@ ArmaSymmetricMatrixFactory::createSparseSymmetricMatrix(uint32_t size) {
     return matrix;
 }
 
+std::unique_ptr<AbstractDenseSemiunitaryMatrix>
+ArmaSymmetricMatrixFactory::createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
+    auto matrix = std::make_unique<ArmaDenseSemiunitaryMatrix>();
+    matrix->resize(rows, cols);
+    return matrix;
+}
+
 std::unique_ptr<AbstractDenseVector> ArmaDenseVectorFactory::createVector() {
     auto vector = std::make_unique<ArmaDenseVector>();
     return vector;

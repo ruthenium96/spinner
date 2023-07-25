@@ -19,6 +19,8 @@ class FactoriesList {
             AbstractDenseVectorFactory::defaultFactory());
 
     std::unique_ptr<AbstractSymmetricMatrix> createDenseSymmetricMatrix(uint32_t size) const;
+    std::unique_ptr<AbstractDenseSemiunitaryMatrix>
+    createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
     std::unique_ptr<AbstractDenseVector> createVector() const;
     std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;

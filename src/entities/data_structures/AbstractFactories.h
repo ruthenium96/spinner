@@ -11,6 +11,9 @@ class AbstractSymmetricMatrixFactory {
     static std::shared_ptr<AbstractSymmetricMatrixFactory> defaultFactory();
     virtual std::unique_ptr<AbstractSymmetricMatrix> createDenseSymmetricMatrix(uint32_t size) = 0;
     virtual std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) = 0;
+    // TODO: move it to another class?
+    virtual std::unique_ptr<AbstractDenseSemiunitaryMatrix>
+    createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
 
     ~AbstractSymmetricMatrixFactory() = default;
 };

@@ -21,6 +21,13 @@ EigenSymmetricMatrixFactory::createSparseSymmetricMatrix(uint32_t size) {
     return matrix;
 }
 
+std::unique_ptr<AbstractDenseSemiunitaryMatrix>
+EigenSymmetricMatrixFactory::createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
+    auto matrix = std::make_unique<EigenDenseSemiunitaryMatrix>();
+    matrix->resize(rows, cols);
+    return matrix;
+}
+
 std::unique_ptr<AbstractDenseVector> EigenDenseVectorFactory::createVector() {
     auto vector = std::make_unique<EigenDenseVector>();
     return vector;
