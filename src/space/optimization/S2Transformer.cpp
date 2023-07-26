@@ -83,6 +83,8 @@ S2Transformer::constructTransformationMatrix(
             transformation_matrix->add_to_position(value, i, j);
         }
     }
+    std::cout << "Transformation matrix (" << number_of_s2_states << ", " << number_of_sz_states
+              << ") was constructed" << std::endl;
     return transformation_matrix;
 }
 
