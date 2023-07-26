@@ -1,6 +1,11 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
+TEST(symbolic_worker, throw_assign_the_empty_name) {
+    model::symbols::SymbolicWorker symbols(2);
+    EXPECT_THROW(symbols.addSymbol("", 10), std::invalid_argument);
+}
+
 TEST(symbolic_worker, throw_add_the_same_symbol_name) {
     model::symbols::SymbolicWorker symbols(2);
     symbols.addSymbol("same", 10);
