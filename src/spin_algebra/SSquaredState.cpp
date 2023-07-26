@@ -60,7 +60,7 @@ std::map<Multiplicity, std::vector<SSquaredState>> SSquaredState::addAllMultipli
 
     for (const auto& instruction : *order_of_summation) {
         // we currently do not support cases with three or more summands:
-        assert(instruction.size() == 2);
+        assert(instruction.positions_of_summands.size() == 2);
         size_t pos_one = instruction.positions_of_summands[0];
         size_t pos_two = instruction.positions_of_summands[1];
         size_t pos_sum = instruction.position_of_sum;
