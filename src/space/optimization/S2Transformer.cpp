@@ -17,7 +17,10 @@ S2Transformer::S2Transformer(
         auto number_of_mults = converter_.get_mults().size();
 
         for (size_t i = 0; i < number_of_mults - 1; ++i) {
-            order_of_summation_->push_back({i, number_of_mults + i - 1});
+            spin_algebra::AdditionInstruction instruction;
+            instruction.positions_of_summands = {i, number_of_mults + i - 1};
+            instruction.position_of_sum = number_of_mults + i;
+            order_of_summation_->push_back(instruction);
         }
     }
 
@@ -106,9 +109,9 @@ double S2Transformer::total_CG_coefficient(
     }
 
     for (size_t i = 0; i < order_of_summation_->size(); ++i) {
-        size_t pos_one = order_of_summation_->at(i)[0];
-        size_t pos_two = order_of_summation_->at(i)[1];
-        size_t pos_sum = number_of_mults + i;  // chain-like summation
+        size_t pos_one = order_of_summation_->at(i).positions_of_summands[0];
+        size_t pos_two = order_of_summation_->at(i).positions_of_summands[1];
+        size_t pos_sum = order_of_summation_->at(i).position_of_sum;  // chain-like summation
 
         double spin_one = ((double)s_squared_state.getMultiplicity(pos_one) - 1.0) / 2.0;
         double spin_two = ((double)s_squared_state.getMultiplicity(pos_two) - 1.0) / 2.0;

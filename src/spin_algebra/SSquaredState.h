@@ -9,22 +9,22 @@
 
 namespace spin_algebra {
 
-// TODO: replace this class with something like that:
-//  struct AdditionInstruction {
-//      std::vector<uint64_t> positions_of_summands;
-//      uint64_t position_of_sum;
-//  };
-using AdditionInstruction = std::vector<uint64_t>;
+struct AdditionInstruction {
+    std::vector<uint64_t> positions_of_summands;
+    uint64_t position_of_sum;
+};
 
 // TODO: refactor this class.
 class SSquaredState {
   private:
     std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities_;
     std::vector<Multiplicity> intermediateMultiplicities_;
+    SSquaredState(
+        std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities,
+        size_t number_of_summations);
+    void setMultiplicity(size_t number, Multiplicity multiplicity);
 
   public:
-    void pushNewIntermediateMultiplicity(Multiplicity multiplicity);
-    explicit SSquaredState(std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities);
     Multiplicity getMultiplicity(size_t number) const;
     size_t getSize() const;
     Multiplicity back() const;
