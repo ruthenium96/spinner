@@ -246,3 +246,17 @@ TEST(group_tests, throw_wrong_order_of_elements) {
         group::Group group(group::Group::S3, {{1, 2, 0, 3}, {3, 1, 2, 0}}),
         group::InitializationError);
 }
+
+TEST(group_tests, construct_orbits_of_mults) {
+    std::vector<std::pair<group::Group, std::vector<std::set<size_t>>>> cases = {
+        {group::Group(group::Group::S2, {{1, 0, 3, 2, 4}}), {{0, 1}, {2, 3}, {4}}},
+        {group::Group(group::Group::S2, {{4, 3, 2, 1, 0}}), {{0, 4}, {1, 3}, {2}}},
+        {group::Group(group::Group::S2, {{4, 1, 2, 3, 0}}), {{0, 4}, {1}, {2}, {3}}},
+        {group::Group(group::Group::S3, {{1, 2, 0, 3}, {0, 2, 1, 3}}), {{0, 1, 2}, {3}}},
+    };
+    for (const auto& [group, right_answer] : cases) {
+        auto orbits_of_mults = group.construct_orbits_of_mults();
+        std::sort(orbits_of_mults.begin(), orbits_of_mults.end());
+        EXPECT_EQ(orbits_of_mults, right_answer);
+    }
+}

@@ -2,6 +2,7 @@
 #define SPINNER_GROUP_H
 
 #include <cstdint>
+#include <set>
 #include <stdexcept>
 #include <vector>
 
@@ -50,6 +51,8 @@ class Group {
     explicit Group(GroupTypeEnum group_name, std::vector<Permutation> generators);
 
     std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
+
+    std::vector<std::set<size_t>> construct_orbits_of_mults() const;
 
     bool operator==(const Group& rhs) const;
 
