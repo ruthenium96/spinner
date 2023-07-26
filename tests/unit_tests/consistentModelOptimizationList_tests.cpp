@@ -144,7 +144,34 @@ TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_ZFS)
         .assignSymbolToZFSNoAnisotropy(D, 0);
 
     common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort().SSquaredTransform();
+    optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+    EXPECT_THROW(
+        runner::ConsistentModelOptimizationList(model, optimizationList),
+        std::invalid_argument);
+}
+
+TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_different_gs) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+    model::ModelInput model(mults);
+    double J_value = 10;
+    double g_value = 2.0;
+    double D_value = 5.0;
+    auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+    auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_value);
+    auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_value);
+    model.modifySymbolicWorker()
+        .assignSymbolToIsotropicExchange(J, 0, 1)
+        .assignSymbolToIsotropicExchange(J, 1, 2)
+        .assignSymbolToIsotropicExchange(J, 2, 3)
+        .assignSymbolToIsotropicExchange(J, 3, 0)
+        .assignSymbolToGFactor(g_one, 0)
+        .assignSymbolToGFactor(g_one, 1)
+        .assignSymbolToGFactor(g_two, 2)
+        .assignSymbolToGFactor(g_two, 3);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
 
     EXPECT_THROW(
         runner::ConsistentModelOptimizationList(model, optimizationList),
