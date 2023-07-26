@@ -24,8 +24,9 @@ class S2Transformer {
     constructTransformationMatrix(
         const std::vector<spin_algebra::SSquaredState>& history,
         const space::Subspace& subspace) const;
-    double
-    total_CG_coefficient(const spin_algebra::SSquaredState& history, uint32_t lex_index) const;
+    double total_CG_coefficient(
+        const spin_algebra::SSquaredState& s_squared_state,
+        uint32_t lex_index) const;
     static double hashed_clebsh_gordan(double l1, double l2, double l3, double m1, double m2);
 
     const lexicographic::IndexConverter converter_;
