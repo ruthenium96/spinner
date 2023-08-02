@@ -35,8 +35,6 @@ StdSparseSemiunitaryMatrix::GetNewIterator(size_t index_of_vector) const {
         basis_[index_of_vector].cend());
 }
 
-std::ostream& operator<<(std::ostream& os, const StdSparseSemiunitaryMatrix& decomposition) {}
-
 uint32_t StdSparseSemiunitaryMatrix::size_cols() const {
     return basis_.size();
 }
