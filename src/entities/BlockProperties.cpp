@@ -18,6 +18,12 @@ std::ostream& operator<<(std::ostream& os, const BlockProperties& properties) {
     } else {
         os << "none";
     }
+    os << "\nTotal multiplicity: ";
+    if (properties.total_mult.has_value()) {
+        os << properties.total_mult.value();
+    } else {
+        os << "none";
+    }
     os << '\n'
        << "    dimensionality: " << properties.dimensionality << '\n'
        << "        degeneracy: " << properties.degeneracy << '\n'

@@ -4,6 +4,10 @@ namespace space {
 std::ostream& operator<<(std::ostream& os, const Subspace& subspace) {
     os << subspace.properties;
     subspace.decomposition->print(os);
+    if (subspace.dense_semiunitary_matrix.has_value()) {
+        os << std::endl;
+        subspace.dense_semiunitary_matrix.value()->print(os);
+    }
     os << std::endl;
     return os;
 }
