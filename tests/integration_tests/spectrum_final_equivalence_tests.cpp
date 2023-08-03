@@ -191,6 +191,39 @@ TEST(spectrum_final_equivalence, rectangle) {
                 runner::Runner runner(model, optimizationList);
                 expect_final_vectors_equivalence(runner_simple, runner);
             }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(first_direction)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                //                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(second_direction)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                //                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + SYMMETRIZER + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(first_direction)
+                    .Symmetrize(second_direction)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                //                expect_final_vectors_equivalence(runner_simple, runner);
+            }
         }
     }
 }
