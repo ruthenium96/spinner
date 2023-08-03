@@ -24,7 +24,13 @@ OptimizationList& OptimizationList::SSquaredTransform() {
     }
     if (!groupsToApply_.empty()) {
         // TODO: proper connection between S2-transformation and Symmetrizer.
-        throw std::invalid_argument("Currently cannot perform S2-transformation with Symmetrizer");
+        // throw std::invalid_argument("Currently cannot perform S2-transformation with Symmetrizer");
+    }
+    for (const auto& group : groupsToApply_) {
+        if (!group.properties.is_abelian) {
+            throw std::invalid_argument(
+                "Currently cannot perform S2-transformation with non-Abelian symmetries");
+        }
     }
     isSSquaredTransformed_ = true;
     return *this;
