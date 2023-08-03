@@ -104,3 +104,5 @@ TEST(
             duplicate_multiplicity_multiplicity_times(spin_addition(copied_mults)));
     }
 }
+
+// TODO: add tests for OrderOfSummation

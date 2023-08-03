@@ -51,7 +51,7 @@ Multiplicity SSquaredState::back() const {
 
 std::map<Multiplicity, std::vector<SSquaredState>> SSquaredState::addAllMultiplicitiesAndSort(
     const std::vector<Multiplicity>& multiplicities_to_sum,
-    const std::shared_ptr<const std::vector<AdditionInstruction>>& order_of_summation) {
+    const std::shared_ptr<const OrderOfSummation>& order_of_summation) {
     auto empty_history = SSquaredState(
         std::make_shared<std::vector<Multiplicity>>(multiplicities_to_sum),
         order_of_summation->size());

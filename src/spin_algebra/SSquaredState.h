@@ -6,19 +6,15 @@
 #include <vector>
 
 #include "MultiplicityDirectSum.h"
+#include "OrderOfSummation.h"
 
 namespace spin_algebra {
 
-struct AdditionInstruction {
-    std::vector<uint64_t> positions_of_summands;
-    uint64_t position_of_sum;
-};
-
-// TODO: refactor this class.
 class SSquaredState {
   private:
     std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities_;
     std::vector<Multiplicity> intermediateMultiplicities_;
+    // TODO: std::vector of representations?
     SSquaredState(
         std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities,
         size_t number_of_summations);
@@ -30,7 +26,7 @@ class SSquaredState {
     Multiplicity back() const;
     static std::map<Multiplicity, std::vector<SSquaredState>> addAllMultiplicitiesAndSort(
         const std::vector<Multiplicity>& multiplicities_to_sum,
-        const std::shared_ptr<const std::vector<AdditionInstruction>>& order_of_summation);
+        const std::shared_ptr<const OrderOfSummation>& order_of_summation);
 };
 
 }  // namespace spin_algebra

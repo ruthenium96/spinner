@@ -8,22 +8,11 @@ namespace space::optimization {
 
 S2Transformer::S2Transformer(
     lexicographic::IndexConverter converter,
-    quantum::linear_algebra::FactoriesList factories) :
+    quantum::linear_algebra::FactoriesList factories,
+    std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation) :
     converter_(std::move(converter)),
-    factories_(std::move(factories)) {
-    {  // TODO: it is construction of chain-order summation. Move it to another place.
-        order_of_summation_ = std::make_shared<std::vector<spin_algebra::AdditionInstruction>>();
-
-        auto number_of_mults = converter_.get_mults().size();
-
-        for (size_t i = 0; i < number_of_mults - 1; ++i) {
-            spin_algebra::AdditionInstruction instruction;
-            instruction.positions_of_summands = {i, number_of_mults + i - 1};
-            instruction.position_of_sum = number_of_mults + i;
-            order_of_summation_->push_back(instruction);
-        }
-    }
-
+    factories_(std::move(factories)),
+    order_of_summation_(order_of_summation) {
     sorted_s_squared_states_ = spin_algebra::SSquaredState::addAllMultiplicitiesAndSort(
         converter_.get_mults(),
         order_of_summation_);
@@ -104,14 +93,19 @@ double S2Transformer::total_CG_coefficient(
         projections[i] = converter_.convert_lex_index_to_one_sz_projection(lex_index, i)
             - converter_.get_spins()[i];
     }
-    for (size_t i = 0; i < number_of_mults - 1; ++i) {
-        projections[i + number_of_mults] = projections[i] + projections[i + number_of_mults - 1];
+    for (const auto& instruction : *order_of_summation_) {
+        // TODO: it may lead to an error if instructions has been shuffled.
+        //  Create corresponding unit tests
+        projections[instruction.position_of_sum] = 0;
+        for (const auto& pos : instruction.positions_of_summands) {
+            projections[instruction.position_of_sum] += projections[pos];
+        }
     }
 
-    for (size_t i = 0; i < order_of_summation_->size(); ++i) {
-        size_t pos_one = order_of_summation_->at(i).positions_of_summands[0];
-        size_t pos_two = order_of_summation_->at(i).positions_of_summands[1];
-        size_t pos_sum = order_of_summation_->at(i).position_of_sum;
+    for (const auto& instruction : *order_of_summation_) {
+        size_t pos_one = instruction.positions_of_summands[0];
+        size_t pos_two = instruction.positions_of_summands[1];
+        size_t pos_sum = instruction.position_of_sum;
 
         double spin_one = ((double)s_squared_state.getMultiplicity(pos_one) - 1.0) / 2.0;
         double spin_two = ((double)s_squared_state.getMultiplicity(pos_two) - 1.0) / 2.0;
