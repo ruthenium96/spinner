@@ -2,22 +2,7 @@
 #include "src/common/runner/Runner.h"
 
 struct EnergyAndSSquared {
-    bool operator<(const EnergyAndSSquared& rhs) const {
-        if (energy < rhs.energy)
-            return true;
-        if (rhs.energy < energy)
-            return false;
-        return s_squared < rhs.s_squared;
-    }
-    bool operator>(const EnergyAndSSquared& rhs) const {
-        return rhs < *this;
-    }
-    bool operator<=(const EnergyAndSSquared& rhs) const {
-        return !(rhs < *this);
-    }
-    bool operator>=(const EnergyAndSSquared& rhs) const {
-        return !(*this < rhs);
-    }
+    std::partial_ordering operator<=>(const EnergyAndSSquared&) const = default;
     double energy;
     double s_squared;
 };
