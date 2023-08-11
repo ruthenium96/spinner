@@ -50,4 +50,8 @@ arma::dmat& ArmaDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
 void ArmaDenseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     denseSemiunitaryMatrix_.at(j, i) += value;
 }
+
+void ArmaDenseSemiunitaryMatrix::normalize() {
+    denseSemiunitaryMatrix_ = arma::normalise(denseSemiunitaryMatrix_, 2, 0);
+}
 }  // namespace quantum::linear_algebra

@@ -22,6 +22,8 @@ class AbstractDenseSemiunitaryMatrix {
     virtual std::unique_ptr<AbstractSymmetricMatrix>
     unitaryTransform(const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const = 0;
 
+    virtual void normalize() = 0;
+
     virtual ~AbstractDenseSemiunitaryMatrix() = default;
 };
 }  // namespace quantum::linear_algebra

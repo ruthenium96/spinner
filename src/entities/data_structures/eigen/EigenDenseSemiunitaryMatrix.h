@@ -22,6 +22,7 @@ class EigenDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
 
     const Eigen::MatrixXd& getDenseSemiunitaryMatrix() const;
     Eigen::MatrixXd& modifyDenseSemiunitaryMatrix();
+    void normalize() override;
 
   private:
     Eigen::MatrixXd denseSemiunitaryMatrix_;

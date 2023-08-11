@@ -21,6 +21,7 @@ class ArmaDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     void resize(size_t size_rows, size_t size_cols);
     const arma::dmat& getDenseSemiunitaryMatrix() const;
     arma::dmat& modifyDenseSemiunitaryMatrix();
+    void normalize() override;
 
   private:
     arma::dmat denseSemiunitaryMatrix_;
