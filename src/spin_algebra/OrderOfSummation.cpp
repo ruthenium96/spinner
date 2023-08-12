@@ -1,6 +1,15 @@
 #include "OrderOfSummation.h"
 
+#include <algorithm>
 #include <optional>
+
+namespace {
+template<typename T>
+bool has_duplicates(std::vector<T> vector) {
+    std::sort(vector.begin(), vector.end());
+    return std::adjacent_find(vector.begin(), vector.end()) != vector.end();
+}
+}  // namespace
 
 namespace spin_algebra {
 
@@ -24,11 +33,17 @@ std::shared_ptr<const OrderOfSummation> spin_algebra::OrderOfSummation::construc
             OrderOfSummation::AdditionInstruction instruction;
             instruction.position_of_sum = number_of_mults + performed_summations;
             for (auto pos : orbit) {
-                while (pos_of_results_of_sum[pos] != std::nullopt) {
+                while (pos_of_results_of_sum[pos].has_value()) {
                     pos = pos_of_results_of_sum[pos].value();
                 }
                 instruction.positions_of_summands.push_back(pos);
             }
+
+            if (has_duplicates(instruction.positions_of_summands)) {
+                // analogue of orbit.size() == 1:
+                continue;
+            }
+
             for (const auto pos : instruction.positions_of_summands) {
                 pos_of_results_of_sum[pos] = instruction.position_of_sum;
             }
