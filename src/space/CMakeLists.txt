@@ -11,10 +11,9 @@ add_library(space
 
 FetchContent_Declare(
         wignersymbols
-        GIT_REPOSITORY https://github.com/joeydumont/wignerSymbols.git
-        GIT_TAG "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
+        GIT_REPOSITORY https://github.com/ruthenium96/wignerSymbols.git
+        GIT_TAG "deae28c3b0d92579a193517970e59fa78d9cde9c"
 )
-# TODO: do not build tests of wignersymbols
 FetchContent_MakeAvailable(wignersymbols)
 include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
