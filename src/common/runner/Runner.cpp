@@ -58,7 +58,7 @@ const space::Space& runner::Runner::getSpace() const {
 }
 
 void Runner::BuildMatrices() {
-    if (!getOperator(common::Energy).empty()) {
+    if (!getOperator(common::Energy).empty() || !energy.matrix_.blocks.empty()) {
         energy.matrix_ = Matrix(
             getSpace(),
             getOperator(common::Energy),

@@ -14,7 +14,7 @@ struct BlockProperties {
     uint32_t dimensionality = 1;
     // TODO: double instead int for cases with TzSorter and without PositiveProjectionsEliminator:
     double degeneracy = 1;
-    std::vector<uint32_t> representation;
+    std::vector<uint8_t> representation;
 
     bool operator==(const BlockProperties&) const = default;
 };
