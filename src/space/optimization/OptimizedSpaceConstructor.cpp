@@ -5,6 +5,7 @@
 #include "src/space/optimization/S2Transformer.h"
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TzSorter.h"
+#include "src/spin_algebra/GroupAdapter.h"
 #include "src/spin_algebra/OrderOfSummation.h"
 
 namespace space::optimization {
@@ -64,30 +65,23 @@ Space OptimizedSpaceConstructor::construct(
     //    space_history_.number_of_non_simplified_abelian_groups = 0;
     //    space_history_.isNonAbelianSimplified = true;
 
-    if (optimizationList.isSSquaredTransformed()) {
-        const auto number_of_mults = indexConverter.get_mults().size();
-        // TODO: fix it somehow based on the information from groups:
-        const size_t number_of_summation = number_of_mults - 1;
-
-        std::vector<std::vector<std::set<size_t>>> all_groups_orbits_of_mults;
-        for (const auto& group : optimizationList.getGroupsToApply()) {
-            all_groups_orbits_of_mults.emplace_back(group.construct_orbits_of_mults());
-        }
-
-        // TODO: can we move it to constructor of S2Transformer?
-        auto order_of_summations = spin_algebra::OrderOfSummation::constructFromOrbits(
-            all_groups_orbits_of_mults,
-            number_of_mults,
-            number_of_summation);
-
-        S2Transformer transformer(indexConverter, factories, order_of_summations);
-        space = transformer.apply(std::move(space));
-    }
-
     if (!spaceIsNormalized) {
         for (auto& subspace : space.getBlocks()) {
             subspace.decomposition->normalize();
         }
+    }
+
+    if (optimizationList.isSSquaredTransformed()) {
+        const auto number_of_mults = indexConverter.get_mults().size();
+        auto group_adapter =
+            spin_algebra::GroupAdapter(optimizationList.getGroupsToApply(), number_of_mults);
+
+        S2Transformer transformer(
+            indexConverter,
+            factories,
+            group_adapter.getOrderOfSummations(),
+            group_adapter.getAllGroupsCayleyTables());
+        space = transformer.apply(std::move(space));
     }
 
     return space;
