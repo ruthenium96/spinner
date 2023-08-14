@@ -25,12 +25,15 @@ std::shared_ptr<const OrderOfSummation> spin_algebra::OrderOfSummation::construc
 
     auto order_of_summations = std::make_shared<spin_algebra::OrderOfSummation>();
 
-    for (const auto& current_orbits : all_groups_orbits_of_mults) {
+    for (size_t number_of_group = 0; number_of_group < all_groups_orbits_of_mults.size();
+         ++number_of_group) {
+        const auto& current_orbits = all_groups_orbits_of_mults.at(number_of_group);
         for (const auto& orbit : current_orbits) {
             if (orbit.size() == 1) {
                 continue;
             }
             OrderOfSummation::AdditionInstruction instruction;
+            instruction.number_of_group = number_of_group;
             instruction.position_of_sum = number_of_mults + performed_summations;
             for (auto pos : orbit) {
                 while (pos_of_results_of_sum[pos].has_value()) {
