@@ -82,25 +82,8 @@ S2Transformer::constructTransformationMatrix(
 
 double S2Transformer::total_CG_coefficient(
     const spin_algebra::SSquaredState& s_squared_state,
-    uint32_t lex_index) const {
-    auto number_of_mults = converter_.get_mults().size();
-
+    const std::vector<double>& projections) const {
     double c = 1;
-
-    std::vector<double> projections;
-    projections.resize(2 * number_of_mults - 1);
-    for (size_t i = 0; i < number_of_mults; ++i) {
-        projections[i] = converter_.convert_lex_index_to_one_sz_projection(lex_index, i)
-            - converter_.get_spins()[i];
-    }
-    for (const auto& instruction : *order_of_summation_) {
-        // TODO: it may lead to an error if instructions has been shuffled.
-        //  Create corresponding unit tests
-        projections[instruction.position_of_sum] = 0;
-        for (const auto& pos : instruction.positions_of_summands) {
-            projections[instruction.position_of_sum] += projections[pos];
-        }
-    }
 
     for (const auto& instruction : *order_of_summation_) {
         size_t pos_one = instruction.positions_of_summands[0];
@@ -125,5 +108,25 @@ double S2Transformer::total_CG_coefficient(
 double S2Transformer::hashed_clebsh_gordan(double l1, double l2, double l3, double m1, double m2) {
     // TODO: implement hashing of CG-coefficients
     return WignerSymbols::clebschGordan(l1, l2, l3, m1, m2, m1 + m2);
+}
+
+std::vector<double> S2Transformer::construct_projections(uint32_t lex_index) const {
+    const auto number_of_mults = converter_.get_mults().size();
+
+    std::vector<double> projections;
+    projections.resize(2 * number_of_mults - 1);
+    for (size_t a = 0; a < number_of_mults; ++a) {
+        projections[a] = converter_.convert_lex_index_to_one_sz_projection(lex_index, a)
+            - converter_.get_spins()[a];
+    }
+
+    for (const auto& instruction : *order_of_summation_) {
+        projections[instruction.position_of_sum] = 0;
+        for (const auto& pos : instruction.positions_of_summands) {
+            projections[instruction.position_of_sum] += projections[pos];
+        }
+    }
+
+    return projections;
 }
 }  // namespace space::optimization

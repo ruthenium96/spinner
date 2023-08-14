@@ -27,7 +27,8 @@ class S2Transformer {
         const space::Subspace& subspace) const;
     double total_CG_coefficient(
         const spin_algebra::SSquaredState& s_squared_state,
-        uint32_t lex_index) const;
+        const std::vector<double>& projections) const;
+    std::vector<double> construct_projections(uint32_t lex_index) const;
     static double hashed_clebsh_gordan(double l1, double l2, double l3, double m1, double m2);
 
     const lexicographic::IndexConverter converter_;
