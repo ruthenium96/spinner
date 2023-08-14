@@ -195,10 +195,10 @@ TEST(group_info_tests, size_of_multiplication_table) {
         const group::Group::AlgebraicProperties& group_info =
             group::Group::return_group_info_by_group_name(group_name);
         EXPECT_EQ(
-            group_info.representations_multiplication_table.size(),
+            group_info.cayley_table.size(),
             group_info.number_of_representations * group_info.number_of_representations)
             << "In the group '" << group_name << "' the size of multiplication table "
-            << group_info.representations_multiplication_table.size()
+            << group_info.cayley_table.size()
             << " does not equal to square of number of representations "
             << group_info.number_of_representations * group_info.number_of_representations;
     }
@@ -211,11 +211,11 @@ TEST(group_info_tests, full_symmetric_representation_as_identity_of_representati
         for (size_t i = 0; i < group_info.number_of_representations; ++i) {
             auto representation = std::set<uint8_t>();
             representation.insert(i);
-            EXPECT_EQ(group_info.representations_multiplication_table.at({0, i}), representation)
+            EXPECT_EQ(group_info.cayley_table.at({0, i}), representation)
                 << "In the multiplication table of group '" << group_name
                 << "' product of full-symmetric representation and " << i << " does not equal to "
                 << i;
-            EXPECT_EQ(group_info.representations_multiplication_table.at({i, 0}), representation)
+            EXPECT_EQ(group_info.cayley_table.at({i, 0}), representation)
                 << "In the multiplication table of group '" << group_name << "' product of" << i
                 << " and full-symmetric representation "
                 << " does not equal to " << i;
@@ -234,7 +234,7 @@ TEST(
                 auto product_of_sizes_of_representation = group_info.dimension_of_representation[i]
                     * group_info.dimension_of_representation[j];
                 int size_of_direct_product_representations = 0;
-                for (auto k : group_info.representations_multiplication_table.at({i, j})) {
+                for (auto k : group_info.cayley_table.at({i, j})) {
                     size_of_direct_product_representations +=
                         group_info.dimension_of_representation[k];
                 }

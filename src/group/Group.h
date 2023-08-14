@@ -10,6 +10,7 @@
 namespace group {
 
 using Permutation = std::vector<uint8_t>;
+using CayleyTable = std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>;
 
 class Group {
   public:
@@ -30,7 +31,7 @@ class Group {
      coefficients_of_projectors : has the size (number_of_representations) x (dimension of representation) x (group_size).
                                   important: coefficients_of_projectors[0][0] should correspond to full-symmetric representation.
 
-     representations_multiplication_table : table of direct products of representations
+     cayley_table_table : table of direct products of representations
      */
 
     struct AlgebraicProperties {
@@ -44,8 +45,7 @@ class Group {
         std::vector<std::vector<size_t>> group_in_form_of_generators;
         std::vector<size_t> orders_of_elements;
         std::vector<std::vector<std::vector<double>>> coefficients_of_projectors;
-        std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>
-            representations_multiplication_table;
+        CayleyTable cayley_table;
     };
 
     enum GroupTypeEnum {
