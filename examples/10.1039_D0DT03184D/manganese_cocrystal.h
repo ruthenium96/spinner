@@ -62,9 +62,10 @@ void manganese_cocrystall() {
     model.modifySymbolicWorker().assignSymbolToTheta(Theta);
 
     common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort().EliminatePositiveProjections().Symmetrize(
-        group::Group::S2,
-        {{3, 4, 5, 0, 1, 2}});
+    optimizationList.TzSort()
+        .EliminatePositiveProjections()
+        .Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}})
+        .SSquaredTransform();
 
     runner::Runner runner(model, optimizationList);
     runner.initializeExperimentalValues(
