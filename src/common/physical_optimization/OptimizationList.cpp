@@ -22,10 +22,6 @@ OptimizationList& OptimizationList::SSquaredTransform() {
         throw std::invalid_argument("Cannot perform S2-transformation without without tz-sort");
         // actually, can, but it is inefficient
     }
-    if (!groupsToApply_.empty()) {
-        // TODO: proper connection between S2-transformation and Symmetrizer.
-        // throw std::invalid_argument("Currently cannot perform S2-transformation with Symmetrizer");
-    }
     for (const auto& group : groupsToApply_) {
         if (!group.properties.is_abelian) {
             throw std::invalid_argument(
