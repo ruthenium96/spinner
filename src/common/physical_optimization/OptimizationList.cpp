@@ -5,6 +5,9 @@
 namespace common::physical_optimization {
 
 OptimizationList& OptimizationList::TzSort() {
+    if (isSSquaredTransformed_) {
+        throw std::invalid_argument("Cannot TzSort *AFTER* S2-transformation");
+    }
     isTzSorted_ = true;
     return *this;
 }
@@ -13,6 +16,8 @@ OptimizationList& OptimizationList::EliminatePositiveProjections() {
     if (!isTzSorted_) {
         throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
     }
+    // TODO: can we eliminate positive projections after S2-Transformation?
+    //  if we can, does it have any sense?
     isPositiveProjectionsEliminated_ = true;
     return *this;
 }

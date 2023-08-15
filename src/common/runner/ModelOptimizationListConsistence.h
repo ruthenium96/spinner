@@ -13,6 +13,7 @@ class ModelOptimizationListConsistence {
         const common::physical_optimization::OptimizationList& optimizationList);
 
   private:
+    // TODO: move it to .cpp and anonymous namespace?
     // This function checks if multiplicities are invariant to all elements from the group.
     static void checkMultiplicitiesGroupConsistence(
         const std::vector<spin_algebra::Multiplicity>&,

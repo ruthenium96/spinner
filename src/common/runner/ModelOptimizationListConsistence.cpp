@@ -16,6 +16,7 @@ void ModelOptimizationListConsistence::check(
         if (model.is_zero_field_splitting_initialized()) {
             throw std::invalid_argument("S2-transformation cannot be applied to ZFS-Hamiltonian");
         }
+        // TODO: check if we actually can use S2-transformation even if g-factors are not equal
         // S2-transformation can be applied only if all g-factors are equal:
         if (model.getSymbolicWorker().isGFactorInitialized()
             && !model.getSymbolicWorker().isAllGFactorsEqual()) {
