@@ -25,6 +25,8 @@ space::Space S2Transformer::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
     vector_result.reserve(space.getBlocks().size());
 
+    std::cout << "S2-transformation started." << std::endl;
+
     for (size_t i = 0; i < space.getBlocks().size(); ++i) {
         Subspace& subspace = space.getBlocks()[i];
 
@@ -57,6 +59,8 @@ space::Space S2Transformer::apply(Space&& space) const {
 
         vector_result.emplace_back(std::move(subspace));
     }
+
+    std::cout << "S2-transformation finished." << std::endl;
 
     return space::Space(std::move(vector_result));
 }
@@ -108,8 +112,8 @@ S2Transformer::constructTransformationMatrix(
     transformation_matrix->normalize();
     // I guess, it works for S2, but I'm not sure, if it will work for non-Abelian groups.
 
-    std::cout << "Transformation matrix (" << number_of_s2_states << ", " << number_of_sz_states
-              << ") was constructed" << std::endl;
+    std::cout << "S2-transformation matrix (" << number_of_s2_states << ", " << number_of_sz_states
+              << ") was successfully constructed." << std::endl;
     return transformation_matrix;
 }
 
