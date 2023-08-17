@@ -112,6 +112,36 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_dense) {
 
         // unitary transformation
         std::function<void(void)> armaUnitaryTransformation = [&]() {
+            unitaryMatrices[0]->unitaryTransform(symmetricMatrices[0]);
+        };
+        std::function<void(void)> eigenUnitaryTransformation = [&]() {
+            unitaryMatrices[1]->unitaryTransform(symmetricMatrices[1]);
+        };
+        std::cout << "Armadillo:" << std::endl;
+        PerformanceTest(armaUnitaryTransformation, cycles);
+
+        std::cout << "Eigen:" << std::endl;
+        PerformanceTest(eigenUnitaryTransformation, cycles);
+        std::cout << std::endl;
+    }
+}
+
+// Compare time of unitary transformation (main diagonal only) of the same matrix:
+TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_dense) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-1000, +1000);
+
+    for (size_t size = 2; size <= 2048; size *= 2) {
+        size_t cycles = 2048 * 16 / size;
+        std::cout << "SIZE = " << size << std::endl;
+        auto symmetricMatrices =
+            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto unitaryMatrices =
+            generateUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
+
+        // unitary transformation
+        std::function<void(void)> armaUnitaryTransformation = [&]() {
             unitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[0]);
         };
         std::function<void(void)> eigenUnitaryTransformation = [&]() {
@@ -126,8 +156,8 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_dense) {
     }
 }
 
-// Compare time of unitary transformation of the same sparse matrix:
-TEST(DenseFactoriesPerfomance, unitary_transformation_sparse) {
+// Compare time of unitary transformation (main diagonal only) of the same sparse matrix:
+TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_sparse) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> dist(-1000, +1000);
