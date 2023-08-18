@@ -26,7 +26,7 @@ class SSquaredState {
     static std::vector<std::optional<uint8_t>> multiplyRepresentations(
         const std::vector<std::optional<uint8_t>>& representation_one,
         const std::vector<std::optional<uint8_t>>& representation_two,
-        const OrderOfSummation::AdditionInstruction& instruction,
+        const std::optional<size_t>& mb_number_of_group,
         const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
             all_groups_multiplication_tables,
         Multiplicity mult_one,

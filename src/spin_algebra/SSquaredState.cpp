@@ -84,7 +84,7 @@ SSquaredState::addAllMultiplicitiesAndSort(
                 auto representations_sum = multiplyRepresentations(
                     representations_one,
                     representations_two,
-                    instruction,
+                    instruction.number_of_group,
                     all_groups_multiplication_tables,
                     mult_one.getMultiplicities().at(0),
                     mult_two.getMultiplicities().at(0),
@@ -125,7 +125,7 @@ void SSquaredState::setRepresentations(
 std::vector<std::optional<uint8_t>> SSquaredState::multiplyRepresentations(
     const std::vector<std::optional<uint8_t>>& representations_one,
     const std::vector<std::optional<uint8_t>>& representations_two,
-    const OrderOfSummation::AdditionInstruction& instruction,
+    const std::optional<size_t>& mb_number_of_group,
     const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
         all_groups_multiplication_tables,
     Multiplicity mult_one,
@@ -134,7 +134,7 @@ std::vector<std::optional<uint8_t>> SSquaredState::multiplyRepresentations(
     auto representations_sum = std::vector<std::optional<uint8_t>>(representations_one.size());
     for (size_t number_of_group = 0; number_of_group < representations_one.size();
          ++number_of_group) {
-        if (instruction.number_of_group != number_of_group) {
+        if (mb_number_of_group != number_of_group) {
             // outside orbit summation
             const auto& multiplication_table = all_groups_multiplication_tables[number_of_group];
             if (representations_one[number_of_group].has_value()
