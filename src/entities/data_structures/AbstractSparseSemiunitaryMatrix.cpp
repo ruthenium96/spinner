@@ -6,6 +6,10 @@ void AbstractSparseSemiunitaryMatrix::unitaryTransform(
     std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToAdd) const {
     size_t matrix_in_space_basis_size = this->size_cols();
 
+#pragma omp parallel for shared( \
+        matrix_in_space_basis_size, \
+            symmetricMatrixToTransform, \
+            symmetricMatrixToAdd) default(none)
     for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size;
          ++index_of_space_vector_i) {
         auto outer_iterator = this->GetNewIterator(index_of_space_vector_i);
