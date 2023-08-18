@@ -7,6 +7,7 @@
 #include "src/common/lexicographic/IndexConverter.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/space/Space.h"
+#include "src/spin_algebra/RepresentationsMultiplier.h"
 #include "src/spin_algebra/SSquaredState.h"
 
 namespace space::optimization {
@@ -16,8 +17,7 @@ class S2Transformer {
         lexicographic::IndexConverter converter,
         quantum::linear_algebra::FactoriesList factories,
         std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation,
-        const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
-            all_groups_multiplication_tables);
+        const spin_algebra::RepresentationsMultiplier& representationsMultiplier);
 
     space::Space apply(space::Space&& space) const;
 

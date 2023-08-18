@@ -80,7 +80,7 @@ Space OptimizedSpaceConstructor::construct(
             indexConverter,
             factories,
             group_adapter.getOrderOfSummations(),
-            group_adapter.getAllGroupsCayleyTables());
+            group_adapter.getRepresentationMultiplier());
         space = transformer.apply(std::move(space));
     }
 

@@ -10,15 +10,14 @@ S2Transformer::S2Transformer(
     lexicographic::IndexConverter converter,
     quantum::linear_algebra::FactoriesList factories,
     std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation,
-    const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
-        all_groups_multiplication_tables) :
+    const spin_algebra::RepresentationsMultiplier& representationsMultiplier) :
     converter_(std::move(converter)),
     factories_(std::move(factories)),
     order_of_summation_(std::move(order_of_summation)) {
     sorted_s_squared_states_ = spin_algebra::SSquaredState::addAllMultiplicitiesAndSort(
         converter_.get_mults(),
         order_of_summation_,
-        all_groups_multiplication_tables);
+        representationsMultiplier);
 }
 
 space::Space S2Transformer::apply(Space&& space) const {

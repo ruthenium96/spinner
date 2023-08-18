@@ -188,7 +188,7 @@ TEST(addAllMultiplicitiesAndSort, 2222) {
         auto sorted_sum = spin_algebra::SSquaredState::addAllMultiplicitiesAndSort(
             mults,
             group_adapter.getOrderOfSummations(),
-            group_adapter.getAllGroupsCayleyTables());
+            group_adapter.getRepresentationMultiplier());
 
         for (const auto& [properties, number] : correct_answer) {
             EXPECT_EQ(number, sorted_sum.at(properties).size())

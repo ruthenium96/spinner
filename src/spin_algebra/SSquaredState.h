@@ -7,6 +7,7 @@
 
 #include "MultiplicityDirectSum.h"
 #include "OrderOfSummation.h"
+#include "RepresentationsMultiplier.h"
 
 namespace spin_algebra {
 
@@ -22,16 +23,6 @@ class SSquaredState {
         size_t number_of_representations = 0);
     void setMultiplicity(size_t number, Multiplicity multiplicity);
     void setRepresentations(size_t number, std::vector<std::optional<uint8_t>> representation);
-    // TODO: move it from this class:
-    static std::vector<std::optional<uint8_t>> multiplyRepresentations(
-        const std::vector<std::optional<uint8_t>>& representation_one,
-        const std::vector<std::optional<uint8_t>>& representation_two,
-        const std::optional<size_t>& mb_number_of_group,
-        const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
-            all_groups_multiplication_tables,
-        Multiplicity mult_one,
-        Multiplicity mult_two,
-        Multiplicity mult_sum);
 
   public:
     struct Properties {
@@ -47,8 +38,7 @@ class SSquaredState {
     static std::map<Properties, std::vector<SSquaredState>> addAllMultiplicitiesAndSort(
         const std::vector<Multiplicity>& multiplicities_to_sum,
         const std::shared_ptr<const OrderOfSummation>& order_of_summation,
-        const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
-            all_groups_multiplication_tables);
+        const spin_algebra::RepresentationsMultiplier& representationsMultiplier);
 };
 
 }  // namespace spin_algebra

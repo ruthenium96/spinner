@@ -58,12 +58,11 @@ std::map<SSquaredState::Properties, std::vector<SSquaredState>>
 SSquaredState::addAllMultiplicitiesAndSort(
     const std::vector<Multiplicity>& multiplicities_to_sum,
     const std::shared_ptr<const OrderOfSummation>& order_of_summation,
-    const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
-        all_groups_multiplication_tables) {
+    const spin_algebra::RepresentationsMultiplier& representationsMultiplier) {
     auto empty_history = SSquaredState(
         std::make_shared<std::vector<Multiplicity>>(multiplicities_to_sum),
         order_of_summation->size(),
-        all_groups_multiplication_tables.size());
+        representationsMultiplier.getNumberOfRepresentations());
 
     std::vector<SSquaredState> result_of_summation = {empty_history};
 
@@ -81,11 +80,10 @@ SSquaredState::addAllMultiplicitiesAndSort(
             for (auto mult_sum : mult_direct_sum.getMultiplicities()) {
                 auto representations_one = history.getRepresentations(pos_one);
                 auto representations_two = history.getRepresentations(pos_two);
-                auto representations_sum = multiplyRepresentations(
+                auto representations_sum = representationsMultiplier.multiplyRepresentations(
                     representations_one,
                     representations_two,
                     instruction.number_of_group,
-                    all_groups_multiplication_tables,
                     mult_one.getMultiplicities().at(0),
                     mult_two.getMultiplicities().at(0),
                     mult_sum);
@@ -120,58 +118,6 @@ void SSquaredState::setRepresentations(
     size_t number,
     std::vector<std::optional<uint8_t>> representation) {
     intermediateRepresentations_[number] = std::move(representation);
-}
-
-std::vector<std::optional<uint8_t>> SSquaredState::multiplyRepresentations(
-    const std::vector<std::optional<uint8_t>>& representations_one,
-    const std::vector<std::optional<uint8_t>>& representations_two,
-    const std::optional<size_t>& mb_number_of_group,
-    const std::vector<std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>>&
-        all_groups_multiplication_tables,
-    Multiplicity mult_one,
-    Multiplicity mult_two,
-    Multiplicity mult_sum) {
-    auto representations_sum = std::vector<std::optional<uint8_t>>(representations_one.size());
-    for (size_t number_of_group = 0; number_of_group < representations_one.size();
-         ++number_of_group) {
-        if (mb_number_of_group != number_of_group) {
-            // outside orbit summation
-            const auto& multiplication_table = all_groups_multiplication_tables[number_of_group];
-            if (representations_one[number_of_group].has_value()
-                && representations_two[number_of_group].has_value()) {
-                auto result_representation = multiplication_table.at(
-                    {representations_one[number_of_group].value(),
-                     representations_two[number_of_group].value()});
-                // TODO: the first (and currently the only) representation
-                representations_sum[number_of_group] = *result_representation.begin();
-            } else if (representations_one[number_of_group].has_value()) {
-                representations_sum[number_of_group] = representations_one[number_of_group].value();
-            } else if (representations_two[number_of_group].has_value()) {
-                representations_sum[number_of_group] = representations_two[number_of_group].value();
-            } else {
-                representations_sum[number_of_group] = 0;
-            }
-        } else {
-            // inside orbit summation
-            // TODO: It is correct only for P2 group, move it from here:
-            if (mult_one == mult_two) {
-                // M1 = 2S1 + 1
-                // M2 = 2S2 + 1
-                // Mm = 2(S1+S2) + 1 = (2S1+1) + (2S2+1) - 1 = M1 + M2 - 1
-                Multiplicity maxMultiplicity = mult_one + mult_two - 1;
-                if ((maxMultiplicity - mult_sum) % 4 == 0) {
-                    representations_sum[number_of_group] = 0;
-                } else {
-                    representations_sum[number_of_group] = 1;
-                }
-            } else if (mult_one > mult_two) {
-                representations_sum[number_of_group] = 0;
-            } else if (mult_one < mult_two) {
-                representations_sum[number_of_group] = 1;
-            }
-        }
-    }
-    return representations_sum;
 }
 
 }  // namespace spin_algebra
