@@ -32,6 +32,8 @@ class RepresentationsMultiplier {
         const std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>& cayley_table,
         std::optional<uint32_t> single_representation_one,
         std::optional<uint32_t> single_representation_two);
+    static uint32_t
+    insideOrbitSummation(Multiplicity mult_one, Multiplicity mult_two, Multiplicity mult_sum);
 };
 
 }  // namespace spin_algebra

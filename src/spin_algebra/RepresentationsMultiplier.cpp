@@ -24,23 +24,8 @@ std::vector<std::optional<uint8_t>> RepresentationsMultiplier::multiplyRepresent
                 representations_one[number_of_group],
                 representations_two[number_of_group]);
         } else {
-            // inside orbit summation
-            // TODO: It is correct only for P2 group, move it from here:
-            if (mult_one == mult_two) {
-                // M1 = 2S1 + 1
-                // M2 = 2S2 + 1
-                // Mm = 2(S1+S2) + 1 = (2S1+1) + (2S2+1) - 1 = M1 + M2 - 1
-                Multiplicity maxMultiplicity = mult_one + mult_two - 1;
-                if ((maxMultiplicity - mult_sum) % 4 == 0) {
-                    representations_sum[number_of_group] = 0;
-                } else {
-                    representations_sum[number_of_group] = 1;
-                }
-            } else if (mult_one > mult_two) {
-                representations_sum[number_of_group] = 0;
-            } else if (mult_one < mult_two) {
-                representations_sum[number_of_group] = 1;
-            }
+            representations_sum[number_of_group] =
+                insideOrbitSummation(mult_one, mult_two, mult_sum);
         }
     }
     return representations_sum;
@@ -62,6 +47,29 @@ uint32_t RepresentationsMultiplier::outsideOrbitSummation(
         return single_representation_two.value();
     } else {
         return 0;  // all-symmetric representation
+    }
+}
+
+uint32_t RepresentationsMultiplier::insideOrbitSummation(
+    Multiplicity mult_one,
+    Multiplicity mult_two,
+    Multiplicity mult_sum) {
+    // inside orbit summation
+    // TODO: It is correct only for P2 group:
+    if (mult_one == mult_two) {
+        // M1 = 2S1 + 1
+        // M2 = 2S2 + 1
+        // Mm = 2(S1+S2) + 1 = (2S1+1) + (2S2+1) - 1 = M1 + M2 - 1
+        Multiplicity maxMultiplicity = mult_one + mult_two - 1;
+        if ((maxMultiplicity - mult_sum) % 4 == 0) {
+            return 0;
+        } else {
+            return 1;
+        }
+    } else if (mult_one > mult_two) {
+        return 0;
+    } else if (mult_one < mult_two) {
+        return 1;
     }
 }
 
