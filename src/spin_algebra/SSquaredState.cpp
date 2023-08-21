@@ -78,8 +78,8 @@ SSquaredState::addAllMultiplicitiesAndSort(
             MultiplicityDirectSum mult_two(history.getMultiplicity(pos_two));
             auto mult_direct_sum = mult_one * mult_two;
             for (auto mult_sum : mult_direct_sum.getMultiplicities()) {
-                auto representations_one = history.getRepresentations(pos_one);
-                auto representations_two = history.getRepresentations(pos_two);
+                const auto& representations_one = history.getRepresentations(pos_one);
+                const auto& representations_two = history.getRepresentations(pos_two);
                 auto representations_sum = representationsMultiplier.multiplyRepresentations(
                     representations_one,
                     representations_two,
