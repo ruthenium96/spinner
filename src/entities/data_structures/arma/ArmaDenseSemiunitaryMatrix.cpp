@@ -12,7 +12,7 @@ uint32_t ArmaDenseSemiunitaryMatrix::size_cols() const {
 }
 
 double ArmaDenseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    return denseSemiunitaryMatrix_.at(i, j);
+    return denseSemiunitaryMatrix_.at(j, i);
 }
 
 void ArmaDenseSemiunitaryMatrix::print(std::ostream& os) const {

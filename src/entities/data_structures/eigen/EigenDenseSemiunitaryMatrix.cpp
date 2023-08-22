@@ -3,9 +3,6 @@
 #include "EigenDenseVector.h"
 #include "EigenLogic.h"
 
-// TODO: .at() and .add_to_position() has different order of indexes of row and column
-//  (and it leads to passing the tests). Fix it.
-
 namespace quantum::linear_algebra {
 
 uint32_t EigenDenseSemiunitaryMatrix::size_rows() const {
@@ -22,7 +19,7 @@ void EigenDenseSemiunitaryMatrix::resize(size_t size_rows, size_t size_cols) {
 }
 
 double EigenDenseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    return denseSemiunitaryMatrix_(i, j);
+    return denseSemiunitaryMatrix_(j, i);
 }
 
 void EigenDenseSemiunitaryMatrix::print(std::ostream& os) const {
@@ -51,6 +48,7 @@ const Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() 
 Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
     return denseSemiunitaryMatrix_;
 }
+
 void EigenDenseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     denseSemiunitaryMatrix_(j, i) += value;
 }
