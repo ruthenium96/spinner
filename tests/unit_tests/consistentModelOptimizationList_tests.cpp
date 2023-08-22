@@ -2,7 +2,7 @@
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 
 TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
-    std::vector<int> mults = {4, 4, 4};
+    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4};
     model::ModelInput model(mults);
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
@@ -13,7 +13,7 @@ TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
 }
 
 TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicities) {
-    std::vector<int> mults = {4, 4, 4, 3};
+    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 3};
     model::ModelInput model(mults);
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
@@ -24,7 +24,7 @@ TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicit
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     auto tripledJ = model.modifySymbolicWorker().addSymbol("3J", 3 * J_value);
@@ -47,7 +47,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_sy
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J = 10;
     auto firstJ = model.modifySymbolicWorker().addSymbol("J1", J);
@@ -69,7 +69,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symm
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -96,7 +96,7 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symm
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmetry) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     double g_value = 2.0;
@@ -117,6 +117,61 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmet
     optimizationList.TzSort()
         .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
         .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+
+    EXPECT_THROW(
+        runner::ConsistentModelOptimizationList(model, optimizationList),
+        std::invalid_argument);
+}
+
+TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_ZFS) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+    model::ModelInput model(mults);
+    double J_value = 10;
+    double g_value = 2.0;
+    double D_value = 5.0;
+    auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+    auto g = model.modifySymbolicWorker().addSymbol("g1", g_value);
+    auto D = model.modifySymbolicWorker().addSymbol("D", D_value);
+    model.modifySymbolicWorker()
+        .assignSymbolToIsotropicExchange(J, 0, 1)
+        .assignSymbolToIsotropicExchange(J, 1, 2)
+        .assignSymbolToIsotropicExchange(J, 2, 3)
+        .assignSymbolToIsotropicExchange(J, 3, 0)
+        .assignSymbolToGFactor(g, 0)
+        .assignSymbolToGFactor(g, 1)
+        .assignSymbolToGFactor(g, 2)
+        .assignSymbolToGFactor(g, 3)
+        .assignSymbolToZFSNoAnisotropy(D, 0);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+    EXPECT_THROW(
+        runner::ConsistentModelOptimizationList(model, optimizationList),
+        std::invalid_argument);
+}
+
+TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_different_gs) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+    model::ModelInput model(mults);
+    double J_value = 10;
+    double g_value = 2.0;
+    double D_value = 5.0;
+    auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+    auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_value);
+    auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_value);
+    model.modifySymbolicWorker()
+        .assignSymbolToIsotropicExchange(J, 0, 1)
+        .assignSymbolToIsotropicExchange(J, 1, 2)
+        .assignSymbolToIsotropicExchange(J, 2, 3)
+        .assignSymbolToIsotropicExchange(J, 3, 0)
+        .assignSymbolToGFactor(g_one, 0)
+        .assignSymbolToGFactor(g_one, 1)
+        .assignSymbolToGFactor(g_two, 2)
+        .assignSymbolToGFactor(g_two, 3);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
 
     EXPECT_THROW(
         runner::ConsistentModelOptimizationList(model, optimizationList),

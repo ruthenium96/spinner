@@ -20,6 +20,10 @@ class EigenLogic {
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
         const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
+
+    std::unique_ptr<AbstractSymmetricMatrix> unitaryTransform(
+        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+        const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
 };
 
 }  // namespace quantum::linear_algebra

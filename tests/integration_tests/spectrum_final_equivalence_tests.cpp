@@ -2,22 +2,7 @@
 #include "src/common/runner/Runner.h"
 
 struct EnergyAndSSquared {
-    bool operator<(const EnergyAndSSquared& rhs) const {
-        if (energy < rhs.energy)
-            return true;
-        if (rhs.energy < energy)
-            return false;
-        return s_squared < rhs.s_squared;
-    }
-    bool operator>(const EnergyAndSSquared& rhs) const {
-        return rhs < *this;
-    }
-    bool operator<=(const EnergyAndSSquared& rhs) const {
-        return !(rhs < *this);
-    }
-    bool operator>=(const EnergyAndSSquared& rhs) const {
-        return !(*this < rhs);
-    }
+    std::partial_ordering operator<=>(const EnergyAndSSquared&) const = default;
     double energy;
     double s_squared;
 };
@@ -82,6 +67,104 @@ void expect_final_vectors_equivalence(const runner::Runner& simple, runner::Runn
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+void initialize_five_center_mirror_symmetry_exchange_chain(
+    model::ModelInput& model,
+    double external,
+    double internal) {
+    auto Jexternal = model.modifySymbolicWorker().addSymbol("J1", external);
+    model.modifySymbolicWorker()
+        .assignSymbolToIsotropicExchange(Jexternal, 0, 1)
+        .assignSymbolToIsotropicExchange(Jexternal, 3, 4);
+
+    auto Jinternal = model.modifySymbolicWorker().addSymbol("J2", internal);
+    model.modifySymbolicWorker()
+        .assignSymbolToIsotropicExchange(Jinternal, 1, 2)
+        .assignSymbolToIsotropicExchange(Jinternal, 2, 3);
+}
+
+TEST(spectrum_final_equivalence, five_center_mirror_symmetry_chain) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2, 2},
+        {2, 2, 3, 2, 2},
+        {2, 2, 4, 2, 2},
+        {3, 3, 2, 3, 3},
+        {3, 3, 3, 3, 3},
+        {3, 3, 4, 3, 3}};
+    std::vector<std::pair<double, double>> js =
+        {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
+
+    for (const auto& mults : multss) {
+        for (auto [Jfirst, Jsecond] : js) {
+            group::Group group(group::Group::S2, {{4, 3, 2, 1, 0}});
+
+            model::ModelInput model(mults);
+            initialize_five_center_mirror_symmetry_exchange_chain(model, Jfirst, Jsecond);
+
+            runner::Runner runner_simple(model);
+
+            runner_simple.BuildSpectra();
+
+            // TZ_SORTER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort();
+                runner::Runner runner_tz_sorted(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections();
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // SYMMETRIZER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.Symmetrize(group);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + SYMMETRIZER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().Symmetrize(group);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().Symmetrize(group);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(group)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 void initialize_four_centers_exchange_rectangle(
     model::ModelInput& model,
     double first,
@@ -98,7 +181,10 @@ void initialize_four_centers_exchange_rectangle(
 }
 
 TEST(spectrum_final_equivalence, rectangle) {
-    std::vector<std::vector<int>> multss = {{2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2},
+        {3, 3, 3, 3},
+        {4, 4, 4, 4}};
     std::vector<std::pair<double, double>> js =
         {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
 
@@ -180,6 +266,47 @@ TEST(spectrum_final_equivalence, rectangle) {
                 runner::Runner runner(model, optimizationList);
                 expect_final_vectors_equivalence(runner_simple, runner);
             }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(first_direction)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(second_direction)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + SYMMETRIZER + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(first_direction)
+                    .Symmetrize(second_direction)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
         }
     }
 }
@@ -195,7 +322,7 @@ void initialize_three_centers_exchange_triangle(model::ModelInput& model, double
 }
 
 TEST(spectrum_final_equivalence, triangle) {
-    std::vector<std::vector<int>> multss = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
     std::vector<double> js = {10, 17.17, 33};
 
     for (const auto& mults : multss) {
@@ -257,7 +384,14 @@ TEST(spectrum_final_equivalence, triangle) {
             {}  // TZ_SORTER + SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
             {}  // SYMMETRIZER + TZ_SORTER + NON_ABELIAN_SIMPLIFIER
             {}  // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER + TZ_SORTER
-            {}
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
         }
     }
 }

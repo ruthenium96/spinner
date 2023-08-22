@@ -2,12 +2,15 @@
 #define SPINNER_GROUP_H
 
 #include <cstdint>
+#include <map>
+#include <set>
 #include <stdexcept>
 #include <vector>
 
 namespace group {
 
 using Permutation = std::vector<uint8_t>;
+using CayleyTable = std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>;
 
 class Group {
   public:
@@ -27,6 +30,8 @@ class Group {
 
      coefficients_of_projectors : has the size (number_of_representations) x (dimension of representation) x (group_size).
                                   important: coefficients_of_projectors[0][0] should correspond to full-symmetric representation.
+
+     cayley_table_table : table of direct products of representations
      */
 
     struct AlgebraicProperties {
@@ -40,6 +45,7 @@ class Group {
         std::vector<std::vector<size_t>> group_in_form_of_generators;
         std::vector<size_t> orders_of_elements;
         std::vector<std::vector<std::vector<double>>> coefficients_of_projectors;
+        CayleyTable cayley_table;
     };
 
     enum GroupTypeEnum {
@@ -50,6 +56,8 @@ class Group {
     explicit Group(GroupTypeEnum group_name, std::vector<Permutation> generators);
 
     std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
+
+    std::vector<std::set<size_t>> construct_orbits_of_mults() const;
 
     bool operator==(const Group& rhs) const;
 

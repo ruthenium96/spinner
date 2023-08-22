@@ -88,14 +88,14 @@ TEST(linearAlgebraFactories, eigendecomposition) {
                 for (size_t i = 0; i < size; ++i) {
                     if (i == 0) {
                         sign = -2
-                                * (std::signbit(armaEigenCouple.eigenvectors->at(i, j))
-                                   ^ std::signbit(eigenEigenCouple.eigenvectors->at(i, j)))
+                                * (std::signbit(armaEigenCouple.eigenvectors->at(j, i))
+                                   ^ std::signbit(eigenEigenCouple.eigenvectors->at(j, i)))
                             + 1;
                     }
                     // TODO: epsilon
                     EXPECT_NEAR(
-                        armaEigenCouple.eigenvectors->at(i, j),
-                        sign * eigenEigenCouple.eigenvectors->at(i, j),
+                        armaEigenCouple.eigenvectors->at(j, i),
+                        sign * eigenEigenCouple.eigenvectors->at(j, i),
                         1e-6);
                 }
             }

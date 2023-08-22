@@ -20,7 +20,7 @@ EigenCouple EigenSparseSymmetricMatrix::diagonalizeValuesVectors() const {
 std::unique_ptr<AbstractDenseVector> EigenSparseSymmetricMatrix::diagonalizeValues() const {
     EigenLogic eigenLogic;
 
-    eigenLogic.diagonalizeValues(*this);
+    return eigenLogic.diagonalizeValues(*this);
 }
 
 uint32_t EigenSparseSymmetricMatrix::size() const {

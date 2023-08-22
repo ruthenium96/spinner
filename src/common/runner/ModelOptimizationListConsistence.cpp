@@ -11,10 +11,23 @@ void ModelOptimizationListConsistence::check(
         // ...if Hamiltonian terms invariant to group elements:
         checkAllSymbolNamesGroupConsistence(model.getSymbolicWorker(), group);
     }
+    if (optimizationList.isSSquaredTransformed()) {
+        // S2-transformation can be applied only for HDvV-Hamiltionian:
+        if (model.is_zero_field_splitting_initialized()) {
+            throw std::invalid_argument("S2-transformation cannot be applied to ZFS-Hamiltonian");
+        }
+        // TODO: check if we actually can use S2-transformation even if g-factors are not equal
+        // S2-transformation can be applied only if all g-factors are equal:
+        if (model.getSymbolicWorker().isGFactorInitialized()
+            && !model.getSymbolicWorker().isAllGFactorsEqual()) {
+            throw std::invalid_argument(
+                "S2-transformation cannot be applied to system with different g-factors");
+        }
+    }
 }
 
 void ModelOptimizationListConsistence::checkMultiplicitiesGroupConsistence(
-    const std::vector<int>& mults,
+    const std::vector<spin_algebra::Multiplicity>& mults,
     const group::Group& group) {
     // TODO: split code above (maybe rewrite checkSymbolNamesGroupElementConsistence with templates?)
     if (mults.size() != group.getElements()[0].size()) {
@@ -22,7 +35,7 @@ void ModelOptimizationListConsistence::checkMultiplicitiesGroupConsistence(
             "The size of group elements does not equal to the number of spins.");
     }
     for (const auto& el : group.getElements()) {
-        std::vector<int> permutated_mults(mults);
+        std::vector<spin_algebra::Multiplicity> permutated_mults(mults);
         for (size_t i = 0; i < group.getElements()[0].size(); ++i) {
             permutated_mults[i] = mults[el[i]];
         }

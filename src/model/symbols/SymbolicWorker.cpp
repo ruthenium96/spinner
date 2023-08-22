@@ -97,6 +97,9 @@ SymbolName SymbolicWorker::addSymbol(
     double initial_value,
     bool is_changeable,
     SymbolTypeEnum type_enum) {
+    if (name_string.empty()) {
+        throw std::invalid_argument("Name of Symbol should be non-empty");
+    }
     SymbolName symbol_name(name_string);
     if (symbolsMap.find(symbol_name) != symbolsMap.end()) {
         throw std::invalid_argument(symbol_name.get_name() + " name has been already initialized");

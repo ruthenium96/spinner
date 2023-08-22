@@ -1,6 +1,5 @@
 #include "EigenDenseSemiunitaryMatrix.h"
 
-#include "EigenDenseSymmetricMatrix.h"
 #include "EigenDenseVector.h"
 #include "EigenLogic.h"
 
@@ -20,7 +19,7 @@ void EigenDenseSemiunitaryMatrix::resize(size_t size_rows, size_t size_cols) {
 }
 
 double EigenDenseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    return denseSemiunitaryMatrix_(i, j);
+    return denseSemiunitaryMatrix_(j, i);
 }
 
 void EigenDenseSemiunitaryMatrix::print(std::ostream& os) const {
@@ -35,11 +34,28 @@ EigenDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
     return eigenLogic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
 }
 
+std::unique_ptr<AbstractSymmetricMatrix> EigenDenseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+    EigenLogic eigenLogic;
+
+    return eigenLogic.unitaryTransform(matrix_to_transform, *this);
+}
+
 const Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {
     return denseSemiunitaryMatrix_;
 }
 
 Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
     return denseSemiunitaryMatrix_;
+}
+
+void EigenDenseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
+    denseSemiunitaryMatrix_(j, i) += value;
+}
+
+void EigenDenseSemiunitaryMatrix::normalize() {
+    for (int i = 0; i < denseSemiunitaryMatrix_.cols(); i++) {
+        denseSemiunitaryMatrix_.col(i).normalize();
+    }
 }
 }  // namespace quantum::linear_algebra

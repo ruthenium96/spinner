@@ -38,7 +38,7 @@ add_executable(spinner_test
         unit_tests/magnetic_susceptibility_tests.cpp
         integration_tests/spectrum_builder_tests.cpp)
 
-find_package(Armadillo)
+find_package(Armadillo 10.6)
 find_package(Eigen3 3.3)
 
 if (ARMADILLO_FOUND)
@@ -76,7 +76,7 @@ if (ARMADILLO_FOUND AND Eigen3_FOUND)
 endif ()
 
 target_link_libraries(spinner_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra)
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)

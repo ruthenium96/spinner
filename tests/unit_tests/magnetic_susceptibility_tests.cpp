@@ -66,7 +66,7 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_empty_experimenta
 
 TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
-    std::vector<int> mults = {2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -90,7 +90,7 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
 
 TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
-    std::vector<int> mults = {2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -161,7 +161,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
 
     for (size_t _ = 0; _ < 20; ++_) {
         const double g_factor = g_dist(rng);
-        std::vector<int> mults = {3, 3, 3, 3};
+        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_unique;
 
@@ -230,7 +230,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
         const double J_exact = J_dist(rng);
         const double g_factor = g_dist(rng);
 
-        std::vector<int> mults = {3, 3, 3, 3};
+        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values_unique;
 
@@ -302,8 +302,10 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
     }
 }
 
-model::ModelInput
-constructFourCenterModel_g_J(const std::vector<int>& mults, double J_value, double g_value) {
+model::ModelInput constructFourCenterModel_g_J(
+    const std::vector<spin_algebra::Multiplicity>& mults,
+    double J_value,
+    double g_value) {
     model::ModelInput model(mults);
     auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
     model.modifySymbolicWorker()
@@ -345,7 +347,7 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
         const double J_exact = J_dist(rng);
         const double g_factor = g_dist(rng);
 
-        std::vector<int> mults = {3, 3, 3, 3};
+        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
         {
@@ -422,7 +424,7 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
 }
 
 model::ModelInput constructRingModel_J_g_D(
-    const std::vector<int>& mults,
+    const std::vector<spin_algebra::Multiplicity>& mults,
     double J_value,
     double g_value,
     double D_value) {
@@ -454,7 +456,7 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g_D)
         const double D_exact = D_dist(rng);
         const double g_factor = 2.0;
 
-        std::vector<int> mults = {3, 3, 3, 3};
+        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
         {

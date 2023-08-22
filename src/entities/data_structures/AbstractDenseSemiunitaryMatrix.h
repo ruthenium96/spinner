@@ -13,11 +13,16 @@ class AbstractDenseSemiunitaryMatrix {
     virtual uint32_t size_cols() const = 0;
 
     virtual double at(uint32_t i, uint32_t j) const = 0;
+    virtual void add_to_position(double value, uint32_t i, uint32_t j) = 0;
 
     virtual void print(std::ostream& os) const = 0;
 
     virtual std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix) const = 0;
+    virtual std::unique_ptr<AbstractSymmetricMatrix>
+    unitaryTransform(const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const = 0;
+
+    virtual void normalize() = 0;
 
     virtual ~AbstractDenseSemiunitaryMatrix() = default;
 };

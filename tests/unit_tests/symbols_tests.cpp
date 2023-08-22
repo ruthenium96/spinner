@@ -1,6 +1,11 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
+TEST(symbolic_worker, throw_assign_the_empty_name) {
+    model::symbols::SymbolicWorker symbols(2);
+    EXPECT_THROW(symbols.addSymbol("", 10), std::invalid_argument);
+}
+
 TEST(symbolic_worker, throw_add_the_same_symbol_name) {
     model::symbols::SymbolicWorker symbols(2);
     symbols.addSymbol("same", 10);
@@ -15,7 +20,7 @@ TEST(symbolic_worker, throw_assign_the_same_exchange) {
 }
 
 TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_initialized) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
 
     model::ModelInput modelInput(mults);
 
@@ -35,7 +40,7 @@ TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_initialized) {
 }
 
 TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_not_initialized) {
-    std::vector<int> mults = {2, 2, 2, 2};
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
 
     model::ModelInput modelInput(mults);
 

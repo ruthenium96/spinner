@@ -58,7 +58,7 @@ const space::Space& runner::Runner::getSpace() const {
 }
 
 void Runner::BuildMatrices() {
-    if (!getOperator(common::Energy).empty()) {
+    if (!getOperator(common::Energy).empty() || !energy.matrix_.blocks.empty()) {
         energy.matrix_ = Matrix(
             getSpace(),
             getOperator(common::Energy),
@@ -263,9 +263,20 @@ void Runner::BuildMuSquaredWorker() {
         double g_factor = getModel().getNumericalWorker().getGFactorParameters()->at(0);
         auto s_squared_vector = dataStructuresFactories_.createVector();
 
-        // TODO: check if s_squared has been initialized
-        for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
-            s_squared_vector->concatenate_with(subspectrum.raw_data);
+        if (getModel().is_s_squared_initialized()) {
+            for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
+                s_squared_vector->concatenate_with(subspectrum.raw_data);
+            }
+        } else {
+            // TODO: explicitly check if blockproperties have total_mult
+            for (const auto& subspectrum : getSpectrum(common::Energy).blocks) {
+                double mult = subspectrum.properties.total_mult.value();
+                double spin = (mult - 1) / 2.0;
+                double s_squared_value = spin * (spin + 1);
+                s_squared_vector->add_identical_values(
+                    subspectrum.raw_data->size(),
+                    s_squared_value);
+            }
         }
 
         magnetic_susceptibility_worker =
@@ -344,7 +355,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::J,
             std::move(derivative_map));
         answer[changeable_symbol] = value;
-        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+        //        std::cout << "dRSS/d" << changeable_symbol.get_name() << " = " << value << std::endl;
     }
 
     for (const auto& changeable_symbol :
@@ -362,7 +373,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::D,
             std::move(derivative_map));
         answer[changeable_symbol] = value;
-        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+        //        std::cout << "dRSS/d" << changeable_symbol.get_name() << " = " << value << std::endl;
     }
 
     for (const auto& changeable_symbol :
@@ -382,7 +393,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::g_factor,
             std::move(map));
         answer[changeable_symbol] = value;
-        //        std::cout << "dR^2/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+        //        std::cout << "dRSS/d" << changeable_symbol.get_name() << " = " << value << std::endl;
     }
 
     // Theta calculation:
@@ -396,7 +407,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::Theta,
             std::move(empty_map));
         answer[Theta_name] = value;
-        //        std::cout << "dR^2/d" << Theta_name.get_name() << " = " << value << std::endl;
+        //        std::cout << "dRSS/d" << Theta_name.get_name() << " = " << value << std::endl;
     }
 
     return answer;
@@ -427,9 +438,11 @@ void Runner::minimizeResidualError(
 
     solver->optimize(oneStepFunction, changeable_values);
 
-    //    for (size_t i = 0; i < changeable_names.size(); ++i) {
-    //        std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
-    //    }
+    for (size_t i = 0; i < changeable_names.size(); ++i) {
+        std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
+    }
+    std::cout << "RSS = " << magnetic_susceptibility_controller_.value().calculateResidualError()
+              << std::endl;
 }
 
 double Runner::stepOfRegression(
@@ -462,7 +475,7 @@ double Runner::stepOfRegression(
     // Calculate residual error and write it to external variable:
     double residual_error = getMagneticSusceptibilityController().calculateResidualError();
 
-    //std::cout << "R^2 = " << residual_error << std::endl << std::endl;
+    std::cout << "RSS = " << residual_error << std::endl << std::endl;
 
     if (isGradientRequired) {
         // Calculate derivatives...

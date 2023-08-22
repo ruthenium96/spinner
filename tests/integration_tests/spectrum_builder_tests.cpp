@@ -75,7 +75,7 @@ void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
 }
 
 TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults =
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
@@ -109,7 +109,10 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
 }
 
 TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
-    std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults = {
+        {2, 2, 2, 2},
+        {3, 3, 3, 3},
+        {4, 4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
         model::ModelInput model(mults);
@@ -154,7 +157,10 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
 }
 
 TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
-    std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults = {
+        {2, 2, 2},
+        {3, 3, 3},
+        {4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
         model::ModelInput model(mults);
@@ -222,7 +228,7 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
 //}
 
 TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults =
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
@@ -275,7 +281,10 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
 }
 
 TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2222_3333_4444) {
-    std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults = {
+        {2, 2, 2, 2},
+        {3, 3, 3, 3},
+        {4, 4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
         model::ModelInput model(mults);
@@ -340,7 +349,10 @@ TEST(spectrum_builder_without_matrix, size_consistence_and_spectra_equivalence_2
 TEST(
     spectrum_builder_without_matrix,
     size_consistence_and_spectra_equivalence_222_333_444_S3_symmetrize) {
-    std::vector<std::vector<int>> vector_of_mults = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults = {
+        {2, 2, 2},
+        {3, 3, 3},
+        {4, 4, 4}};
 
     for (const auto& mults : vector_of_mults) {
         model::ModelInput model(mults);
@@ -400,7 +412,7 @@ TEST(
 }
 
 TEST(spectrum_builder_apply_to_entity, spectra_equivalence_22_333_4444_23456) {
-    std::vector<std::vector<int>> vector_of_mults =
+    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {

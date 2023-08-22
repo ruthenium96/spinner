@@ -21,7 +21,7 @@ TEST(fitting_magnetic_susceptibility_advanced, optimNM_fit_theoretical_curve_222
         const double J_exact = J_dist(rng);
         const double g_one_exact = g_one_dist(rng);
         const double g_two_exact = g_two_dist(rng);
-        std::vector<int> mults = {2, 2, 2, 2};
+        std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
@@ -114,7 +114,7 @@ TEST(
     for (size_t _ = 0; _ < 20; ++_) {
         const double J_exact = J_dist(rng);
         const double g_exact = g_dist(rng);
-        std::vector<int> mults = {2, 2, 2, 2};
+        std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 

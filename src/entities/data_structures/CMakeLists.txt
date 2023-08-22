@@ -8,7 +8,7 @@ add_library(data_structures
 
 message("Trying to find packages of linear algebra...")
 
-find_package(Armadillo)
+find_package(Armadillo 10.6)
 
 if (ARMADILLO_FOUND)
     message(" * Armadillo was found")

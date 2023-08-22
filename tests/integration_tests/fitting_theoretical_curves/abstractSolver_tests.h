@@ -41,7 +41,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            std::vector<int> mults = {2};
+            std::vector<spin_algebra::Multiplicity> mults = {2};
             model::ModelInput model(mults);
             double J_value = Theta_exact;
             auto Theta = model.modifySymbolicWorker().addSymbol("Theta", J_value);
@@ -66,7 +66,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
         }
 
         {
-            std::vector<int> mults = {2};
+            std::vector<spin_algebra::Multiplicity> mults = {2};
             model::ModelInput model(mults);
             double Theta_value = -10.0;
             auto Theta = model.modifySymbolicWorker().addSymbol("Theta", Theta_value);
@@ -112,7 +112,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            std::vector<int> mults = {2, 2, 2, 2};
+            std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -141,7 +141,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
         }
 
         {
-            std::vector<int> mults = {2, 2, 2, 2};
+            std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = -10.0;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -191,7 +191,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+            std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -217,7 +217,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         }
 
         {
-            std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+            std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = -10.0;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -265,7 +265,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+            std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -290,7 +290,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         }
 
         {
-            std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+            std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = 40;
             auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
@@ -333,7 +333,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
     for (size_t _ = 0; _ < 20; ++_) {
         const double g_one_exact = g_one_dist(rng);
         const double g_two_exact = g_two_dist(rng);
-        std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+        std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
@@ -408,7 +408,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         const double J_exact = J_dist(rng);
         const double g_one_exact = g_one_dist(rng);
         const double g_two_exact = g_two_dist(rng);
-        std::vector<int> mults = {2, 2, 2, 2, 2, 2};
+        std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
@@ -489,7 +489,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_3333_
         const double J_exact = J_dist(rng);
         const double g_exact = g_dist(rng);
         const double D_exact = D_dist(rng);
-        std::vector<int> mults = {3, 3, 3, 3};
+        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
         std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 

@@ -59,7 +59,7 @@ void nickel_crystall() {
     //    Ni  - R3a - R3b
     // Spin(Ni) = 1, Spin(R3a) = Spin(R3b) = 1/2
 
-    const std::vector<int> mults = {3, 2, 2, 3, 2, 2};
+    const std::vector<spin_algebra::Multiplicity> mults = {3, 2, 2, 3, 2, 2};
 
     // First model.
     std::cout << "\nFirst model\n" << std::endl;

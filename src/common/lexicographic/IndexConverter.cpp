@@ -1,6 +1,7 @@
 #include "IndexConverter.h"
 
-lexicographic::IndexConverter::IndexConverter(std::vector<int> mults) : mults_(mults) {
+lexicographic::IndexConverter::IndexConverter(std::vector<spin_algebra::Multiplicity> mults) :
+    mults_(mults) {
     // auxiliary vector for uint32_t <-> std::vector<uint8_t> transformation
     cumulative_product.resize(mults.size() + 1);
     cumulative_product.back() = 1;
@@ -57,7 +58,7 @@ lexicographic::IndexConverter::ladder_projection(uint32_t lex, uint32_t center, 
     return lex + ladder * cumulative_product[center + 1];
 }
 
-const std::vector<int>& lexicographic::IndexConverter::get_mults() const {
+const std::vector<spin_algebra::Multiplicity>& lexicographic::IndexConverter::get_mults() const {
     return mults_;
 }
 

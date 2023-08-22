@@ -43,15 +43,48 @@ std::unique_ptr<AbstractDenseVector> EigenLogic::unitaryTransformAndReturnMainDi
             * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix();
         main_diagonal->resize(maybeDenseSymmetricMatrix->size());
 #pragma omp parallel for shared( \
-    main_diagonal, \
-    firstMultiplicationResult, \
-    maybeDenseSemiunitaryMatrix) default(none)
+        main_diagonal, \
+            firstMultiplicationResult, \
+            maybeDenseSemiunitaryMatrix) default(none)
         for (size_t i = 0; i < main_diagonal->size(); ++i) {
             auto value = firstMultiplicationResult.row(i)
                 * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
             main_diagonal->modifyDenseVector().coeffRef(i) = value;
         }
         return std::move(main_diagonal);
+    }
+
+    throw std::bad_cast();
+}
+
+std::unique_ptr<AbstractSymmetricMatrix> EigenLogic::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
+    auto result = std::make_unique<EigenDenseSymmetricMatrix>();
+
+    auto maybeDenseSemiunitaryMatrix =
+        dynamic_cast<const EigenDenseSemiunitaryMatrix*>(&denseSemiunitaryMatrix);
+    if (maybeDenseSemiunitaryMatrix == nullptr) {
+        throw std::bad_cast();
+    }
+
+    if (auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const EigenSparseSymmetricMatrix*>(symmetricMatrix.get())) {
+        // TODO: check if all transpositions are efficient
+        result->modifyDenseSymmetricMatrix() =
+            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
+            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix().transpose()
+            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
+        return std::move(result);
+    }
+
+    if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const EigenDenseSymmetricMatrix*>(symmetricMatrix.get())) {
+        result->modifyDenseSymmetricMatrix() =
+            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
+            * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix()
+            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
+        return std::move(result);
     }
 
     throw std::bad_cast();

@@ -8,6 +8,8 @@ class ArmaSymmetricMatrixFactory: public AbstractSymmetricMatrixFactory {
   public:
     std::unique_ptr<AbstractSymmetricMatrix> createDenseSymmetricMatrix(uint32_t size) override;
     std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) override;
+    std::unique_ptr<AbstractDenseSemiunitaryMatrix>
+    createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) override;
 };
 
 class ArmaDenseVectorFactory: public AbstractDenseVectorFactory {

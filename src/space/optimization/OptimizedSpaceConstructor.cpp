@@ -2,11 +2,16 @@
 
 #include "src/space/optimization/NonAbelianSimplifier.h"
 #include "src/space/optimization/PositiveProjectionsEliminator.h"
+#include "src/space/optimization/S2Transformer.h"
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TzSorter.h"
+#include "src/spin_algebra/GroupAdapter.h"
+#include "src/spin_algebra/OrderOfSummation.h"
 
 namespace space::optimization {
 
+// TODO: if Space/Subspace will be transformed into classes,
+//  it should be static constructor of Space.
 Space OptimizedSpaceConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
     const quantum::linear_algebra::FactoriesList& factories) {
@@ -40,7 +45,7 @@ Space OptimizedSpaceConstructor::construct(
         //                "Symmetrization after using of non-Abelian simplifier causes bugs.");
         //        }
 
-        space::optimization::Symmetrizer symmetrizer(indexConverter, group, factories);
+        Symmetrizer symmetrizer(indexConverter, group, factories);
         space = symmetrizer.apply(std::move(space));
 
         //        if (!new_group.properties.is_abelian) {
@@ -64,6 +69,19 @@ Space OptimizedSpaceConstructor::construct(
         for (auto& subspace : space.getBlocks()) {
             subspace.decomposition->normalize();
         }
+    }
+
+    if (optimizationList.isSSquaredTransformed()) {
+        const auto number_of_mults = indexConverter.get_mults().size();
+        auto group_adapter =
+            spin_algebra::GroupAdapter(optimizationList.getGroupsToApply(), number_of_mults);
+
+        S2Transformer transformer(
+            indexConverter,
+            factories,
+            group_adapter.getOrderOfSummations(),
+            group_adapter.getRepresentationMultiplier());
+        space = transformer.apply(std::move(space));
     }
 
     return space;

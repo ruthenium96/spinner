@@ -1,19 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(spinner)
 
 include(FetchContent)
-FetchContent_Declare(
-        wignersymbols
-        GIT_REPOSITORY https://github.com/joeydumont/wignerSymbols.git
-        GIT_TAG "9c39f569128fe4cb4835fc852c61f45d0b94aba4"
-)
-# TODO: do not build tests of wignersymbols
-#FetchContent_MakeAvailable(wignersymbols)
-#include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)

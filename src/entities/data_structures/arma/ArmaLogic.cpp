@@ -105,4 +105,36 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic::unitaryTransformAndReturnMainDia
 
     throw std::bad_cast();
 }
+
+std::unique_ptr<AbstractSymmetricMatrix> ArmaLogic::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
+    auto result = std::make_unique<ArmaDenseSymmetricMatrix>();
+
+    auto maybeDenseSemiunitaryMatrix =
+        dynamic_cast<const ArmaDenseSemiunitaryMatrix*>(&denseSemiunitaryMatrix);
+    if (maybeDenseSemiunitaryMatrix == nullptr) {
+        throw std::bad_cast();
+    }
+
+    if (auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const ArmaSparseSymmetricMatrix*>(symmetricMatrix.get())) {
+        result->modifyDenseSymmetricMatrix() =
+            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix()
+            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
+        return std::move(result);
+    }
+
+    if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const ArmaDenseSymmetricMatrix*>(symmetricMatrix.get())) {
+        result->modifyDenseSymmetricMatrix() =
+            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix()
+            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
+        return std::move(result);
+    }
+
+    throw std::bad_cast();
+}
 }  // namespace quantum::linear_algebra

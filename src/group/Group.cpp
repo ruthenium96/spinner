@@ -128,6 +128,38 @@ std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& i
     return permutated_vectors;
 }
 
+// Returns the indexes of multiplicity centers, forming the same orbit.
+std::vector<std::set<size_t>> Group::construct_orbits_of_mults() const {
+    std::vector<std::set<size_t>> orbits_of_mults;
+
+    size_t number_of_mults = elements_[0].size();
+
+    std::vector<bool> does_mult_already_formed_orbit(number_of_mults, false);
+
+    for (size_t i = 0; i < number_of_mults; ++i) {
+        std::set<size_t> current_orbit;
+        for (size_t j = 0; j < properties.group_size; ++j) {
+            size_t current_position = elements_[j][i];
+            if (!does_mult_already_formed_orbit[current_position]) {
+                current_orbit.insert(current_position);
+                does_mult_already_formed_orbit[current_position] = true;
+            }
+        }
+        if (!current_orbit.empty()) {
+            orbits_of_mults.emplace_back(std::move(current_orbit));
+        }
+
+        if (std::all_of(
+                does_mult_already_formed_orbit.begin(),
+                does_mult_already_formed_orbit.end(),
+                [](bool b) { return b; })) {
+            break;
+        }
+    }
+
+    return orbits_of_mults;
+}
+
 /*
  Different sets of generators can produce isomorphic group.
  So we cannot compare the generators.

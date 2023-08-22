@@ -12,7 +12,7 @@ uint32_t ArmaDenseSemiunitaryMatrix::size_cols() const {
 }
 
 double ArmaDenseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    return denseSemiunitaryMatrix_.at(i, j);
+    return denseSemiunitaryMatrix_.at(j, i);
 }
 
 void ArmaDenseSemiunitaryMatrix::print(std::ostream& os) const {
@@ -31,6 +31,14 @@ ArmaDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
 
     return logic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
 }
+
+std::unique_ptr<AbstractSymmetricMatrix> ArmaDenseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+    ArmaLogic logic;
+
+    return logic.unitaryTransform(matrix_to_transform, *this);
+}
+
 const arma::dmat& ArmaDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {
     return denseSemiunitaryMatrix_;
 }
@@ -39,4 +47,11 @@ arma::dmat& ArmaDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
     return denseSemiunitaryMatrix_;
 }
 
+void ArmaDenseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
+    denseSemiunitaryMatrix_.at(j, i) += value;
+}
+
+void ArmaDenseSemiunitaryMatrix::normalize() {
+    denseSemiunitaryMatrix_ = arma::normalise(denseSemiunitaryMatrix_, 2, 0);
+}
 }  // namespace quantum::linear_algebra
