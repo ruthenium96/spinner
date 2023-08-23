@@ -1,16 +1,14 @@
-#ifndef SPINNER_ABSTRACTSOLVER_TESTS_H
-#define SPINNER_ABSTRACTSOLVER_TESTS_H
+#ifndef SPINNER_INTEGRATIONALABSTRACTSOLVER_TESTS_H
+#define SPINNER_INTEGRATIONALABSTRACTSOLVER_TESTS_H
 
 #include <random>
 
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"
+#include "tests/tools/concreteSolverConstructors/createConcreteSolver.h"
 
 #define RESIDUAL_ERROR_EPSILON 1e-3
-
-template<class T>
-std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> createConcreteSolver();
 
 template<class T>
 class fitting_magnetic_susceptibility_simple: public testing::Test {
@@ -565,4 +563,4 @@ REGISTER_TYPED_TEST_SUITE_P(
     fit_theoretical_curve_222222_JAF_g_fixed_g,
     fit_theoretical_curve_3333_JAF_D_fixed_g);
 
-#endif  //SPINNER_ABSTRACTSOLVER_TESTS_H
+#endif  //SPINNER_INTEGRATIONALABSTRACTSOLVER_TESTS_H
