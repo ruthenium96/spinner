@@ -2,7 +2,7 @@
 
 namespace quantum::linear_algebra {
 
-std::uint64_t SzudzikPair::operator()(const std::pair<uint32_t, uint32_t>& x) const {
+uint64_t SzudzikPair::operator()(const std::pair<uint32_t, uint32_t>& x) const noexcept {
     uint64_t result;
     if (x.first > x.second) {
         result = x.second * x.second + x.first;
