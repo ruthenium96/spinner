@@ -111,7 +111,8 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
             std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
 
         // Create Factory:
-        auto factory_ = quantum::linear_algebra::AbstractSymmetricMatrixFactory::defaultFactory();
+        auto factory_ =
+            quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter, factories_);

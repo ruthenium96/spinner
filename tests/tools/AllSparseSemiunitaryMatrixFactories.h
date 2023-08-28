@@ -5,7 +5,7 @@
 #include "src/entities/data_structures/eigen/EigenFactories.h"
 #include "src/entities/data_structures/std/StdFactories.h"
 
-std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryFactory>>
+std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSparseTransformFactory>>
 constructAllSparseSemiunitaryMatrixFactories();
 
 #endif  //SPINNER_ALLSPARSESEMIUNITARYMATRIXFACTORIES_H

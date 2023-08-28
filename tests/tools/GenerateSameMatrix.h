@@ -6,18 +6,20 @@
 
 #include "src/entities/data_structures/AbstractFactories.h"
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
 generateSymmetricMatrices(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+    const std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng);
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
 generateSparseSymmetricMatrices(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+    const std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng);
@@ -25,7 +27,8 @@ generateSparseSymmetricMatrices(
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
 generateUnitaryMatrix(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+    const std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng);

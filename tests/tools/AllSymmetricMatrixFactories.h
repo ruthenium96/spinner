@@ -4,7 +4,7 @@
 #include "src/entities/data_structures/arma/ArmaFactories.h"
 #include "src/entities/data_structures/eigen/EigenFactories.h"
 
-std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>
+std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
 constructAllSymmetricMatrixFactories();
 
 #endif  //SPINNER_ALLSYMMETRICMATRIXFACTORIES_H

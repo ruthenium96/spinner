@@ -1,18 +1,19 @@
 #include "GenerateSameMatrix.h"
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
 generateSymmetricMatrices(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+    const std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>> answer;
+    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>> answer;
     answer.reserve(factories.size());
 
     // create zero matrices:
     for (const auto& factory : factories) {
-        answer.emplace_back(factory->createDenseSymmetricMatrix(size));
+        answer.emplace_back(factory->createDenseDiagonalizableMatrix(size));
     }
 
     // fill it with identical values:
@@ -28,19 +29,20 @@ generateSymmetricMatrices(
     return answer;
 }
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>>
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
 generateSparseSymmetricMatrices(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+    const std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>> answer;
+    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>> answer;
     answer.reserve(factories.size());
 
     // create zero matrices:
     for (const auto& factory : factories) {
-        answer.emplace_back(factory->createSparseSymmetricMatrix(size));
+        answer.emplace_back(factory->createSparseDiagonalizableMatrix(size));
     }
 
     size_t numberOfElementsPerRow = log(size) * (log(size) - 1);
@@ -67,7 +69,8 @@ generateSparseSymmetricMatrices(
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
 generateUnitaryMatrix(
     size_t size,
-    const std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>&
+    const std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {

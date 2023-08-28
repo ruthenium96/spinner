@@ -3,7 +3,9 @@
 
 #include <memory>
 
+#include "AbstractDiagonalizableMatrix.h"
 #include "AbstractSymmetricMatrix.h"
+
 namespace quantum::linear_algebra {
 
 class AbstractSparseSemiunitaryMatrix {
@@ -47,7 +49,7 @@ class AbstractSparseSemiunitaryMatrix {
     virtual void normalize() = 0;
     virtual void unitaryTransform(
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
-        std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToAdd) const;
+        std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const;
 
     virtual void print(std::ostream& os) const = 0;
 };
