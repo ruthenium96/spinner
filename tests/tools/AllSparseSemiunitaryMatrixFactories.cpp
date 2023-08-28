@@ -6,5 +6,5 @@ std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSparseTransformFact
 constructAllSparseSemiunitaryMatrixFactories() {
     return {
         std::make_shared<quantum::linear_algebra::ArmaSparseTransformFactory>(),
-        std::make_shared<quantum::linear_algebra::StdSparseSemiunitaryFactory>()};
+        std::make_shared<quantum::linear_algebra::StdSparseTransformFactory>()};
 }
