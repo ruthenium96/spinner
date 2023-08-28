@@ -1,14 +1,14 @@
 #include "EigenLogic.h"
 
+#include "EigenDenseDiagonalizableMatrix.h"
 #include "EigenDenseSemiunitaryMatrix.h"
-#include "EigenDenseSymmetricMatrix.h"
 #include "EigenDenseVector.h"
-#include "EigenSparseSymmetricMatrix.h"
+#include "EigenSparseDiagonalizableMatrix.h"
 
 namespace quantum::linear_algebra {
 
 std::unique_ptr<AbstractDenseVector> EigenLogic::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
     const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
     auto main_diagonal = std::make_unique<EigenDenseVector>();
 
@@ -19,15 +19,15 @@ std::unique_ptr<AbstractDenseVector> EigenLogic::unitaryTransformAndReturnMainDi
     }
 
     if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const EigenSparseSymmetricMatrix*>(symmetricMatrix.get())) {
+            dynamic_cast<const EigenSparseDiagonalizableMatrix*>(symmetricMatrix.get())) {
         Eigen::MatrixXd firstMultiplicationResult =
             maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix().transpose();
+            * maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix().transpose();
         main_diagonal->resize(maybeSparseSymmetricMatrix->size());
 #pragma omp parallel for shared( \
-    main_diagonal, \
-    firstMultiplicationResult, \
-    maybeDenseSemiunitaryMatrix) default(none)
+        main_diagonal, \
+            firstMultiplicationResult, \
+            maybeDenseSemiunitaryMatrix) default(none)
         for (size_t i = 0; i < main_diagonal->size(); ++i) {
             auto value = firstMultiplicationResult.row(i)
                 * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
@@ -37,10 +37,10 @@ std::unique_ptr<AbstractDenseVector> EigenLogic::unitaryTransformAndReturnMainDi
     }
 
     if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const EigenDenseSymmetricMatrix*>(symmetricMatrix.get())) {
+            dynamic_cast<const EigenDenseDiagonalizableMatrix*>(symmetricMatrix.get())) {
         Eigen::MatrixXd firstMultiplicationResult =
             maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix();
+            * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix();
         main_diagonal->resize(maybeDenseSymmetricMatrix->size());
 #pragma omp parallel for shared( \
         main_diagonal, \
@@ -57,10 +57,10 @@ std::unique_ptr<AbstractDenseVector> EigenLogic::unitaryTransformAndReturnMainDi
     throw std::bad_cast();
 }
 
-std::unique_ptr<AbstractSymmetricMatrix> EigenLogic::unitaryTransform(
-    const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+std::unique_ptr<AbstractDiagonalizableMatrix> EigenLogic::unitaryTransform(
+    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
     const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
-    auto result = std::make_unique<EigenDenseSymmetricMatrix>();
+    auto result = std::make_unique<EigenDenseDiagonalizableMatrix>();
 
     auto maybeDenseSemiunitaryMatrix =
         dynamic_cast<const EigenDenseSemiunitaryMatrix*>(&denseSemiunitaryMatrix);
@@ -69,20 +69,20 @@ std::unique_ptr<AbstractSymmetricMatrix> EigenLogic::unitaryTransform(
     }
 
     if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const EigenSparseSymmetricMatrix*>(symmetricMatrix.get())) {
+            dynamic_cast<const EigenSparseDiagonalizableMatrix*>(symmetricMatrix.get())) {
         // TODO: check if all transpositions are efficient
-        result->modifyDenseSymmetricMatrix() =
+        result->modifyDenseDiagonalizableMatrix() =
             maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix().transpose()
+            * maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix().transpose()
             * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
         return std::move(result);
     }
 
     if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const EigenDenseSymmetricMatrix*>(symmetricMatrix.get())) {
-        result->modifyDenseSymmetricMatrix() =
+            dynamic_cast<const EigenDenseDiagonalizableMatrix*>(symmetricMatrix.get())) {
+        result->modifyDenseDiagonalizableMatrix() =
             maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeDenseSymmetricMatrix->getDenseSymmetricMatrix()
+            * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix()
             * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
         return std::move(result);
     }
@@ -91,16 +91,19 @@ std::unique_ptr<AbstractSymmetricMatrix> EigenLogic::unitaryTransform(
 }
 
 std::unique_ptr<AbstractDenseVector>
-EigenLogic::diagonalizeValues(const AbstractSymmetricMatrix& symmetricMatrix) const {
+EigenLogic::diagonalizeValues(const AbstractDiagonalizableMatrix& symmetricMatrix) const {
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es;
 
     if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const EigenDenseSymmetricMatrix*>(&symmetricMatrix)) {
-        es.compute(maybeDenseSymmetricMatrix->getDenseSymmetricMatrix(), Eigen::EigenvaluesOnly);
+            dynamic_cast<const EigenDenseDiagonalizableMatrix*>(&symmetricMatrix)) {
+        es.compute(
+            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
+            Eigen::EigenvaluesOnly);
     } else if (
         auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const EigenSparseSymmetricMatrix*>(&symmetricMatrix)) {
-        Eigen::MatrixXd sparseToDenseCopy = maybeSparseSymmetricMatrix->getSparseSymmetricMatrix();
+            dynamic_cast<const EigenSparseDiagonalizableMatrix*>(&symmetricMatrix)) {
+        Eigen::MatrixXd sparseToDenseCopy =
+            maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix();
         es.compute(sparseToDenseCopy, Eigen::EigenvaluesOnly);
     } else {
         throw std::bad_cast();
@@ -113,18 +116,19 @@ EigenLogic::diagonalizeValues(const AbstractSymmetricMatrix& symmetricMatrix) co
 }
 
 EigenCouple
-EigenLogic::diagonalizeValuesVectors(const AbstractSymmetricMatrix& symmetricMatrix) const {
+EigenLogic::diagonalizeValuesVectors(const AbstractDiagonalizableMatrix& symmetricMatrix) const {
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> es;
 
     if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const EigenDenseSymmetricMatrix*>(&symmetricMatrix)) {
+            dynamic_cast<const EigenDenseDiagonalizableMatrix*>(&symmetricMatrix)) {
         es.compute(
-            maybeDenseSymmetricMatrix->getDenseSymmetricMatrix(),
+            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
             Eigen::ComputeEigenvectors);
     } else if (
         auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const EigenSparseSymmetricMatrix*>(&symmetricMatrix)) {
-        Eigen::MatrixXd sparseToDenseCopy = maybeSparseSymmetricMatrix->getSparseSymmetricMatrix();
+            dynamic_cast<const EigenSparseDiagonalizableMatrix*>(&symmetricMatrix)) {
+        Eigen::MatrixXd sparseToDenseCopy =
+            maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix();
         es.compute(sparseToDenseCopy, Eigen::ComputeEigenvectors);
     } else {
         throw std::bad_cast();

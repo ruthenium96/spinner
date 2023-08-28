@@ -36,9 +36,9 @@ if (Eigen3_FOUND)
     add_library(eigen_structures
             eigen/EigenFactories.cpp eigen/EigenFactories.h
             eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h
-            eigen/EigenDenseSymmetricMatrix.cpp eigen/EigenDenseSymmetricMatrix.h
+            eigen/EigenDenseDiagonalizableMatrix.cpp eigen/EigenDenseDiagonalizableMatrix.h
             eigen/EigenDenseSemiunitaryMatrix.cpp eigen/EigenDenseSemiunitaryMatrix.h
-            eigen/EigenSparseSymmetricMatrix.cpp eigen/EigenSparseSymmetricMatrix.h
+            eigen/EigenSparseDiagonalizableMatrix.cpp eigen/EigenSparseDiagonalizableMatrix.h
             eigen/EigenLogic.cpp eigen/EigenLogic.h)
     target_link_libraries(eigen_structures Eigen3::Eigen)
     target_link_libraries(data_structures eigen_structures)
@@ -54,7 +54,6 @@ elseif (Eigen3_FOUND)
     message(" *** Eigen3 will be used as default linear algebra package")
     target_sources(data_structures PRIVATE
             eigen/as_default/EigenSymmetricMatrixAsDefault.cpp
-            eigen/as_default/EigenDenseVectorAsDefault.cpp
             )
 else ()
     message(FATAL_ERROR "At least one linear algebra package must be installed")
