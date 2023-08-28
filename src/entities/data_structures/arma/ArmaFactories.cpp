@@ -1,42 +1,52 @@
 #include "ArmaFactories.h"
 
+#include "ArmaDenseDiagonalizableMatrix.h"
 #include "ArmaDenseSemiunitaryMatrix.h"
-#include "ArmaDenseSymmetricMatrix.h"
 #include "ArmaDenseVector.h"
+#include "ArmaSparseDiagonalizableMatrix.h"
 #include "ArmaSparseSemiunitaryMatrix.h"
-#include "ArmaSparseSymmetricMatrix.h"
 
 namespace quantum::linear_algebra {
 
-std::unique_ptr<AbstractSymmetricMatrix>
-ArmaSymmetricMatrixFactory::createDenseSymmetricMatrix(uint32_t size) {
-    auto matrix = std::make_unique<ArmaDenseSymmetricMatrix>();
+std::unique_ptr<AbstractDiagonalizableMatrix>
+ArmaDenseTransformAndDiagonalizeFactory::createDenseDiagonalizableMatrix(uint32_t size) {
+    auto matrix = std::make_unique<ArmaDenseDiagonalizableMatrix>();
     matrix->resize(size);
     return matrix;
 }
 
-std::unique_ptr<AbstractSymmetricMatrix>
-ArmaSymmetricMatrixFactory::createSparseSymmetricMatrix(uint32_t size) {
-    auto matrix = std::make_unique<ArmaSparseSymmetricMatrix>();
+std::unique_ptr<AbstractDiagonalizableMatrix>
+ArmaDenseTransformAndDiagonalizeFactory::createSparseDiagonalizableMatrix(uint32_t size) {
+    auto matrix = std::make_unique<ArmaSparseDiagonalizableMatrix>();
     matrix->resize(size);
     return matrix;
 }
 
 std::unique_ptr<AbstractDenseSemiunitaryMatrix>
-ArmaSymmetricMatrixFactory::createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
+ArmaDenseTransformAndDiagonalizeFactory::createDenseSemiunitaryMatrix(
+    uint32_t cols,
+    uint32_t rows) {
     auto matrix = std::make_unique<ArmaDenseSemiunitaryMatrix>();
     matrix->resize(rows, cols);
     return matrix;
 }
 
-std::unique_ptr<AbstractDenseVector> ArmaDenseVectorFactory::createVector() {
+std::unique_ptr<AbstractDenseVector> ArmaDenseTransformAndDiagonalizeFactory::createVector() {
     auto vector = std::make_unique<ArmaDenseVector>();
     return vector;
 }
+
 std::unique_ptr<AbstractSparseSemiunitaryMatrix>
-ArmaSparseSemiunitaryFactory::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
+ArmaSparseTransformFactory::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
     auto matrix = std::make_unique<ArmaSparseSemiunitaryMatrix>();
     matrix->resize(cols, rows);
+    return matrix;
+}
+
+std::unique_ptr<AbstractSymmetricMatrix>
+ArmaSparseTransformFactory::createSparseSymmetricMatrix(uint32_t size) {
+    auto matrix = std::make_unique<ArmaSparseSymmetricMatrix>();
+    matrix->resize(size);
     return matrix;
 }
 }  // namespace quantum::linear_algebra
