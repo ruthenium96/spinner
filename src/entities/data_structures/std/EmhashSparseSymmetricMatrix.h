@@ -6,11 +6,6 @@
 
 namespace quantum::linear_algebra {
 
-struct SzudzikPair {
-  public:
-    uint64_t operator()(const std::pair<uint32_t, uint32_t>& x) const noexcept;
-};
-
 class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
   public:
     void add_to_position(double value, uint32_t i, uint32_t j) override;
@@ -22,8 +17,7 @@ class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
 
   private:
     size_t size_;
-    // todo: test vs. emhash7::HashMap<uint32_t, emhash7::HashMap<uint32_t, double>>
-    emhash7::HashMap<std::pair<uint32_t, uint32_t>, double, SzudzikPair> hashmap_;
+    emhash7::HashMap<uint32_t, emhash7::HashMap<uint32_t, double>> hashmap_;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_EMHASHSPARSESYMMETRICMATRIX_H
