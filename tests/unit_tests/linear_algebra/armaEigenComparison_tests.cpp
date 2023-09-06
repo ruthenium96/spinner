@@ -10,9 +10,9 @@ TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
     auto unitaryMatrices =
-        generateUnitaryMatrix(10, constructAllSymmetricMatrixFactories(), dist, rng);
+        generateDenseUnitaryMatrix(10, constructAllSymmetricMatrixFactories(), dist, rng);
     auto symmetricMatrices =
-        generateSymmetricMatrices(10, constructAllSymmetricMatrixFactories(), dist, rng);
+        generateDenseDiagonalizableMatrices(10, constructAllSymmetricMatrixFactories(), dist, rng);
 
     auto armaUnitaryMatrix = std::move(unitaryMatrices[0]);
     auto eigenUnitaryMatrix = std::move(unitaryMatrices[1]);
@@ -57,8 +57,11 @@ TEST(linearAlgebraFactories, eigendecomposition) {
 
     for (size_t size = 2; size < 100; ++size) {
         // construct identical symmetrical matrix:
-        auto matrices =
-            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto matrices = generateDenseDiagonalizableMatrices(
+            size,
+            constructAllSymmetricMatrixFactories(),
+            dist,
+            rng);
         auto armaMatrix = std::move(matrices[0]);
         auto eigenMatrix = std::move(matrices[1]);
         // only-values-eigendecomposition:
@@ -110,10 +113,13 @@ TEST(linearAlgebraFactories, unitary_transformation) {
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
     for (size_t size = 2; size < 100; ++size) {
-        auto symmetricMatrices =
-            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto symmetricMatrices = generateDenseDiagonalizableMatrices(
+            size,
+            constructAllSymmetricMatrixFactories(),
+            dist,
+            rng);
         auto unitaryMatrices =
-            generateUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
+            generateDenseUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
 
         auto armaSymmetricMatrixTransformed =
             unitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[0]);

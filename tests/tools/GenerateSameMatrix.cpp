@@ -1,7 +1,7 @@
 #include "GenerateSameMatrix.h"
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
-generateSymmetricMatrices(
+generateDenseDiagonalizableMatrices(
     size_t size,
     const std::vector<
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
@@ -30,7 +30,7 @@ generateSymmetricMatrices(
 }
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
-generateSparseSymmetricMatrices(
+generateSparseDiagonalizableMatrices(
     size_t size,
     const std::vector<
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
@@ -67,7 +67,7 @@ generateSparseSymmetricMatrices(
 }
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
-generateUnitaryMatrix(
+generateDenseUnitaryMatrix(
     size_t size,
     const std::vector<
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
@@ -75,7 +75,7 @@ generateUnitaryMatrix(
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
     // construct symmetrical matrix:
-    auto symmetricMatrices = generateSymmetricMatrices(size, factories, dist, rng);
+    auto symmetricMatrices = generateDenseDiagonalizableMatrices(size, factories, dist, rng);
 
     auto unitaryMatrices =
         std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>(

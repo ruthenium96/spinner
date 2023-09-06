@@ -7,7 +7,7 @@
 #include "src/entities/data_structures/AbstractFactories.h"
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
-generateSymmetricMatrices(
+generateDenseDiagonalizableMatrices(
     size_t size,
     const std::vector<
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
@@ -16,7 +16,7 @@ generateSymmetricMatrices(
     std::mt19937 rng);
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
-generateSparseSymmetricMatrices(
+generateSparseDiagonalizableMatrices(
     size_t size,
     const std::vector<
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
@@ -25,7 +25,7 @@ generateSparseSymmetricMatrices(
     std::mt19937 rng);
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
-generateUnitaryMatrix(
+generateDenseUnitaryMatrix(
     size_t size,
     const std::vector<
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
