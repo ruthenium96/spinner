@@ -452,7 +452,7 @@ double Runner::stepOfRegression(
     bool isGradientRequired) {
     // At first, update actual values in SymbolicWorker:
     for (size_t i = 0; i < changeable_names.size(); ++i) {
-        getModel().getNumericalWorker().setNewValueToChangeableSymbol(
+        consistentModelOptimizationList_.setNewValueToChangeableSymbol(
             changeable_names[i],
             changeable_values[i]);
     }
@@ -490,7 +490,7 @@ double Runner::stepOfRegression(
 }
 
 void Runner::initializeDerivatives() {
-    consistentModelOptimizationList_.getModel().InitializeDerivatives();
+    consistentModelOptimizationList_.InitializeDerivatives();
     if (getModel().is_isotropic_exchange_derivatives_initialized()) {
         for (const auto& symbol :
              getSymbolicWorker().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
@@ -520,10 +520,6 @@ const model::symbols::SymbolicWorker& Runner::getSymbolicWorker() const {
 }
 
 const model::Model& Runner::getModel() const {
-    return consistentModelOptimizationList_.getModel();
-}
-
-model::Model& Runner::getModel() {
     return consistentModelOptimizationList_.getModel();
 }
 

@@ -12,8 +12,12 @@ class ConsistentModelOptimizationList {
     ConsistentModelOptimizationList(
         model::ModelInput,
         common::physical_optimization::OptimizationList);
+
+    void InitializeDerivatives();
+    void
+    setNewValueToChangeableSymbol(const model::symbols::SymbolName& symbol_name, double new_value);
+
     const model::Model& getModel() const;
-    model::Model& getModel();
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
 
   private:

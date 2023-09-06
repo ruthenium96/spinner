@@ -26,10 +26,6 @@ const model::Model& ConsistentModelOptimizationList::getModel() const {
     return model_;
 }
 
-model::Model& ConsistentModelOptimizationList::getModel() {
-    return model_;
-}
-
 const common::physical_optimization::OptimizationList&
 ConsistentModelOptimizationList::getOptimizationList() const {
     return optimizationList_;
@@ -42,6 +38,16 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     optimizationList_(std::move(optimizationList)) {
     // this function throw an exception if ModelInput and OptimizationList are inconsistent
     checkModelOptimizationListConsistence(model_, optimizationList_);
+}
+
+void ConsistentModelOptimizationList::InitializeDerivatives() {
+    model_.InitializeDerivatives();
+}
+
+void ConsistentModelOptimizationList::setNewValueToChangeableSymbol(
+    const model::symbols::SymbolName& symbol_name,
+    double new_value) {
+    model_.getNumericalWorker().setNewValueToChangeableSymbol(symbol_name, new_value);
 }
 }  // namespace runner
 
