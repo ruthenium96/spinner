@@ -113,7 +113,7 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_dense) {
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
             size,
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
@@ -149,7 +149,7 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_d
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
             size,
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
@@ -187,7 +187,7 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_s
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto denseUnitaryMatrix = generateDenseUnitaryMatrix(
+        auto denseUnitaryMatrix = generateDenseUnitaryMatrices(
             size,
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
