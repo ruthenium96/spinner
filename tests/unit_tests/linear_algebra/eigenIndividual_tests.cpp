@@ -8,4 +8,7 @@ createConcreteFactory<quantum::linear_algebra::EigenDenseTransformAndDiagonalize
 }
 
 typedef testing::Types<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory> Eigen;
-INSTANTIATE_TYPED_TEST_SUITE_P(EigenIndividualTests, AbstractFactoryIndividualTest, Eigen);
+INSTANTIATE_TYPED_TEST_SUITE_P(
+    EigenIndividualTests,
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    Eigen);

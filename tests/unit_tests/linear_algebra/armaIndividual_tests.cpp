@@ -8,4 +8,7 @@ createConcreteFactory<quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeF
 };
 
 typedef testing::Types<quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory> Arma;
-INSTANTIATE_TYPED_TEST_SUITE_P(ArmaIndividualTests, AbstractFactoryIndividualTest, Arma);
+INSTANTIATE_TYPED_TEST_SUITE_P(
+    ArmaIndividualTests,
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    Arma);
