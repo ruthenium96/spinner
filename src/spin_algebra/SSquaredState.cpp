@@ -89,7 +89,7 @@ SSquaredState::addAllMultiplicitiesAndSort(
                     mult_sum);
                 temp_result.push_back(history);
                 temp_result.back().setMultiplicity(pos_sum, mult_sum);
-                temp_result.back().setRepresentations(pos_sum, representations_sum);
+                temp_result.back().setRepresentations(pos_sum, std::move(representations_sum));
             }
         }
         std::swap(result_of_summation, temp_result);
@@ -98,7 +98,7 @@ SSquaredState::addAllMultiplicitiesAndSort(
 
     auto result_of_sum_and_sort = std::map<Properties, std::vector<SSquaredState>>();
 
-    for (auto history : result_of_summation) {
+    for (auto& history : result_of_summation) {
         auto final_properties = history.back();
 
         if (result_of_sum_and_sort.count(final_properties) == 0) {

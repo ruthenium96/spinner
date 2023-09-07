@@ -1,12 +1,12 @@
-#ifndef SPINNER_ARMASPARSESYMMETRICMATRIX_H
-#define SPINNER_ARMASPARSESYMMETRICMATRIX_H
+#ifndef SPINNER_ARMASPARSEDIAGONALIZABLEMATRIX_H
+#define SPINNER_ARMASPARSEDIAGONALIZABLEMATRIX_H
 
 #include <armadillo>
 
-#include "src/entities/data_structures/AbstractSymmetricMatrix.h"
+#include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
 
 namespace quantum::linear_algebra {
-class ArmaSparseSymmetricMatrix: public AbstractSymmetricMatrix {
+class ArmaSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   public:
     void add_to_position(double value, uint32_t i, uint32_t j) override;
     void resize(uint32_t matrix_in_space_basis_size_i);
@@ -19,7 +19,10 @@ class ArmaSparseSymmetricMatrix: public AbstractSymmetricMatrix {
     arma::sp_mat& modifySparseSymmetricMatrix();
 
   private:
-    arma::sp_mat sparseSymmetricMatrix_;
+    arma::sp_mat sparseDiagonalizableMatrix_;
 };
+
+using ArmaSparseSymmetricMatrix = ArmaSparseDiagonalizableMatrix;
+
 }  // namespace quantum::linear_algebra
-#endif  //SPINNER_ARMASPARSESYMMETRICMATRIX_H
+#endif  //SPINNER_ARMASPARSEDIAGONALIZABLEMATRIX_H

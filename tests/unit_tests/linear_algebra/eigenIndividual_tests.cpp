@@ -2,10 +2,13 @@
 #include "src/entities/data_structures/eigen/EigenFactories.h"
 
 template<>
-std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>
-createConcreteFactory<quantum::linear_algebra::EigenSymmetricMatrixFactory>() {
-    return std::make_shared<quantum::linear_algebra::EigenSymmetricMatrixFactory>();
+std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>
+createConcreteFactory<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>() {
+    return std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
 }
 
-typedef testing::Types<quantum::linear_algebra::EigenSymmetricMatrixFactory> Eigen;
-INSTANTIATE_TYPED_TEST_SUITE_P(EigenIndividualTests, AbstractFactoryIndividualTest, Eigen);
+typedef testing::Types<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory> Eigen;
+INSTANTIATE_TYPED_TEST_SUITE_P(
+    EigenIndividualTests,
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    Eigen);

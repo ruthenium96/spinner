@@ -12,7 +12,7 @@ uint32_t ArmaDenseSemiunitaryMatrix::size_cols() const {
 }
 
 double ArmaDenseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    return denseSemiunitaryMatrix_.at(i, j);
+    return denseSemiunitaryMatrix_.at(j, i);
 }
 
 void ArmaDenseSemiunitaryMatrix::print(std::ostream& os) const {
@@ -26,14 +26,14 @@ void ArmaDenseSemiunitaryMatrix::resize(size_t size_rows, size_t size_cols) {
 
 std::unique_ptr<AbstractDenseVector>
 ArmaDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
     ArmaLogic logic;
 
     return logic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
 }
 
-std::unique_ptr<AbstractSymmetricMatrix> ArmaDenseSemiunitaryMatrix::unitaryTransform(
-    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+std::unique_ptr<AbstractDiagonalizableMatrix> ArmaDenseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
     ArmaLogic logic;
 
     return logic.unitaryTransform(matrix_to_transform, *this);

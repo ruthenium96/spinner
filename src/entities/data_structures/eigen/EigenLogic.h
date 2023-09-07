@@ -13,16 +13,16 @@ namespace quantum::linear_algebra {
 class EigenLogic {
   public:
     std::unique_ptr<AbstractDenseVector>
-    diagonalizeValues(const AbstractSymmetricMatrix& symmetricMatrix) const;
+    diagonalizeValues(const AbstractDiagonalizableMatrix& symmetricMatrix) const;
 
-    EigenCouple diagonalizeValuesVectors(const AbstractSymmetricMatrix& symmetricMatrix) const;
+    EigenCouple diagonalizeValuesVectors(const AbstractDiagonalizableMatrix& symmetricMatrix) const;
 
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
 
-    std::unique_ptr<AbstractSymmetricMatrix> unitaryTransform(
-        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+    std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
 };
 

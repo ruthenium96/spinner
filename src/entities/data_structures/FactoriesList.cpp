@@ -2,36 +2,39 @@
 
 namespace quantum::linear_algebra {
 
-std::unique_ptr<AbstractDenseVector> FactoriesList::createVector() const {
-    return denseVectorFactory_->createVector();
+std::unique_ptr<AbstractDiagonalizableMatrix>
+FactoriesList::createDenseDiagonalizableMatrix(uint32_t size) const {
+    return denseFactory_->createDenseDiagonalizableMatrix(size);
 }
 
-std::unique_ptr<AbstractSparseSemiunitaryMatrix>
-FactoriesList::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const {
-    return sparseSemiunitaryMatrixFactory_->createSparseSemiunitaryMatrix(cols, rows);
-}
-
-std::unique_ptr<AbstractSymmetricMatrix>
-FactoriesList::createDenseSymmetricMatrix(uint32_t size) const {
-    return symmetricMatrixFactory_->createDenseSymmetricMatrix(size);
-}
-
-std::unique_ptr<AbstractSymmetricMatrix>
-FactoriesList::createSparseSymmetricMatrix(uint32_t size) const {
-    return symmetricMatrixFactory_->createSparseSymmetricMatrix(size);
+std::unique_ptr<AbstractDiagonalizableMatrix>
+FactoriesList::createSparseDiagonalizableMatrix(uint32_t size) const {
+    return denseFactory_->createSparseDiagonalizableMatrix(size);
 }
 
 std::unique_ptr<AbstractDenseSemiunitaryMatrix>
 FactoriesList::createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const {
-    return symmetricMatrixFactory_->createDenseSemiunitaryMatrix(cols, rows);
+    return denseFactory_->createDenseSemiunitaryMatrix(cols, rows);
+}
+
+std::unique_ptr<AbstractDenseVector> FactoriesList::createVector() const {
+    return denseFactory_->createVector();
+}
+
+std::unique_ptr<AbstractSparseSemiunitaryMatrix>
+FactoriesList::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const {
+    return sparseFactory_->createSparseSemiunitaryMatrix(cols, rows);
+}
+
+std::unique_ptr<AbstractSymmetricMatrix>
+FactoriesList::createSparseSymmetricMatrix(uint32_t size) const {
+    return sparseFactory_->createSparseSymmetricMatrix(size);
 }
 
 FactoriesList::FactoriesList(
-    std::shared_ptr<AbstractSymmetricMatrixFactory> symmetricMatrixFactory,
-    std::shared_ptr<AbstractSparseSemiunitaryFactory> sparseMatrix,
-    std::shared_ptr<AbstractDenseVectorFactory> denseVectorMatrix) {
-    symmetricMatrixFactory_ = symmetricMatrixFactory;
-    sparseSemiunitaryMatrixFactory_ = sparseMatrix;
-    denseVectorFactory_ = denseVectorMatrix;
+    std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> symmetricMatrixFactory,
+    std::shared_ptr<AbstractSparseTransformFactory> sparseMatrix) {
+    denseFactory_ = symmetricMatrixFactory;
+    sparseFactory_ = sparseMatrix;
 }
 }  // namespace quantum::linear_algebra

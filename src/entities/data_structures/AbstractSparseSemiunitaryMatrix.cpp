@@ -3,7 +3,7 @@
 namespace quantum::linear_algebra {
 void AbstractSparseSemiunitaryMatrix::unitaryTransform(
     const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
-    std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToAdd) const {
+    std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const {
     size_t matrix_in_space_basis_size = this->size_cols();
 
 #pragma omp parallel for shared( \

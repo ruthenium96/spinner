@@ -1,8 +1,11 @@
 #include "AllSymmetricMatrixFactories.h"
 
-std::vector<std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>>
-constructAllSymmetricMatrixFactories() {
+#include "src/entities/data_structures/arma/ArmaFactories.h"
+#include "src/entities/data_structures/eigen/EigenFactories.h"
+
+std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+constructAllDenseTransformAndDiagonalizeFactories() {
     return {
-        std::make_shared<quantum::linear_algebra::ArmaSymmetricMatrixFactory>(),
-        std::make_shared<quantum::linear_algebra::EigenSymmetricMatrixFactory>()};
+        std::make_shared<quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory>(),
+        std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>()};
 }

@@ -13,6 +13,8 @@ Model::Model(ModelInput modelInput) :
     numericalWorker_(modelInput.modifySymbolicWorker(), modelInput.getMults().size()),
     converter_(modelInput.getMults()) {
     energy_operator = operators::Operator();
+    // todo: I guess, we need to move these initializations to ConsistentModelOptimizationList,
+    //  because here we do not know about S2-transformation.
     // TODO: this strange check need only because some tests do not initialize g factors,
     //  but want to calculate S^2 values. Fix it.
     if (getSymbolicWorker().isGFactorInitialized()

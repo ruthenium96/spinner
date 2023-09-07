@@ -2,35 +2,31 @@
 #define SPINNER_ABSTRACTFACTORIES_H
 
 #include "AbstractDenseSemiunitaryMatrix.h"
+#include "AbstractDiagonalizableMatrix.h"
 #include "AbstractSparseSemiunitaryMatrix.h"
 #include "AbstractSymmetricMatrix.h"
 
 namespace quantum::linear_algebra {
-class AbstractSymmetricMatrixFactory {
+class AbstractDenseTransformAndDiagonalizeFactory {
   public:
-    static std::shared_ptr<AbstractSymmetricMatrixFactory> defaultFactory();
-    virtual std::unique_ptr<AbstractSymmetricMatrix> createDenseSymmetricMatrix(uint32_t size) = 0;
-    virtual std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) = 0;
-    // TODO: move it to another class?
+    static std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> defaultFactory();
+    virtual std::unique_ptr<AbstractDiagonalizableMatrix>
+    createDenseDiagonalizableMatrix(uint32_t size) = 0;
+    virtual std::unique_ptr<AbstractDiagonalizableMatrix>
+    createSparseDiagonalizableMatrix(uint32_t size) = 0;
     virtual std::unique_ptr<AbstractDenseSemiunitaryMatrix>
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
-
-    ~AbstractSymmetricMatrixFactory() = default;
-};
-
-class AbstractSparseSemiunitaryFactory {
-  public:
-    static std::shared_ptr<AbstractSparseSemiunitaryFactory> defaultSparseFactory();
-    virtual std::unique_ptr<AbstractSparseSemiunitaryMatrix>
-    createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
-};
-
-class AbstractDenseVectorFactory {
-  public:
-    static std::shared_ptr<AbstractDenseVectorFactory> defaultFactory();
     virtual std::unique_ptr<AbstractDenseVector> createVector() = 0;
 
-    ~AbstractDenseVectorFactory() = default;
+    ~AbstractDenseTransformAndDiagonalizeFactory() = default;
+};
+
+class AbstractSparseTransformFactory {
+  public:
+    static std::shared_ptr<AbstractSparseTransformFactory> defaultSparseFactory();
+    virtual std::unique_ptr<AbstractSparseSemiunitaryMatrix>
+    createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
+    virtual std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) = 0;
 };
 
 }  // namespace quantum::linear_algebra

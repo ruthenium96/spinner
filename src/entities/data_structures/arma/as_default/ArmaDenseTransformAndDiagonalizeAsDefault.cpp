@@ -2,8 +2,9 @@
 #include "src/entities/data_structures/arma/ArmaFactories.h"
 
 namespace quantum::linear_algebra {
-std::shared_ptr<AbstractSymmetricMatrixFactory> AbstractSymmetricMatrixFactory::defaultFactory() {
-    auto answer = std::make_shared<ArmaSymmetricMatrixFactory>();
+std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>
+AbstractDenseTransformAndDiagonalizeFactory::defaultFactory() {
+    auto answer = std::make_shared<ArmaDenseTransformAndDiagonalizeFactory>();
     return answer;
 }
 }  // namespace quantum::linear_algebra

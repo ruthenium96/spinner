@@ -76,7 +76,6 @@ class Runner {
     quantum::linear_algebra::FactoriesList dataStructuresFactories_;
 
     const model::Model& getModel() const;
-    model::Model& getModel();
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
 
     struct MatrixHistory {
@@ -95,6 +94,7 @@ class Runner {
         std::vector<double>&,
         bool isGradientRequired);
 
+    // todo: can we use std::variant for these two structures?
     std::optional<magnetic_susceptibility::MagneticSusceptibilityController>
         magnetic_susceptibility_controller_;
     std::optional<std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>>

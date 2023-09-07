@@ -15,9 +15,9 @@ class ArmaDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
 
     void print(std::ostream& os) const override;
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const override;
-    std::unique_ptr<AbstractSymmetricMatrix> unitaryTransform(
-        const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const override;
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const override;
+    std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const override;
     void resize(size_t size_rows, size_t size_cols);
     const arma::dmat& getDenseSemiunitaryMatrix() const;
     arma::dmat& modifyDenseSemiunitaryMatrix();

@@ -74,25 +74,33 @@ S2Transformer::constructTransformationMatrix(
         factories_.createDenseSemiunitaryMatrix(number_of_s2_states, number_of_sz_states);
 
 #pragma omp parallel for shared( \
-    number_of_s2_states, \
-    number_of_sz_states, \
-    s_squared_states, \
-    subspace, \
-    transformation_matrix) default(none)
-    for (size_t i = 0; i < number_of_s2_states; ++i) {
-        const auto& s_squared_state = s_squared_states[i];
-        for (size_t j = 0; j < number_of_sz_states; ++j) {
-            auto iterator = subspace.decomposition->GetNewIterator(j);
+        number_of_s2_states, \
+            number_of_sz_states, \
+            s_squared_states, \
+            subspace, \
+            transformation_matrix) default(none)
+    for (size_t j = 0; j < number_of_sz_states; ++j) {
+        auto iterator = subspace.decomposition->GetNewIterator(j);
+        // todo: consider reserve or resize
+        std::vector<std::vector<double>> all_projections;
+        std::vector<double> all_coeffs;
+        while (iterator->hasNext()) {
+            auto item = iterator->getNext();
+            auto lex_index = item.index;
+
+            all_projections.emplace_back(std::move(construct_projections(lex_index)));
+            all_coeffs.emplace_back(item.value);
+        }
+        for (size_t i = 0; i < number_of_s2_states; ++i) {
+            const auto& s_squared_state = s_squared_states[i];
             double value = 0;
             double acc = 0;
 
             // iterate over all lex-states of these (possibly) symmetrized state
-            while (iterator->hasNext()) {
-                auto item = iterator->getNext();
-                auto lex_index = item.index;
-                auto projections = construct_projections(lex_index);
-
-                value += total_CG_coefficient(s_squared_state, projections) / item.value;
+            for (size_t k = 0; k < all_coeffs.size(); ++k) {
+                const auto& projections = all_projections.at(k);
+                const double coeff = all_coeffs.at(k);
+                value += total_CG_coefficient(s_squared_state, projections) / coeff;
                 acc++;
             }
             // something like "averaging" of value:
