@@ -67,7 +67,7 @@ generateSparseDiagonalizableMatrices(
 }
 
 std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
-generateDenseUnitaryMatrix(
+generateDenseUnitaryMatrices(
     size_t size,
     const std::vector<
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
@@ -87,4 +87,27 @@ generateDenseUnitaryMatrix(
     }
 
     return unitaryMatrices;
+}
+
+std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>
+generateDenseDiagonalizableMatrix(
+    size_t size,
+    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory,
+    std::uniform_real_distribution<double> dist,
+    std::mt19937 rng) {
+    std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        factories = {factory};
+    return std::move(generateDenseDiagonalizableMatrices(size, factories, dist, rng)[0]);
+}
+
+std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix> generateDenseUnitaryMatrix(
+    size_t size,
+    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory,
+    std::uniform_real_distribution<double> dist,
+    std::mt19937 rng) {
+    std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        factories = {factory};
+    return std::move(generateDenseUnitaryMatrices(size, factories, dist, rng)[0]);
 }

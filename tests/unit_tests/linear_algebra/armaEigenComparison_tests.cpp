@@ -9,7 +9,7 @@ TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
-    auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+    auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
         10,
         constructAllDenseTransformAndDiagonalizeFactories(),
         dist,
@@ -125,7 +125,7 @@ TEST(linearAlgebraFactories, unitary_transformation) {
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
             size,
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
@@ -161,7 +161,7 @@ TEST(linearAlgebraFactories, unitary_transformation_and_return_main_diagonal) {
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
             size,
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
