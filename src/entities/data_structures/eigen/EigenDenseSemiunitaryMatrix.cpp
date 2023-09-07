@@ -28,14 +28,14 @@ void EigenDenseSemiunitaryMatrix::print(std::ostream& os) const {
 
 std::unique_ptr<AbstractDenseVector>
 EigenDenseSemiunitaryMatrix::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
     EigenLogic eigenLogic;
 
     return eigenLogic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
 }
 
-std::unique_ptr<AbstractSymmetricMatrix> EigenDenseSemiunitaryMatrix::unitaryTransform(
-    const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const {
+std::unique_ptr<AbstractDiagonalizableMatrix> EigenDenseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
     EigenLogic eigenLogic;
 
     return eigenLogic.unitaryTransform(matrix_to_transform, *this);

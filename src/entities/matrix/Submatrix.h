@@ -9,7 +9,7 @@
 
 struct Submatrix {
     BlockProperties properties;
-    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix> raw_data;
+    std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data;
 
     Submatrix() = delete;
 

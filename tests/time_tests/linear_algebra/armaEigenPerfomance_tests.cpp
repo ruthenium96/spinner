@@ -16,8 +16,11 @@ TEST(DenseFactoriesPerfomance, eigendecomposition_dense) {
         size_t cycles = 2048 * 8 / size;
         std::cout << "SIZE = " << size << std::endl;
         // construct identical dense symmetrical matrix:
-        auto matrices =
-            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto matrices = generateDenseDiagonalizableMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
         auto armaMatrix = std::move(matrices[0]);
         auto eigenMatrix = std::move(matrices[1]);
         // only-values-eigendecomposition:
@@ -59,9 +62,9 @@ TEST(DenseFactoriesPerfomance, eigendecomposition_sparse) {
         size_t cycles = 2048 * 8 / size;
         std::cout << "SIZE = " << size << std::endl;
         // construct identical sparse symmetrical matrix:
-        auto matrices = generateSparseSymmetricMatrices(
+        auto matrices = generateSparseDiagonalizableMatrices(
             size,
-            constructAllSymmetricMatrixFactories(),
+            constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
         auto armaMatrix = std::move(matrices[0]);
@@ -105,17 +108,23 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_dense) {
     for (size_t size = 2; size <= 2048; size *= 2) {
         size_t cycles = 2048 * 16 / size;
         std::cout << "SIZE = " << size << std::endl;
-        auto symmetricMatrices =
-            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
-        auto unitaryMatrices =
-            generateUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto denseDiagonalizableMatrices = generateDenseDiagonalizableMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
 
         // unitary transformation
         std::function<void(void)> armaUnitaryTransformation = [&]() {
-            unitaryMatrices[0]->unitaryTransform(symmetricMatrices[0]);
+            denseUnitaryMatrices[0]->unitaryTransform(denseDiagonalizableMatrices[0]);
         };
         std::function<void(void)> eigenUnitaryTransformation = [&]() {
-            unitaryMatrices[1]->unitaryTransform(symmetricMatrices[1]);
+            denseUnitaryMatrices[1]->unitaryTransform(denseDiagonalizableMatrices[1]);
         };
         std::cout << "Armadillo:" << std::endl;
         PerformanceTest(armaUnitaryTransformation, cycles);
@@ -135,17 +144,25 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_d
     for (size_t size = 2; size <= 2048; size *= 2) {
         size_t cycles = 2048 * 16 / size;
         std::cout << "SIZE = " << size << std::endl;
-        auto symmetricMatrices =
-            generateSymmetricMatrices(size, constructAllSymmetricMatrixFactories(), dist, rng);
-        auto unitaryMatrices =
-            generateUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto denseDiagonalizableMatrices = generateDenseDiagonalizableMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
 
         // unitary transformation
         std::function<void(void)> armaUnitaryTransformation = [&]() {
-            unitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[0]);
+            denseUnitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(
+                denseDiagonalizableMatrices[0]);
         };
         std::function<void(void)> eigenUnitaryTransformation = [&]() {
-            unitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[1]);
+            denseUnitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(
+                denseDiagonalizableMatrices[1]);
         };
         std::cout << "Armadillo:" << std::endl;
         PerformanceTest(armaUnitaryTransformation, cycles);
@@ -165,20 +182,25 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_s
     for (size_t size = 2; size <= 2048; size *= 2) {
         size_t cycles = 2048 * 16 / size;
         std::cout << "SIZE = " << size << std::endl;
-        auto symmetricMatrices = generateSparseSymmetricMatrices(
+        auto sparseDiagonalizableMatrices = generateSparseDiagonalizableMatrices(
             size,
-            constructAllSymmetricMatrixFactories(),
+            constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto unitaryMatrices =
-            generateUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto denseUnitaryMatrix = generateDenseUnitaryMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
 
         // unitary transformation
         std::function<void(void)> armaUnitaryTransformation = [&]() {
-            unitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[0]);
+            denseUnitaryMatrix[0]->unitaryTransformAndReturnMainDiagonal(
+                sparseDiagonalizableMatrices[0]);
         };
         std::function<void(void)> eigenUnitaryTransformation = [&]() {
-            unitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[1]);
+            denseUnitaryMatrix[1]->unitaryTransformAndReturnMainDiagonal(
+                sparseDiagonalizableMatrices[1]);
         };
         std::cout << "Armadillo:" << std::endl;
         PerformanceTest(armaUnitaryTransformation, cycles);

@@ -2,10 +2,13 @@
 #include "src/entities/data_structures/arma/ArmaFactories.h"
 
 template<>
-std::shared_ptr<quantum::linear_algebra::AbstractSymmetricMatrixFactory>
-createConcreteFactory<quantum::linear_algebra::ArmaSymmetricMatrixFactory>() {
-    return std::make_shared<quantum::linear_algebra::ArmaSymmetricMatrixFactory>();
+std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>
+createConcreteFactory<quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory>() {
+    return std::make_shared<quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory>();
 };
 
-typedef testing::Types<quantum::linear_algebra::ArmaSymmetricMatrixFactory> Arma;
-INSTANTIATE_TYPED_TEST_SUITE_P(ArmaIndividualTests, AbstractFactoryIndividualTest, Arma);
+typedef testing::Types<quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory> Arma;
+INSTANTIATE_TYPED_TEST_SUITE_P(
+    ArmaIndividualTests,
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    Arma);

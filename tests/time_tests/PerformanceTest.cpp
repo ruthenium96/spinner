@@ -17,7 +17,7 @@ TEST(performanceTest, simple2ComponentSchema) {
 
     for (const auto& sparseSemiunitaryfactory : sparseSemiunitaryfactories) {
         quantum::linear_algebra::FactoriesList factoryList = quantum::linear_algebra::FactoriesList(
-            quantum::linear_algebra::AbstractSymmetricMatrixFactory::defaultFactory(),
+            quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory(),
             sparseSemiunitaryfactory);
         allFactoriesLists.push_back(factoryList);
     }

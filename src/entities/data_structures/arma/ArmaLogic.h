@@ -12,22 +12,23 @@ namespace quantum::linear_algebra {
 class ArmaLogic {
   public:
     std::unique_ptr<AbstractDenseVector>
-    diagonalizeValues(const AbstractSymmetricMatrix& symmetricMatrix) const;
-    std::unique_ptr<AbstractDenseVector>
-    diagonalizeValues(const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix) const;
+    diagonalizeValues(const AbstractDiagonalizableMatrix& diagonalizableMatrix) const;
+    std::unique_ptr<AbstractDenseVector> diagonalizeValues(
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const;
 
-    EigenCouple diagonalizeValuesVectors(const AbstractSymmetricMatrix& symmetricMatrix) const;
     EigenCouple
-    diagonalizeValuesVectors(const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix) const;
+    diagonalizeValuesVectors(const AbstractDiagonalizableMatrix& diagonalizableMatrix) const;
+    EigenCouple diagonalizeValuesVectors(
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const;
 
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const std::unique_ptr<AbstractDenseSemiunitaryMatrix>& denseSemiunitaryMatrix) const;
-    std::unique_ptr<AbstractSymmetricMatrix> unitaryTransform(
-        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix,
+    std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
 };
 }  // namespace quantum::linear_algebra

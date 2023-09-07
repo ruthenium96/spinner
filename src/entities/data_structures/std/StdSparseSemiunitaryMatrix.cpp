@@ -136,4 +136,38 @@ StdSparseSemiunitaryMatrix::downcast_ptr(std::unique_ptr<AbstractSparseSemiunita
     }
     return answer;
 }
+
+void StdSparseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
+    std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const {
+    size_t matrix_in_space_basis_size = this->size_cols();
+
+#pragma omp parallel for shared( \
+        matrix_in_space_basis_size, \
+            symmetricMatrixToTransform, \
+            symmetricMatrixToAdd) default(none)
+    for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size;
+         ++index_of_space_vector_i) {
+        for (const auto& i_iter : basis_[index_of_space_vector_i]) {
+            uint32_t index_of_lexicographic_vector_k = i_iter.first;
+            for (uint32_t index_of_space_vector_j = index_of_space_vector_i;
+                 index_of_space_vector_j < matrix_in_space_basis_size;
+                 ++index_of_space_vector_j) {
+                for (const auto& j_iter : basis_[index_of_space_vector_j]) {
+                    uint32_t index_of_lexicographic_vector_l = j_iter.first;
+                    double value_in_matrix_in_lexicografical_basis = symmetricMatrixToTransform->at(
+                        index_of_lexicographic_vector_k,
+                        index_of_lexicographic_vector_l);
+                    if (value_in_matrix_in_lexicografical_basis != 0) {
+                        // \Delta B_{ij} = \sum_{kl} U_{ki} * \Delta A_{kl} * U_{lj}
+                        symmetricMatrixToAdd->add_to_position(
+                            i_iter.second * value_in_matrix_in_lexicografical_basis * j_iter.second,
+                            index_of_space_vector_i,
+                            index_of_space_vector_j);
+                    }
+                }
+            }
+        }
+    }
+}
 }  // namespace quantum::linear_algebra

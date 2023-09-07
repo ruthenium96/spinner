@@ -41,6 +41,9 @@ class StdSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
     void normalize() override;
 
     void print(std::ostream& os) const override;
+    void unitaryTransform(
+        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
+        std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const override;
 
   private:
     std::vector<std::map<uint32_t, double>> basis_;

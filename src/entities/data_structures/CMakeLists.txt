@@ -1,8 +1,18 @@
+FetchContent_Declare(
+        emhash
+        GIT_REPOSITORY https://github.com/ktprime/emhash.git
+        GIT_TAG "2e3edc378373b331afa8bd570d657bf3f1229b86"
+)
+FetchContent_MakeAvailable(emhash)
+include_directories(${emhash_SOURCE_DIR}/)
+
+# TODO: it is not "std" now, rename it to more suitable name
 # TODO: implement other sparse matrices:
 add_library(data_structures
         std/StdSparseSemiunitaryMatrix.cpp
-        std/as_default/StdSparseSemiunitaryAsDefault.cpp
+        std/as_default/StdSparseTransformAsDefault.cpp
         std/StdFactories.cpp
+        std/EmhashSparseSymmetricMatrix.cpp std/EmhashSparseSymmetricMatrix.h
         AbstractSparseSemiunitaryMatrix.cpp
         FactoriesList.cpp)
 
@@ -15,11 +25,12 @@ if (ARMADILLO_FOUND)
     add_library(arma_structures
             arma/ArmaFactories.cpp arma/ArmaFactories.h
             arma/ArmaDenseVector.cpp arma/ArmaDenseVector.h
-            arma/ArmaSparseSymmetricMatrix.cpp
+            arma/ArmaSparseDiagonalizableMatrix.cpp
             arma/ArmaDenseSemiunitaryMatrix.cpp arma/ArmaDenseSemiunitaryMatrix.h
-            arma/ArmaDenseSymmetricMatrix.cpp arma/ArmaDenseSymmetricMatrix.h
+            arma/ArmaDenseDiagonalizableMatrix.cpp arma/ArmaDenseDiagonalizableMatrix.h
             arma/ArmaLogic.cpp arma/ArmaLogic.h
-            arma/ArmaSparseSemiunitaryMatrix.cpp arma/ArmaSparseSemiunitaryMatrix.h)
+            arma/ArmaSparseSemiunitaryMatrix.cpp arma/ArmaSparseSemiunitaryMatrix.h
+            )
     # This include is requested sometimes:
     include_directories(${ARMADILLO_INCLUDE_DIRS})
     target_link_libraries(arma_structures ${ARMADILLO_LIBRARIES})
@@ -35,9 +46,9 @@ if (Eigen3_FOUND)
     add_library(eigen_structures
             eigen/EigenFactories.cpp eigen/EigenFactories.h
             eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h
-            eigen/EigenDenseSymmetricMatrix.cpp eigen/EigenDenseSymmetricMatrix.h
+            eigen/EigenDenseDiagonalizableMatrix.cpp eigen/EigenDenseDiagonalizableMatrix.h
             eigen/EigenDenseSemiunitaryMatrix.cpp eigen/EigenDenseSemiunitaryMatrix.h
-            eigen/EigenSparseSymmetricMatrix.cpp eigen/EigenSparseSymmetricMatrix.h
+            eigen/EigenSparseDiagonalizableMatrix.cpp eigen/EigenSparseDiagonalizableMatrix.h
             eigen/EigenLogic.cpp eigen/EigenLogic.h)
     target_link_libraries(eigen_structures Eigen3::Eigen)
     target_link_libraries(data_structures eigen_structures)
@@ -48,13 +59,11 @@ endif ()
 if (ARMADILLO_FOUND)
     message(" *** Armadillo will be used as default linear algebra package")
     target_sources(data_structures PRIVATE
-            arma/as_default/ArmaSymmetricMatrixAsDefault.cpp
-            arma/as_default/ArmaDenseVectorAsDefault.cpp)
+            arma/as_default/ArmaDenseTransformAndDiagonalizeAsDefault.cpp)
 elseif (Eigen3_FOUND)
     message(" *** Eigen3 will be used as default linear algebra package")
     target_sources(data_structures PRIVATE
             eigen/as_default/EigenSymmetricMatrixAsDefault.cpp
-            eigen/as_default/EigenDenseVectorAsDefault.cpp
             )
 else ()
     message(FATAL_ERROR "At least one linear algebra package must be installed")

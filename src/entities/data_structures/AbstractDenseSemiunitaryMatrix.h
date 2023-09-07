@@ -4,9 +4,10 @@
 #include <memory>
 
 #include "AbstractDenseVector.h"
+#include "AbstractDiagonalizableMatrix.h"
 
 namespace quantum::linear_algebra {
-class AbstractSymmetricMatrix;
+class AbstractDiagonalizableMatrix;
 class AbstractDenseSemiunitaryMatrix {
   public:
     virtual uint32_t size_rows() const = 0;
@@ -18,9 +19,9 @@ class AbstractDenseSemiunitaryMatrix {
     virtual void print(std::ostream& os) const = 0;
 
     virtual std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrix) const = 0;
-    virtual std::unique_ptr<AbstractSymmetricMatrix>
-    unitaryTransform(const std::unique_ptr<AbstractSymmetricMatrix>& matrix_to_transform) const = 0;
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix) const = 0;
+    virtual std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
+        const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const = 0;
 
     virtual void normalize() = 0;
 

@@ -1,5 +1,5 @@
-#ifndef SPINNER_ABSTRACTFACTORY__H
-#define SPINNER_ABSTRACTFACTORY__H
+#ifndef SPINNER_FACTORIESLIST_H
+#define SPINNER_FACTORIESLIST_H
 
 #include "AbstractFactories.h"
 
@@ -11,14 +11,15 @@ namespace quantum::linear_algebra {
 class FactoriesList {
   public:
     explicit FactoriesList(
-        std::shared_ptr<AbstractSymmetricMatrixFactory> symmetricMatrixFactory =
-            AbstractSymmetricMatrixFactory::defaultFactory(),
-        std::shared_ptr<AbstractSparseSemiunitaryFactory> sparseMatrix =
-            AbstractSparseSemiunitaryFactory::defaultSparseFactory(),
-        std::shared_ptr<AbstractDenseVectorFactory> denseVectorMatrix =
-            AbstractDenseVectorFactory::defaultFactory());
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> symmetricMatrixFactory =
+            AbstractDenseTransformAndDiagonalizeFactory::defaultFactory(),
+        std::shared_ptr<AbstractSparseTransformFactory> sparseMatrix =
+            AbstractSparseTransformFactory::defaultSparseFactory());
 
-    std::unique_ptr<AbstractSymmetricMatrix> createDenseSymmetricMatrix(uint32_t size) const;
+    std::unique_ptr<AbstractDiagonalizableMatrix>
+    createDenseDiagonalizableMatrix(uint32_t size) const;
+    std::unique_ptr<AbstractDiagonalizableMatrix>
+    createSparseDiagonalizableMatrix(uint32_t size) const;
     std::unique_ptr<AbstractDenseSemiunitaryMatrix>
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
     std::unique_ptr<AbstractDenseVector> createVector() const;
@@ -27,9 +28,8 @@ class FactoriesList {
     std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) const;
 
   private:
-    std::shared_ptr<AbstractSymmetricMatrixFactory> symmetricMatrixFactory_;
-    std::shared_ptr<AbstractSparseSemiunitaryFactory> sparseSemiunitaryMatrixFactory_;
-    std::shared_ptr<AbstractDenseVectorFactory> denseVectorFactory_;
+    std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> denseFactory_;
+    std::shared_ptr<AbstractSparseTransformFactory> sparseFactory_;
 };
 }  // namespace quantum::linear_algebra
-#endif  //SPINNER_ABSTRACTFACTORY__H
+#endif  //SPINNER_FACTORIESLIST_H

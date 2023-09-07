@@ -3,8 +3,8 @@
 
 namespace quantum::linear_algebra {
 
-std::shared_ptr<AbstractSparseSemiunitaryFactory>
-AbstractSparseSemiunitaryFactory::defaultSparseFactory() {
-    return std::make_shared<ArmaSparseSemiunitaryFactory>();
+std::shared_ptr<AbstractSparseTransformFactory>
+AbstractSparseTransformFactory::defaultSparseFactory() {
+    return std::make_shared<ArmaSparseTransformFactory>();
 }
 }  // namespace quantum::linear_algebra
