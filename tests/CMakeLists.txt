@@ -48,13 +48,29 @@ if (Eigen3_FOUND)
     target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenIndividual_tests.cpp)
 endif ()
 
+if (Eigen3_FOUND)
+    target_sources(tests_tools PRIVATE tools/concreteSolverConstructors/create_LBFGSpp.cpp)
+endif ()
+target_sources(tests_tools PRIVATE
+        tools/concreteSolverConstructors/create_stlbfgs.cpp
+        tools/concreteSolverConstructors/create_optimNM.cpp
+        )
+
+if (Eigen3_FOUND)
+    target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/LBFGSpp_tests.cpp)
+endif ()
 target_sources(spinner_test PRIVATE
         integration_tests/fitting_theoretical_curves/stlbfgs_tests.cpp
         integration_tests/fitting_theoretical_curves/optimNM_tests.cpp
         )
+
 if (Eigen3_FOUND)
-    target_sources(spinner_test PRIVATE integration_tests/fitting_theoretical_curves/LBFGSpp_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/nonlinear_solver/LBFGSpp_tests.cpp)
 endif ()
+target_sources(spinner_test PRIVATE
+        unit_tests/nonlinear_solver/stlbfgs_tests.cpp
+        unit_tests/nonlinear_solver/optimNM_tests.cpp
+        )
 
 if (ARMADILLO_FOUND)
     target_sources(spinner_time_test PRIVATE
@@ -74,6 +90,8 @@ if (ARMADILLO_FOUND AND Eigen3_FOUND)
             time_tests/linear_algebra/armaEigenPerfomance_tests.cpp
             )
 endif ()
+
+target_link_libraries(tests_tools gtest gtest_main)
 
 target_link_libraries(spinner_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra)
