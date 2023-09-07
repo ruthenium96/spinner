@@ -132,6 +132,42 @@ TEST(linearAlgebraFactories, unitary_transformation) {
             rng);
 
         auto armaDenseDiagonalizableMatrixTransformed =
+            denseUnitaryMatrices[0]->unitaryTransform(denseDiagonalizableMatrices[0]);
+        auto eigenDenseDiagonalizableMatrixTransformed =
+            denseUnitaryMatrices[1]->unitaryTransform(denseDiagonalizableMatrices[1]);
+
+        // check equality:
+        for (size_t j = 0; j < size; ++j) {
+            for (size_t i = 0; i < size; ++i) {
+                // TODO: epsilon
+                EXPECT_NEAR(
+                    armaDenseDiagonalizableMatrixTransformed->at(j, i),
+                    eigenDenseDiagonalizableMatrixTransformed->at(j, i),
+                    1e-6);
+            }
+        }
+    }
+}
+
+// Check if different linear algebra packages make the same unitary transformation
+TEST(linearAlgebraFactories, unitary_transformation_and_return_main_diagonal) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-1000, +1000);
+
+    for (size_t size = 2; size < 100; ++size) {
+        auto denseDiagonalizableMatrices = generateDenseDiagonalizableMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
+
+        auto armaDenseDiagonalizableMatrixTransformed =
             denseUnitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(
                 denseDiagonalizableMatrices[0]);
         auto eigenDenseDiagonalizableMatrixTransformed =
