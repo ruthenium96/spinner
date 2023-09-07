@@ -9,26 +9,33 @@ TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
-    auto unitaryMatrices =
-        generateDenseUnitaryMatrix(10, constructAllSymmetricMatrixFactories(), dist, rng);
-    auto symmetricMatrices =
-        generateDenseDiagonalizableMatrices(10, constructAllSymmetricMatrixFactories(), dist, rng);
+    auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+        10,
+        constructAllDenseTransformAndDiagonalizeFactories(),
+        dist,
+        rng);
+    auto denseDiagonalizableMatrices = generateDenseDiagonalizableMatrices(
+        10,
+        constructAllDenseTransformAndDiagonalizeFactories(),
+        dist,
+        rng);
 
-    auto armaUnitaryMatrix = std::move(unitaryMatrices[0]);
-    auto eigenUnitaryMatrix = std::move(unitaryMatrices[1]);
-    auto armaSymmetricMatrix = std::move(symmetricMatrices[0]);
-    auto eigenSymmetricMatrix = std::move(symmetricMatrices[1]);
+    auto armaDenseUnitaryMatrix = std::move(denseUnitaryMatrices[0]);
+    auto eigenDenseUnitaryMatrix = std::move(denseUnitaryMatrices[1]);
+    auto armaDenseDiagonalizableMatrix = std::move(denseDiagonalizableMatrices[0]);
+    auto eigenDenseDiagonalizableMatrix = std::move(denseDiagonalizableMatrices[1]);
     // unitary_transform
-    EXPECT_ANY_THROW(
-        eigenUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(armaSymmetricMatrix));
-    EXPECT_ANY_THROW(
-        armaUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(eigenSymmetricMatrix));
-    EXPECT_NO_THROW(
-        eigenUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(eigenSymmetricMatrix));
-    EXPECT_NO_THROW(armaUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(armaSymmetricMatrix));
+    EXPECT_ANY_THROW(eigenDenseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(
+        armaDenseDiagonalizableMatrix));
+    EXPECT_ANY_THROW(armaDenseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(
+        eigenDenseDiagonalizableMatrix));
+    EXPECT_NO_THROW(eigenDenseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(
+        eigenDenseDiagonalizableMatrix));
+    EXPECT_NO_THROW(armaDenseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(
+        armaDenseDiagonalizableMatrix));
 
-    auto armaEigenVector = armaSymmetricMatrix->diagonalizeValues();
-    auto eigenEigenVector = eigenSymmetricMatrix->diagonalizeValues();
+    auto armaEigenVector = armaDenseDiagonalizableMatrix->diagonalizeValues();
+    auto eigenEigenVector = eigenDenseDiagonalizableMatrix->diagonalizeValues();
 
     // concatenate_with
     EXPECT_ANY_THROW(eigenEigenVector->concatenate_with(armaEigenVector));
@@ -56,10 +63,10 @@ TEST(linearAlgebraFactories, eigendecomposition) {
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
     for (size_t size = 2; size < 100; ++size) {
-        // construct identical symmetrical matrix:
+        // construct identical dense diagonalizable matrix:
         auto matrices = generateDenseDiagonalizableMatrices(
             size,
-            constructAllSymmetricMatrixFactories(),
+            constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
         auto armaMatrix = std::move(matrices[0]);
@@ -113,25 +120,30 @@ TEST(linearAlgebraFactories, unitary_transformation) {
     std::uniform_real_distribution<double> dist(-1000, +1000);
 
     for (size_t size = 2; size < 100; ++size) {
-        auto symmetricMatrices = generateDenseDiagonalizableMatrices(
+        auto denseDiagonalizableMatrices = generateDenseDiagonalizableMatrices(
             size,
-            constructAllSymmetricMatrixFactories(),
+            constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto unitaryMatrices =
-            generateDenseUnitaryMatrix(size, constructAllSymmetricMatrixFactories(), dist, rng);
+        auto denseUnitaryMatrices = generateDenseUnitaryMatrix(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
 
-        auto armaSymmetricMatrixTransformed =
-            unitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[0]);
-        auto eigenSymmetricMatrixTransformed =
-            unitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(symmetricMatrices[1]);
+        auto armaDenseDiagonalizableMatrixTransformed =
+            denseUnitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(
+                denseDiagonalizableMatrices[0]);
+        auto eigenDenseDiagonalizableMatrixTransformed =
+            denseUnitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(
+                denseDiagonalizableMatrices[1]);
 
         // check equality:
         for (size_t i = 0; i < size; ++i) {
             // TODO: epsilon
             EXPECT_NEAR(
-                armaSymmetricMatrixTransformed->at(i),
-                eigenSymmetricMatrixTransformed->at(i),
+                armaDenseDiagonalizableMatrixTransformed->at(i),
+                eigenDenseDiagonalizableMatrixTransformed->at(i),
                 1e-4);
         }
     }
