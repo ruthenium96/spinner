@@ -16,7 +16,6 @@ class AbstractSparseSemiunitaryMatrix {
      I do not know any possibilities to pass
      index_of_vector to range-base loop,
      so currently it is the best solution.
-     TODO: can we pass index_of_vector to range-base loop?
      */
     struct Iterator {
         struct IndexValueItem {

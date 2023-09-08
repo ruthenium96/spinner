@@ -6,9 +6,6 @@
 #include "src/model/symbols/SymbolicWorker.h"
 #include "worker/AbstractWorker.h"
 
-// TODO: is it true?
-//constexpr double bohr_magneton = 0.67171388;
-
 namespace magnetic_susceptibility {
 
 // Class for calculating mu^2 and dmu^2/dparameter.

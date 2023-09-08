@@ -11,7 +11,6 @@ class Operator {
   public:
     Operator() = default;
     Operator(const Operator&);
-    // TODO: should we implement copy assignment?
     Operator& operator=(const Operator&) = delete;
     Operator(Operator&&) noexcept = default;
     Operator& operator=(Operator&&) noexcept = default;
