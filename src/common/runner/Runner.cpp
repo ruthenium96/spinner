@@ -218,7 +218,7 @@ const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
 }
 
 const model::operators::Operator& Runner::getOperator(common::QuantityEnum quantity_enum) const {
-    return getModel().getOperator(quantity_enum);
+    return getModel().getOperator(quantity_enum)->get();
 }
 
 const lexicographic::IndexConverter& Runner::getIndexConverter() const {
@@ -228,7 +228,7 @@ const lexicographic::IndexConverter& Runner::getIndexConverter() const {
 const model::operators::Operator& Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    return getModel().getOperatorDerivative(quantity_enum, symbol);
+    return getModel().getOperatorDerivative(quantity_enum, symbol)->get();
 }
 
 const Spectrum& Runner::getSpectrumDerivative(

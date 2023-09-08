@@ -23,8 +23,9 @@ class Model {
     bool is_isotropic_exchange_derivatives_initialized() const;
     bool is_zero_field_splitting_initialized() const;
 
-    const operators::Operator& getOperator(common::QuantityEnum) const;
-    const operators::Operator&
+    std::optional<std::reference_wrapper<const operators::Operator>>
+        getOperator(common::QuantityEnum) const;
+    std::optional<std::reference_wrapper<const operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
     const lexicographic::IndexConverter& getIndexConverter() const;
 

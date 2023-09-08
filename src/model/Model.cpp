@@ -161,21 +161,25 @@ const lexicographic::IndexConverter& Model::getIndexConverter() const {
     return converter_;
 }
 
-const operators::Operator& Model::getOperator(common::QuantityEnum quantity_enum) const {
+std::optional<std::reference_wrapper<const operators::Operator>>
+Model::getOperator(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         return energy_operator;
     } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return s_squared_operator.value();
+        return s_squared_operator;
     } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
-        return g_sz_squared_operator.value();
+        return g_sz_squared_operator;
     }
-    assert(0);
+    return std::nullopt;
 }
 
-const operators::Operator& Model::getOperatorDerivative(
+std::optional<std::reference_wrapper<const operators::Operator>> Model::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     const symbols::SymbolName& symbol) const {
-    return derivatives_map_.at({quantity_enum, symbol});
+    if (derivatives_map_.contains({quantity_enum, symbol})) {
+        return derivatives_map_.at({quantity_enum, symbol});
+    }
+    return std::nullopt;
 }
 
 bool Model::is_s_squared_initialized() const {
