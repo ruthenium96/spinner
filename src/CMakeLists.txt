@@ -1,4 +1,5 @@
 add_subdirectory(common)
+add_subdirectory(eigendecompositor)
 add_subdirectory(entities)
 add_subdirectory(group)
 add_subdirectory(model)

@@ -27,6 +27,8 @@ class Model {
         getOperator(common::QuantityEnum) const;
     std::optional<std::reference_wrapper<const operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
+    const std::map<std::pair<common::QuantityEnum, symbols::SymbolName>, operators::Operator>&
+    getOperatorDerivatives() const;
     const lexicographic::IndexConverter& getIndexConverter() const;
 
   private:

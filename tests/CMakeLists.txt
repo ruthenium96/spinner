@@ -94,7 +94,7 @@ endif ()
 target_link_libraries(tests_tools gtest gtest_main)
 
 target_link_libraries(spinner_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra eigendecompositor)
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver eigendecompositor)

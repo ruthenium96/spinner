@@ -182,6 +182,11 @@ std::optional<std::reference_wrapper<const operators::Operator>> Model::getOpera
     return std::nullopt;
 }
 
+const std::map<std::pair<common::QuantityEnum, symbols::SymbolName>, operators::Operator>&
+Model::getOperatorDerivatives() const {
+    return derivatives_map_;
+}
+
 bool Model::is_s_squared_initialized() const {
     return operators_history_.s_squared;
 }
