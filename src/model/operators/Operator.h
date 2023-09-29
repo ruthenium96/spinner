@@ -10,6 +10,7 @@ namespace model::operators {
 class Operator {
   public:
     Operator() = default;
+    // TODO: should we delete this constructor?
     Operator(const Operator&);
     Operator& operator=(const Operator&) = delete;
     Operator(Operator&&) noexcept = default;

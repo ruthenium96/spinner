@@ -61,8 +61,8 @@ const space::Space& runner::Runner::getSpace() const {
 
 void Runner::BuildMatrices() {
     const model::operators::Operator& energy_operator = getOperator(common::QuantityEnum::Energy);
-    std::optional<model::operators::Operator> s_squared_operator;
-    std::optional<model::operators::Operator> g_sz_squared_operator;
+    std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator;
+    std::optional<std::reference_wrapper<const model::operators::Operator>> g_sz_squared_operator;
     if (getModel().is_s_squared_initialized()) {
         s_squared_operator = getOperator(common::QuantityEnum::S_total_squared);
     }
