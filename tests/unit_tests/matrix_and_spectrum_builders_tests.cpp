@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
+// todo: do we really need this test?
 TEST(
     spectrum_builder_apply_to_entity,
     throw_size_inconsistent_non_energy_matrix_22_333_4444_23456) {

@@ -3,6 +3,7 @@
 #include <cassert>
 #include <utility>
 
+#include "src/eigendecompositor/ExactEigendecompositor.h"
 #include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
@@ -41,11 +42,12 @@ Runner::Runner(
     space_(space::optimization::OptimizedSpaceConstructor::construct(
         consistentModelOptimizationList_,
         dataStructuresFactories)) {
+    eigendecompositor_ = std::make_unique<eigendecompositor::ExactEigendecompositor>();
     if (getModel().is_s_squared_initialized()) {
-        s_squared = common::Quantity();
+        eigendecompositor_->initializeSSquared();
     }
     if (getModel().is_g_sz_squared_initialized()) {
-        g_sz_squared = common::Quantity();
+        eigendecompositor_->initializeGSzSquared();
     }
 
     //    if (!symbols_.isGFactorInitialized()) {
@@ -58,163 +60,51 @@ const space::Space& runner::Runner::getSpace() const {
 }
 
 void Runner::BuildMatrices() {
-    if (!getOperator(common::Energy).empty() || !energy.matrix_.blocks.empty()) {
-        energy.matrix_ = Matrix(
-            getSpace(),
-            getOperator(common::Energy),
-            getIndexConverter(),
-            getDataStructuresFactories());
+    const model::operators::Operator& energy_operator = getOperator(common::QuantityEnum::Energy);
+    std::optional<model::operators::Operator> s_squared_operator;
+    std::optional<model::operators::Operator> g_sz_squared_operator;
+    if (getModel().is_s_squared_initialized()) {
+        s_squared_operator = getOperator(common::QuantityEnum::S_total_squared);
     }
-    if (s_squared.has_value()) {
-        s_squared->matrix_ = Matrix(
-            getSpace(),
-            getOperator(common::S_total_squared),
-            getIndexConverter(),
-            getDataStructuresFactories());
+    if (getModel().is_g_sz_squared_initialized()) {
+        g_sz_squared_operator = getOperator(common::QuantityEnum::gSz_total_squared);
     }
-    if (g_sz_squared.has_value()) {
-        g_sz_squared->matrix_ = Matrix(
-            getSpace(),
-            getOperator(common::gSz_total_squared),
-            getIndexConverter(),
-            getDataStructuresFactories());
-    }
-    for (auto& [pair, derivative] : derivatives_map_) {
-        // TODO: fix it!
-        auto [quantity_enum, symbol_name] = pair;
-        derivative.matrix_ = Matrix(
-            getSpace(),
-            getOperatorDerivative(quantity_enum, symbol_name),
-            getIndexConverter(),
-            getDataStructuresFactories());
-    }
-
-    matrix_history_.matrices_was_built = true;
+    eigendecompositor_->BuildMatrices(
+        energy_operator,
+        s_squared_operator,
+        g_sz_squared_operator,
+        getModel().getOperatorDerivatives(),
+        getSpace(),
+        getIndexConverter(),
+        getDataStructuresFactories());
 }
 
 void Runner::BuildSpectra() {
-    size_t number_of_blocks = getSpace().getBlocks().size();
-
-    if (!getOperator(common::Energy).empty() || !energy.spectrum_.blocks.empty()) {
-        energy.spectrum_.blocks.clear();
-        energy.spectrum_.blocks.reserve(number_of_blocks);
+    const model::operators::Operator& energy_operator = getOperator(common::QuantityEnum::Energy);
+    std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator;
+    std::optional<std::reference_wrapper<const model::operators::Operator>> g_sz_squared_operator;
+    if (getModel().is_s_squared_initialized()) {
+        s_squared_operator = getOperator(common::QuantityEnum::S_total_squared);
     }
-    if (s_squared.has_value()) {
-        s_squared->spectrum_.blocks.clear();
-        s_squared->spectrum_.blocks.reserve(number_of_blocks);
+    if (getModel().is_g_sz_squared_initialized()) {
+        g_sz_squared_operator = getOperator(common::QuantityEnum::gSz_total_squared);
     }
-    if (g_sz_squared.has_value()) {
-        g_sz_squared->spectrum_.blocks.clear();
-        g_sz_squared->spectrum_.blocks.reserve(number_of_blocks);
-    }
-    for (auto& [_, derivative] : derivatives_map_) {
-        derivative.spectrum_.blocks.clear();
-        derivative.spectrum_.blocks.reserve(number_of_blocks);
-    }
-
-    if (matrix_history_.matrices_was_built) {
-        BuildSpectraUsingMatrices(number_of_blocks);
-    } else {
-        BuildSpectraWithoutMatrices(number_of_blocks);
-    }
-}
-
-void Runner::BuildSpectraUsingMatrices(size_t number_of_blocks) {
-    for (size_t block = 0; block < number_of_blocks; ++block) {
-        auto [subspectrum_energy, unitary_transformation_matrix] =
-            Subspectrum::energy(energy.matrix_.blocks[block]);
-        energy.spectrum_.blocks.emplace_back(std::move(subspectrum_energy));
-
-        if (s_squared.has_value()) {
-            s_squared->spectrum_.blocks.emplace_back(Subspectrum::non_energy(
-                s_squared->matrix_.blocks[block],
-                unitary_transformation_matrix));
-        }
-
-        if (g_sz_squared.has_value()) {
-            g_sz_squared->spectrum_.blocks.emplace_back(Subspectrum::non_energy(
-                g_sz_squared->matrix_.blocks[block],
-                unitary_transformation_matrix));
-        }
-
-        for (auto& [_, derivative] : derivatives_map_) {
-            derivative.spectrum_.blocks.emplace_back(Subspectrum::non_energy(
-                derivative.matrix_.blocks[block],
-                unitary_transformation_matrix));
-        }
-    }
-}
-
-void Runner::BuildSpectraWithoutMatrices(size_t number_of_blocks) {
-    for (size_t block = 0; block < number_of_blocks; ++block) {
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
-            unitary_transformation_matrix;
-
-        {
-            auto hamiltonian_submatrix = Submatrix(
-                getSpace().getBlocks()[block],
-                getOperator(common::Energy),
-                getIndexConverter(),
-                getDataStructuresFactories());
-            auto pair = Subspectrum::energy(hamiltonian_submatrix);
-            energy.spectrum_.blocks.emplace_back(std::move(pair.first));
-            unitary_transformation_matrix = std::move(pair.second);
-        }
-
-        if (s_squared.has_value()) {
-            auto non_hamiltonian_submatrix = Submatrix(
-                getSpace().getBlocks()[block],
-                getOperator(common::S_total_squared),
-                getIndexConverter(),
-                getDataStructuresFactories());
-            s_squared->spectrum_.blocks.emplace_back(
-                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
-        }
-
-        if (g_sz_squared.has_value()) {
-            auto non_hamiltonian_submatrix = Submatrix(
-                getSpace().getBlocks()[block],
-                getOperator(common::gSz_total_squared),
-                getIndexConverter(),
-                getDataStructuresFactories());
-            g_sz_squared->spectrum_.blocks.emplace_back(
-                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
-        }
-
-        for (auto& [pair, derivative] : derivatives_map_) {
-            // TODO: fix it
-            auto [quantity_enum, symbol_name] = pair;
-            auto derivative_submatrix = Submatrix(
-                getSpace().getBlocks()[block],
-                getOperatorDerivative(quantity_enum, symbol_name),
-                getIndexConverter(),
-                getDataStructuresFactories());
-            derivative.spectrum_.blocks.emplace_back(
-                Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
-        }
-    }
+    eigendecompositor_->BuildSpectra(
+        energy_operator,
+        s_squared_operator,
+        g_sz_squared_operator,
+        getModel().getOperatorDerivatives(),
+        getSpace(),
+        getIndexConverter(),
+        getDataStructuresFactories());
 }
 
 const Matrix& Runner::getMatrix(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        return energy.matrix_;
-    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return s_squared->matrix_;
-    } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
-        return g_sz_squared->matrix_;
-    }
-    assert(0);
+    return eigendecompositor_->getMatrix(quantity_enum);
 }
 
 const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        return energy.spectrum_;
-    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return s_squared->spectrum_;
-    } else if (quantity_enum == common::gSz_total_squared) {
-        return g_sz_squared->spectrum_;
-    }
-    assert(0);
+    return eigendecompositor_->getSpectrum(quantity_enum);
 }
 
 const model::operators::Operator& Runner::getOperator(common::QuantityEnum quantity_enum) const {
@@ -234,13 +124,13 @@ const model::operators::Operator& Runner::getOperatorDerivative(
 const Spectrum& Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    return derivatives_map_.at({quantity_enum, symbol}).spectrum_;
+    return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol);
 }
 
 const Matrix& Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    return derivatives_map_.at({quantity_enum, symbol}).matrix_;
+    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol);
 }
 
 void Runner::BuildMuSquaredWorker() {
@@ -462,12 +352,6 @@ double Runner::stepOfRegression(
     //    }
 
     // Do some calculation stuff...
-    if (matrix_history_.matrices_was_built) {
-        // TODO: 1) it does not work now
-        //       2) here's the problem with future SSquaredTransformer
-        //       or we can use SSquaredTransform() as flag and actually apply it at BuildMatrix?
-        BuildMatrices();
-    }
     BuildSpectra();
 
     BuildMuSquaredWorker();
@@ -494,18 +378,18 @@ void Runner::initializeDerivatives() {
     if (getModel().is_isotropic_exchange_derivatives_initialized()) {
         for (const auto& symbol :
              getSymbolicWorker().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
-            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
+            eigendecompositor_->initializeDerivative(common::Energy, symbol);
         }
     }
     if (getModel().is_g_sz_squared_derivatives_initialized()) {
         for (const auto& symbol :
              getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
-            derivatives_map_[{common::gSz_total_squared, symbol}] = common::Quantity();
+            eigendecompositor_->initializeDerivative(common::gSz_total_squared, symbol);
         }
     }
     if (getModel().is_zero_field_splitting_initialized()) {
         for (const auto& symbol : getSymbolicWorker().getChangeableNames(model::symbols::D)) {
-            derivatives_map_[{common::Energy, symbol}] = common::Quantity();
+            eigendecompositor_->initializeDerivative(common::Energy, symbol);
         }
     }
 }
