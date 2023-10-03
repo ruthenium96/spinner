@@ -9,13 +9,12 @@ namespace eigendecompositor {
 class AbstractEigendecompositor {
   public:
     virtual void BuildSpectra(
-        const model::operators::Operator& energy_operator,
-        std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator,
-        std::optional<std::reference_wrapper<const model::operators::Operator>>
-            g_sz_squared_operator,
+        std::shared_ptr<const model::operators::Operator> energy_operator,
+        std::optional<std::shared_ptr<const model::operators::Operator>> s_squared_operator,
+        std::optional<std::shared_ptr<const model::operators::Operator>> g_sz_squared_operator,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-            model::operators::Operator>& derivatives_operators_,
+            std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
         const space::Space& space,
         const lexicographic::IndexConverter& converter,
         quantum::linear_algebra::FactoriesList data_structure_factories) = 0;

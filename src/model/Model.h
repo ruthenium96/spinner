@@ -23,11 +23,13 @@ class Model {
     bool is_isotropic_exchange_derivatives_initialized() const;
     bool is_zero_field_splitting_initialized() const;
 
-    std::optional<std::reference_wrapper<const operators::Operator>>
+    std::optional<std::shared_ptr<const operators::Operator>>
         getOperator(common::QuantityEnum) const;
-    std::optional<std::reference_wrapper<const operators::Operator>>
+    std::optional<std::shared_ptr<const operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
-    const std::map<std::pair<common::QuantityEnum, symbols::SymbolName>, operators::Operator>&
+    const std::map<
+        std::pair<common::QuantityEnum, symbols::SymbolName>,
+        std::shared_ptr<operators::Operator>>&
     getOperatorDerivatives() const;
     const lexicographic::IndexConverter& getIndexConverter() const;
 
@@ -53,13 +55,12 @@ class Model {
     void InitializeGSzSquared();
     void InitializeGSzSquaredDerivatives();
 
-    // std::shared_ptr<BasicQuantity>, where BasicQuantity is virtual class?
-    // or Quantity can consist std::unique_ptr<VirtualMatrix>?
-    // or can we just separate Operator and Spectrum?
-    operators::Operator energy_operator;
-    std::optional<operators::Operator> s_squared_operator;
-    std::optional<operators::Operator> g_sz_squared_operator;
-    std::map<std::pair<common::QuantityEnum, symbols::SymbolName>, operators::Operator>
+    std::shared_ptr<operators::Operator> energy_operator;
+    std::optional<std::shared_ptr<operators::Operator>> s_squared_operator;
+    std::optional<std::shared_ptr<operators::Operator>> g_sz_squared_operator;
+    std::map<
+        std::pair<common::QuantityEnum, symbols::SymbolName>,
+        std::shared_ptr<operators::Operator>>
         derivatives_map_;
 };
 

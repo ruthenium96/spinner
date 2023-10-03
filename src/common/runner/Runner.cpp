@@ -60,19 +60,10 @@ const space::Space& runner::Runner::getSpace() const {
 }
 
 void Runner::BuildSpectra() {
-    const model::operators::Operator& energy_operator = getOperator(common::QuantityEnum::Energy);
-    std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator;
-    std::optional<std::reference_wrapper<const model::operators::Operator>> g_sz_squared_operator;
-    if (getModel().is_s_squared_initialized()) {
-        s_squared_operator = getOperator(common::QuantityEnum::S_total_squared);
-    }
-    if (getModel().is_g_sz_squared_initialized()) {
-        g_sz_squared_operator = getOperator(common::QuantityEnum::gSz_total_squared);
-    }
     eigendecompositor_->BuildSpectra(
-        energy_operator,
-        s_squared_operator,
-        g_sz_squared_operator,
+        getOperator(common::QuantityEnum::Energy).value(),
+        getOperator(common::QuantityEnum::S_total_squared),
+        getOperator(common::QuantityEnum::gSz_total_squared),
         getModel().getOperatorDerivatives(),
         getSpace(),
         getIndexConverter(),
@@ -87,18 +78,19 @@ const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
 
-const model::operators::Operator& Runner::getOperator(common::QuantityEnum quantity_enum) const {
-    return getModel().getOperator(quantity_enum)->get();
+std::optional<std::shared_ptr<const model::operators::Operator>>
+Runner::getOperator(common::QuantityEnum quantity_enum) const {
+    return getModel().getOperator(quantity_enum);
 }
 
 const lexicographic::IndexConverter& Runner::getIndexConverter() const {
     return getModel().getIndexConverter();
 }
 
-const model::operators::Operator& Runner::getOperatorDerivative(
+std::optional<std::shared_ptr<const model::operators::Operator>> Runner::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    return getModel().getOperatorDerivative(quantity_enum, symbol)->get();
+    return getModel().getOperatorDerivative(quantity_enum, symbol);
 }
 
 const Spectrum& Runner::getSpectrumDerivative(

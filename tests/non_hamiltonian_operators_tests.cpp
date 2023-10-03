@@ -214,7 +214,7 @@ TEST(
 
         Matrix s_squared_matrix = Matrix(
             runner.getSpace(),
-            runner.getOperator(common::QuantityEnum::S_total_squared),
+            *runner.getOperator(common::QuantityEnum::S_total_squared).value(),
             runner.getIndexConverter(),
             runner.getDataStructuresFactories());
 

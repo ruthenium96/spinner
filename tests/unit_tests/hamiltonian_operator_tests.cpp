@@ -29,7 +29,7 @@ TEST(hamiltonian_operator, exchange_interaction_22_333_4444_23456) {
         model::Model model(modelInput);
 
         EXPECT_EQ(
-            model.getOperator(common::QuantityEnum::Energy)->get().getTwoCenterTerms().size(),
+            model.getOperator(common::QuantityEnum::Energy).value()->getTwoCenterTerms().size(),
             1);
     }
 }

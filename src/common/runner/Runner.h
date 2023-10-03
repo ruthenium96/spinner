@@ -49,16 +49,15 @@ class Runner {
     void minimizeResidualError(std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>);
 
     const lexicographic::IndexConverter& getIndexConverter() const;
-    const model::operators::Operator& getOperator(common::QuantityEnum) const;
+    std::optional<std::shared_ptr<const model::operators::Operator>>
+        getOperator(common::QuantityEnum) const;
     const space::Space& getSpace() const;
     const Spectrum& getSpectrum(common::QuantityEnum) const;
     const Matrix& getMatrix(common::QuantityEnum) const;
-    const model::operators::Operator& getOperatorDerivative(
-        common::QuantityEnum,
-        const model::symbols::SymbolName&) const;
-    const Spectrum& getSpectrumDerivative(
-        common::QuantityEnum,
-        const model::symbols::SymbolName&) const;
+    std::optional<std::shared_ptr<const model::operators::Operator>>
+    getOperatorDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
+    const Spectrum&
+    getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
     const Matrix& getMatrixDerivative(
         common::QuantityEnum,
         const model::symbols::SymbolName&) const;

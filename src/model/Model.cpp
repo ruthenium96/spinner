@@ -1,6 +1,5 @@
 #include "Model.h"
 
-#include <cassert>
 #include <utility>
 
 #include "src/model/operators/terms/LocalSSquaredOneCenterTerm.h"
@@ -12,7 +11,7 @@ namespace model {
 Model::Model(ModelInput modelInput) :
     numericalWorker_(modelInput.modifySymbolicWorker(), modelInput.getMults().size()),
     converter_(modelInput.getMults()) {
-    energy_operator = operators::Operator();
+    energy_operator = std::make_shared<operators::Operator>();
     // todo: I guess, we need to move these initializations to ConsistentModelOptimizationList,
     //  because here we do not know about S2-transformation.
     // TODO: this strange check need only because some tests do not initialize g factors,
@@ -53,7 +52,8 @@ void Model::InitializeSSquared() {
         return;
     }
 
-    s_squared_operator = operators::Operator::s_squared(converter_);
+    s_squared_operator =
+        std::make_shared<operators::Operator>(operators::Operator::s_squared(converter_));
 
     operators_history_.s_squared = true;
 }
@@ -63,10 +63,10 @@ void Model::InitializeGSzSquared() {
         return;
     }
 
-    g_sz_squared_operator = operators::Operator::g_sz_squared(
+    g_sz_squared_operator = std::make_shared<operators::Operator>(operators::Operator::g_sz_squared(
         converter_,
         getNumericalWorker().getGGParameters().first,
-        getNumericalWorker().getGGParameters().second);
+        getNumericalWorker().getGGParameters().second));
 
     operators_history_.g_sz_squared = true;
 }
@@ -75,7 +75,7 @@ void Model::InitializeIsotropicExchange() {
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
         return;
     }
-    energy_operator.getTwoCenterTerms().emplace_back(
+    energy_operator->getTwoCenterTerms().emplace_back(
         std::make_unique<const operators::ScalarProductTerm>(
             converter_,
             getNumericalWorker().getIsotropicExchangeParameters()));
@@ -87,12 +87,12 @@ void Model::InitializeZeroFieldSplitting() {
         return;
     }
     auto D_parameters = getNumericalWorker().getZFSParameters().first;
-    energy_operator.getOneCenterTerms().emplace_back(
+    energy_operator->getOneCenterTerms().emplace_back(
         std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
             converter_,
             D_parameters,
             -1.0 / 3.0));
-    energy_operator.getOneCenterTerms().emplace_back(
+    energy_operator->getOneCenterTerms().emplace_back(
         std::make_unique<const operators::SzSzOneCenterTerm>(converter_, D_parameters));
     operators_history_.zfs_in_hamiltonian = true;
 }
@@ -108,7 +108,8 @@ void Model::InitializeIsotropicExchangeDerivatives() {
             std::make_unique<const operators::ScalarProductTerm>(
                 converter_,
                 getNumericalWorker().constructIsotropicExchangeDerivativeParameters(symbol)));
-        derivatives_map_[{common::Energy, symbol}] = std::move(operator_derivative);
+        derivatives_map_[{common::Energy, symbol}] =
+            std::make_shared<operators::Operator>(std::move(operator_derivative));
     }
 
     operators_history_.isotropic_exchange_derivatives = true;
@@ -130,7 +131,8 @@ void Model::InitializeZeroFieldSplittingDerivative() {
             std::make_unique<const operators::SzSzOneCenterTerm>(
                 converter_,
                 derivative_parameters));
-        derivatives_map_[{common::Energy, symbol}] = std::move(operator_derivative);
+        derivatives_map_[{common::Energy, symbol}] =
+            std::make_shared<operators::Operator>(std::move(operator_derivative));
     }
 }
 
@@ -151,7 +153,8 @@ void Model::InitializeGSzSquaredDerivatives() {
                 pair_of_parameters.second,
                 2));
         // this two from summation in Submatrix: \sum_{a=1}^N \sum_{b=a+1}^N
-        derivatives_map_[{common::gSz_total_squared, symbol}] = std::move(operator_derivative);
+        derivatives_map_[{common::gSz_total_squared, symbol}] =
+            std::make_shared<operators::Operator>(std::move(operator_derivative));
     }
 
     operators_history_.g_sz_squared_derivatives = true;
@@ -161,7 +164,7 @@ const lexicographic::IndexConverter& Model::getIndexConverter() const {
     return converter_;
 }
 
-std::optional<std::reference_wrapper<const operators::Operator>>
+std::optional<std::shared_ptr<const operators::Operator>>
 Model::getOperator(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::QuantityEnum::Energy) {
         return energy_operator;
@@ -173,7 +176,7 @@ Model::getOperator(common::QuantityEnum quantity_enum) const {
     return std::nullopt;
 }
 
-std::optional<std::reference_wrapper<const operators::Operator>> Model::getOperatorDerivative(
+std::optional<std::shared_ptr<const operators::Operator>> Model::getOperatorDerivative(
     common::QuantityEnum quantity_enum,
     const symbols::SymbolName& symbol) const {
     if (derivatives_map_.contains({quantity_enum, symbol})) {
@@ -182,8 +185,9 @@ std::optional<std::reference_wrapper<const operators::Operator>> Model::getOpera
     return std::nullopt;
 }
 
-const std::map<std::pair<common::QuantityEnum, symbols::SymbolName>, operators::Operator>&
-Model::getOperatorDerivatives() const {
+const std::
+    map<std::pair<common::QuantityEnum, symbols::SymbolName>, std::shared_ptr<operators::Operator>>&
+    Model::getOperatorDerivatives() const {
     return derivatives_map_;
 }
 
