@@ -40,36 +40,6 @@ const Matrix& ExactEigendecompositor::getMatrixDerivative(
     return derivatives_map_.at({quantity_enum, symbol}).matrix_;
 }
 
-void ExactEigendecompositor::BuildMatrices(
-    const model::operators::Operator& energy_operator,
-    std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator,
-    std::optional<std::reference_wrapper<const model::operators::Operator>> g_sz_squared_operator,
-    const std::map<
-        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-        model::operators::Operator>& derivatives_operators_,
-    const space::Space& space,
-    const lexicographic::IndexConverter& converter,
-    quantum::linear_algebra::FactoriesList data_structure_factories) {
-    if (!energy_operator.empty() || !energy.matrix_.blocks.empty()) {
-        energy.matrix_ = Matrix(space, energy_operator, converter, data_structure_factories);
-    }
-    if (s_squared.has_value()) {
-        s_squared->matrix_ =
-            Matrix(space, s_squared_operator.value(), converter, data_structure_factories);
-    }
-    if (g_sz_squared.has_value()) {
-        g_sz_squared->matrix_ =
-            Matrix(space, g_sz_squared_operator.value(), converter, data_structure_factories);
-    }
-    for (auto& [pair, derivative] : derivatives_map_) {
-        // TODO: fix it!
-        derivative.matrix_ =
-            Matrix(space, derivatives_operators_.at(pair), converter, data_structure_factories);
-    }
-
-    matrix_history_.matrices_was_built = true;
-}
-
 void ExactEigendecompositor::BuildSpectra(
     const model::operators::Operator& energy_operator,
     std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator,
@@ -82,10 +52,8 @@ void ExactEigendecompositor::BuildSpectra(
     quantum::linear_algebra::FactoriesList data_structure_factories) {
     size_t number_of_blocks = space.getBlocks().size();
 
-    if (!energy_operator.empty() || !energy.spectrum_.blocks.empty()) {
-        energy.spectrum_.blocks.clear();
-        energy.spectrum_.blocks.reserve(number_of_blocks);
-    }
+    energy.spectrum_.blocks.clear();
+    energy.spectrum_.blocks.reserve(number_of_blocks);
     if (s_squared.has_value()) {
         s_squared->spectrum_.blocks.clear();
         s_squared->spectrum_.blocks.reserve(number_of_blocks);
@@ -98,46 +66,15 @@ void ExactEigendecompositor::BuildSpectra(
         derivative.spectrum_.blocks.clear();
         derivative.spectrum_.blocks.reserve(number_of_blocks);
     }
-
-    if (matrix_history_.matrices_was_built) {
-        BuildSpectraUsingMatrices(number_of_blocks);
-    } else {
-        BuildSpectraWithoutMatrices(
-            number_of_blocks,
-            energy_operator,
-            s_squared_operator,
-            g_sz_squared_operator,
-            derivatives_operators_,
-            space,
-            converter,
-            data_structure_factories);
-    }
-}
-
-void ExactEigendecompositor::BuildSpectraUsingMatrices(size_t number_of_blocks) {
-    for (size_t block = 0; block < number_of_blocks; ++block) {
-        auto [subspectrum_energy, unitary_transformation_matrix] =
-            Subspectrum::energy(energy.matrix_.blocks[block]);
-        energy.spectrum_.blocks.emplace_back(std::move(subspectrum_energy));
-
-        if (s_squared.has_value()) {
-            s_squared->spectrum_.blocks.emplace_back(Subspectrum::non_energy(
-                s_squared->matrix_.blocks[block],
-                unitary_transformation_matrix));
-        }
-
-        if (g_sz_squared.has_value()) {
-            g_sz_squared->spectrum_.blocks.emplace_back(Subspectrum::non_energy(
-                g_sz_squared->matrix_.blocks[block],
-                unitary_transformation_matrix));
-        }
-
-        for (auto& [_, derivative] : derivatives_map_) {
-            derivative.spectrum_.blocks.emplace_back(Subspectrum::non_energy(
-                derivative.matrix_.blocks[block],
-                unitary_transformation_matrix));
-        }
-    }
+    BuildSpectraWithoutMatrices(
+        number_of_blocks,
+        energy_operator,
+        s_squared_operator,
+        g_sz_squared_operator,
+        derivatives_operators_,
+        space,
+        converter,
+        data_structure_factories);
 }
 
 void ExactEigendecompositor::BuildSpectraWithoutMatrices(
@@ -164,6 +101,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             auto pair = Subspectrum::energy(hamiltonian_submatrix);
             energy.spectrum_.blocks.emplace_back(std::move(pair.first));
             unitary_transformation_matrix = std::move(pair.second);
+            energy.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
         }
 
         if (s_squared.has_value()) {
@@ -174,6 +112,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
                 data_structure_factories);
             s_squared->spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
+            s_squared->matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
         }
 
         if (g_sz_squared.has_value()) {
@@ -184,6 +123,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
                 data_structure_factories);
             g_sz_squared->spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
+            g_sz_squared->matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
         }
 
         for (auto& [pair, derivative] : derivatives_map_) {
@@ -194,6 +134,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
                 data_structure_factories);
             derivative.spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
+            derivative.matrix_.blocks.emplace_back(std::move(derivative_submatrix));
         }
     }
 }

@@ -36,9 +36,6 @@ class Runner {
     // TODO: This function is public only for tests. Fix it?
     void initializeDerivatives();
 
-    // MATRIX OPERATIONS
-    void BuildMatrices();
-
     // SPECTRUM OPERATIONS
     void BuildSpectra();
 

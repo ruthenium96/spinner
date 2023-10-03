@@ -59,26 +59,6 @@ const space::Space& runner::Runner::getSpace() const {
     return space_;
 }
 
-void Runner::BuildMatrices() {
-    const model::operators::Operator& energy_operator = getOperator(common::QuantityEnum::Energy);
-    std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator;
-    std::optional<std::reference_wrapper<const model::operators::Operator>> g_sz_squared_operator;
-    if (getModel().is_s_squared_initialized()) {
-        s_squared_operator = getOperator(common::QuantityEnum::S_total_squared);
-    }
-    if (getModel().is_g_sz_squared_initialized()) {
-        g_sz_squared_operator = getOperator(common::QuantityEnum::gSz_total_squared);
-    }
-    eigendecompositor_->BuildMatrices(
-        energy_operator,
-        s_squared_operator,
-        g_sz_squared_operator,
-        getModel().getOperatorDerivatives(),
-        getSpace(),
-        getIndexConverter(),
-        getDataStructuresFactories());
-}
-
 void Runner::BuildSpectra() {
     const model::operators::Operator& energy_operator = getOperator(common::QuantityEnum::Energy);
     std::optional<std::reference_wrapper<const model::operators::Operator>> s_squared_operator;
