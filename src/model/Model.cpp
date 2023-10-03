@@ -11,7 +11,7 @@ namespace model {
 Model::Model(ModelInput modelInput) :
     numericalWorker_(modelInput.modifySymbolicWorker(), modelInput.getMults().size()),
     converter_(modelInput.getMults()) {
-    energy_operator = std::make_shared<operators::Operator>();
+    operators_map_[common::Energy] = std::make_shared<operators::Operator>();
     // todo: I guess, we need to move these initializations to ConsistentModelOptimizationList,
     //  because here we do not know about S2-transformation.
     // TODO: this strange check need only because some tests do not initialize g factors,
@@ -52,7 +52,7 @@ void Model::InitializeSSquared() {
         return;
     }
 
-    s_squared_operator =
+    operators_map_[common::S_total_squared] =
         std::make_shared<operators::Operator>(operators::Operator::s_squared(converter_));
 
     operators_history_.s_squared = true;
@@ -63,10 +63,11 @@ void Model::InitializeGSzSquared() {
         return;
     }
 
-    g_sz_squared_operator = std::make_shared<operators::Operator>(operators::Operator::g_sz_squared(
-        converter_,
-        getNumericalWorker().getGGParameters().first,
-        getNumericalWorker().getGGParameters().second));
+    operators_map_[common::gSz_total_squared] =
+        std::make_shared<operators::Operator>(operators::Operator::g_sz_squared(
+            converter_,
+            getNumericalWorker().getGGParameters().first,
+            getNumericalWorker().getGGParameters().second));
 
     operators_history_.g_sz_squared = true;
 }
@@ -75,7 +76,7 @@ void Model::InitializeIsotropicExchange() {
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
         return;
     }
-    energy_operator->getTwoCenterTerms().emplace_back(
+    operators_map_[common::Energy]->getTwoCenterTerms().emplace_back(
         std::make_unique<const operators::ScalarProductTerm>(
             converter_,
             getNumericalWorker().getIsotropicExchangeParameters()));
@@ -87,12 +88,12 @@ void Model::InitializeZeroFieldSplitting() {
         return;
     }
     auto D_parameters = getNumericalWorker().getZFSParameters().first;
-    energy_operator->getOneCenterTerms().emplace_back(
+    operators_map_[common::Energy]->getOneCenterTerms().emplace_back(
         std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
             converter_,
             D_parameters,
             -1.0 / 3.0));
-    energy_operator->getOneCenterTerms().emplace_back(
+    operators_map_[common::Energy]->getOneCenterTerms().emplace_back(
         std::make_unique<const operators::SzSzOneCenterTerm>(converter_, D_parameters));
     operators_history_.zfs_in_hamiltonian = true;
 }
@@ -166,14 +167,15 @@ const lexicographic::IndexConverter& Model::getIndexConverter() const {
 
 std::optional<std::shared_ptr<const operators::Operator>>
 Model::getOperator(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        return energy_operator;
-    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return s_squared_operator;
-    } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
-        return g_sz_squared_operator;
+    if (operators_map_.contains(quantity_enum)) {
+        return operators_map_.at(quantity_enum);
     }
     return std::nullopt;
+}
+
+const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>&
+Model::getOperators() const {
+    return operators_map_;
 }
 
 std::optional<std::shared_ptr<const operators::Operator>> Model::getOperatorDerivative(

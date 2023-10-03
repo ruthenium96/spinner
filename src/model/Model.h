@@ -27,6 +27,8 @@ class Model {
         getOperator(common::QuantityEnum) const;
     std::optional<std::shared_ptr<const operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
+    const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>&
+    getOperators() const;
     const std::map<
         std::pair<common::QuantityEnum, symbols::SymbolName>,
         std::shared_ptr<operators::Operator>>&
@@ -55,9 +57,7 @@ class Model {
     void InitializeGSzSquared();
     void InitializeGSzSquaredDerivatives();
 
-    std::shared_ptr<operators::Operator> energy_operator;
-    std::optional<std::shared_ptr<operators::Operator>> s_squared_operator;
-    std::optional<std::shared_ptr<operators::Operator>> g_sz_squared_operator;
+    std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>> operators_map_;
     std::map<
         std::pair<common::QuantityEnum, symbols::SymbolName>,
         std::shared_ptr<operators::Operator>>
