@@ -71,6 +71,22 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
         std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
     const space::Space& space) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
+        if (operators_.size() + derivatives_operators_.size() == 1) {
+            auto& energy = quantities_map_[common::Energy];
+            auto hamiltonian_submatrix = Submatrix(
+                space.getBlocks()[block],
+                *operators_.at(common::Energy),
+                converter_,
+                factories_list_);
+            auto energy_spectrum = Subspectrum::energy_without_eigenvectors(hamiltonian_submatrix);
+            energy.spectrum_.blocks.emplace_back(std::move(energy_spectrum));
+            energy.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
+
+            std::cout << "I was here!" << std::endl;
+
+            continue;
+        }
+
         std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
             unitary_transformation_matrix;
 

@@ -39,3 +39,11 @@ Subspectrum::Subspectrum(
     raw_data = std::move(raw_data_);
     properties = std::move(properties_);
 }
+
+Subspectrum Subspectrum::energy_without_eigenvectors(const Submatrix& hamiltonian_submatrix) {
+    auto eigenvalues = hamiltonian_submatrix.raw_data->diagonalizeValues();
+
+    auto energy_subspectrum = Subspectrum(std::move(eigenvalues), hamiltonian_submatrix.properties);
+
+    return std::move(energy_subspectrum);
+}
