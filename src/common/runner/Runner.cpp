@@ -61,9 +61,7 @@ const space::Space& runner::Runner::getSpace() const {
 
 void Runner::BuildSpectra() {
     eigendecompositor_->BuildSpectra(
-        getOperator(common::QuantityEnum::Energy).value(),
-        getOperator(common::QuantityEnum::S_total_squared),
-        getOperator(common::QuantityEnum::gSz_total_squared),
+        getModel().getOperators(),
         getModel().getOperatorDerivatives(),
         getSpace(),
         getIndexConverter(),

@@ -9,9 +9,8 @@ namespace eigendecompositor {
 class ExactEigendecompositor: public AbstractEigendecompositor {
   public:
     void BuildSpectra(
-        std::shared_ptr<const model::operators::Operator> energy_operator,
-        std::optional<std::shared_ptr<const model::operators::Operator>> s_squared_operator,
-        std::optional<std::shared_ptr<const model::operators::Operator>> g_sz_squared_operator,
+        const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>&
+            operators_,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
@@ -38,9 +37,8 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
         derivatives_map_;
     void BuildSpectraWithoutMatrices(
         size_t number_of_blocks,
-        std::shared_ptr<const model::operators::Operator> energy_operator,
-        std::optional<std::shared_ptr<const model::operators::Operator>> s_squared_operator,
-        std::optional<std::shared_ptr<const model::operators::Operator>> g_sz_squared_operator,
+        const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>&
+            operators_,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<model::operators::Operator>>& derivatives_operators_,

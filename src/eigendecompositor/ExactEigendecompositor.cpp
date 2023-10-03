@@ -41,9 +41,7 @@ const Matrix& ExactEigendecompositor::getMatrixDerivative(
 }
 
 void ExactEigendecompositor::BuildSpectra(
-    std::shared_ptr<const model::operators::Operator> energy_operator,
-    std::optional<std::shared_ptr<const model::operators::Operator>> s_squared_operator,
-    std::optional<std::shared_ptr<const model::operators::Operator>> g_sz_squared_operator,
+    const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>& operators_,
     const std::map<
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
@@ -68,9 +66,7 @@ void ExactEigendecompositor::BuildSpectra(
     }
     BuildSpectraWithoutMatrices(
         number_of_blocks,
-        energy_operator,
-        s_squared_operator,
-        g_sz_squared_operator,
+        operators_,
         derivatives_operators_,
         space,
         converter,
@@ -79,9 +75,7 @@ void ExactEigendecompositor::BuildSpectra(
 
 void ExactEigendecompositor::BuildSpectraWithoutMatrices(
     size_t number_of_blocks,
-    std::shared_ptr<const model::operators::Operator> energy_operator,
-    std::optional<std::shared_ptr<const model::operators::Operator>> s_squared_operator,
-    std::optional<std::shared_ptr<const model::operators::Operator>> g_sz_squared_operator,
+    const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>& operators_,
     const std::map<
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
@@ -95,7 +89,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
         {
             auto hamiltonian_submatrix = Submatrix(
                 space.getBlocks()[block],
-                *energy_operator,
+                *operators_.at(common::Energy),
                 converter,
                 data_structure_factories);
             auto pair = Subspectrum::energy(hamiltonian_submatrix);
@@ -107,7 +101,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
         if (s_squared.has_value()) {
             auto non_hamiltonian_submatrix = Submatrix(
                 space.getBlocks()[block],
-                *s_squared_operator.value(),
+                *operators_.at(common::S_total_squared),
                 converter,
                 data_structure_factories);
             s_squared->spectrum_.blocks.emplace_back(
@@ -118,7 +112,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
         if (g_sz_squared.has_value()) {
             auto non_hamiltonian_submatrix = Submatrix(
                 space.getBlocks()[block],
-                *g_sz_squared_operator.value(),
+                *operators_.at(common::gSz_total_squared),
                 converter,
                 data_structure_factories);
             g_sz_squared->spectrum_.blocks.emplace_back(
