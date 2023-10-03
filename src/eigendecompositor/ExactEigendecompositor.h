@@ -8,15 +8,16 @@
 namespace eigendecompositor {
 class ExactEigendecompositor: public AbstractEigendecompositor {
   public:
+    ExactEigendecompositor(
+        lexicographic::IndexConverter converter,
+        quantum::linear_algebra::FactoriesList factories_list);
     void BuildSpectra(
         const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>&
             operators_,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
-        const space::Space& space,
-        const lexicographic::IndexConverter& converter,
-        quantum::linear_algebra::FactoriesList data_structure_factories) override;
+        const space::Space& space) override;
 
     const Spectrum& getSpectrum(common::QuantityEnum) const override;
     const Matrix& getMatrix(common::QuantityEnum) const override;
@@ -26,6 +27,8 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
 
   protected:
+    lexicographic::IndexConverter converter_;
+    quantum::linear_algebra::FactoriesList factories_list_;
     std::map<common::QuantityEnum, common::Quantity> quantities_map_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, common::Quantity>
         derivatives_map_;
@@ -36,9 +39,7 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
-        const space::Space& space,
-        const lexicographic::IndexConverter& converter,
-        quantum::linear_algebra::FactoriesList data_structure_factories);
+        const space::Space& space);
 };
 
 }  // namespace eigendecompositor

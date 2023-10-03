@@ -42,7 +42,9 @@ Runner::Runner(
     space_(space::optimization::OptimizedSpaceConstructor::construct(
         consistentModelOptimizationList_,
         dataStructuresFactories)) {
-    eigendecompositor_ = std::make_unique<eigendecompositor::ExactEigendecompositor>();
+    eigendecompositor_ = std::make_unique<eigendecompositor::ExactEigendecompositor>(
+        getIndexConverter(),
+        getDataStructuresFactories());
 }
 
 const space::Space& runner::Runner::getSpace() const {
@@ -53,9 +55,7 @@ void Runner::BuildSpectra() {
     eigendecompositor_->BuildSpectra(
         getModel().getOperators(),
         getModel().getOperatorDerivatives(),
-        getSpace(),
-        getIndexConverter(),
-        getDataStructuresFactories());
+        getSpace());
 }
 
 const Matrix& Runner::getMatrix(common::QuantityEnum quantity_enum) const {

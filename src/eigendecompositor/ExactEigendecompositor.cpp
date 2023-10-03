@@ -1,8 +1,14 @@
 #include "ExactEigendecompositor.h"
 
-#include <cassert>
+#include <utility>
 
 namespace eigendecompositor {
+
+ExactEigendecompositor::ExactEigendecompositor(
+    lexicographic::IndexConverter converter,
+    quantum::linear_algebra::FactoriesList factories_list) :
+    converter_(std::move(converter)),
+    factories_list_(std::move(factories_list)) {}
 
 const Matrix& ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     return quantities_map_.at(quantity_enum).matrix_;
@@ -29,9 +35,7 @@ void ExactEigendecompositor::BuildSpectra(
     const std::map<
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
-    const space::Space& space,
-    const lexicographic::IndexConverter& converter,
-    quantum::linear_algebra::FactoriesList data_structure_factories) {
+    const space::Space& space) {
     size_t number_of_blocks = space.getBlocks().size();
 
     for (const auto& [quanity_enum, _] : operators_) {
@@ -54,13 +58,7 @@ void ExactEigendecompositor::BuildSpectra(
         derivative.spectrum_.blocks.clear();
         derivative.spectrum_.blocks.reserve(number_of_blocks);
     }
-    BuildSpectraWithoutMatrices(
-        number_of_blocks,
-        operators_,
-        derivatives_operators_,
-        space,
-        converter,
-        data_structure_factories);
+    BuildSpectraWithoutMatrices(number_of_blocks, operators_, derivatives_operators_, space);
 }
 
 void ExactEigendecompositor::BuildSpectraWithoutMatrices(
@@ -69,9 +67,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
     const std::map<
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
-    const space::Space& space,
-    const lexicographic::IndexConverter& converter,
-    quantum::linear_algebra::FactoriesList data_structure_factories) {
+    const space::Space& space) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
             unitary_transformation_matrix;
@@ -81,8 +77,8 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             auto hamiltonian_submatrix = Submatrix(
                 space.getBlocks()[block],
                 *operators_.at(common::Energy),
-                converter,
-                data_structure_factories);
+                converter_,
+                factories_list_);
             auto pair = Subspectrum::energy(hamiltonian_submatrix);
             energy.spectrum_.blocks.emplace_back(std::move(pair.first));
             unitary_transformation_matrix = std::move(pair.second);
@@ -96,8 +92,8 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             auto non_hamiltonian_submatrix = Submatrix(
                 space.getBlocks()[block],
                 *operators_.at(quantity_enum),
-                converter,
-                data_structure_factories);
+                converter_,
+                factories_list_);
             quantity.spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
             quantity.matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
@@ -107,8 +103,8 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             auto derivative_submatrix = Submatrix(
                 space.getBlocks()[block],
                 *derivatives_operators_.at(pair),
-                converter,
-                data_structure_factories);
+                converter_,
+                factories_list_);
             derivative.spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
             derivative.matrix_.blocks.emplace_back(std::move(derivative_submatrix));

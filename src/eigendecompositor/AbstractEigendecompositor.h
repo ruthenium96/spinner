@@ -14,9 +14,7 @@ class AbstractEigendecompositor {
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
-        const space::Space& space,
-        const lexicographic::IndexConverter& converter,
-        quantum::linear_algebra::FactoriesList data_structure_factories) = 0;
+        const space::Space& space) = 0;
 
     virtual const Spectrum& getSpectrum(common::QuantityEnum) const = 0;
     virtual const Matrix& getMatrix(common::QuantityEnum) const = 0;
