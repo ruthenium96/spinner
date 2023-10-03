@@ -27,12 +27,14 @@ class Model {
         getOperator(common::QuantityEnum) const;
     std::optional<std::shared_ptr<const operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
-    const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>&
-    getOperators() const;
+
+    // These methods are not 'const' because they return non-const pointers.
+    const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>& getOperators();
     const std::map<
         std::pair<common::QuantityEnum, symbols::SymbolName>,
         std::shared_ptr<operators::Operator>>&
-    getOperatorDerivatives() const;
+    getOperatorDerivatives();
+
     const lexicographic::IndexConverter& getIndexConverter() const;
 
   private:

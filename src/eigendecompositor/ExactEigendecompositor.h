@@ -12,11 +12,11 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
         lexicographic::IndexConverter converter,
         quantum::linear_algebra::FactoriesList factories_list);
     void BuildSpectra(
-        const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>&
+        const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-            std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
+            std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
         const space::Space& space) override;
 
     const Spectrum& getSpectrum(common::QuantityEnum) const override;
@@ -34,11 +34,11 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
         derivatives_map_;
     void BuildSpectraWithoutMatrices(
         size_t number_of_blocks,
-        const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>&
+        const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-            std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
+            std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
         const space::Space& space);
 };
 

@@ -31,10 +31,11 @@ const Matrix& ExactEigendecompositor::getMatrixDerivative(
 }
 
 void ExactEigendecompositor::BuildSpectra(
-    const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>& operators_,
+    const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+        operators_,
     const std::map<
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-        std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
+        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
     const space::Space& space) {
     size_t number_of_blocks = space.getBlocks().size();
 
@@ -63,10 +64,11 @@ void ExactEigendecompositor::BuildSpectra(
 
 void ExactEigendecompositor::BuildSpectraWithoutMatrices(
     size_t number_of_blocks,
-    const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>& operators_,
+    const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+        operators_,
     const std::map<
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-        std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
+        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
     const space::Space& space) {
     for (size_t block = 0; block < number_of_blocks; ++block) {
         std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>

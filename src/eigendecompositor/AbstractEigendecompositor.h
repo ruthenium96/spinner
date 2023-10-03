@@ -9,11 +9,11 @@ namespace eigendecompositor {
 class AbstractEigendecompositor {
   public:
     virtual void BuildSpectra(
-        const std::map<common::QuantityEnum, std::shared_ptr<model::operators::Operator>>&
+        const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-            std::shared_ptr<model::operators::Operator>>& derivatives_operators_,
+            std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
         const space::Space& space) = 0;
 
     virtual const Spectrum& getSpectrum(common::QuantityEnum) const = 0;

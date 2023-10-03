@@ -173,8 +173,7 @@ Model::getOperator(common::QuantityEnum quantity_enum) const {
     return std::nullopt;
 }
 
-const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>&
-Model::getOperators() const {
+const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>& Model::getOperators() {
     return operators_map_;
 }
 
@@ -189,7 +188,7 @@ std::optional<std::shared_ptr<const operators::Operator>> Model::getOperatorDeri
 
 const std::
     map<std::pair<common::QuantityEnum, symbols::SymbolName>, std::shared_ptr<operators::Operator>>&
-    Model::getOperatorDerivatives() const {
+    Model::getOperatorDerivatives() {
     return derivatives_map_;
 }
 
