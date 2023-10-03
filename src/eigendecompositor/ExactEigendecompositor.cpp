@@ -82,8 +82,6 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             energy.spectrum_.blocks.emplace_back(std::move(energy_spectrum));
             energy.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
 
-            std::cout << "I was here!" << std::endl;
-
             continue;
         }
 

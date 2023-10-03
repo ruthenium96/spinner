@@ -122,20 +122,8 @@ void Runner::BuildMuSquaredWorker() {
         double g_factor = getModel().getNumericalWorker().getGFactorParameters()->at(0);
         auto s_squared_vector = dataStructuresFactories_.createVector();
 
-        if (getModel().is_s_squared_initialized()) {
-            for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
-                s_squared_vector->concatenate_with(subspectrum.raw_data);
-            }
-        } else {
-            // TODO: explicitly check if blockproperties have total_mult
-            for (const auto& subspectrum : getSpectrum(common::Energy).blocks) {
-                double mult = subspectrum.properties.total_mult.value();
-                double spin = (mult - 1) / 2.0;
-                double s_squared_value = spin * (spin + 1);
-                s_squared_vector->add_identical_values(
-                    subspectrum.raw_data->size(),
-                    s_squared_value);
-            }
+        for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
+            s_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 
         magnetic_susceptibility_worker =
