@@ -30,9 +30,7 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
         override;
 
   protected:
-    common::Quantity energy;
-    std::optional<common::Quantity> s_squared;
-    std::optional<common::Quantity> g_sz_squared;
+    std::map<common::QuantityEnum, common::Quantity> quantities_map_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, common::Quantity>
         derivatives_map_;
     void BuildSpectraWithoutMatrices(

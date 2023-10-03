@@ -5,27 +5,11 @@
 namespace eigendecompositor {
 
 const Matrix& ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        return energy.matrix_;
-    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return s_squared->matrix_;
-    } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
-        return g_sz_squared->matrix_;
-    }
-    throw std::invalid_argument("There is no such matrix");
-    assert(0);
+    return quantities_map_.at(quantity_enum).matrix_;
 }
 
 const Spectrum& ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::QuantityEnum::Energy) {
-        return energy.spectrum_;
-    } else if (quantity_enum == common::QuantityEnum::S_total_squared) {
-        return s_squared->spectrum_;
-    } else if (quantity_enum == common::QuantityEnum::gSz_total_squared) {
-        return g_sz_squared->spectrum_;
-    }
-    throw std::invalid_argument("There is no such spectrum");
-    assert(0);
+    return quantities_map_.at(quantity_enum).spectrum_;
 }
 
 const Spectrum& ExactEigendecompositor::getSpectrumDerivative(
@@ -50,15 +34,9 @@ void ExactEigendecompositor::BuildSpectra(
     quantum::linear_algebra::FactoriesList data_structure_factories) {
     size_t number_of_blocks = space.getBlocks().size();
 
-    energy.spectrum_.blocks.clear();
-    energy.spectrum_.blocks.reserve(number_of_blocks);
-    if (s_squared.has_value()) {
-        s_squared->spectrum_.blocks.clear();
-        s_squared->spectrum_.blocks.reserve(number_of_blocks);
-    }
-    if (g_sz_squared.has_value()) {
-        g_sz_squared->spectrum_.blocks.clear();
-        g_sz_squared->spectrum_.blocks.reserve(number_of_blocks);
+    for (auto& [_, quantity_] : quantities_map_) {
+        quantity_.spectrum_.blocks.clear();
+        quantity_.spectrum_.blocks.reserve(number_of_blocks);
     }
     for (auto& [_, derivative] : derivatives_map_) {
         derivative.spectrum_.blocks.clear();
@@ -87,6 +65,7 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             unitary_transformation_matrix;
 
         {
+            auto& energy = quantities_map_[common::Energy];
             auto hamiltonian_submatrix = Submatrix(
                 space.getBlocks()[block],
                 *operators_.at(common::Energy),
@@ -98,26 +77,18 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             energy.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
         }
 
-        if (s_squared.has_value()) {
+        for (auto& [quantity_enum, quantity] : quantities_map_) {
+            if (quantity_enum == common::Energy) {
+                continue;
+            }
             auto non_hamiltonian_submatrix = Submatrix(
                 space.getBlocks()[block],
-                *operators_.at(common::S_total_squared),
+                *operators_.at(quantity_enum),
                 converter,
                 data_structure_factories);
-            s_squared->spectrum_.blocks.emplace_back(
+            quantity.spectrum_.blocks.emplace_back(
                 Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
-            s_squared->matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
-        }
-
-        if (g_sz_squared.has_value()) {
-            auto non_hamiltonian_submatrix = Submatrix(
-                space.getBlocks()[block],
-                *operators_.at(common::gSz_total_squared),
-                converter,
-                data_structure_factories);
-            g_sz_squared->spectrum_.blocks.emplace_back(
-                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
-            g_sz_squared->matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
+            quantity.matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
         }
 
         for (auto& [pair, derivative] : derivatives_map_) {
@@ -134,11 +105,11 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
 }
 
 void ExactEigendecompositor::initializeSSquared() {
-    s_squared = common::Quantity();
+    quantities_map_[common::S_total_squared] = common::Quantity();
 }
 
 void ExactEigendecompositor::initializeGSzSquared() {
-    g_sz_squared = common::Quantity();
+    quantities_map_[common::gSz_total_squared] = common::Quantity();
 }
 
 void ExactEigendecompositor::initializeDerivative(
