@@ -38,16 +38,50 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     optimizationList_(std::move(optimizationList)) {
     // this function throw an exception if ModelInput and OptimizationList are inconsistent
     checkModelOptimizationListConsistence(model_, optimizationList_);
+
+    operators_for_explicit_construction_[common::Energy] =
+        model_.getOperator(common::Energy).value();
+    if (getOptimizationList().isSSquaredTransformed()) {
+        return;
+    }
+    if (getModel().is_g_sz_squared_initialized()
+        && (!getModel().getSymbolicWorker().isAllGFactorsEqual()
+            || getModel().getSymbolicWorker().isZFSInitialized())) {
+        operators_for_explicit_construction_[common::gSz_total_squared] =
+            model_.getOperator(common::gSz_total_squared).value();
+        // TODO: when there is no Sz <-> -Sz symmetry, also \sum g_aS_{az} required
+    } else {
+        // TODO: some tests want to calculate S^2 values. Can we fix it?
+        operators_for_explicit_construction_[common::S_total_squared] =
+            model_.getOperator(common::S_total_squared).value();
+    }
 }
 
 void ConsistentModelOptimizationList::InitializeDerivatives() {
-    model_.InitializeDerivatives();
+    for (const auto& [quanity_enum, shared_ptr] : model_.getOperators()) {
+        operators_for_explicit_construction_[quanity_enum] = shared_ptr;
+    }
+    for (const auto& [pair, shared_ptr] : model_.getOperatorDerivatives()) {
+        derivatives_for_explicit_construction_[pair] = shared_ptr;
+    }
 }
 
 void ConsistentModelOptimizationList::setNewValueToChangeableSymbol(
     const model::symbols::SymbolName& symbol_name,
     double new_value) {
     model_.getNumericalWorker().setNewValueToChangeableSymbol(symbol_name, new_value);
+}
+
+const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+ConsistentModelOptimizationList::getOperatorsForExplicitConstruction() const {
+    return operators_for_explicit_construction_;
+}
+
+const std::map<
+    std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+    std::shared_ptr<const model::operators::Operator>>&
+ConsistentModelOptimizationList::getDerivativeOperatorsForExplicitConstruction() const {
+    return derivatives_for_explicit_construction_;
 }
 }  // namespace runner
 

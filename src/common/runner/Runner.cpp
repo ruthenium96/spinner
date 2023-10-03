@@ -53,8 +53,8 @@ const space::Space& runner::Runner::getSpace() const {
 
 void Runner::BuildSpectra() {
     eigendecompositor_->BuildSpectra(
-        getModel().getOperators(),
-        getModel().getOperatorDerivatives(),
+        consistentModelOptimizationList_.getOperatorsForExplicitConstruction(),
+        consistentModelOptimizationList_.getDerivativeOperatorsForExplicitConstruction(),
         getSpace());
 }
 
