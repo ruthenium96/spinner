@@ -10,8 +10,6 @@ class Model {
   public:
     explicit Model(ModelInput modelInput);
 
-    void InitializeDerivatives();
-
     // TODO: remove it?
     const symbols::SymbolicWorker& getSymbolicWorker() const;
     const symbols::NumericalWorker& getNumericalWorker() const;

@@ -12,38 +12,20 @@ Model::Model(ModelInput modelInput) :
     numericalWorker_(modelInput.modifySymbolicWorker(), modelInput.getMults().size()),
     converter_(modelInput.getMults()) {
     operators_map_[common::Energy] = std::make_shared<operators::Operator>();
-    // todo: I guess, we need to move these initializations to ConsistentModelOptimizationList,
-    //  because here we do not know about S2-transformation.
-    // TODO: this strange check need only because some tests do not initialize g factors,
-    //  but want to calculate S^2 values. Fix it.
-    if (getSymbolicWorker().isGFactorInitialized()
-        && (!getSymbolicWorker().isAllGFactorsEqual() || getSymbolicWorker().isZFSInitialized())) {
+    InitializeSSquared();
+    if (getSymbolicWorker().isGFactorInitialized()) {
         InitializeGSzSquared();
-        // TODO: when there is no Sz <-> -Sz symmetry, also \sum g_aS_{az} required
-    } else {
-        InitializeSSquared();
+        InitializeGSzSquaredDerivatives();
     }
 
     if (getSymbolicWorker().isZFSInitialized()) {
         InitializeZeroFieldSplitting();
+        InitializeZeroFieldSplittingDerivative();
     }
 
     if (getSymbolicWorker().isIsotropicExchangeInitialized()) {
         InitializeIsotropicExchange();
-    }
-}
-
-void Model::InitializeDerivatives() {
-    if (!getSymbolicWorker().isAllGFactorsEqual()) {
-        InitializeGSzSquaredDerivatives();
-    }
-
-    if (getSymbolicWorker().isIsotropicExchangeInitialized()) {
         InitializeIsotropicExchangeDerivatives();
-    }
-
-    if (getSymbolicWorker().isZFSInitialized()) {
-        InitializeZeroFieldSplittingDerivative();
     }
 }
 
