@@ -43,16 +43,6 @@ Runner::Runner(
         consistentModelOptimizationList_,
         dataStructuresFactories)) {
     eigendecompositor_ = std::make_unique<eigendecompositor::ExactEigendecompositor>();
-    if (getModel().is_s_squared_initialized()) {
-        eigendecompositor_->initializeSSquared();
-    }
-    if (getModel().is_g_sz_squared_initialized()) {
-        eigendecompositor_->initializeGSzSquared();
-    }
-
-    //    if (!symbols_.isGFactorInitialized()) {
-    //        throw std::length_error("g factor parameters have not been initialized");
-    //    }
 }
 
 const space::Space& runner::Runner::getSpace() const {
@@ -345,23 +335,6 @@ double Runner::stepOfRegression(
 
 void Runner::initializeDerivatives() {
     consistentModelOptimizationList_.InitializeDerivatives();
-    if (getModel().is_isotropic_exchange_derivatives_initialized()) {
-        for (const auto& symbol :
-             getSymbolicWorker().getChangeableNames(model::symbols::SymbolTypeEnum::J)) {
-            eigendecompositor_->initializeDerivative(common::Energy, symbol);
-        }
-    }
-    if (getModel().is_g_sz_squared_derivatives_initialized()) {
-        for (const auto& symbol :
-             getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
-            eigendecompositor_->initializeDerivative(common::gSz_total_squared, symbol);
-        }
-    }
-    if (getModel().is_zero_field_splitting_initialized()) {
-        for (const auto& symbol : getSymbolicWorker().getChangeableNames(model::symbols::D)) {
-            eigendecompositor_->initializeDerivative(common::Energy, symbol);
-        }
-    }
 }
 
 const magnetic_susceptibility::MagneticSusceptibilityController&

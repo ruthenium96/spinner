@@ -34,6 +34,18 @@ void ExactEigendecompositor::BuildSpectra(
     quantum::linear_algebra::FactoriesList data_structure_factories) {
     size_t number_of_blocks = space.getBlocks().size();
 
+    for (const auto& [quanity_enum, _] : operators_) {
+        if (!quantities_map_.contains(quanity_enum)) {
+            quantities_map_[quanity_enum] = common::Quantity();
+        }
+    }
+
+    for (const auto& [pair, _] : derivatives_operators_) {
+        if (!derivatives_map_.contains(pair)) {
+            derivatives_map_[pair] = common::Quantity();
+        }
+    }
+
     for (auto& [_, quantity_] : quantities_map_) {
         quantity_.spectrum_.blocks.clear();
         quantity_.spectrum_.blocks.reserve(number_of_blocks);
@@ -102,20 +114,6 @@ void ExactEigendecompositor::BuildSpectraWithoutMatrices(
             derivative.matrix_.blocks.emplace_back(std::move(derivative_submatrix));
         }
     }
-}
-
-void ExactEigendecompositor::initializeSSquared() {
-    quantities_map_[common::S_total_squared] = common::Quantity();
-}
-
-void ExactEigendecompositor::initializeGSzSquared() {
-    quantities_map_[common::gSz_total_squared] = common::Quantity();
-}
-
-void ExactEigendecompositor::initializeDerivative(
-    common::QuantityEnum quantity_enum,
-    model::symbols::SymbolName symbol) {
-    derivatives_map_[{quantity_enum, symbol}] = common::Quantity();
 }
 
 }  // namespace eigendecompositor

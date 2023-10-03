@@ -24,10 +24,6 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
     const Matrix&
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
-    void initializeSSquared() override;
-    void initializeGSzSquared() override;
-    void initializeDerivative(common::QuantityEnum quantity_enum, model::symbols::SymbolName symbol)
-        override;
 
   protected:
     std::map<common::QuantityEnum, common::Quantity> quantities_map_;
