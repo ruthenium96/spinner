@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "src/eigendecompositor/ExactEigendecompositor.h"
+#include "src/eigendecompositor/ImplicitSSquareEigendecompositor.h"
 #include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
@@ -42,9 +43,17 @@ Runner::Runner(
     space_(space::optimization::OptimizedSpaceConstructor::construct(
         consistentModelOptimizationList_,
         dataStructuresFactories)) {
-    eigendecompositor_ = std::make_unique<eigendecompositor::ExactEigendecompositor>(
+    // TODO: move it from Runner
+    auto eigendecompositor = std::make_unique<eigendecompositor::ExactEigendecompositor>(
         getIndexConverter(),
         getDataStructuresFactories());
+    if (consistentModelOptimizationList_.getOptimizationList().isSSquaredTransformed()) {
+        eigendecompositor_ = std::make_unique<eigendecompositor::ImplicitSSquareEigendecompositor>(
+            std::move(eigendecompositor),
+            dataStructuresFactories_);
+    } else {
+        eigendecompositor_ = std::move(eigendecompositor);
+    }
 }
 
 const space::Space& runner::Runner::getSpace() const {
