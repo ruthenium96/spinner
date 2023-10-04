@@ -61,7 +61,7 @@ class NumericalWorker {
     std::vector<std::shared_ptr<TwoDNumericalParameters<double>>>
         numeric_isotropic_exchange_derivatives_;
 
-    const SymbolicWorker symbolicWorker_;
+    SymbolicWorker symbolicWorker_;
     size_t number_of_spins_;
 };
 

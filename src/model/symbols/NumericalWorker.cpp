@@ -265,7 +265,7 @@ NumericalWorker::constructGGDerivativeParameters(const SymbolName& symbol_name) 
 void NumericalWorker::setNewValueToChangeableSymbol(
     const SymbolName& symbol_name,
     double new_value) {
-    getSymbolicWorker().setNewValueToChangeableSymbol(symbol_name, new_value);
+    symbolicWorker_.setNewValueToChangeableSymbol(symbol_name, new_value);
 
     auto symbol_data = getSymbolicWorker().getSymbolData(symbol_name);
 
