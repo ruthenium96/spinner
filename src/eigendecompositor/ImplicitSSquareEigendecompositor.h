@@ -18,12 +18,14 @@ class ImplicitSSquareEigendecompositor: public AbstractEigendecompositor {
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
         const space::Space& space) override;
 
-    const Spectrum& getSpectrum(common::QuantityEnum anEnum) const override;
-    const Matrix& getMatrix(common::QuantityEnum anEnum) const override;
-    const Spectrum& getSpectrumDerivative(
+    std::optional<std::reference_wrapper<const Spectrum>>
+    getSpectrum(common::QuantityEnum anEnum) const override;
+    std::optional<std::reference_wrapper<const Matrix>>
+    getMatrix(common::QuantityEnum anEnum) const override;
+    std::optional<std::reference_wrapper<const Spectrum>> getSpectrumDerivative(
         common::QuantityEnum anEnum,
         const model::symbols::SymbolName& name) const override;
-    const Matrix& getMatrixDerivative(
+    std::optional<std::reference_wrapper<const Matrix>> getMatrixDerivative(
         common::QuantityEnum anEnum,
         const model::symbols::SymbolName& name) const override;
 

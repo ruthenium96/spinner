@@ -10,24 +10,38 @@ ExactEigendecompositor::ExactEigendecompositor(
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
-const Matrix& ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
-    return quantities_map_.at(quantity_enum).matrix_;
+std::optional<std::reference_wrapper<const Matrix>>
+ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+    if (quantities_map_.contains(quantity_enum)) {
+        return quantities_map_.at(quantity_enum).matrix_;
+    }
+    return std::nullopt;
 }
 
-const Spectrum& ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    return quantities_map_.at(quantity_enum).spectrum_;
+std::optional<std::reference_wrapper<const Spectrum>>
+ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
+    if (quantities_map_.contains(quantity_enum)) {
+        return quantities_map_.at(quantity_enum).spectrum_;
+    }
+    return std::nullopt;
 }
 
-const Spectrum& ExactEigendecompositor::getSpectrumDerivative(
+std::optional<std::reference_wrapper<const Spectrum>> ExactEigendecompositor::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    return derivatives_map_.at({quantity_enum, symbol}).spectrum_;
+    if (derivatives_map_.contains({quantity_enum, symbol})) {
+        return derivatives_map_.at({quantity_enum, symbol}).spectrum_;
+    }
+    return std::nullopt;
 }
 
-const Matrix& ExactEigendecompositor::getMatrixDerivative(
+std::optional<std::reference_wrapper<const Matrix>> ExactEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    return derivatives_map_.at({quantity_enum, symbol}).matrix_;
+    if (derivatives_map_.contains({quantity_enum, symbol})) {
+        return derivatives_map_.at({quantity_enum, symbol}).matrix_;
+    }
+    return std::nullopt;
 }
 
 void ExactEigendecompositor::BuildSpectra(

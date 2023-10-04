@@ -16,11 +16,13 @@ class AbstractEigendecompositor {
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
         const space::Space& space) = 0;
 
-    virtual const Spectrum& getSpectrum(common::QuantityEnum) const = 0;
-    virtual const Matrix& getMatrix(common::QuantityEnum) const = 0;
-    virtual const Spectrum&
+    virtual std::optional<std::reference_wrapper<const Spectrum>>
+        getSpectrum(common::QuantityEnum) const = 0;
+    virtual std::optional<std::reference_wrapper<const Matrix>>
+        getMatrix(common::QuantityEnum) const = 0;
+    virtual std::optional<std::reference_wrapper<const Spectrum>>
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
-    virtual const Matrix&
+    virtual std::optional<std::reference_wrapper<const Matrix>>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
 
     virtual ~AbstractEigendecompositor() = default;

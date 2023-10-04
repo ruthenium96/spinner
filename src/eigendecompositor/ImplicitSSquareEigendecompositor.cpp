@@ -24,7 +24,7 @@ void ImplicitSSquareEigendecompositor::BuildSpectra(
 
     eigendecompositor_->BuildSpectra(operators_, derivatives_operators_, space);
 
-    for (const auto& subspectrum_energy : getSpectrum(common::Energy).blocks) {
+    for (const auto& subspectrum_energy : getSpectrum(common::Energy)->get().blocks) {
         double mult = subspectrum_energy.properties.total_mult.value();
         double spin = (mult - 1) / 2.0;
         double s_squared_value = spin * (spin + 1);
@@ -38,7 +38,7 @@ void ImplicitSSquareEigendecompositor::BuildSpectra(
     }
 }
 
-const Spectrum&
+std::optional<std::reference_wrapper<const Spectrum>>
 ImplicitSSquareEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::S_total_squared) {
         return s_square_implicit_.spectrum_;
@@ -46,24 +46,31 @@ ImplicitSSquareEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
 
-const Matrix&
+std::optional<std::reference_wrapper<const Matrix>>
 ImplicitSSquareEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::S_total_squared) {
-        throw std::invalid_argument(
-            "ImplicitSSquareEigendecompositor cannot return S_total_squared matrix");
+        return std::nullopt;
     }
     return eigendecompositor_->getMatrix(quantity_enum);
 }
 
-const Spectrum& ImplicitSSquareEigendecompositor::getSpectrumDerivative(
+std::optional<std::reference_wrapper<const Spectrum>>
+ImplicitSSquareEigendecompositor::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
+    if (quantity_enum == common::S_total_squared) {
+        return std::nullopt;
+    }
     return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
 }
 
-const Matrix& ImplicitSSquareEigendecompositor::getMatrixDerivative(
+std::optional<std::reference_wrapper<const Matrix>>
+ImplicitSSquareEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
+    if (quantity_enum == common::S_total_squared) {
+        return std::nullopt;
+    }
     return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
 }
 }  // namespace eigendecompositor
