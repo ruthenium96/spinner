@@ -12,7 +12,8 @@ class EigenDenseVector: public AbstractDenseVector {
     void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) override;
     void add_identical_values(size_t number, double value) override;
     void subtract_minimum() override;
-    std::unique_ptr<AbstractDenseVector> divide_and_wise_exp(double denominator) const override;
+    void wise_exp() override;
+    std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const override;
     double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
     std::unique_ptr<AbstractDenseVector>
     element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const override;

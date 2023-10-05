@@ -29,14 +29,17 @@ void EigenDenseVector::subtract_minimum() {
     vector_.array() -= minimum;
 }
 
-std::unique_ptr<AbstractDenseVector>
-EigenDenseVector::divide_and_wise_exp(double denominator) const {
+std::unique_ptr<AbstractDenseVector> EigenDenseVector::multiply_by(double multiplier) const {
     auto answer = std::make_unique<EigenDenseVector>();
     answer->resize(vector_.size());
 
-    answer->vector_.array() = exp(vector_.array() / denominator);
+    answer->vector_.array() = vector_.array() * multiplier;
 
     return answer;
+}
+
+void EigenDenseVector::wise_exp() {
+    vector_.array() = exp(vector_.array());
 }
 
 double EigenDenseVector::dot(const std::unique_ptr<AbstractDenseVector>& rhs) const {
