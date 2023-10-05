@@ -31,7 +31,7 @@ class ImplicitSSquareEigendecompositor: public AbstractEigendecompositor {
 
   private:
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor_;
-    common::Quantity s_square_implicit_;
+    std::optional<common::Quantity> s_square_implicit_;
     quantum::linear_algebra::FactoriesList factories_list_;
 };
 

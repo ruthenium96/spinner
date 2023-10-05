@@ -24,24 +24,31 @@ void ImplicitSSquareEigendecompositor::BuildSpectra(
 
     eigendecompositor_->BuildSpectra(operators_, derivatives_operators_, space);
 
-    for (const auto& subspectrum_energy : getSpectrum(common::Energy)->get().blocks) {
-        double mult = subspectrum_energy.properties.total_mult.value();
-        double spin = (mult - 1) / 2.0;
-        double s_squared_value = spin * (spin + 1);
-        size_t size = subspectrum_energy.raw_data->size();
+    if (!s_square_implicit_.has_value()) {
+        const auto& energy_spectrum = eigendecompositor_->getSpectrum(common::Energy)->get();
 
-        auto raw_data = factories_list_.createVector();
-        raw_data->add_identical_values(size, s_squared_value);
-        s_square_implicit_.spectrum_.blocks.emplace_back(
-            std::move(raw_data),
-            subspectrum_energy.properties);
+        s_square_implicit_ = common::Quantity();
+        s_square_implicit_.value().spectrum_.blocks.reserve(energy_spectrum.blocks.size());
+
+        for (const auto& subspectrum_energy : energy_spectrum.blocks) {
+            double mult = subspectrum_energy.properties.total_mult.value();
+            double spin = (mult - 1) / 2.0;
+            double s_squared_value = spin * (spin + 1);
+            size_t size = subspectrum_energy.raw_data->size();
+
+            auto raw_data = factories_list_.createVector();
+            raw_data->add_identical_values(size, s_squared_value);
+            s_square_implicit_.value().spectrum_.blocks.emplace_back(
+                std::move(raw_data),
+                subspectrum_energy.properties);
+        }
     }
 }
 
 std::optional<std::reference_wrapper<const Spectrum>>
 ImplicitSSquareEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::S_total_squared) {
-        return s_square_implicit_.spectrum_;
+        return s_square_implicit_.value().spectrum_;
     }
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
