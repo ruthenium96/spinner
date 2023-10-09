@@ -8,13 +8,13 @@
 namespace eigendecompositor {
 class AbstractEigendecompositor {
   public:
-    virtual void BuildSpectra(
+    void BuildSpectra(
         const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
-            operators_,
+            operators,
         const std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-            std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
-        const space::Space& space) = 0;
+            std::shared_ptr<const model::operators::Operator>>& derivatives_operators,
+        const space::Space& space);
 
     virtual std::optional<std::reference_wrapper<const Spectrum>>
         getSpectrum(common::QuantityEnum) const = 0;
@@ -26,6 +26,18 @@ class AbstractEigendecompositor {
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
 
     virtual ~AbstractEigendecompositor() = default;
+
+    virtual void initialize() = 0;
+    virtual std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    BuildSubspectra(
+        std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+            operators_to_calculate,
+        std::map<
+            std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+            std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
+        size_t number_of_block,
+        const space::Subspace& subspace) = 0;
+    virtual void finalize() = 0;
 };
 
 }  // namespace eigendecompositor
