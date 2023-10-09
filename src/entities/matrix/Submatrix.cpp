@@ -10,6 +10,12 @@ std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix) {
 }
 
 Submatrix::Submatrix(
+    std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
+    BlockProperties properties_) :
+    raw_data(std::move(raw_data_)),
+    properties(properties_) {}
+
+Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter,

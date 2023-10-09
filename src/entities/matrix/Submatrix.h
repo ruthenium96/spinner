@@ -14,6 +14,10 @@ struct Submatrix {
     Submatrix() = delete;
 
     Submatrix(
+        std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
+        BlockProperties properties_);
+
+    Submatrix(
         const space::Subspace& subspace,
         const model::operators::Operator& new_operator,
         const lexicographic::IndexConverter& converter,
