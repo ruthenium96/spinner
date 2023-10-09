@@ -1,5 +1,6 @@
 #include "ExactEigendecompositor.h"
 
+#include <cassert>
 #include <utility>
 
 namespace eigendecompositor {
@@ -10,18 +11,62 @@ ExactEigendecompositor::ExactEigendecompositor(
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
+std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+ExactEigendecompositor::BuildSubspectra(
+    std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+        operators_to_calculate,
+    std::map<
+        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
+    size_t number_of_block,
+    const space::Subspace& subspace) {
+    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+        mb_unitary_transformation_matrix;
+
+    auto hamiltonian_submatrix = Submatrix(
+        subspace,
+        *operators_to_calculate.at(common::Energy),
+        converter_,
+        factories_list_);
+
+    if (operators_to_calculate.size() == 1 && derivatives_operators_to_calculate.empty()) {
+        // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
+        auto energy_spectrum = energy_subspectrum_eigenvalues_only(hamiltonian_submatrix);
+        energy_.spectrum_.blocks.emplace_back(std::move(energy_spectrum));
+    } else {
+        auto pair = energy_subspectrum_with_eigenvectors(hamiltonian_submatrix);
+        mb_unitary_transformation_matrix = std::move(pair.second);
+        energy_.spectrum_.blocks.emplace_back(std::move(pair.first));
+    }
+    energy_.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
+    assert(energy_.spectrum_.blocks.size() == number_of_block + 1);
+    assert(energy_.matrix_.blocks.size() == number_of_block + 1);
+
+    // delete energy operator, because we just have calculated energy
+    std::erase_if(operators_to_calculate, [](auto p) { return p.first == common::Energy; });
+
+    return mb_unitary_transformation_matrix;
+}
+
+void ExactEigendecompositor::initialize() {
+    energy_.matrix_.blocks.clear();
+    energy_.spectrum_.blocks.clear();
+}
+
+void ExactEigendecompositor::finalize() {}
+
 std::optional<std::reference_wrapper<const Matrix>>
 ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
-    if (quantities_map_.contains(quantity_enum)) {
-        return quantities_map_.at(quantity_enum).matrix_;
+    if (quantity_enum == common::Energy) {
+        return energy_.matrix_;
     }
     return std::nullopt;
 }
 
 std::optional<std::reference_wrapper<const Spectrum>>
 ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantities_map_.contains(quantity_enum)) {
-        return quantities_map_.at(quantity_enum).spectrum_;
+    if (quantity_enum == common::Energy) {
+        return energy_.spectrum_;
     }
     return std::nullopt;
 }
@@ -29,117 +74,33 @@ ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
 std::optional<std::reference_wrapper<const Spectrum>> ExactEigendecompositor::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    if (derivatives_map_.contains({quantity_enum, symbol})) {
-        return derivatives_map_.at({quantity_enum, symbol}).spectrum_;
-    }
     return std::nullopt;
 }
 
 std::optional<std::reference_wrapper<const Matrix>> ExactEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    if (derivatives_map_.contains({quantity_enum, symbol})) {
-        return derivatives_map_.at({quantity_enum, symbol}).matrix_;
-    }
     return std::nullopt;
 }
 
-void ExactEigendecompositor::BuildSpectra(
-    const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
-        operators_,
-    const std::map<
-        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
-    const space::Space& space) {
-    size_t number_of_blocks = space.getBlocks().size();
+Subspectrum ExactEigendecompositor::energy_subspectrum_eigenvalues_only(
+    const Submatrix& hamiltonian_submatrix) {
+    auto eigenvalues = hamiltonian_submatrix.raw_data->diagonalizeValues();
 
-    for (const auto& [quanity_enum, _] : operators_) {
-        if (!quantities_map_.contains(quanity_enum)) {
-            quantities_map_[quanity_enum] = common::Quantity();
-        }
-    }
+    auto energy_subspectrum = Subspectrum(std::move(eigenvalues), hamiltonian_submatrix.properties);
 
-    for (const auto& [pair, _] : derivatives_operators_) {
-        if (!derivatives_map_.contains(pair)) {
-            derivatives_map_[pair] = common::Quantity();
-        }
-    }
-
-    for (auto& [_, quantity_] : quantities_map_) {
-        quantity_.spectrum_.blocks.clear();
-        quantity_.spectrum_.blocks.reserve(number_of_blocks);
-    }
-    for (auto& [_, derivative] : derivatives_map_) {
-        derivative.spectrum_.blocks.clear();
-        derivative.spectrum_.blocks.reserve(number_of_blocks);
-    }
-    BuildSpectraWithoutMatrices(number_of_blocks, operators_, derivatives_operators_, space);
+    return std::move(energy_subspectrum);
 }
 
-void ExactEigendecompositor::BuildSpectraWithoutMatrices(
-    size_t number_of_blocks,
-    const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
-        operators_,
-    const std::map<
-        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
-    const space::Space& space) {
-    for (size_t block = 0; block < number_of_blocks; ++block) {
-        if (operators_.size() + derivatives_operators_.size() == 1) {
-            auto& energy = quantities_map_[common::Energy];
-            auto hamiltonian_submatrix = Submatrix(
-                space.getBlocks()[block],
-                *operators_.at(common::Energy),
-                converter_,
-                factories_list_);
-            auto energy_spectrum = Subspectrum::energy_without_eigenvectors(hamiltonian_submatrix);
-            energy.spectrum_.blocks.emplace_back(std::move(energy_spectrum));
-            energy.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
+std::pair<Subspectrum, std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+ExactEigendecompositor::energy_subspectrum_with_eigenvectors(
+    const Submatrix& hamiltonian_submatrix) {
+    auto eigencouple = hamiltonian_submatrix.raw_data->diagonalizeValuesVectors();
 
-            continue;
-        }
+    auto energy_subspectrum =
+        Subspectrum(std::move(eigencouple.eigenvalues), hamiltonian_submatrix.properties);
 
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
-            unitary_transformation_matrix;
-
-        {
-            auto& energy = quantities_map_[common::Energy];
-            auto hamiltonian_submatrix = Submatrix(
-                space.getBlocks()[block],
-                *operators_.at(common::Energy),
-                converter_,
-                factories_list_);
-            auto pair = Subspectrum::energy(hamiltonian_submatrix);
-            energy.spectrum_.blocks.emplace_back(std::move(pair.first));
-            unitary_transformation_matrix = std::move(pair.second);
-            energy.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
-        }
-
-        for (auto& [quantity_enum, quantity] : quantities_map_) {
-            if (quantity_enum == common::Energy) {
-                continue;
-            }
-            auto non_hamiltonian_submatrix = Submatrix(
-                space.getBlocks()[block],
-                *operators_.at(quantity_enum),
-                converter_,
-                factories_list_);
-            quantity.spectrum_.blocks.emplace_back(
-                Subspectrum::non_energy(non_hamiltonian_submatrix, unitary_transformation_matrix));
-            quantity.matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
-        }
-
-        for (auto& [pair, derivative] : derivatives_map_) {
-            auto derivative_submatrix = Submatrix(
-                space.getBlocks()[block],
-                *derivatives_operators_.at(pair),
-                converter_,
-                factories_list_);
-            derivative.spectrum_.blocks.emplace_back(
-                Subspectrum::non_energy(derivative_submatrix, unitary_transformation_matrix));
-            derivative.matrix_.blocks.emplace_back(std::move(derivative_submatrix));
-        }
-    }
+    return {std::move(energy_subspectrum), std::move(eigencouple.eigenvectors)};
 }
 
 }  // namespace eigendecompositor
