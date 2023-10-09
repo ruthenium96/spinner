@@ -12,6 +12,7 @@ class ArmaSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
     void resize(uint32_t matrix_in_space_basis_size_i);
     EigenCouple diagonalizeValuesVectors() const override;
     std::unique_ptr<AbstractDenseVector> diagonalizeValues() const override;
+    std::unique_ptr<AbstractDiagonalizableMatrix> multiply_by(double multiplier) const override;
     uint32_t size() const override;
     double at(uint32_t i, uint32_t j) const override;
     void print(std::ostream& os) const override;

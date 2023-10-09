@@ -27,6 +27,14 @@ std::unique_ptr<AbstractDenseVector> ArmaSparseDiagonalizableMatrix::diagonalize
     return logic.diagonalizeValues(*this);
 }
 
+std::unique_ptr<AbstractDiagonalizableMatrix>
+ArmaSparseDiagonalizableMatrix::multiply_by(double multiplier) const {
+    auto answer = std::make_unique<ArmaSparseDiagonalizableMatrix>();
+    answer->resize(size());
+    answer->sparseDiagonalizableMatrix_ = sparseDiagonalizableMatrix_ * multiplier;
+    return answer;
+}
+
 uint32_t ArmaSparseDiagonalizableMatrix::size() const {
     return sparseDiagonalizableMatrix_.n_rows;
 }

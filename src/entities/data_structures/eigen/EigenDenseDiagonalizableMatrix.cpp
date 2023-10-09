@@ -23,6 +23,16 @@ std::unique_ptr<AbstractDenseVector> EigenDenseDiagonalizableMatrix::diagonalize
     return eigenLogic.diagonalizeValues(*this);
 }
 
+std::unique_ptr<AbstractDiagonalizableMatrix>
+EigenDenseDiagonalizableMatrix::multiply_by(double multiplier) const {
+    auto answer = std::make_unique<EigenDenseDiagonalizableMatrix>();
+    answer->resize(size());
+
+    answer->denseDiagonalizableMatrix_ = denseDiagonalizableMatrix_ * multiplier;
+
+    return answer;
+}
+
 uint32_t EigenDenseDiagonalizableMatrix::size() const {
     return denseDiagonalizableMatrix_.cols();
 }
