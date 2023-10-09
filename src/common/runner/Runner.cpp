@@ -4,7 +4,9 @@
 #include <utility>
 
 #include "src/eigendecompositor/ExactEigendecompositor.h"
+#include "src/eigendecompositor/ExplicitQuantitiesEigendecompositor.h"
 #include "src/eigendecompositor/ImplicitSSquareEigendecompositor.h"
+#include "src/eigendecompositor/OneSymbolInHamiltonianEigendecompositor.h"
 #include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
@@ -76,6 +78,11 @@ Runner::Runner(
             std::move(eigendecompositor),
             dataStructuresFactories_);
     }
+
+    eigendecompositor = std::make_unique<eigendecompositor::ExplicitQuantitiesEigendecompositor>(
+        std::move(eigendecompositor),
+        getIndexConverter(),
+        getDataStructuresFactories());
 
     eigendecompositor_ = std::move(eigendecompositor);
 }
