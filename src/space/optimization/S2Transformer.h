@@ -29,9 +29,18 @@ class S2Transformer {
         const space::Subspace& subspace) const;
     double total_CG_coefficient(
         const spin_algebra::SSquaredState& s_squared_state,
-        const std::vector<double>& projections) const;
+        const std::vector<double>& projections,
+        std::unordered_map<uint64_t, double>& cached_CGs) const;
     std::vector<double> construct_projections(uint32_t lex_index) const;
-    static double hashed_clebsh_gordan(double l1, double l2, double l3, double m1, double m2);
+    double hashed_clebsh_gordan(
+        double l1,
+        double l2,
+        double l3,
+        double m1,
+        double m2,
+        std::unordered_map<uint64_t, double>& cached_CGs) const;
+
+    static uint64_t to_key(double l1, double l2, double l3, double m1, double m2) noexcept;
 
     const lexicographic::IndexConverter converter_;
     const quantum::linear_algebra::FactoriesList factories_;
