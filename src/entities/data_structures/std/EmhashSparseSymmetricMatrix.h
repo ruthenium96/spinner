@@ -8,6 +8,8 @@ namespace quantum::linear_algebra {
 
 class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
   public:
+    using Map = emhash8::HashMap<uint32_t, double>;
+
     void add_to_position(double value, uint32_t i, uint32_t j) override;
     uint32_t size() const override;
     double at(uint32_t i, uint32_t j) const noexcept override;
@@ -17,7 +19,7 @@ class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
 
   private:
     size_t size_;
-    emhash8::HashMap<uint32_t, emhash8::HashMap<uint32_t, double>> hashmap_;
+    emhash8::HashMap<uint32_t, Map> hashmap_;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_EMHASHSPARSESYMMETRICMATRIX_H

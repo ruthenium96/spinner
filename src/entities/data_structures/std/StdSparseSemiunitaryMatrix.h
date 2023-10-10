@@ -13,6 +13,8 @@
 namespace quantum::linear_algebra {
 class StdSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   public:
+    using Map = emhash8::HashMap<uint32_t, double>;
+
     StdSparseSemiunitaryMatrix() = default;
     StdSparseSemiunitaryMatrix(const StdSparseSemiunitaryMatrix&) = delete;
     StdSparseSemiunitaryMatrix& operator=(const StdSparseSemiunitaryMatrix&) = delete;
@@ -47,7 +49,7 @@ class StdSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
         std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const override;
 
   private:
-    std::vector<emhash8::HashMap<uint32_t, double>> basis_;
+    std::vector<Map> basis_;
     uint32_t rows_;
     // c-like pointers are necessary to avoid double-free error
     static const StdSparseSemiunitaryMatrix*

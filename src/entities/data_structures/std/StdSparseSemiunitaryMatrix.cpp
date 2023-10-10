@@ -6,12 +6,12 @@
 namespace quantum::linear_algebra {
 
 struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
-    emhash8::HashMap<uint32_t, double>::const_iterator iter;
-    const emhash8::HashMap<uint32_t, double>::const_iterator end;
+    StdSparseSemiunitaryMatrix::Map::const_iterator iter;
+    const StdSparseSemiunitaryMatrix::Map::const_iterator end;
 
     IteratorStdImpl(
-        emhash8::HashMap<uint32_t, double>::const_iterator iter1,
-        emhash8::HashMap<uint32_t, double>::const_iterator iter2) :
+        StdSparseSemiunitaryMatrix::Map::const_iterator iter1,
+        StdSparseSemiunitaryMatrix::Map::const_iterator iter2) :
         iter(iter1),
         end(iter2) {}
 

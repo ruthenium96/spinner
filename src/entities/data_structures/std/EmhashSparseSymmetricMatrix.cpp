@@ -4,7 +4,7 @@ namespace quantum::linear_algebra {
 
 void EmhashSparseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     if (!hashmap_.contains(i)) {
-        hashmap_.emplace(i, emhash8::HashMap<uint32_t, double>());
+        hashmap_.emplace(i, Map());
     }
     if (!hashmap_[i].contains(j)) {
         hashmap_[i].emplace(j, value);
@@ -13,7 +13,7 @@ void EmhashSparseSymmetricMatrix::add_to_position(double value, uint32_t i, uint
     }
     if (i != j) {
         if (!hashmap_.contains(j)) {
-            hashmap_.emplace(j, emhash8::HashMap<uint32_t, double>());
+            hashmap_.emplace(j, Map());
         }
         if (!hashmap_[j].contains(i)) {
             hashmap_[j].emplace(i, value);
