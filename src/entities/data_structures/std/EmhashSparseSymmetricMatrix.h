@@ -1,7 +1,7 @@
 #ifndef SPINNER_EMHASHSPARSESYMMETRICMATRIX_H
 #define SPINNER_EMHASHSPARSESYMMETRICMATRIX_H
 
-#include "hash_table7.hpp"
+#include "hash_table8.hpp"
 #include "src/entities/data_structures/AbstractSymmetricMatrix.h"
 
 namespace quantum::linear_algebra {
@@ -17,7 +17,7 @@ class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
 
   private:
     size_t size_;
-    emhash7::HashMap<uint32_t, emhash7::HashMap<uint32_t, double>> hashmap_;
+    emhash8::HashMap<uint32_t, emhash8::HashMap<uint32_t, double>> hashmap_;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_EMHASHSPARSESYMMETRICMATRIX_H
