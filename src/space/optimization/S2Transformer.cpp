@@ -20,6 +20,9 @@ S2Transformer::S2Transformer(
         converter_.get_mults(),
         order_of_summation_,
         representationsMultiplier);
+    auto max_number_of_threads = omp_get_max_threads();
+    hashed_CGs_for_all_threads =
+        std::vector<std::unordered_map<uint64_t, double>>(max_number_of_threads);
 }
 
 space::Space S2Transformer::apply(Space&& space) const {
@@ -74,10 +77,6 @@ S2Transformer::constructTransformationMatrix(
     const auto number_of_s2_states = s_squared_states.size();
     auto transformation_matrix =
         factories_.createDenseSemiunitaryMatrix(number_of_s2_states, number_of_sz_states);
-
-    auto max_number_of_threads = omp_get_max_threads();
-    std::vector<std::unordered_map<uint64_t, double>> hashed_CGs_for_all_threads(
-        max_number_of_threads);
 
 #pragma omp parallel for shared( \
         number_of_s2_states, \
@@ -170,6 +169,9 @@ double S2Transformer::hashed_clebsh_gordan(
     double m1,
     double m2,
     std::unordered_map<uint64_t, double>& cached_CGs) const {
+    if (l1 + l2 < l3 || std::abs(l1 - l2) > l3) {
+        return 0;
+    }
     auto key = to_key(l1, l2, l3, m1, m2);
     if (cached_CGs.contains(key)) {
         return cached_CGs.at(key);

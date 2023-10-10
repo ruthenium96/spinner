@@ -48,6 +48,13 @@ class S2Transformer {
     std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation_;
     std::map<spin_algebra::SSquaredState::Properties, std::vector<spin_algebra::SSquaredState>>
         sorted_s_squared_states_;
+
+    // we use caching of CG values to speed up calculations.
+    // real concurrent hashmaps are too slow for our task,
+    // thus we will use ordinary ones -- one per each thread,
+    // this solution already significantly improves performance
+    mutable std::vector<std::unordered_map<uint64_t, double>> hashed_CGs_for_all_threads;
+    // todo: use good and fast hashmap instead of stl version
 };
 }  // namespace space::optimization
 #endif  //SPINNER_S2TRANSFORMER_H
