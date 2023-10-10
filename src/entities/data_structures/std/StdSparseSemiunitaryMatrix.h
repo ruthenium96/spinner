@@ -2,6 +2,7 @@
 #define SPINNER_STDSPARSESEMIUNITARYMATRIX_H
 
 #include <cstdint>
+#include <hash_table8.hpp>
 #include <map>
 #include <memory>
 #include <ostream>
@@ -46,7 +47,7 @@ class StdSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
         std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const override;
 
   private:
-    std::vector<std::map<uint32_t, double>> basis_;
+    std::vector<emhash8::HashMap<uint32_t, double>> basis_;
     uint32_t rows_;
     // c-like pointers are necessary to avoid double-free error
     static const StdSparseSemiunitaryMatrix*

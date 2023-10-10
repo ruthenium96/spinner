@@ -6,12 +6,12 @@
 namespace quantum::linear_algebra {
 
 struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
-    std::map<uint32_t, double>::const_iterator iter;
-    const std::map<uint32_t, double>::const_iterator end;
+    emhash8::HashMap<uint32_t, double>::const_iterator iter;
+    const emhash8::HashMap<uint32_t, double>::const_iterator end;
 
     IteratorStdImpl(
-        std::map<uint32_t, double>::const_iterator iter1,
-        std::map<uint32_t, double>::const_iterator iter2) :
+        emhash8::HashMap<uint32_t, double>::const_iterator iter1,
+        emhash8::HashMap<uint32_t, double>::const_iterator iter2) :
         iter(iter1),
         end(iter2) {}
 
@@ -63,16 +63,18 @@ void StdSparseSemiunitaryMatrix::move_vector_from(
 }
 
 void StdSparseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
-    basis_[i][j] += value;
+    if (!basis_[i].contains(j)) {
+        basis_[i].emplace(j, value);
+    } else {
+        basis_[i][j] += value;
+    }
 }
 
 double StdSparseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    auto mb_iterator = basis_[i].find(j);
-    if (mb_iterator == basis_[i].end()) {
+    if (!basis_.at(i).contains(j)) {
         return 0;
-    } else {
-        return mb_iterator->second;
     }
+    return basis_.at(i).at(j);
 }
 
 void StdSparseSemiunitaryMatrix::resize(uint32_t cols, uint32_t rows) {
@@ -81,25 +83,19 @@ void StdSparseSemiunitaryMatrix::resize(uint32_t cols, uint32_t rows) {
 }
 
 bool StdSparseSemiunitaryMatrix::is_zero(uint32_t i, uint32_t j) const {
-    return basis_[i].find(j) == basis_[i].end();
+    return !basis_.at(i).contains(j);
 }
 
 void StdSparseSemiunitaryMatrix::eraseExplicitZeros() {
-    for (std::map<uint32_t, double>& mm : basis_) {
-        for (auto i = mm.begin(), last = mm.end(); i != last;) {
-            if (std::abs(i->second) < 0.001) {
-                i = mm.erase(i);
-            } else {
-                ++i;
-            }
-        }
+    for (auto& mm : basis_) {
+        mm.erase_if([](auto& p) { return std::abs(p.second) < 0.001; });
     }
 }
 
 void StdSparseSemiunitaryMatrix::normalize() {
     for (auto& v : basis_) {
         double sum_of_squares = 0;
-        for (const auto p : v) {
+        for (const auto& p : v) {
             sum_of_squares += p.second * p.second;
         }
         double sqrt_of_sum_of_squares = sqrt(sum_of_squares);
