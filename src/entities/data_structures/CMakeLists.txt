@@ -14,7 +14,6 @@ add_library(data_structures
         std/StdFactories.cpp
         std/EmhashSparseSymmetricMatrix.cpp std/EmhashSparseSymmetricMatrix.h
         std/EmhashLogic.cpp
-        AbstractSparseSemiunitaryMatrix.cpp
         FactoriesList.cpp)
 
 message("Trying to find packages of linear algebra...")

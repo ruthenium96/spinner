@@ -94,4 +94,14 @@ void ArmaSparseSemiunitaryMatrix::normalize() {
 void ArmaSparseSemiunitaryMatrix::print(std::ostream& os) const {
     os << sparseSemiunitaryMatrix_ << std::endl;
 }
+
+const arma::sp_mat& ArmaSparseSemiunitaryMatrix::getSparseSemiunitaryMatrix() const {
+    return sparseSemiunitaryMatrix_;
+}
+
+void ArmaSparseSemiunitaryMatrix::unitaryTransform(
+    const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
+    std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const {
+    throw std::invalid_argument("unitaryTransform not implemented in ArmaSparseSemiunitaryMatrix");
+}
 }  // namespace quantum::linear_algebra

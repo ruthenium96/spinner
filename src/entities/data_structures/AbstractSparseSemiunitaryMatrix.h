@@ -48,7 +48,7 @@ class AbstractSparseSemiunitaryMatrix {
     virtual void normalize() = 0;
     virtual void unitaryTransform(
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
-        std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const;
+        std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const = 0;
 
     virtual void print(std::ostream& os) const = 0;
 };
