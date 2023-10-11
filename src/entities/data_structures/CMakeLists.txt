@@ -13,6 +13,7 @@ add_library(data_structures
         std/as_default/StdSparseTransformAsDefault.cpp
         std/StdFactories.cpp
         std/EmhashSparseSymmetricMatrix.cpp std/EmhashSparseSymmetricMatrix.h
+        std/EmhashLogic.cpp
         AbstractSparseSemiunitaryMatrix.cpp
         FactoriesList.cpp)
 
