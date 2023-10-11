@@ -1,11 +1,10 @@
-# TODO: it is not "std" now, rename it to more suitable name
 # TODO: implement other sparse matrices:
 add_library(data_structures
-        std/EmhashSparseSemiunitaryMatrix.cpp
-        std/as_default/StdSparseTransformAsDefault.cpp
-        std/StdFactories.cpp
-        std/EmhashSparseSymmetricMatrix.cpp std/EmhashSparseSymmetricMatrix.h
-        std/EmhashLogic.cpp
+        hashmap/EmhashSparseSemiunitaryMatrix.cpp
+        hashmap/as_default/StdSparseTransformAsDefault.cpp
+        hashmap/StdFactories.cpp
+        hashmap/EmhashSparseSymmetricMatrix.cpp
+        hashmap/EmhashLogic.cpp
         FactoriesList.cpp)
 
 message("Trying to find packages of linear algebra...")

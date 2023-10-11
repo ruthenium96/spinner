@@ -1,5 +1,5 @@
 #include "src/entities/data_structures/AbstractFactories.h"
-#include "src/entities/data_structures/std/StdFactories.h"
+#include "src/entities/data_structures/hashmap/StdFactories.h"
 
 namespace quantum::linear_algebra {
 
