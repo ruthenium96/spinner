@@ -1,11 +1,3 @@
-FetchContent_Declare(
-        emhash
-        GIT_REPOSITORY https://github.com/ktprime/emhash.git
-        GIT_TAG "2e3edc378373b331afa8bd570d657bf3f1229b86"
-)
-FetchContent_MakeAvailable(emhash)
-include_directories(${emhash_SOURCE_DIR}/)
-
 # TODO: it is not "std" now, rename it to more suitable name
 # TODO: implement other sparse matrices:
 add_library(data_structures
