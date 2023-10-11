@@ -7,6 +7,7 @@
 #include "src/common/lexicographic/IndexConverter.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/space/Space.h"
+#include "src/spin_algebra/ClebshGordanCalculator.h"
 #include "src/spin_algebra/RepresentationsMultiplier.h"
 #include "src/spin_algebra/SSquaredState.h"
 
@@ -29,18 +30,8 @@ class S2Transformer {
         const space::Subspace& subspace) const;
     double total_CG_coefficient(
         const spin_algebra::SSquaredState& s_squared_state,
-        const std::vector<double>& projections,
-        std::unordered_map<uint64_t, double>& cached_CGs) const;
+        const std::vector<double>& projections) const;
     std::vector<double> construct_projections(uint32_t lex_index) const;
-    double hashed_clebsh_gordan(
-        double l1,
-        double l2,
-        double l3,
-        double m1,
-        double m2,
-        std::unordered_map<uint64_t, double>& cached_CGs) const;
-
-    static uint64_t to_key(double l1, double l2, double l3, double m1, double m2) noexcept;
 
     const lexicographic::IndexConverter converter_;
     const quantum::linear_algebra::FactoriesList factories_;
@@ -49,12 +40,7 @@ class S2Transformer {
     std::map<spin_algebra::SSquaredState::Properties, std::vector<spin_algebra::SSquaredState>>
         sorted_s_squared_states_;
 
-    // we use caching of CG values to speed up calculations.
-    // real concurrent hashmaps are too slow for our task,
-    // thus we will use ordinary ones -- one per each thread,
-    // this solution already significantly improves performance
-    mutable std::vector<std::unordered_map<uint64_t, double>> hashed_CGs_for_all_threads;
-    // todo: use good and fast hashmap instead of stl version
+    spin_algebra::ClebshGordanCalculator clebshGordanCalculator_;
 };
 }  // namespace space::optimization
 #endif  //SPINNER_S2TRANSFORMER_H
