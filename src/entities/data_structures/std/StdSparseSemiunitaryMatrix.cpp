@@ -133,6 +133,11 @@ StdSparseSemiunitaryMatrix::downcast_ptr(std::unique_ptr<AbstractSparseSemiunita
     return answer;
 }
 
+const std::vector<StdSparseSemiunitaryMatrix::Map>&
+StdSparseSemiunitaryMatrix::getSparseSemiunitaryMatrix() const {
+    return basis_;
+}
+
 void StdSparseSemiunitaryMatrix::unitaryTransform(
     const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
     std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const {

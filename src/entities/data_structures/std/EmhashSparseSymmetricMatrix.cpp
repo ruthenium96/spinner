@@ -38,6 +38,11 @@ void EmhashSparseSymmetricMatrix::resize(size_t size) {
     size_ = size;
 }
 
+const emhash8::HashMap<uint32_t, EmhashSparseSymmetricMatrix::Map>&
+EmhashSparseSymmetricMatrix::getSparseSymmetricMatrix() const {
+    return hashmap_;
+}
+
 void EmhashSparseSymmetricMatrix::print(std::ostream& os) const {
     for (const auto& p : hashmap_) {
         auto i = p.first;

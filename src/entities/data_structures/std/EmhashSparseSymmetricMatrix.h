@@ -17,6 +17,8 @@ class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
     ~EmhashSparseSymmetricMatrix() override = default;
     void resize(size_t size);
 
+    const emhash8::HashMap<uint32_t, Map>& getSparseSymmetricMatrix() const;
+
   private:
     size_t size_;
     emhash8::HashMap<uint32_t, Map> hashmap_;

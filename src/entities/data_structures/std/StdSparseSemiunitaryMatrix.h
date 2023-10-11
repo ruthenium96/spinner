@@ -48,6 +48,8 @@ class StdSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
         std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const override;
 
+    const std::vector<Map>& getSparseSemiunitaryMatrix() const;
+
   private:
     std::vector<Map> basis_;
     uint32_t rows_;
