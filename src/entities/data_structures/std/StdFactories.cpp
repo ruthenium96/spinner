@@ -1,12 +1,12 @@
 #include "StdFactories.h"
 
+#include "EmhashSparseSemiunitaryMatrix.h"
 #include "EmhashSparseSymmetricMatrix.h"
-#include "StdSparseSemiunitaryMatrix.h"
 
 namespace quantum::linear_algebra {
 std::unique_ptr<AbstractSparseSemiunitaryMatrix>
 StdSparseTransformFactory::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
-    auto answer = std::make_unique<StdSparseSemiunitaryMatrix>();
+    auto answer = std::make_unique<EmhashSparseSemiunitaryMatrix>();
     answer->resize(cols, rows);
     return answer;
 }

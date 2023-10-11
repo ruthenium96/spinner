@@ -1,8 +1,8 @@
 #ifndef SPINNER_EMHASHLOGIC_H
 #define SPINNER_EMHASHLOGIC_H
 
+#include "EmhashSparseSemiunitaryMatrix.h"
 #include "EmhashSparseSymmetricMatrix.h"
-#include "StdSparseSemiunitaryMatrix.h"
 
 namespace quantum::linear_algebra {
 

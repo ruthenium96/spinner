@@ -1,4 +1,4 @@
-#include "StdSparseSemiunitaryMatrix.h"
+#include "EmhashSparseSemiunitaryMatrix.h"
 
 #include <algorithm>
 #include <cmath>
@@ -8,12 +8,12 @@
 namespace quantum::linear_algebra {
 
 struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
-    StdSparseSemiunitaryMatrix::Map::const_iterator iter;
-    const StdSparseSemiunitaryMatrix::Map::const_iterator end;
+    EmhashSparseSemiunitaryMatrix::Map::const_iterator iter;
+    const EmhashSparseSemiunitaryMatrix::Map::const_iterator end;
 
     IteratorStdImpl(
-        StdSparseSemiunitaryMatrix::Map::const_iterator iter1,
-        StdSparseSemiunitaryMatrix::Map::const_iterator iter2) :
+        EmhashSparseSemiunitaryMatrix::Map::const_iterator iter1,
+        EmhashSparseSemiunitaryMatrix::Map::const_iterator iter2) :
         iter(iter1),
         end(iter2) {}
 
@@ -31,40 +31,40 @@ struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
 };
 
 std::unique_ptr<AbstractSparseSemiunitaryMatrix::Iterator>
-StdSparseSemiunitaryMatrix::GetNewIterator(size_t index_of_vector) const {
+EmhashSparseSemiunitaryMatrix::GetNewIterator(size_t index_of_vector) const {
     return std::make_unique<IteratorStdImpl>(
         basis_[index_of_vector].cbegin(),
         basis_[index_of_vector].cend());
 }
 
-uint32_t StdSparseSemiunitaryMatrix::size_cols() const {
+uint32_t EmhashSparseSemiunitaryMatrix::size_cols() const {
     return basis_.size();
 }
 
-uint32_t StdSparseSemiunitaryMatrix::size_rows() const {
+uint32_t EmhashSparseSemiunitaryMatrix::size_rows() const {
     return rows_;
 }
 
-bool StdSparseSemiunitaryMatrix::empty() const {
+bool EmhashSparseSemiunitaryMatrix::empty() const {
     return basis_.empty();
 }
 
-bool StdSparseSemiunitaryMatrix::vempty(uint32_t index_of_vector) const {
+bool EmhashSparseSemiunitaryMatrix::vempty(uint32_t index_of_vector) const {
     return basis_[index_of_vector].empty();
 }
 
-void StdSparseSemiunitaryMatrix::clear() {
+void EmhashSparseSemiunitaryMatrix::clear() {
     basis_.clear();
 }
 
-void StdSparseSemiunitaryMatrix::move_vector_from(
+void EmhashSparseSemiunitaryMatrix::move_vector_from(
     uint32_t i,
     std::unique_ptr<AbstractSparseSemiunitaryMatrix>& subspace_from) {
     auto rhs_ = downcast_ptr(subspace_from);
     basis_.emplace_back(std::move(rhs_->basis_[i]));
 }
 
-void StdSparseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
+void EmhashSparseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     if (!basis_[i].contains(j)) {
         basis_[i].emplace(j, value);
     } else {
@@ -72,29 +72,29 @@ void StdSparseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint3
     }
 }
 
-double StdSparseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
+double EmhashSparseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
     if (!basis_.at(i).contains(j)) {
         return 0;
     }
     return basis_.at(i).at(j);
 }
 
-void StdSparseSemiunitaryMatrix::resize(uint32_t cols, uint32_t rows) {
+void EmhashSparseSemiunitaryMatrix::resize(uint32_t cols, uint32_t rows) {
     basis_.resize(cols);
     rows_ = rows;
 }
 
-bool StdSparseSemiunitaryMatrix::is_zero(uint32_t i, uint32_t j) const {
+bool EmhashSparseSemiunitaryMatrix::is_zero(uint32_t i, uint32_t j) const {
     return !basis_.at(i).contains(j);
 }
 
-void StdSparseSemiunitaryMatrix::eraseExplicitZeros() {
+void EmhashSparseSemiunitaryMatrix::eraseExplicitZeros() {
     for (auto& mm : basis_) {
         mm.erase_if([](auto& p) { return std::abs(p.second) < 0.001; });
     }
 }
 
-void StdSparseSemiunitaryMatrix::normalize() {
+void EmhashSparseSemiunitaryMatrix::normalize() {
     for (auto& v : basis_) {
         double sum_of_squares = 0;
         for (const auto& p : v) {
@@ -107,16 +107,16 @@ void StdSparseSemiunitaryMatrix::normalize() {
     }
 }
 
-const StdSparseSemiunitaryMatrix* StdSparseSemiunitaryMatrix::downcast_ptr(
+const EmhashSparseSemiunitaryMatrix* EmhashSparseSemiunitaryMatrix::downcast_ptr(
     const std::unique_ptr<AbstractSparseSemiunitaryMatrix>& ptr) {
-    auto answer = dynamic_cast<const StdSparseSemiunitaryMatrix*>(ptr.get());
+    auto answer = dynamic_cast<const EmhashSparseSemiunitaryMatrix*>(ptr.get());
     if (answer == nullptr) {
         throw std::bad_cast();
     }
     return answer;
 }
 
-void StdSparseSemiunitaryMatrix::print(std::ostream& os) const {
+void EmhashSparseSemiunitaryMatrix::print(std::ostream& os) const {
     for (uint32_t i = 0; i < size_cols(); ++i) {
         for (const auto& p : basis_[i]) {
             os << p.second << "*[" << p.first << "] ";
@@ -126,21 +126,21 @@ void StdSparseSemiunitaryMatrix::print(std::ostream& os) const {
     os << std::endl;
 }
 
-StdSparseSemiunitaryMatrix*
-StdSparseSemiunitaryMatrix::downcast_ptr(std::unique_ptr<AbstractSparseSemiunitaryMatrix>& ptr) {
-    auto answer = dynamic_cast<StdSparseSemiunitaryMatrix*>(ptr.get());
+EmhashSparseSemiunitaryMatrix*
+EmhashSparseSemiunitaryMatrix::downcast_ptr(std::unique_ptr<AbstractSparseSemiunitaryMatrix>& ptr) {
+    auto answer = dynamic_cast<EmhashSparseSemiunitaryMatrix*>(ptr.get());
     if (answer == nullptr) {
         throw std::bad_cast();
     }
     return answer;
 }
 
-const std::vector<StdSparseSemiunitaryMatrix::Map>&
-StdSparseSemiunitaryMatrix::getSparseSemiunitaryMatrix() const {
+const std::vector<EmhashSparseSemiunitaryMatrix::Map>&
+EmhashSparseSemiunitaryMatrix::getSparseSemiunitaryMatrix() const {
     return basis_;
 }
 
-void StdSparseSemiunitaryMatrix::unitaryTransform(
+void EmhashSparseSemiunitaryMatrix::unitaryTransform(
     const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
     std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const {
     EmhashLogic logic;

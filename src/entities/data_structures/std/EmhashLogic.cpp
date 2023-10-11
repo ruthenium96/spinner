@@ -8,7 +8,7 @@ void EmhashLogic::unitaryTransform(
     std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd,
     const AbstractSparseSemiunitaryMatrix& unitaryMatrix) const {
     const auto maybeSemiunitaryMatrix =
-        dynamic_cast<const StdSparseSemiunitaryMatrix*>(&unitaryMatrix);
+        dynamic_cast<const EmhashSparseSemiunitaryMatrix*>(&unitaryMatrix);
     if (maybeSemiunitaryMatrix == nullptr) {
         throw std::bad_cast();
     }
@@ -22,7 +22,7 @@ void EmhashLogic::unitaryTransform(
     }
     const auto& symmetricMatrixData = maybeSymmetricMatrix->getSparseSymmetricMatrix();
 
-    emhash8::HashMap<uint32_t, StdSparseSemiunitaryMatrix::Map> first_mult;
+    emhash8::HashMap<uint32_t, EmhashSparseSemiunitaryMatrix::Map> first_mult;
 
     // cannot easily use pragma omp parallel: race condition inside first_mult hashmap.
     for (uint32_t index_of_space_vector_i = 0; index_of_space_vector_i < matrix_in_space_basis_size;
