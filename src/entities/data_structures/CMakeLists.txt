@@ -1,8 +1,8 @@
 # TODO: implement other sparse matrices:
 add_library(data_structures
         hashmap/EmhashSparseSemiunitaryMatrix.cpp
-        hashmap/as_default/StdSparseTransformAsDefault.cpp
-        hashmap/StdFactories.cpp
+        hashmap/as_default/EmhashSparseTransformAsDefault.cpp
+        hashmap/HashmapFactories.cpp
         hashmap/EmhashSparseSymmetricMatrix.cpp
         hashmap/EmhashLogic.cpp
         FactoriesList.cpp)
