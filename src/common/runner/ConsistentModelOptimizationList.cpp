@@ -115,13 +115,13 @@ void checkMultiplicitiesGroupConsistence(
     const std::vector<spin_algebra::Multiplicity>& mults,
     const group::Group& group) {
     // TODO: split code above (maybe rewrite checkSymbolNamesGroupElementConsistence with templates?)
-    if (mults.size() != group.getElements()[0].size()) {
+    if (mults.size() != group.size_of_permutations()) {
         throw std::length_error(
             "The size of group elements does not equal to the number of spins.");
     }
     for (const auto& el : group.getElements()) {
         std::vector<spin_algebra::Multiplicity> permutated_mults(mults);
-        for (size_t i = 0; i < group.getElements()[0].size(); ++i) {
+        for (size_t i = 0; i < group.size_of_permutations(); ++i) {
             permutated_mults[i] = mults[el[i]];
         }
         if (permutated_mults != mults) {

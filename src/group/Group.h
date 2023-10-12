@@ -57,6 +57,10 @@ class Group {
 
     std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
 
+    size_t size_of_permutations() const;
+
+    bool do_groups_commute(const Group& rhs) const;
+
     std::vector<std::set<size_t>> construct_orbits_of_mults() const;
 
     bool operator==(const Group& rhs) const;
