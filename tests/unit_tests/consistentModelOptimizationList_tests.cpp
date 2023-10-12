@@ -1,6 +1,18 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 
+TEST(consistentModelOptimizationList_tests, throw_groups_with_different_sizes_of_permutations) {
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize(group::Group::S2, {{0, 2, 1}});
+    EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0}}), std::invalid_argument);
+}
+
+TEST(consistentModelOptimizationList_tests, throw_noncommutative_groups) {
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize(group::Group::S2, {{0, 2, 1}});
+    EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0, 2}}), std::invalid_argument);
+}
+
 TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
     std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4};
     model::ModelInput model(mults);

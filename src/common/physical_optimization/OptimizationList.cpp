@@ -42,6 +42,18 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
     if (std::count(groupsToApply_.begin(), groupsToApply_.end(), new_group)) {
         return *this;
     }
+    // check if groups can be applied at the same time
+    for (const auto& old_group : groupsToApply_) {
+        if (old_group.size_of_permutations() != new_group.size_of_permutations()) {
+            throw std::invalid_argument(
+                "Trying to apply groups with different sizes of permutations");
+        }
+        // we are trying to construct so-called "internal direct product" of groups.
+        // it is necessary and sufficient if groups elements commute.
+        if (!old_group.do_groups_commute(new_group)) {
+            throw std::invalid_argument("Groups do not commute!");
+        }
+    }
     if (isSSquaredTransformed_) {
         throw std::invalid_argument("Cannot symmetrize *AFTER* S2-transformation");
     }
