@@ -10,7 +10,7 @@ ImplicitSSquareEigendecompositor::ImplicitSSquareEigendecompositor(
     quantum::linear_algebra::FactoriesList factories_list) :
     eigendecompositor_(std::move(eigendecompositor)),
     factories_list_(std::move(factories_list)) {
-    s_square_implicit_ = common::Quantity();
+    s_square_implicit_spectrum_ = Spectrum();
 }
 
 std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
@@ -43,10 +43,10 @@ ImplicitSSquareEigendecompositor::BuildSubspectra(
 
         auto raw_data = factories_list_.createVector();
         raw_data->add_identical_values(size_of_subspace, s_squared_value);
-        s_square_implicit_.spectrum_.blocks.emplace_back(
+        s_square_implicit_spectrum_.blocks.emplace_back(
             std::move(raw_data),
             energy_subspectrum.properties);
-        assert(s_square_implicit_.spectrum_.blocks.size() == number_of_block + 1);
+        assert(s_square_implicit_spectrum_.blocks.size() == number_of_block + 1);
     }
 
     return mb_unitary_transformation_matrix;
@@ -55,7 +55,7 @@ ImplicitSSquareEigendecompositor::BuildSubspectra(
 std::optional<std::reference_wrapper<const Spectrum>>
 ImplicitSSquareEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::S_total_squared) {
-        return s_square_implicit_.spectrum_;
+        return s_square_implicit_spectrum_;
     }
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
