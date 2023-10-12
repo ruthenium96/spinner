@@ -40,8 +40,8 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
         throw std::invalid_argument(
             "More than two energy derivatives passed to OneParameterEigendecompositor");
     }
-    if (number_of_energy_derivatives == 1 && !current_energy_derivative_.has_value()) {
-        current_energy_derivative_ = common::Quantity();
+    if (number_of_energy_derivatives == 1 && !current_energy_derivative_spectrum_.has_value()) {
+        current_energy_derivative_spectrum_ = Spectrum();
     }
 
     if (!first_iteration_has_been_done_) {
@@ -56,53 +56,33 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
 
         const auto& energy_subspectrum =
             eigendecompositor_->getSpectrum(common::Energy)->get().blocks.at(number_of_block);
-        const auto& energy_submatrix =
-            eigendecompositor_->getMatrix(common::Energy)->get().blocks.at(number_of_block);
 
         auto raw_spectrum = energy_subspectrum.raw_data->multiply_by(1);
-        auto raw_matrix = energy_submatrix.raw_data->multiply_by(1);
-        current_energy_.spectrum_.blocks.emplace_back(
+        current_energy_spectrum_.blocks.emplace_back(
             std::move(raw_spectrum),
             energy_subspectrum.properties);
-        current_energy_.matrix_.blocks.emplace_back(
-            std::move(raw_matrix),
-            energy_submatrix.properties);
 
-        assert(current_energy_.spectrum_.blocks.size() == number_of_block + 1);
-        assert(current_energy_.matrix_.blocks.size() == number_of_block + 1);
+        assert(current_energy_spectrum_.blocks.size() == number_of_block + 1);
 
-        if (current_energy_derivative_.has_value()) {
+        if (current_energy_derivative_spectrum_.has_value()) {
             auto raw_subspectrum_derivative =
                 energy_subspectrum.raw_data->multiply_by(1 / initial_value_of_symbol_);
-            auto raw_submatrix_derivative =
-                energy_submatrix.raw_data->multiply_by(1 / initial_value_of_symbol_);
-            current_energy_derivative_.value().spectrum_.blocks.emplace_back(
+            current_energy_derivative_spectrum_.value().blocks.emplace_back(
                 std::move(raw_subspectrum_derivative),
                 energy_subspectrum.properties);
-            current_energy_derivative_.value().matrix_.blocks.emplace_back(
-                std::move(raw_submatrix_derivative),
-                energy_subspectrum.properties);
             assert(
-                current_energy_derivative_.value().spectrum_.blocks.size() == number_of_block + 1);
-            assert(current_energy_derivative_.value().matrix_.blocks.size() == number_of_block + 1);
+                current_energy_derivative_spectrum_.value().blocks.size() == number_of_block + 1);
         }
     } else {
         double current_value_of_symbol = currentValueGetter_();
         double multiplier = current_value_of_symbol / initial_value_of_symbol_;
         const auto& energy_subspectrum =
             eigendecompositor_->getSpectrum(common::Energy)->get().blocks.at(number_of_block);
-        const auto& energy_submatrix =
-            eigendecompositor_->getMatrix(common::Energy)->get().blocks.at(number_of_block);
         auto raw_subspectrum_energy = energy_subspectrum.raw_data->multiply_by(multiplier);
-        auto raw_submatrix_energy = energy_submatrix.raw_data->multiply_by(multiplier);
-        current_energy_.spectrum_.blocks.emplace_back(
+        current_energy_spectrum_.blocks.emplace_back(
             std::move(raw_subspectrum_energy),
             energy_subspectrum.properties);
-        current_energy_.matrix_.blocks.emplace_back(
-            std::move(raw_submatrix_energy),
-            energy_subspectrum.properties);
-        assert(current_energy_.spectrum_.blocks.size() == number_of_block + 1);
-        assert(current_energy_.matrix_.blocks.size() == number_of_block + 1);
+        assert(current_energy_spectrum_.blocks.size() == number_of_block + 1);
 
         // delete energy operator, because we just have implicitly calculated energy
         std::erase_if(operators_to_calculate, [](auto p) { return p.first == common::Energy; });
@@ -113,7 +93,7 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
 std::optional<std::reference_wrapper<const Spectrum>>
 OneSymbolInHamiltonianEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::Energy) {
-        return current_energy_.spectrum_;
+        return current_energy_spectrum_;
     }
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
@@ -121,7 +101,7 @@ OneSymbolInHamiltonianEigendecompositor::getSpectrum(common::QuantityEnum quanti
 std::optional<std::reference_wrapper<const Matrix>>
 OneSymbolInHamiltonianEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::Energy) {
-        return current_energy_.matrix_;
+        return std::nullopt;
     }
     return eigendecompositor_->getMatrix(quantity_enum);
 }
@@ -130,8 +110,8 @@ std::optional<std::reference_wrapper<const Spectrum>>
 OneSymbolInHamiltonianEigendecompositor::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
-    if (quantity_enum == common::Energy && current_energy_derivative_.has_value()) {
-        return current_energy_derivative_.value().spectrum_;
+    if (quantity_enum == common::Energy && current_energy_derivative_spectrum_.has_value()) {
+        return current_energy_derivative_spectrum_.value();
     }
     return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
 }
@@ -140,15 +120,14 @@ std::optional<std::reference_wrapper<const Matrix>>
 OneSymbolInHamiltonianEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
-    if (quantity_enum == common::Energy && current_energy_derivative_.has_value()) {
-        return current_energy_derivative_.value().matrix_;
+    if (quantity_enum == common::Energy) {
+        return std::nullopt;
     }
     return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
 }
 
 void OneSymbolInHamiltonianEigendecompositor::initialize() {
-    current_energy_.spectrum_.blocks.clear();
-    current_energy_.matrix_.blocks.clear();
+    current_energy_spectrum_.blocks.clear();
     if (!first_iteration_has_been_done_) {
         eigendecompositor_->initialize();
     }
