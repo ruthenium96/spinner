@@ -33,19 +33,19 @@ ImplicitSSquareEigendecompositor::BuildSubspectra(
         subspace);
 
     if (!first_iteration_has_been_done_) {
+        // todo: we use energy_subspectrum only because of size_of_subspace
+        //  can we implement calculation of size_of_subspace in Subspace class?
         const auto& energy_subspectrum =
             eigendecompositor_->getSpectrum(common::Energy)->get().blocks.at(number_of_block);
 
-        double mult = energy_subspectrum.properties.total_mult.value();
+        double mult = subspace.properties.total_mult.value();
         double spin = (mult - 1) / 2.0;
         double s_squared_value = spin * (spin + 1);
         size_t size_of_subspace = energy_subspectrum.raw_data->size();
 
         auto raw_data = factories_list_.createVector();
         raw_data->add_identical_values(size_of_subspace, s_squared_value);
-        s_square_implicit_spectrum_.blocks.emplace_back(
-            std::move(raw_data),
-            energy_subspectrum.properties);
+        s_square_implicit_spectrum_.blocks.emplace_back(std::move(raw_data), subspace.properties);
         assert(s_square_implicit_spectrum_.blocks.size() == number_of_block + 1);
     }
 
