@@ -98,8 +98,9 @@ void Runner::BuildSpectra() {
         getSpace());
 }
 
-const Matrix& Runner::getMatrix(common::QuantityEnum quantity_enum) const {
-    return eigendecompositor_->getMatrix(quantity_enum)->get();
+std::optional<std::reference_wrapper<const Matrix>>
+Runner::getMatrix(common::QuantityEnum quantity_enum) const {
+    return eigendecompositor_->getMatrix(quantity_enum);
 }
 
 const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
@@ -127,10 +128,10 @@ const Spectrum& Runner::getSpectrumDerivative(
     return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol)->get();
 }
 
-const Matrix& Runner::getMatrixDerivative(
+std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
-    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol)->get();
+    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol);
 }
 
 void Runner::BuildMuSquaredWorker() {

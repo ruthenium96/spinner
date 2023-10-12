@@ -53,14 +53,13 @@ class Runner {
         getOperator(common::QuantityEnum) const;
     const space::Space& getSpace() const;
     const Spectrum& getSpectrum(common::QuantityEnum) const;
-    const Matrix& getMatrix(common::QuantityEnum) const;
+    std::optional<std::reference_wrapper<const Matrix>> getMatrix(common::QuantityEnum) const;
     std::optional<std::shared_ptr<const model::operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
     const Spectrum&
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
-    const Matrix& getMatrixDerivative(
-        common::QuantityEnum,
-        const model::symbols::SymbolName&) const;
+    std::optional<std::reference_wrapper<const Matrix>>
+    getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
     const magnetic_susceptibility::MagneticSusceptibilityController&
     getMagneticSusceptibilityController() const;
     const model::symbols::SymbolicWorker& getSymbolicWorker() const;
