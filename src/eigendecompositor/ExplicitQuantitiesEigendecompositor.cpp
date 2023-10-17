@@ -111,9 +111,11 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
 
 void ExplicitQuantitiesEigendecompositor::initialize() {
     for (auto& [_, quantity_] : quantities_map_) {
+        quantity_.matrix_.blocks.clear();
         quantity_.spectrum_.blocks.clear();
     }
     for (auto& [_, derivative] : derivatives_map_) {
+        derivative.matrix_.blocks.clear();
         derivative.spectrum_.blocks.clear();
     }
     eigendecompositor_->initialize();
