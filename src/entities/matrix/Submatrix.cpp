@@ -60,7 +60,11 @@ Submatrix::Submatrix(
     }
 
     properties = subspace.properties;
-    raw_data = factories.createDenseDiagonalizableMatrix(matrix_in_space_basis_size);
+    if (subspace.dense_semiunitary_matrix.has_value()) {
+        raw_data = factories.createSparseDiagonalizableMatrix(matrix_in_space_basis_size);
+    } else {
+        raw_data = factories.createDenseDiagonalizableMatrix(matrix_in_space_basis_size);
+    }
 
     subspace.decomposition->unitaryTransform(matrix_in_lexicografical_basis, raw_data);
     if (subspace.dense_semiunitary_matrix.has_value()) {
