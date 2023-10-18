@@ -50,49 +50,72 @@ ExplicitQuantitiesEigendecompositor::getMatrixDerivative(
 
 std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
 ExplicitQuantitiesEigendecompositor::BuildSubspectra(
+    size_t number_of_block,
+    const space::Subspace& subspace) {
+    auto mb_unitary_transformation_matrix =
+        eigendecompositor_->BuildSubspectra(number_of_block, subspace);
+
+    for (const auto& [quantity_enum, operator_to_calculate] : quantities_operators_map_) {
+        auto non_hamiltonian_submatrix =
+            Submatrix(subspace, *operator_to_calculate, converter_, factories_list_);
+        auto& quantity = quantities_map_[quantity_enum];
+        quantity.spectrum_.blocks[number_of_block] = non_energy_subspectrum(
+            non_hamiltonian_submatrix,
+            mb_unitary_transformation_matrix.value());
+        quantity.matrix_.blocks[number_of_block] = std::move(non_hamiltonian_submatrix);
+    }
+
+    for (auto& [pair, derivative_operator] : derivatives_operators_map_) {
+        auto derivative_submatrix =
+            Submatrix(subspace, *derivative_operator, converter_, factories_list_);
+        auto& derivative = derivatives_map_[pair];
+        derivative.spectrum_.blocks[number_of_block] =
+            non_energy_subspectrum(derivative_submatrix, mb_unitary_transformation_matrix.value());
+        derivative.matrix_.blocks[number_of_block] = std::move(derivative_submatrix);
+    }
+
+    return mb_unitary_transformation_matrix;
+}
+
+void ExplicitQuantitiesEigendecompositor::initialize(
     std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
         operators_to_calculate,
     std::map<
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
-    size_t number_of_block,
-    const space::Subspace& subspace) {
-    auto mb_unitary_transformation_matrix = eigendecompositor_->BuildSubspectra(
+    uint32_t number_of_subspaces) {
+    eigendecompositor_->initialize(
         operators_to_calculate,
         derivatives_operators_to_calculate,
-        number_of_block,
-        subspace);
+        number_of_subspaces);
 
     for (const auto& [quantity_enum, operator_to_calculate] : operators_to_calculate) {
         if (quantity_enum == common::Energy) {
             throw std::invalid_argument(
                 "Energy operator passed to ExplicitQuantitiesEigendecompositor");
         }
-        auto non_hamiltonian_submatrix =
-            Submatrix(subspace, *operator_to_calculate, converter_, factories_list_);
+        quantities_operators_map_[quantity_enum] = operator_to_calculate;
         if (!quantities_map_.contains(quantity_enum)) {
             quantities_map_[quantity_enum] = common::Quantity();
         }
-        auto& quantity = quantities_map_[quantity_enum];
-        quantity.spectrum_.blocks.emplace_back(non_energy_subspectrum(
-            non_hamiltonian_submatrix,
-            mb_unitary_transformation_matrix.value()));
-        quantity.matrix_.blocks.emplace_back(std::move(non_hamiltonian_submatrix));
+        quantities_map_[quantity_enum].matrix_.blocks.clear();
+        quantities_map_[quantity_enum].spectrum_.blocks.clear();
+        quantities_map_[quantity_enum].matrix_.blocks.resize(number_of_subspaces);
+        quantities_map_[quantity_enum].spectrum_.blocks.resize(number_of_subspaces);
     }
 
     for (auto& [pair, derivative_operator] : derivatives_operators_to_calculate) {
-        auto derivative_submatrix =
-            Submatrix(subspace, *derivative_operator, converter_, factories_list_);
+        derivatives_operators_map_[pair] = derivative_operator;
         if (!derivatives_map_.contains(pair)) {
             derivatives_map_[pair] = common::Quantity();
         }
-        auto& derivative = derivatives_map_[pair];
-        derivative.spectrum_.blocks.emplace_back(
-            non_energy_subspectrum(derivative_submatrix, mb_unitary_transformation_matrix.value()));
-        derivative.matrix_.blocks.emplace_back(std::move(derivative_submatrix));
+        derivatives_map_[pair].matrix_.blocks.clear();
+        derivatives_map_[pair].spectrum_.blocks.clear();
+        derivatives_map_[pair].matrix_.blocks.resize(number_of_subspaces);
+        derivatives_map_[pair].spectrum_.blocks.resize(number_of_subspaces);
     }
 
-    // delete operators, because we just have calculated corresponding spectra
+    // delete operators, because we are going to calculate corresponding spectra
     for (const auto& p : quantities_map_) {
         auto quantity_enum = p.first;
         std::erase_if(operators_to_calculate, [quantity_enum](auto p) {
@@ -105,20 +128,6 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
             return p.first == pair;
         });
     }
-
-    return mb_unitary_transformation_matrix;
-}
-
-void ExplicitQuantitiesEigendecompositor::initialize() {
-    for (auto& [_, quantity_] : quantities_map_) {
-        quantity_.matrix_.blocks.clear();
-        quantity_.spectrum_.blocks.clear();
-    }
-    for (auto& [_, derivative] : derivatives_map_) {
-        derivative.matrix_.blocks.clear();
-        derivative.spectrum_.blocks.clear();
-    }
-    eigendecompositor_->initialize();
 }
 
 void ExplicitQuantitiesEigendecompositor::finalize() {

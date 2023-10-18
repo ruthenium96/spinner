@@ -1,6 +1,5 @@
 #include "ImplicitSSquareEigendecompositor.h"
 
-#include <cassert>
 #include <utility>
 
 namespace eigendecompositor {
@@ -15,20 +14,10 @@ ImplicitSSquareEigendecompositor::ImplicitSSquareEigendecompositor(
 
 std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
 ImplicitSSquareEigendecompositor::BuildSubspectra(
-    std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>& operators_,
-    std::map<
-        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
     size_t number_of_block,
     const space::Subspace& subspace) {
-    if (operators_.contains(common::S_total_squared)) {
-        throw std::invalid_argument(
-            "Explicit S2 operator passed to ImplicitSSquareEigendecompositor");
-    }
 
     auto mb_unitary_transformation_matrix = eigendecompositor_->BuildSubspectra(
-        operators_,
-        derivatives_operators_,
         number_of_block,
         subspace);
 
@@ -45,8 +34,8 @@ ImplicitSSquareEigendecompositor::BuildSubspectra(
 
         auto raw_data = factories_list_.createVector();
         raw_data->add_identical_values(size_of_subspace, s_squared_value);
-        s_square_implicit_spectrum_.blocks.emplace_back(std::move(raw_data), subspace.properties);
-        assert(s_square_implicit_spectrum_.blocks.size() == number_of_block + 1);
+        s_square_implicit_spectrum_.blocks[number_of_block] =
+            Subspectrum(std::move(raw_data), subspace.properties);
     }
 
     return mb_unitary_transformation_matrix;
@@ -88,8 +77,24 @@ ImplicitSSquareEigendecompositor::getMatrixDerivative(
     return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
 }
 
-void ImplicitSSquareEigendecompositor::initialize() {
-    eigendecompositor_->initialize();
+void ImplicitSSquareEigendecompositor::initialize(
+    std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+        operators_to_calculate,
+    std::map<
+        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
+    uint32_t number_of_subspaces) {
+    if (operators_to_calculate.contains(common::S_total_squared)) {
+        throw std::invalid_argument(
+            "Explicit S2 operator passed to ImplicitSSquareEigendecompositor");
+    }
+    if (!first_iteration_has_been_done_) {
+        s_square_implicit_spectrum_.blocks.resize(number_of_subspaces);
+    }
+    eigendecompositor_->initialize(
+        operators_to_calculate,
+        derivatives_operators_to_calculate,
+        number_of_subspaces);
 }
 
 void ImplicitSSquareEigendecompositor::finalize() {

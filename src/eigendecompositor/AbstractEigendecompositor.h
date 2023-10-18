@@ -31,16 +31,15 @@ class AbstractEigendecompositor {
 
     virtual ~AbstractEigendecompositor() = default;
 
-    virtual void initialize() = 0;
-    virtual std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
-    BuildSubspectra(
+    virtual void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_to_calculate,
         std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
-        size_t number_of_block,
-        const space::Subspace& subspace) = 0;
+        uint32_t number_of_subspaces) = 0;
+    virtual std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    BuildSubspectra(size_t number_of_block, const space::Subspace& subspace) = 0;
     virtual void finalize() = 0;
 };
 

@@ -1,6 +1,5 @@
 #include "ExactEigendecompositor.h"
 
-#include <cassert>
 #include <utility>
 
 namespace eigendecompositor {
@@ -13,44 +12,43 @@ ExactEigendecompositor::ExactEigendecompositor(
 
 std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
 ExactEigendecompositor::BuildSubspectra(
-    std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
-        operators_to_calculate,
-    std::map<
-        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
     size_t number_of_block,
     const space::Subspace& subspace) {
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
         mb_unitary_transformation_matrix;
 
-    auto hamiltonian_submatrix = Submatrix(
-        subspace,
-        *operators_to_calculate.at(common::Energy),
-        converter_,
-        factories_list_);
+    auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_);
 
-    if (operators_to_calculate.size() == 1 && derivatives_operators_to_calculate.empty()) {
+    if (!do_we_need_eigenvectors_) {
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
         auto energy_spectrum = energy_subspectrum_eigenvalues_only(hamiltonian_submatrix);
-        energy_.spectrum_.blocks.emplace_back(std::move(energy_spectrum));
+        energy_.spectrum_.blocks[number_of_block] = std::move(energy_spectrum);
     } else {
         auto pair = energy_subspectrum_with_eigenvectors(hamiltonian_submatrix);
         mb_unitary_transformation_matrix = std::move(pair.second);
-        energy_.spectrum_.blocks.emplace_back(std::move(pair.first));
+        energy_.spectrum_.blocks[number_of_block] = std::move(pair.first);
     }
-    energy_.matrix_.blocks.emplace_back(std::move(hamiltonian_submatrix));
-    assert(energy_.spectrum_.blocks.size() == number_of_block + 1);
-    assert(energy_.matrix_.blocks.size() == number_of_block + 1);
-
-    // delete energy operator, because we just have calculated energy
-    std::erase_if(operators_to_calculate, [](auto p) { return p.first == common::Energy; });
+    energy_.matrix_.blocks[number_of_block] = std::move(hamiltonian_submatrix);
 
     return mb_unitary_transformation_matrix;
 }
 
-void ExactEigendecompositor::initialize() {
+void ExactEigendecompositor::initialize(
+    std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+        operators_to_calculate,
+    std::map<
+        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+        std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
+    uint32_t number_of_subspaces) {
     energy_.matrix_.blocks.clear();
     energy_.spectrum_.blocks.clear();
+    energy_.matrix_.blocks.resize(number_of_subspaces);
+    energy_.spectrum_.blocks.resize(number_of_subspaces);
+
+    energy_operator_ = operators_to_calculate.at(common::Energy);
+    do_we_need_eigenvectors_ =
+        !(operators_to_calculate.size() == 1 && derivatives_operators_to_calculate.empty());
+    std::erase_if(operators_to_calculate, [](auto p) { return p.first == common::Energy; });
 }
 
 void ExactEigendecompositor::finalize() {}

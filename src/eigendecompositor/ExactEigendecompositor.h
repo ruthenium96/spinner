@@ -13,13 +13,7 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
         quantum::linear_algebra::FactoriesList factories_list);
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
     BuildSubspectra(
-        std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
-            operators_,
-        std::map<
-            std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-            std::shared_ptr<const model::operators::Operator>>& derivatives_operators_,
-        size_t number_of_block,
-        const space::Subspace& subspace) override;
+        size_t number_of_block, const space::Subspace& subspace) override;
 
     std::optional<std::reference_wrapper<const Spectrum>>
         getSpectrum(common::QuantityEnum) const override;
@@ -29,13 +23,21 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
     std::optional<std::reference_wrapper<const Matrix>>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
-    void initialize() override;
+    void initialize(
+        std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+            operators_to_calculate,
+        std::map<
+            std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+            std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
+        uint32_t number_of_subspaces) override;
     void finalize() override;
 
   private:
     lexicographic::IndexConverter converter_;
     quantum::linear_algebra::FactoriesList factories_list_;
     common::Quantity energy_;
+    std::shared_ptr<const model::operators::Operator> energy_operator_;
+    bool do_we_need_eigenvectors_;
 
     static Subspectrum energy_subspectrum_eigenvalues_only(const Submatrix& hamiltonian_submatrix);
     static std::

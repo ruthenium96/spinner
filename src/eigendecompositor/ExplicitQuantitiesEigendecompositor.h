@@ -23,16 +23,15 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
         const model::symbols::SymbolName& symbol_name) const override;
 
   protected:
-    void initialize() override;
-    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
-    BuildSubspectra(
+    void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_to_calculate,
         std::map<
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
-        size_t number_of_block,
-        const space::Subspace& subspace) override;
+        uint32_t number_of_subspaces) override;
+    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    BuildSubspectra(size_t number_of_block, const space::Subspace& subspace) override;
     void finalize() override;
 
   private:
@@ -42,6 +41,12 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
     std::map<common::QuantityEnum, common::Quantity> quantities_map_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, common::Quantity>
         derivatives_map_;
+    std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>
+        quantities_operators_map_;
+    std::map<
+        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+        std::shared_ptr<const model::operators::Operator>>
+        derivatives_operators_map_;
 
     static Subspectrum non_energy_subspectrum(
         const Submatrix& non_hamiltonian_submatrix,
