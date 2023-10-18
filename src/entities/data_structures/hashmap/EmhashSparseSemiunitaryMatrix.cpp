@@ -10,12 +10,15 @@ namespace quantum::linear_algebra {
 struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
     EmhashSparseSemiunitaryMatrix::Map::const_iterator iter;
     const EmhashSparseSemiunitaryMatrix::Map::const_iterator end;
+    const size_t size_;
 
     IteratorStdImpl(
         EmhashSparseSemiunitaryMatrix::Map::const_iterator iter1,
-        EmhashSparseSemiunitaryMatrix::Map::const_iterator iter2) :
+        EmhashSparseSemiunitaryMatrix::Map::const_iterator iter2,
+        size_t size) :
         iter(iter1),
-        end(iter2) {}
+        end(iter2),
+        size_(size) {}
 
     bool hasNext() const override {
         return iter != end;
@@ -27,6 +30,10 @@ struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
         return {pair.first, pair.second};
     }
 
+    size_t size() const override {
+        return size_;
+    }
+
     ~IteratorStdImpl() override = default;
 };
 
@@ -34,7 +41,8 @@ std::unique_ptr<AbstractSparseSemiunitaryMatrix::Iterator>
 EmhashSparseSemiunitaryMatrix::GetNewIterator(size_t index_of_vector) const {
     return std::make_unique<IteratorStdImpl>(
         basis_[index_of_vector].cbegin(),
-        basis_[index_of_vector].cend());
+        basis_[index_of_vector].cend(),
+        basis_[index_of_vector].size());
 }
 
 uint32_t EmhashSparseSemiunitaryMatrix::size_cols() const {

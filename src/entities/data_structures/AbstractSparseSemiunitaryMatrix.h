@@ -24,6 +24,7 @@ class AbstractSparseSemiunitaryMatrix {
         };
         virtual bool hasNext() const = 0;
         virtual IndexValueItem getNext() = 0;
+        virtual size_t size() const = 0;
         virtual ~Iterator() = default;
     };
 

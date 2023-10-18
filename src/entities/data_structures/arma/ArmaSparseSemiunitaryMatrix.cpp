@@ -5,10 +5,15 @@ namespace quantum::linear_algebra {
 struct IteratorImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
     arma::sp_mat::const_col_iterator iter;
     const arma::sp_mat::const_col_iterator end;
+    const size_t size_;
 
-    IteratorImpl(arma::sp_mat::const_col_iterator iter1, arma::sp_mat::const_col_iterator iter2) :
+    IteratorImpl(
+        arma::sp_mat::const_col_iterator iter1,
+        arma::sp_mat::const_col_iterator iter2,
+        size_t size) :
         iter(iter1),
-        end(iter2) {}
+        end(iter2),
+        size_(size) {}
 
     bool hasNext() const override {
         return iter != end;
@@ -21,6 +26,10 @@ struct IteratorImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
         return {row, value};
     }
 
+    size_t size() const override {
+        return size_;
+    }
+
     ~IteratorImpl() override = default;
 };
 
@@ -28,7 +37,8 @@ std::unique_ptr<AbstractSparseSemiunitaryMatrix::Iterator>
 ArmaSparseSemiunitaryMatrix::GetNewIterator(size_t index_of_vector) const {
     return std::make_unique<IteratorImpl>(
         sparseSemiunitaryMatrix_.begin_col(index_of_vector),
-        sparseSemiunitaryMatrix_.end_col(index_of_vector));
+        sparseSemiunitaryMatrix_.end_col(index_of_vector),
+        sparseSemiunitaryMatrix_.col(index_of_vector).n_nonzero);
 }
 
 uint32_t ArmaSparseSemiunitaryMatrix::size_rows() const {
