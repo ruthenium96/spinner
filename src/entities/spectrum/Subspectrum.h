@@ -9,7 +9,8 @@ struct Subspectrum {
     BlockProperties properties;
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> raw_data;
 
-    Subspectrum() = delete;
+    Subspectrum() = default;
+
     Subspectrum(
         std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> raw_data_,
         BlockProperties properties_);
