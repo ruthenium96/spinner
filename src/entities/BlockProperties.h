@@ -1,6 +1,7 @@
 #ifndef SPINNER_BLOCKPROPERTIES_H
 #define SPINNER_BLOCKPROPERTIES_H
 
+#include <cstdint>
 #include <optional>
 #include <ostream>
 #include <string>
