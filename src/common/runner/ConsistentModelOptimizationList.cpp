@@ -58,9 +58,6 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
 }
 
 void ConsistentModelOptimizationList::InitializeDerivatives() {
-    for (const auto& [quanity_enum, shared_ptr] : model_.getOperators()) {
-        operators_for_explicit_construction_[quanity_enum] = shared_ptr;
-    }
     for (const auto& [pair, shared_ptr] : model_.getOperatorDerivatives()) {
         derivatives_for_explicit_construction_[pair] = shared_ptr;
     }
