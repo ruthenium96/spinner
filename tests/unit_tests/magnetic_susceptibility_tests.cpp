@@ -122,6 +122,36 @@ TEST(magnetic_susceptibility, sort_experimental_temperatues) {
     EXPECT_TRUE(std::is_sorted(temperatures.begin(), temperatures.end()));
 }
 
+TEST(magnetic_susceptibility, equvalence_of_weightong_schemes_on_equidistant_data) {
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values;
+
+    for (size_t i = 1; i < 300; i += 3) {
+        magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+            static_cast<double>(i),
+            1.0};
+        exp_values.push_back(value_at_temperature);
+    }
+
+    magnetic_susceptibility::ExperimentalValuesWorker worker_per_point(
+        exp_values,
+        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        1.0,
+        magnetic_susceptibility::per_point);
+    magnetic_susceptibility::ExperimentalValuesWorker worker_per_interval(
+        exp_values,
+        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        1.0,
+        magnetic_susceptibility::per_interval);
+
+    const auto& weights_per_point = worker_per_point.getWeights();
+    const auto& weights_per_interval = worker_per_interval.getWeights();
+
+    EXPECT_EQ(weights_per_interval.size(), weights_per_point.size());
+    for (size_t i = 0; i < weights_per_interval.size(); ++i) {
+        EXPECT_NEAR(weights_per_interval.at(i), weights_per_point.at(i), 1e-9);
+    }
+}
+
 TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
     std::vector<magnetic_susceptibility::ExperimentalValuesEnum> values_enum = {
         magnetic_susceptibility::mu_in_bohr_magnetons,

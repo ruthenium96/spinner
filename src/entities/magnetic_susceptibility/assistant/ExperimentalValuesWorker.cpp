@@ -9,7 +9,8 @@ namespace magnetic_susceptibility {
 ExperimentalValuesWorker::ExperimentalValuesWorker(
     std::vector<ValueAtTemperature> experimental_values,
     ExperimentalValuesEnum experimental_values_type,
-    double number_of_centers_ratio) {
+    double number_of_centers_ratio,
+    WeightingSchemeEnum weightingSchemeEnum) {
     if (experimental_values.empty()) {
         throw std::length_error("experimental_values cannot be empty");
     }
@@ -44,6 +45,8 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
     });
 
     experimental_mu_squared_ = std::move(experimental_values);
+
+    weights_ = WeightingScheme(getTemperatures(), weightingSchemeEnum);
 }
 
 double ExperimentalValuesWorker::calculateResidualError() const {
@@ -51,7 +54,7 @@ double ExperimentalValuesWorker::calculateResidualError() const {
     double residual_error = 0;
     for (size_t i = 0; i < theoretical_mu_squared_.size(); ++i) {
         double diff = theoretical_mu_squared_[i].value - experimental_mu_squared_[i].value;
-        residual_error += diff * diff;
+        residual_error += weights_.at(i) * diff * diff;
     }
     return residual_error;
 }
@@ -61,7 +64,7 @@ std::vector<ValueAtTemperature> ExperimentalValuesWorker::calculateDerivative() 
     std::vector<ValueAtTemperature> derivative(experimental_mu_squared_.size());
     for (size_t i = 0; i < theoretical_mu_squared_.size(); ++i) {
         double diff = theoretical_mu_squared_[i].value - experimental_mu_squared_[i].value;
-        derivative[i] = {theoretical_mu_squared_[i].temperature, 2 * diff};
+        derivative[i] = {theoretical_mu_squared_[i].temperature, 2 * diff * weights_.at(i)};
     }
     return derivative;
 }
@@ -114,11 +117,16 @@ std::vector<ValueAtTemperature> ExperimentalValuesWorker::getTheoreticalValues()
 std::vector<ValueAtTemperature> ExperimentalValuesWorker::getExperimentalMuSquared() const {
     return experimental_mu_squared_;
 }
+
 void ExperimentalValuesWorker::throw_exception_if_theoretical_mu_squared_was_not_initialized()
     const {
     if (theoretical_mu_squared_.empty()) {
         throw std::length_error("Theoretical mu-squared was not initialized");
     }
+}
+
+const std::vector<double>& ExperimentalValuesWorker::getWeights() const {
+    return weights_.getWeights();
 }
 
 }  // namespace magnetic_susceptibility

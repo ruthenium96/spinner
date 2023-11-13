@@ -44,7 +44,9 @@ class Runner {
     void initializeExperimentalValues(
         const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
         magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
-        double number_of_centers_ratio);
+        double number_of_centers_ratio,
+        magnetic_susceptibility::WeightingSchemeEnum weightingSchemeEnum =
+            magnetic_susceptibility::per_point);
     std::map<model::symbols::SymbolName, double> calculateTotalDerivatives();
     void minimizeResidualError(std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>);
 

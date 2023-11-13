@@ -197,7 +197,8 @@ void Runner::BuildMuSquaredWorker() {
 void Runner::initializeExperimentalValues(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
     magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
-    double number_of_centers_ratio) {
+    double number_of_centers_ratio,
+    magnetic_susceptibility::WeightingSchemeEnum weightingSchemeEnum) {
     if (experimental_values_worker_.has_value()) {
         throw std::invalid_argument("Experimental values have been already initialized");
     }
@@ -206,7 +207,8 @@ void Runner::initializeExperimentalValues(
         std::make_shared<magnetic_susceptibility::ExperimentalValuesWorker>(
             experimental_data,
             experimental_quantity_type,
-            number_of_centers_ratio);
+            number_of_centers_ratio,
+            weightingSchemeEnum);
 
     if (magnetic_susceptibility_controller_.has_value()) {
         magnetic_susceptibility_controller_.value().initializeExperimentalValues(
