@@ -22,4 +22,6 @@ add_library(magnetic_susceptibility
         magnetic_susceptibility/MagneticSusceptibilityController.cpp
         magnetic_susceptibility/worker/AbstractWorker.h
         magnetic_susceptibility/worker/GSzSquaredWorker.cpp
-        magnetic_susceptibility/worker/GSzSquaredWorker.h)
+        magnetic_susceptibility/worker/GSzSquaredWorker.h
+        magnetic_susceptibility/assistant/WeightingScheme.cpp
+        magnetic_susceptibility/assistant/WeightingScheme.h)
