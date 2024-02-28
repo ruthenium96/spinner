@@ -322,3 +322,46 @@ TEST(group_tests, construct_orbits_of_mults) {
         EXPECT_EQ(orbits_of_mults, right_answer);
     }
 }
+
+TEST(group_tests, noncommutation_of_P2s_in_triangle) {
+    auto group_one = group::Group(group::Group::S2, {{0, 2, 1}});
+    auto group_two = group::Group(group::Group::S2, {{1, 0, 2}});
+    EXPECT_FALSE(group_one.do_groups_commute(group_two));
+    EXPECT_FALSE(group_two.do_groups_commute(group_one));
+}
+
+TEST(group_tests, commutation_of_P2s_in_rectangle) {
+    auto group_one = group::Group(group::Group::S2, {{1, 0, 3, 2}});
+    auto group_two = group::Group(group::Group::S2, {{2, 3, 0, 1}});
+    EXPECT_TRUE(group_one.do_groups_commute(group_two));
+    EXPECT_TRUE(group_two.do_groups_commute(group_one));
+}
+
+TEST(group_tests, commutation_of_P3s_in_toroid) {
+    auto group_one = group::Group(group::Group::S3, {
+                                                        {
+                                                            3, 4, 5,
+                                                            6, 7, 8,
+                                                            0, 1, 2,
+                                                        },
+                                                        {
+                                                            3, 4, 5,
+                                                            0, 1, 2,
+                                                            6, 7, 8,
+                                                        }
+                                                    });
+    auto group_two = group::Group(group::Group::S3, {
+                                                        {
+                                                            1, 2, 0,
+                                                            4, 5, 3,
+                                                            7, 8, 6,
+                                                        },
+                                                        {
+                                                            1, 0, 2,
+                                                            4, 3, 5,
+                                                            7, 6, 8,
+                                                        }
+                                                    });
+    EXPECT_TRUE(group_one.do_groups_commute(group_two));
+    EXPECT_TRUE(group_two.do_groups_commute(group_one));
+}
