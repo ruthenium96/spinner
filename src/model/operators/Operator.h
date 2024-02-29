@@ -10,8 +10,7 @@ namespace model::operators {
 class Operator {
   public:
     Operator() = default;
-    // TODO: should we delete this constructor?
-    Operator(const Operator&);
+    Operator(const Operator&) = delete;
     Operator& operator=(const Operator&) = delete;
     Operator(Operator&&) noexcept = default;
     Operator& operator=(Operator&&) noexcept = default;
@@ -24,12 +23,13 @@ class Operator {
         std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters);
 
     bool empty() const;
-    std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms();
     const std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms() const;
-    std::vector<std::unique_ptr<const OneCenterTerm>>& getOneCenterTerms();
     const std::vector<std::unique_ptr<const OneCenterTerm>>& getOneCenterTerms() const;
-    std::vector<std::unique_ptr<const TwoCenterTerm>>& getTwoCenterTerms();
     const std::vector<std::unique_ptr<const TwoCenterTerm>>& getTwoCenterTerms() const;
+
+    void emplace_back(std::unique_ptr<const ZeroCenterTerm>&& term);
+    void emplace_back(std::unique_ptr<const OneCenterTerm>&& term);
+    void emplace_back(std::unique_ptr<const TwoCenterTerm>&& term);
 
   private:
     std::vector<std::unique_ptr<const ZeroCenterTerm>> zero_center_terms;

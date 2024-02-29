@@ -58,7 +58,7 @@ void Model::InitializeIsotropicExchange() {
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
         return;
     }
-    operators_map_[common::Energy]->getTwoCenterTerms().emplace_back(
+    operators_map_[common::Energy]->emplace_back(
         std::make_unique<const operators::ScalarProductTerm>(
             converter_,
             getNumericalWorker().getIsotropicExchangeParameters()));
@@ -70,12 +70,12 @@ void Model::InitializeZeroFieldSplitting() {
         return;
     }
     auto D_parameters = getNumericalWorker().getZFSParameters().first;
-    operators_map_[common::Energy]->getOneCenterTerms().emplace_back(
+    operators_map_[common::Energy]->emplace_back(
         std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
             converter_,
             D_parameters,
             -1.0 / 3.0));
-    operators_map_[common::Energy]->getOneCenterTerms().emplace_back(
+    operators_map_[common::Energy]->emplace_back(
         std::make_unique<const operators::SzSzOneCenterTerm>(converter_, D_parameters));
     operators_history_.zfs_in_hamiltonian = true;
 }
@@ -87,7 +87,7 @@ void Model::InitializeIsotropicExchangeDerivatives() {
 
     for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::J)) {
         operators::Operator operator_derivative = operators::Operator();
-        operator_derivative.getTwoCenterTerms().emplace_back(
+        operator_derivative.emplace_back(
             std::make_unique<const operators::ScalarProductTerm>(
                 converter_,
                 getNumericalWorker().constructIsotropicExchangeDerivativeParameters(symbol)));
@@ -105,12 +105,12 @@ void Model::InitializeZeroFieldSplittingDerivative() {
     for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::D)) {
         operators::Operator operator_derivative = operators::Operator();
         auto derivative_parameters = getNumericalWorker().constructZFSDerivativeParameters(symbol);
-        operator_derivative.getOneCenterTerms().emplace_back(
+        operator_derivative.emplace_back(
             std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
                 converter_,
                 derivative_parameters,
                 -1.0 / 3.0));
-        operator_derivative.getOneCenterTerms().emplace_back(
+        operator_derivative.emplace_back(
             std::make_unique<const operators::SzSzOneCenterTerm>(
                 converter_,
                 derivative_parameters));
@@ -128,9 +128,9 @@ void Model::InitializeGSzSquaredDerivatives() {
          getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
         operators::Operator operator_derivative = operators::Operator();
         auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
-        operator_derivative.getOneCenterTerms().emplace_back(
+        operator_derivative.emplace_back(
             std::make_unique<operators::SzSzOneCenterTerm>(converter_, pair_of_parameters.first));
-        operator_derivative.getTwoCenterTerms().emplace_back(
+        operator_derivative.emplace_back(
             std::make_unique<const operators::SzSzTwoCenterTerm>(
                 converter_,
                 pair_of_parameters.second,
