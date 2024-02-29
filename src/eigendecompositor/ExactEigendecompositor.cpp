@@ -48,7 +48,7 @@ void ExactEigendecompositor::initialize(
     energy_operator_ = operators_to_calculate.at(common::Energy);
     do_we_need_eigenvectors_ =
         !(operators_to_calculate.size() == 1 && derivatives_operators_to_calculate.empty());
-    std::erase_if(operators_to_calculate, [](auto p) { return p.first == common::Energy; });
+    std::erase_if(operators_to_calculate, [](const auto& p) { return p.first == common::Energy; });
 }
 
 void ExactEigendecompositor::finalize() {}

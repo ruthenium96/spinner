@@ -101,7 +101,7 @@ void OneSymbolInHamiltonianEigendecompositor::initialize(
 
     size_t number_of_all_derivatives = derivatives_operators_to_calculate.size();
     // delete energy derivative operator, because we are about to calculate corresponding spectrum
-    std::erase_if(derivatives_operators_to_calculate, [](auto p) {
+    std::erase_if(derivatives_operators_to_calculate, [](const auto& p) {
         return p.first.first == common::Energy;
     });
     size_t number_of_non_energy_derivatives = derivatives_operators_to_calculate.size();
@@ -124,7 +124,7 @@ void OneSymbolInHamiltonianEigendecompositor::initialize(
         eigenvectors_.resize(number_of_subspaces);
     } else {
         // delete energy operator, because we are going to implicitly calculate energy
-        std::erase_if(operators_to_calculate, [](auto p) { return p.first == common::Energy; });
+        std::erase_if(operators_to_calculate, [](const auto& p) { return p.first == common::Energy; });
     }
 }
 

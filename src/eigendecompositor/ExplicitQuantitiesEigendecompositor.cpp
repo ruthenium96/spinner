@@ -118,13 +118,13 @@ void ExplicitQuantitiesEigendecompositor::initialize(
     // delete operators, because we are going to calculate corresponding spectra
     for (const auto& p : quantities_map_) {
         auto quantity_enum = p.first;
-        std::erase_if(operators_to_calculate, [quantity_enum](auto p) {
+        std::erase_if(operators_to_calculate, [quantity_enum](const auto& p) {
             return p.first == quantity_enum;
         });
     }
     for (const auto& p : derivatives_map_) {
         auto pair = p.first;
-        std::erase_if(derivatives_operators_to_calculate, [pair](auto p) {
+        std::erase_if(derivatives_operators_to_calculate, [pair](const auto& p) {
             return p.first == pair;
         });
     }
