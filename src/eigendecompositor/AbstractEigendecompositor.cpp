@@ -22,7 +22,7 @@ void AbstractEigendecompositor::BuildSpectra(
         assert(derivatives_operators_to_calculate.size() == 0);
     }
 
-#pragma omp parallel for shared(space, operators, derivatives_operators) default(none)
+#pragma omp parallel for shared(space, operators, derivatives_operators) default(shared)
     for (size_t i = 0; i < space.getBlocks().size(); ++i) {
         const auto& subspace = space.getBlocks().at(i);
         BuildSubspectra(i, subspace);
