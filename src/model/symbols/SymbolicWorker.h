@@ -50,7 +50,7 @@ class SymbolicWorker {
     SymbolName addSymbol(const std::string& name, double initial_value, bool is_changeable);
     SymbolName addSymbol(const std::string& name, double initial_value);
 
-    void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value) const;
+    void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
 
     std::vector<SymbolName> getChangeableNames(SymbolTypeEnum type_enum) const;
     std::vector<SymbolName> getChangeableNames() const;
@@ -62,7 +62,7 @@ class SymbolicWorker {
     // TODO: Can we move all of this to SymbolName and rename it to Symbol?
     //  maybe except of value.
     struct SymbolData {
-        mutable double value;
+        double value;
         bool is_changeable;
         SymbolTypeEnum type_enum;
     };

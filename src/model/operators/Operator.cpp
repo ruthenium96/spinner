@@ -32,44 +32,32 @@ Operator Operator::g_sz_squared(
     return g_sz_squared_operator_;
 }
 
-Operator::Operator(const Operator& rhs) {
-    for (const std::unique_ptr<const ZeroCenterTerm>& el : rhs.zero_center_terms) {
-        zero_center_terms.emplace_back(el->clone());
-    }
-    for (const std::unique_ptr<const OneCenterTerm>& el : rhs.one_center_terms) {
-        one_center_terms.emplace_back(el->clone());
-    }
-    for (const std::unique_ptr<const TwoCenterTerm>& el : rhs.two_center_terms) {
-        two_center_terms.emplace_back(el->clone());
-    }
-}
-
 bool Operator::empty() const {
     return zero_center_terms.empty() && one_center_terms.empty() && two_center_terms.empty();
-}
-
-std::vector<std::unique_ptr<const ZeroCenterTerm>>& Operator::getZeroCenterTerms() {
-    return zero_center_terms;
 }
 
 const std::vector<std::unique_ptr<const ZeroCenterTerm>>& Operator::getZeroCenterTerms() const {
     return zero_center_terms;
 }
 
-std::vector<std::unique_ptr<const OneCenterTerm>>& Operator::getOneCenterTerms() {
-    return one_center_terms;
-}
-
 const std::vector<std::unique_ptr<const OneCenterTerm>>& Operator::getOneCenterTerms() const {
     return one_center_terms;
 }
 
-std::vector<std::unique_ptr<const TwoCenterTerm>>& Operator::getTwoCenterTerms() {
+const std::vector<std::unique_ptr<const TwoCenterTerm>>& Operator::getTwoCenterTerms() const {
     return two_center_terms;
 }
 
-const std::vector<std::unique_ptr<const TwoCenterTerm>>& Operator::getTwoCenterTerms() const {
-    return two_center_terms;
+void Operator::emplace_back(std::unique_ptr<const ZeroCenterTerm>&& term) {
+    zero_center_terms.emplace_back(std::move(term));
+}
+
+void Operator::emplace_back(std::unique_ptr<const OneCenterTerm>&& term) {
+    one_center_terms.emplace_back(std::move(term));
+}
+
+void Operator::emplace_back(std::unique_ptr<const TwoCenterTerm>&& term) {
+    two_center_terms.emplace_back(std::move(term));
 }
 
 }  // namespace model::operators

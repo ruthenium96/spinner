@@ -25,6 +25,11 @@ class ArmaSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
     void normalize() override;
     void print(std::ostream& os) const override;
 
+    const arma::sp_mat& getSparseSemiunitaryMatrix() const;
+    void unitaryTransform(
+        const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
+        std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const override;
+
   private:
     arma::sp_mat sparseSemiunitaryMatrix_;
 };

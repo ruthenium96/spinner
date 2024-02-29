@@ -2,8 +2,6 @@
 
 #include <utility>
 
-#include "wignerSymbols.h"
-
 namespace space::optimization {
 
 S2Transformer::S2Transformer(
@@ -81,9 +79,11 @@ S2Transformer::constructTransformationMatrix(
             transformation_matrix) default(none)
     for (size_t j = 0; j < number_of_sz_states; ++j) {
         auto iterator = subspace.decomposition->GetNewIterator(j);
-        // todo: consider reserve or resize
         std::vector<std::vector<double>> all_projections;
         std::vector<double> all_coeffs;
+        all_projections.reserve(iterator->size());
+        all_coeffs.reserve(iterator->size());
+
         while (iterator->hasNext()) {
             auto item = iterator->getNext();
             auto lex_index = item.index;
@@ -91,6 +91,7 @@ S2Transformer::constructTransformationMatrix(
             all_projections.emplace_back(std::move(construct_projections(lex_index)));
             all_coeffs.emplace_back(item.value);
         }
+
         for (size_t i = 0; i < number_of_s2_states; ++i) {
             const auto& s_squared_state = s_squared_states[i];
             double value = 0;
@@ -140,18 +141,14 @@ double S2Transformer::total_CG_coefficient(
 
         double proj_one = projections[pos_one];
         double proj_two = projections[pos_two];
-        c *= hashed_clebsh_gordan(spin_one, spin_two, spin_sum, proj_one, proj_two);
+        c *= clebshGordanCalculator_
+                 .clebsh_gordan_coefficient(spin_one, spin_two, spin_sum, proj_one, proj_two);
         if (c == 0.0) {
             return c;
         }
     }
 
     return c;
-}
-
-double S2Transformer::hashed_clebsh_gordan(double l1, double l2, double l3, double m1, double m2) {
-    // TODO: implement hashing of CG-coefficients
-    return WignerSymbols::clebschGordan(l1, l2, l3, m1, m2, m1 + m2);
 }
 
 std::vector<double> S2Transformer::construct_projections(uint32_t lex_index) const {
@@ -173,4 +170,5 @@ std::vector<double> S2Transformer::construct_projections(uint32_t lex_index) con
 
     return projections;
 }
+
 }  // namespace space::optimization

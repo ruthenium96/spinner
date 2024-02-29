@@ -33,7 +33,6 @@ add_executable(spinner_test
         unit_tests/interactions_test.cpp
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
-        unit_tests/matrix_and_spectrum_builders_tests.cpp
         non_hamiltonian_operators_tests.cpp
         unit_tests/magnetic_susceptibility_tests.cpp
         integration_tests/spectrum_builder_tests.cpp)
@@ -94,7 +93,7 @@ endif ()
 target_link_libraries(tests_tools gtest gtest_main)
 
 target_link_libraries(spinner_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra eigendecompositor)
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver eigendecompositor)

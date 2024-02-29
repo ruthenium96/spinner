@@ -191,4 +191,27 @@ Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
 const std::vector<Permutation>& Group::getElements() const {
     return elements_;
 }
+
+bool Group::do_groups_commute(const Group& rhs) const {
+    size_t lhs_size = generators_.size();
+    size_t rhs_size = rhs.generators_.size();
+    size_t permutation_size = elements_.back().size();
+
+    for (size_t l = 0; l < lhs_size; ++l) {
+        const auto& lg = generators_.at(l);
+        for (size_t r = 0; r < rhs_size; ++r) {
+            const auto& rg = rhs.generators_.at(r);
+            for (size_t el = 0; el < permutation_size; ++el) {
+                if (rg.at(lg.at(el)) != lg.at(rg.at(el))) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+size_t Group::size_of_permutations() const {
+    return elements_.back().size();
+}
 }  // namespace group

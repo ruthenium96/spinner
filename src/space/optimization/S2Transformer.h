@@ -7,6 +7,7 @@
 #include "src/common/lexicographic/IndexConverter.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/space/Space.h"
+#include "src/spin_algebra/ClebshGordanCalculator.h"
 #include "src/spin_algebra/RepresentationsMultiplier.h"
 #include "src/spin_algebra/SSquaredState.h"
 
@@ -31,7 +32,6 @@ class S2Transformer {
         const spin_algebra::SSquaredState& s_squared_state,
         const std::vector<double>& projections) const;
     std::vector<double> construct_projections(uint32_t lex_index) const;
-    static double hashed_clebsh_gordan(double l1, double l2, double l3, double m1, double m2);
 
     const lexicographic::IndexConverter converter_;
     const quantum::linear_algebra::FactoriesList factories_;
@@ -39,6 +39,8 @@ class S2Transformer {
     std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation_;
     std::map<spin_algebra::SSquaredState::Properties, std::vector<spin_algebra::SSquaredState>>
         sorted_s_squared_states_;
+
+    spin_algebra::ClebshGordanCalculator clebshGordanCalculator_;
 };
 }  // namespace space::optimization
 #endif  //SPINNER_S2TRANSFORMER_H

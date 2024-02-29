@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "WeightingScheme.h"
+
 namespace magnetic_susceptibility {
 
 constexpr double mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol =
@@ -25,17 +27,18 @@ enum ExperimentalValuesEnum {
 // and its chain rule derivative: 2 * (exp(T) - theor(T)).
 class ExperimentalValuesWorker {
   public:
-    // TODO: can we also add weight function?
     ExperimentalValuesWorker(
         std::vector<ValueAtTemperature> experimental_values,
         ExperimentalValuesEnum experimental_values_type,
-        double number_of_centers_ratio);
+        double number_of_centers_ratio,
+        WeightingSchemeEnum weightingSchemeEnum = per_point);
 
     std::vector<double> getTemperatures() const;
     void setTheoreticalMuSquared(std::vector<ValueAtTemperature> theoretical_mu_squared);
 
     std::vector<ValueAtTemperature> getTheoreticalValues() const;
     std::vector<ValueAtTemperature> getExperimentalMuSquared() const;
+    const std::vector<double>& getWeights() const;
 
     double calculateResidualError() const;
     std::vector<ValueAtTemperature> calculateDerivative() const;
@@ -46,6 +49,7 @@ class ExperimentalValuesWorker {
     std::vector<ValueAtTemperature> experimental_mu_squared_;
     std::vector<ValueAtTemperature> theoretical_mu_squared_;
     ExperimentalValuesEnum experimental_values_type_;
+    WeightingScheme weights_;
     // Ratio between number of centers (or molar weight) of theoretical and experimental systems.
     double number_of_centers_ratio_;
 };

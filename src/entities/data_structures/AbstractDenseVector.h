@@ -11,8 +11,9 @@ class AbstractDenseVector {
     virtual void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) = 0;
     virtual void add_identical_values(size_t number, double value) = 0;
     virtual void subtract_minimum() = 0;
+    virtual void wise_exp() = 0;
 
-    virtual std::unique_ptr<AbstractDenseVector> divide_and_wise_exp(double denominator) const = 0;
+    virtual std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const = 0;
     virtual double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const = 0;
     virtual std::unique_ptr<AbstractDenseVector>
     element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const = 0;

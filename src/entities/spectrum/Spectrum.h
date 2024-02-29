@@ -11,15 +11,6 @@ struct Spectrum {
 
     std::vector<Subspectrum> blocks;
     explicit Spectrum(std::vector<Subspectrum>&& m);
-
-    static std::pair<
-        Spectrum,
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
-    energy(const Matrix& hamiltonian_matrix);
-    static Spectrum non_energy(
-        const Matrix& non_hamiltonian_matrix,
-        const std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>&
-            unitary_transformation_matrices);
 };
 
 std::ostream& operator<<(std::ostream& os, const Spectrum& space);

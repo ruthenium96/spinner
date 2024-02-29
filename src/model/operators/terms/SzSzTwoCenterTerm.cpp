@@ -40,7 +40,7 @@ void SzSzTwoCenterTerm::construct(
 }
 
 std::unique_ptr<TwoCenterTerm> SzSzTwoCenterTerm::clone() const {
-    return std::make_unique<SzSzTwoCenterTerm>(converter_, coefficients_);
+    return std::make_unique<SzSzTwoCenterTerm>(converter_, coefficients_, prefactor_);
 }
 
 }  // namespace model::operators

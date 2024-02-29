@@ -16,7 +16,6 @@ class AbstractSparseSemiunitaryMatrix {
      I do not know any possibilities to pass
      index_of_vector to range-base loop,
      so currently it is the best solution.
-     TODO: can we pass index_of_vector to range-base loop?
      */
     struct Iterator {
         struct IndexValueItem {
@@ -25,6 +24,7 @@ class AbstractSparseSemiunitaryMatrix {
         };
         virtual bool hasNext() const = 0;
         virtual IndexValueItem getNext() = 0;
+        virtual size_t size() const = 0;
         virtual ~Iterator() = default;
     };
 
@@ -49,7 +49,7 @@ class AbstractSparseSemiunitaryMatrix {
     virtual void normalize() = 0;
     virtual void unitaryTransform(
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
-        std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const;
+        std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const = 0;
 
     virtual void print(std::ostream& os) const = 0;
 };

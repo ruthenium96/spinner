@@ -1,7 +1,8 @@
-#ifndef SPINNER_STDSPARSESEMIUNITARYMATRIX_H
-#define SPINNER_STDSPARSESEMIUNITARYMATRIX_H
+#ifndef SPINNER_EMHASHSPARSESEMIUNITARYMATRIX_H
+#define SPINNER_EMHASHSPARSESEMIUNITARYMATRIX_H
 
 #include <cstdint>
+#include <hash_table8.hpp>
 #include <map>
 #include <memory>
 #include <ostream>
@@ -10,14 +11,16 @@
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 
 namespace quantum::linear_algebra {
-class StdSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
+class EmhashSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   public:
-    StdSparseSemiunitaryMatrix() = default;
-    StdSparseSemiunitaryMatrix(const StdSparseSemiunitaryMatrix&) = delete;
-    StdSparseSemiunitaryMatrix& operator=(const StdSparseSemiunitaryMatrix&) = delete;
-    StdSparseSemiunitaryMatrix(StdSparseSemiunitaryMatrix&&) noexcept = default;
-    StdSparseSemiunitaryMatrix& operator=(StdSparseSemiunitaryMatrix&&) noexcept = default;
-    ~StdSparseSemiunitaryMatrix() override = default;
+    using Map = emhash8::HashMap<uint32_t, double>;
+
+    EmhashSparseSemiunitaryMatrix() = default;
+    EmhashSparseSemiunitaryMatrix(const EmhashSparseSemiunitaryMatrix&) = delete;
+    EmhashSparseSemiunitaryMatrix& operator=(const EmhashSparseSemiunitaryMatrix&) = delete;
+    EmhashSparseSemiunitaryMatrix(EmhashSparseSemiunitaryMatrix&&) noexcept = default;
+    EmhashSparseSemiunitaryMatrix& operator=(EmhashSparseSemiunitaryMatrix&&) noexcept = default;
+    ~EmhashSparseSemiunitaryMatrix() override = default;
 
     std::unique_ptr<Iterator> GetNewIterator(size_t index_of_vector) const override;
 
@@ -45,15 +48,17 @@ class StdSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
         std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const override;
 
+    const std::vector<Map>& getSparseSemiunitaryMatrix() const;
+
   private:
-    std::vector<std::map<uint32_t, double>> basis_;
+    std::vector<Map> basis_;
     uint32_t rows_;
     // c-like pointers are necessary to avoid double-free error
-    static const StdSparseSemiunitaryMatrix*
+    static const EmhashSparseSemiunitaryMatrix*
     downcast_ptr(const std::unique_ptr<AbstractSparseSemiunitaryMatrix>& ptr);
-    static StdSparseSemiunitaryMatrix*
+    static EmhashSparseSemiunitaryMatrix*
     downcast_ptr(std::unique_ptr<AbstractSparseSemiunitaryMatrix>& ptr);
 };
 }  // namespace quantum::linear_algebra
 
-#endif  //SPINNER_STDSPARSESEMIUNITARYMATRIX_H
+#endif  //SPINNER_EMHASHSPARSESEMIUNITARYMATRIX_H

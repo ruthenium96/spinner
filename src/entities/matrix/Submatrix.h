@@ -11,7 +11,11 @@ struct Submatrix {
     BlockProperties properties;
     std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data;
 
-    Submatrix() = delete;
+    Submatrix() = default;
+
+    Submatrix(
+        std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
+        BlockProperties properties_);
 
     Submatrix(
         const space::Subspace& subspace,

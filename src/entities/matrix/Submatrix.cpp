@@ -10,6 +10,12 @@ std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix) {
 }
 
 Submatrix::Submatrix(
+    std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
+    BlockProperties properties_) :
+    raw_data(std::move(raw_data_)),
+    properties(properties_) {}
+
+Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
     const lexicographic::IndexConverter& converter,
@@ -54,7 +60,11 @@ Submatrix::Submatrix(
     }
 
     properties = subspace.properties;
-    raw_data = factories.createDenseDiagonalizableMatrix(matrix_in_space_basis_size);
+    if (subspace.dense_semiunitary_matrix.has_value()) {
+        raw_data = factories.createSparseDiagonalizableMatrix(matrix_in_space_basis_size);
+    } else {
+        raw_data = factories.createDenseDiagonalizableMatrix(matrix_in_space_basis_size);
+    }
 
     subspace.decomposition->unitaryTransform(matrix_in_lexicografical_basis, raw_data);
     if (subspace.dense_semiunitary_matrix.has_value()) {

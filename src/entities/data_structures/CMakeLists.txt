@@ -1,19 +1,10 @@
-FetchContent_Declare(
-        emhash
-        GIT_REPOSITORY https://github.com/ktprime/emhash.git
-        GIT_TAG "2e3edc378373b331afa8bd570d657bf3f1229b86"
-)
-FetchContent_MakeAvailable(emhash)
-include_directories(${emhash_SOURCE_DIR}/)
-
-# TODO: it is not "std" now, rename it to more suitable name
 # TODO: implement other sparse matrices:
 add_library(data_structures
-        std/StdSparseSemiunitaryMatrix.cpp
-        std/as_default/StdSparseTransformAsDefault.cpp
-        std/StdFactories.cpp
-        std/EmhashSparseSymmetricMatrix.cpp std/EmhashSparseSymmetricMatrix.h
-        AbstractSparseSemiunitaryMatrix.cpp
+        hashmap/EmhashSparseSemiunitaryMatrix.cpp
+        hashmap/as_default/EmhashSparseTransformAsDefault.cpp
+        hashmap/HashmapFactories.cpp
+        hashmap/EmhashSparseSymmetricMatrix.cpp
+        hashmap/EmhashLogic.cpp
         FactoriesList.cpp)
 
 message("Trying to find packages of linear algebra...")

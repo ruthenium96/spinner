@@ -14,42 +14,36 @@ double sum_of_s_squared(const lexicographic::IndexConverter& indexConverter) {
 // mu_2 = g^2 \sum_a s_a (s_a + 1)
 
 TEST(simple_analytical_dependencies, nothing) {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_real_distribution<double> Theta_dist(-100, -1.0);
-
     std::vector<std::vector<spin_algebra::Multiplicity>> mults_cases =
         {{2}, {3}, {4}, {5}, {2, 2}, {2, 2, 2, 2}, {2, 3, 4, 5}};
 
     for (const auto& mults : mults_cases) {
-        for (size_t _ = 0; _ < 10; ++_) {
-            const double g_exact = 2.0;
+        const double g_exact = 2.0;
 
-            std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
 
-            {
-                model::ModelInput model(mults);
-                double g_value = g_exact;
-                auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
-                for (size_t i = 0; i < mults.size(); ++i) {
-                    model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
-                }
+        {
+            model::ModelInput model(mults);
+            double g_value = g_exact;
+            auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
+            for (size_t i = 0; i < mults.size(); ++i) {
+                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+            }
 
-                runner::Runner runner(model);
+            runner::Runner runner(model);
 
-                runner.BuildSpectra();
-                runner.BuildMuSquaredWorker();
+            runner.BuildSpectra();
+            runner.BuildMuSquaredWorker();
 
-                double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
+            double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
-                for (size_t temperature = 1; temperature < 301; ++temperature) {
-                    double calculated_value =
-                        runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
-                            temperature);
-                    double exact_value = (g_exact * g_exact * sum_of_s_squared_);
-                    // TODO: epsilon
-                    EXPECT_NEAR(calculated_value, exact_value, 1e-9);
-                }
+            for (size_t temperature = 1; temperature < 301; ++temperature) {
+                double calculated_value =
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
+                        temperature);
+                double exact_value = (g_exact * g_exact * sum_of_s_squared_);
+                // TODO: epsilon
+                EXPECT_NEAR(calculated_value, exact_value, 1e-9);
             }
         }
     }

@@ -10,8 +10,6 @@ class Model {
   public:
     explicit Model(ModelInput modelInput);
 
-    void InitializeDerivatives();
-
     // TODO: remove it?
     const symbols::SymbolicWorker& getSymbolicWorker() const;
     const symbols::NumericalWorker& getNumericalWorker() const;
@@ -23,9 +21,19 @@ class Model {
     bool is_isotropic_exchange_derivatives_initialized() const;
     bool is_zero_field_splitting_initialized() const;
 
-    const operators::Operator& getOperator(common::QuantityEnum) const;
-    const operators::Operator&
+    std::optional<std::shared_ptr<const operators::Operator>>
+        getOperator(common::QuantityEnum) const;
+    std::optional<std::shared_ptr<const operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
+
+    // These methods are not 'const' because they return non-const pointers.
+    // TODO: fix it using C++20 std::views?
+    const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>& getOperators();
+    const std::map<
+        std::pair<common::QuantityEnum, symbols::SymbolName>,
+        std::shared_ptr<operators::Operator>>&
+    getOperatorDerivatives();
+
     const lexicographic::IndexConverter& getIndexConverter() const;
 
   private:
@@ -50,13 +58,10 @@ class Model {
     void InitializeGSzSquared();
     void InitializeGSzSquaredDerivatives();
 
-    // std::shared_ptr<BasicQuantity>, where BasicQuantity is virtual class?
-    // or Quantity can consist std::unique_ptr<VirtualMatrix>?
-    // or can we just separate Operator and Spectrum?
-    operators::Operator energy_operator;
-    std::optional<operators::Operator> s_squared_operator;
-    std::optional<operators::Operator> g_sz_squared_operator;
-    std::map<std::pair<common::QuantityEnum, symbols::SymbolName>, operators::Operator>
+    std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>> operators_map_;
+    std::map<
+        std::pair<common::QuantityEnum, symbols::SymbolName>,
+        std::shared_ptr<operators::Operator>>
         derivatives_map_;
 };
 

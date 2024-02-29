@@ -155,8 +155,9 @@ double SymbolicWorker::getValueOfName(const SymbolName& symbol_name) const {
     return getSymbolData(symbol_name).value;
 }
 
-void SymbolicWorker::setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value)
-    const {
+void SymbolicWorker::setNewValueToChangeableSymbol(
+    const SymbolName& symbol_name,
+    double new_value) {
     if (!getSymbolData(symbol_name).is_changeable) {
         throw std::invalid_argument("Cannot change value of unchangeable symbol");
     }

@@ -28,12 +28,15 @@ void ArmaDenseVector::subtract_minimum() {
     vector_ -= minimum;
 }
 
-std::unique_ptr<AbstractDenseVector>
-ArmaDenseVector::divide_and_wise_exp(double denominator) const {
+std::unique_ptr<AbstractDenseVector> ArmaDenseVector::multiply_by(double multiplier) const {
     auto answer = std::make_unique<ArmaDenseVector>();
     answer->resize(size());
-    answer->vector_ = arma::exp(vector_ / (denominator));
+    answer->vector_ = vector_ * multiplier;
     return answer;
+}
+
+void ArmaDenseVector::wise_exp() {
+    vector_ = arma::exp(vector_);
 }
 
 double ArmaDenseVector::dot(const std::unique_ptr<AbstractDenseVector>& rhs) const {

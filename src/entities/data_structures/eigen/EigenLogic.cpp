@@ -27,7 +27,7 @@ std::unique_ptr<AbstractDenseVector> EigenLogic::unitaryTransformAndReturnMainDi
 #pragma omp parallel for shared( \
         main_diagonal, \
             firstMultiplicationResult, \
-            maybeDenseSemiunitaryMatrix) default(none)
+            maybeDenseSemiunitaryMatrix) default(shared)
         for (size_t i = 0; i < main_diagonal->size(); ++i) {
             auto value = firstMultiplicationResult.row(i)
                 * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);

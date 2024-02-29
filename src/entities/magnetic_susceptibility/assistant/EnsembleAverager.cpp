@@ -12,7 +12,8 @@ double EnsembleAverager::ensemble_average(
     const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& value,
     double temperature) const {
     if (last_temperature != temperature) {
-        divided_and_wise_exped_energy = energy_->divide_and_wise_exp(-1 * temperature);
+        divided_and_wise_exped_energy = energy_->multiply_by(-1.0 / temperature);
+        divided_and_wise_exped_energy->wise_exp();
         partition_function = divided_and_wise_exped_energy->dot(degeneracy_);
         last_temperature = temperature;
     }

@@ -20,9 +20,22 @@ class ConsistentModelOptimizationList {
     const model::Model& getModel() const;
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
 
+    const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+    getOperatorsForExplicitConstruction() const;
+    const std::map<
+        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+        std::shared_ptr<const model::operators::Operator>>&
+    getDerivativeOperatorsForExplicitConstruction() const;
+
   private:
     model::Model model_;
     common::physical_optimization::OptimizationList optimizationList_;
+    std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>
+        operators_for_explicit_construction_;
+    std::map<
+        std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+        std::shared_ptr<const model::operators::Operator>>
+        derivatives_for_explicit_construction_;
 };
 }  // namespace runner
 
