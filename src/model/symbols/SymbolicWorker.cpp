@@ -119,6 +119,16 @@ SymbolName SymbolicWorker::addSymbol(const std::string& name_string, double init
     return addSymbol(name_string, initial_value, true);
 }
 
+std::vector<SymbolName> SymbolicWorker::getAllNames(SymbolTypeEnum type_enum) const {
+    std::vector<SymbolName> answer;
+    for (const auto& [symbol_name, symbol_data] : symbolsMap) {
+        if (symbol_data.type_enum == type_enum) {
+            answer.push_back(symbol_name);
+        }
+    }
+    return answer;
+}
+
 std::vector<SymbolName> SymbolicWorker::getChangeableNames(SymbolTypeEnum type_enum) const {
     std::vector<SymbolName> answer;
     for (const auto& [symbol_name, symbol_data] : symbolsMap) {

@@ -52,16 +52,17 @@ Runner::Runner(
             getDataStructuresFactories());
 
     // todo: we need only J and D if there is no field
-    size_t number_of_changeable_J =
-        getModel().getSymbolicWorker().getChangeableNames(model::symbols::J).size();
-    size_t number_of_changeable_D =
-        getModel().getSymbolicWorker().getChangeableNames(model::symbols::D).size();
-    if (number_of_changeable_J == 1 && number_of_changeable_D == 0
-        || number_of_changeable_J == 0 && number_of_changeable_D == 1) {
+    size_t number_of_all_J =
+        getModel().getSymbolicWorker().getAllNames(model::symbols::J).size();
+    size_t number_of_all_D =
+        getModel().getSymbolicWorker().getAllNames(model::symbols::D).size();
+    if (number_of_all_J == 1 && number_of_all_D == 0
+        || number_of_all_J == 0 && number_of_all_D == 1) {
+        // TODO: the symbol_name can be unique, but fixed. This needs to be taken into account.
         model::symbols::SymbolName symbol_name;
-        if (number_of_changeable_J == 1) {
+        if (number_of_all_J == 1) {
             symbol_name = getModel().getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
-        } else if (number_of_changeable_D == 1) {
+        } else if (number_of_all_D == 1) {
             symbol_name = getModel().getSymbolicWorker().getChangeableNames(model::symbols::D)[0];
         }
         auto getter = [this, symbol_name]() {
