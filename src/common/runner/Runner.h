@@ -40,7 +40,6 @@ class Runner {
     void BuildSpectra();
 
     // CHIT OPERATIONS
-    void BuildMuSquaredWorker();
     void initializeExperimentalValues(
         const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
         magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
@@ -65,7 +64,7 @@ class Runner {
     std::optional<std::reference_wrapper<const Matrix>>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
     const magnetic_susceptibility::MagneticSusceptibilityController&
-    getMagneticSusceptibilityController() const;
+    getMagneticSusceptibilityController();
     const model::symbols::SymbolicWorker& getSymbolicWorker() const;
 
     quantum::linear_algebra::FactoriesList getDataStructuresFactories() const;
@@ -75,6 +74,8 @@ class Runner {
     const space::Space space_;
     quantum::linear_algebra::FactoriesList dataStructuresFactories_;
     std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor_;
+
+    void BuildMuSquaredWorker();
 
     const model::Model& getModel() const;
     const common::physical_optimization::OptimizationList& getOptimizationList() const;

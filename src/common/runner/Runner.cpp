@@ -1,6 +1,5 @@
 #include "Runner.h"
 
-#include <cassert>
 #include <utility>
 
 #include "src/eigendecompositor/ExactEigendecompositor.h"
@@ -241,7 +240,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             common::QuantityEnum,
             std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
         derivative_map[common::Energy] = std::move(derivative_vector);
-        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
             model::symbols::J,
             std::move(derivative_map));
         answer[changeable_symbol] = value;
@@ -259,7 +258,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             common::QuantityEnum,
             std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
         derivative_map[common::Energy] = std::move(derivative_vector);
-        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
             model::symbols::D,
             std::move(derivative_map));
         answer[changeable_symbol] = value;
@@ -279,7 +278,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             }
             map[common::gSz_total_squared] = std::move(derivative_vector);
         }
-        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
             model::symbols::g_factor,
             std::move(map));
         answer[changeable_symbol] = value;
@@ -293,7 +292,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
         auto empty_map = std::map<
             common::QuantityEnum,
             std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
-        double value = magnetic_susceptibility_controller_.value().calculateTotalDerivative(
+        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
             model::symbols::Theta,
             std::move(empty_map));
         answer[Theta_name] = value;
@@ -331,7 +330,7 @@ void Runner::minimizeResidualError(
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
     }
-    std::cout << "RSS = " << magnetic_susceptibility_controller_.value().calculateResidualError()
+    std::cout << "RSS = " << getMagneticSusceptibilityController().calculateResidualError()
               << std::endl;
 }
 
@@ -353,7 +352,7 @@ double Runner::stepOfRegression(
 
     // Do some calculation stuff...
     BuildSpectra();
-
+    // Rebuild MuSquaredWorker:
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
@@ -378,7 +377,10 @@ void Runner::initializeDerivatives() {
 }
 
 const magnetic_susceptibility::MagneticSusceptibilityController&
-Runner::getMagneticSusceptibilityController() const {
+Runner::getMagneticSusceptibilityController() {
+    if (!magnetic_susceptibility_controller_.has_value()) {
+        BuildMuSquaredWorker();
+    }
     return magnetic_susceptibility_controller_.value();
 }
 

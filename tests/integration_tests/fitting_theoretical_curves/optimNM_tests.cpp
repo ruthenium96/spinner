@@ -37,7 +37,6 @@ TEST(
             runner::Runner runner(model);
 
             runner.BuildSpectra();
-            runner.BuildMuSquaredWorker();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
