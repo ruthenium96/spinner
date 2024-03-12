@@ -196,25 +196,33 @@ void Runner::BuildMuSquaredWorker() {
 }
 
 void Runner::initializeExperimentalValues(
-    const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
-    magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
-    double number_of_centers_ratio,
-    magnetic_susceptibility::WeightingSchemeEnum weightingSchemeEnum) {
+    const std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>& experimental_values_worker) {
     if (experimental_values_worker_.has_value()) {
         throw std::invalid_argument("Experimental values have been already initialized");
     }
 
-    experimental_values_worker_ =
+    experimental_values_worker_ = experimental_values_worker;
+
+    if (magnetic_susceptibility_controller_.has_value()) {
+        magnetic_susceptibility_controller_.value().initializeExperimentalValues(
+            experimental_values_worker_.value());
+    }
+}
+
+void Runner::initializeExperimentalValues(
+    const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
+    magnetic_susceptibility::ExperimentalValuesEnum experimental_quantity_type,
+    double number_of_centers_ratio,
+    magnetic_susceptibility::WeightingSchemeEnum weightingSchemeEnum) {
+
+    auto experimental_values_worker =
         std::make_shared<magnetic_susceptibility::ExperimentalValuesWorker>(
             experimental_data,
             experimental_quantity_type,
             number_of_centers_ratio,
             weightingSchemeEnum);
 
-    if (magnetic_susceptibility_controller_.has_value()) {
-        magnetic_susceptibility_controller_.value().initializeExperimentalValues(
-            experimental_values_worker_.value());
-    }
+    initializeExperimentalValues(experimental_values_worker);
 }
 
 std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {

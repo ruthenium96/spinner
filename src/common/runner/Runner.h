@@ -47,6 +47,8 @@ class Runner {
         double number_of_centers_ratio,
         magnetic_susceptibility::WeightingSchemeEnum weightingSchemeEnum =
             magnetic_susceptibility::per_point);
+    void initializeExperimentalValues(
+        const std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>& experimental_values_worker);
     std::map<model::symbols::SymbolName, double> calculateTotalDerivatives();
     void minimizeResidualError(std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>);
 
