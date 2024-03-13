@@ -3,9 +3,7 @@
 #include <utility>
 
 #include "src/eigendecompositor/EigendecompositorConstructor.h"
-#include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
-#include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
-#include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
+#include "src/entities/magnetic_susceptibility/worker/WorkerConstructor.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
 
 namespace runner {
@@ -94,55 +92,11 @@ std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(
 }
 
 void Runner::BuildMuSquaredWorker() {
-    auto energy_vector = dataStructuresFactories_.createVector();
-    auto degeneracy_vector = dataStructuresFactories_.createVector();
-
-    for (const auto& subspectrum : getSpectrum(common::Energy).blocks) {
-        energy_vector->concatenate_with(subspectrum.raw_data);
-        degeneracy_vector->add_identical_values(
-            subspectrum.raw_data->size(),
-            subspectrum.properties.degeneracy);
-    }
-    energy_vector->subtract_minimum();
-
-    std::unique_ptr<magnetic_susceptibility::worker::AbstractWorker> magnetic_susceptibility_worker;
-
-    if (getSymbolicWorker().isAllGFactorsEqual() && !getSymbolicWorker().isZFSInitialized()) {
-        // and there is no field
-        // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
-        double g_factor = getModel().getNumericalWorker().getGFactorParameters()->at(0);
-        auto s_squared_vector = dataStructuresFactories_.createVector();
-
-        for (const auto& subspectrum : getSpectrum(common::S_total_squared).blocks) {
-            s_squared_vector->concatenate_with(subspectrum.raw_data);
-        }
-
-        magnetic_susceptibility_worker =
-            std::make_unique<magnetic_susceptibility::worker::UniqueGOnlySSquaredWorker>(
-                std::move(energy_vector),
-                std::move(degeneracy_vector),
-                std::move(s_squared_vector),
-                g_factor);
-    } else {
-        auto g_sz_squared_vector = dataStructuresFactories_.createVector();
-        // TODO: check if g_sz_squared has been initialized
-        for (const auto& subspectrum : getSpectrum(common::gSz_total_squared).blocks) {
-            g_sz_squared_vector->concatenate_with(subspectrum.raw_data);
-        }
-
-        magnetic_susceptibility_worker =
-            std::make_unique<magnetic_susceptibility::worker::GSzSquaredWorker>(
-                std::move(energy_vector),
-                std::move(degeneracy_vector),
-                std::move(g_sz_squared_vector));
-    }
-
-    if (getSymbolicWorker().isThetaInitialized()) {
-        magnetic_susceptibility_worker =
-            std::make_unique<magnetic_susceptibility::worker::CurieWeissWorker>(
-                std::move(magnetic_susceptibility_worker),
-                getModel().getNumericalWorker().getThetaParameter());
-    }
+    auto magnetic_susceptibility_worker =
+        magnetic_susceptibility::worker::WorkerConstructor::construct(
+            getModel(),
+            getEigendecompositor(),
+            getDataStructuresFactories());
 
     magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
         std::move(magnetic_susceptibility_worker));
