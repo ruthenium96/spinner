@@ -2,10 +2,7 @@
 
 #include <utility>
 
-#include "src/eigendecompositor/ExactEigendecompositor.h"
-#include "src/eigendecompositor/ExplicitQuantitiesEigendecompositor.h"
-#include "src/eigendecompositor/ImplicitSSquareEigendecompositor.h"
-#include "src/eigendecompositor/OneSymbolInHamiltonianEigendecompositor.h"
+#include "src/eigendecompositor/EigendecompositorConstructor.h"
 #include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
@@ -43,49 +40,11 @@ Runner::Runner(
     dataStructuresFactories_(std::move(dataStructuresFactories)),
     space_(space::optimization::OptimizedSpaceConstructor::construct(
         consistentModelOptimizationList_,
-        dataStructuresFactories)) {
-    // TODO: move it from Runner
-    std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor =
-        std::make_unique<eigendecompositor::ExactEigendecompositor>(
-            getIndexConverter(),
-            getDataStructuresFactories());
-
-    // todo: we need only J and D if there is no field
-    size_t number_of_all_J =
-        getModel().getSymbolicWorker().getAllNames(model::symbols::J).size();
-    size_t number_of_all_D =
-        getModel().getSymbolicWorker().getAllNames(model::symbols::D).size();
-    if (number_of_all_J == 1 && number_of_all_D == 0
-        || number_of_all_J == 0 && number_of_all_D == 1) {
-        // TODO: the symbol_name can be unique, but fixed. This needs to be taken into account.
-        model::symbols::SymbolName symbol_name;
-        if (number_of_all_J == 1) {
-            symbol_name = getModel().getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
-        } else if (number_of_all_D == 1) {
-            symbol_name = getModel().getSymbolicWorker().getChangeableNames(model::symbols::D)[0];
-        }
-        auto getter = [this, symbol_name]() {
-            return getModel().getSymbolicWorker().getValueOfName(symbol_name);
-        };
-        eigendecompositor =
-            std::make_unique<eigendecompositor::OneSymbolInHamiltonianEigendecompositor>(
-                std::move(eigendecompositor),
-                getter);
-    }
-
-    if (consistentModelOptimizationList_.getOptimizationList().isSSquaredTransformed()) {
-        eigendecompositor = std::make_unique<eigendecompositor::ImplicitSSquareEigendecompositor>(
-            std::move(eigendecompositor),
-            dataStructuresFactories_);
-    }
-
-    eigendecompositor = std::make_unique<eigendecompositor::ExplicitQuantitiesEigendecompositor>(
-        std::move(eigendecompositor),
-        getIndexConverter(),
-        getDataStructuresFactories());
-
-    eigendecompositor_ = std::move(eigendecompositor);
-}
+        dataStructuresFactories)),
+    eigendecompositor_(eigendecompositor::EigendecompositorConstructor::construct(
+        consistentModelOptimizationList_,
+        dataStructuresFactories_
+        )) {}
 
 const space::Space& runner::Runner::getSpace() const {
     return space_;
