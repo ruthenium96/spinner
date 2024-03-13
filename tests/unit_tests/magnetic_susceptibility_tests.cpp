@@ -84,7 +84,6 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
         magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
         1);
 
-    runner.BuildSpectra();
     EXPECT_NO_THROW(runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(100));
 }
 
@@ -103,7 +102,6 @@ TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
 
     runner::Runner runner(model);
 
-    runner.BuildSpectra();
     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(100);
     EXPECT_NO_THROW(runner.initializeExperimentalValues(
         exp_values,
@@ -204,8 +202,6 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
 
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
@@ -227,8 +223,6 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
             }
 
             runner::Runner runner(model);
-
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
@@ -278,8 +272,6 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
 
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
@@ -307,8 +299,6 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
             }
 
             runner::Runner runner(model);
-
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
@@ -357,8 +347,6 @@ double calculateResidualError(
         magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
         1);
 
-    runner.BuildSpectra();
-
     return runner.getMagneticSusceptibilityController().calculateResidualError();
 }
 
@@ -378,8 +366,6 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
         {
             auto model = constructFourCenterModel_g_J(mults, J_exact, g_factor);
             runner::Runner runner(model);
-
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
@@ -409,8 +395,6 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
                 values,
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
-
-            runner.BuildSpectra();
 
             auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
             auto g = runner.getSymbolicWorker().getChangeableNames(model::symbols::g_factor)[0];
@@ -485,8 +469,6 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g_D)
             auto model = constructRingModel_J_g_D(mults, J_exact, g_factor, D_exact);
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
@@ -515,8 +497,6 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g_D)
                 values,
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
-
-            runner.BuildSpectra();
 
             auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
             auto D = runner.getSymbolicWorker().getChangeableNames(model::symbols::D)[0];

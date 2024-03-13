@@ -52,8 +52,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
 
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
@@ -125,8 +123,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             }
 
             runner::Runner runner(model);
-
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
@@ -201,8 +197,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
@@ -273,7 +267,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             }
 
             runner::Runner runner(model);
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
@@ -345,8 +338,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             }
 
             runner::Runner runner(model);
-
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
@@ -423,8 +414,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
@@ -499,8 +488,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_3333_
             }
 
             runner::Runner runner(model);
-
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
@@ -582,8 +569,6 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             }
 
             runner::Runner runner(model);
-
-            runner.BuildSpectra();
 
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {

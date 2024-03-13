@@ -36,8 +36,6 @@ TEST(
 
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             for (size_t i = 1; i < 301; ++i) {
                 magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),

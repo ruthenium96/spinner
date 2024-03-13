@@ -7,7 +7,7 @@ struct EnergyAndSSquared {
     double s_squared;
 };
 
-std::vector<EnergyAndSSquared> construct_final_vector(const runner::Runner& runner) {
+std::vector<EnergyAndSSquared> construct_final_vector(runner::Runner& runner) {
     std::vector<EnergyAndSSquared> vector;
 
     auto factory = runner.getDataStructuresFactories();
@@ -37,8 +37,7 @@ std::vector<EnergyAndSSquared> construct_final_vector(const runner::Runner& runn
     return vector;
 }
 
-void expect_final_vectors_equivalence(const runner::Runner& simple, runner::Runner& second) {
-    second.BuildSpectra();
+void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& second) {
 
     auto first_vector = construct_final_vector(simple);
     auto second_vector = construct_final_vector(second);
@@ -101,8 +100,6 @@ TEST(spectrum_final_equivalence, five_center_mirror_symmetry_chain) {
             initialize_five_center_mirror_symmetry_exchange_chain(model, Jfirst, Jsecond);
 
             runner::Runner runner_simple(model);
-
-            runner_simple.BuildSpectra();
 
             // TZ_SORTER
             {
@@ -197,8 +194,6 @@ TEST(spectrum_final_equivalence, rectangle) {
             initialize_four_centers_exchange_rectangle(model, Jfirst, Jsecond);
 
             runner::Runner runner_simple(model);
-
-            runner_simple.BuildSpectra();
 
             // TZ_SORTER
             {
@@ -332,7 +327,6 @@ TEST(spectrum_final_equivalence, triangle) {
             initialize_three_centers_exchange_triangle(model, Jfirst);
 
             runner::Runner runner_simple(model);
-            runner_simple.BuildSpectra();
 
             // TZ_SORTER
             {

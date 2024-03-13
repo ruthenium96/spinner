@@ -32,8 +32,6 @@ TEST(simple_analytical_dependencies, nothing) {
 
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
-
             double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
             for (size_t temperature = 1; temperature < 301; ++temperature) {
@@ -76,8 +74,6 @@ TEST(simple_analytical_dependencies, Theta) {
                 }
 
                 runner::Runner runner(model);
-
-                runner.BuildSpectra();
 
                 double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 

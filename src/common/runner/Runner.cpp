@@ -58,12 +58,12 @@ void Runner::BuildSpectra() {
 }
 
 std::optional<std::reference_wrapper<const Matrix>>
-Runner::getMatrix(common::QuantityEnum quantity_enum) const {
-    return eigendecompositor_->getMatrix(quantity_enum);
+Runner::getMatrix(common::QuantityEnum quantity_enum) {
+    return getEigendecompositor()->getMatrix(quantity_enum);
 }
 
-const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) const {
-    return eigendecompositor_->getSpectrum(quantity_enum)->get();
+const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) {
+    return getEigendecompositor()->getSpectrum(quantity_enum)->get();
 }
 
 std::optional<std::shared_ptr<const model::operators::Operator>>
@@ -83,14 +83,14 @@ std::optional<std::shared_ptr<const model::operators::Operator>> Runner::getOper
 
 const Spectrum& Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
-    return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol)->get();
+    const model::symbols::SymbolName& symbol) {
+    return getEigendecompositor()->getSpectrumDerivative(quantity_enum, symbol)->get();
 }
 
 std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
-    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol);
+    const model::symbols::SymbolName& symbol) {
+    return getEigendecompositor()->getMatrixDerivative(quantity_enum, symbol);
 }
 
 void Runner::BuildMuSquaredWorker() {
@@ -311,9 +311,9 @@ double Runner::stepOfRegression(
     //        std::cout << changeable_names[i].get_name() << " = " << changeable_values[i] << std::endl;
     //    }
 
-    // Do some calculation stuff...
+    // (Re)build Eigendecompositor:
     BuildSpectra();
-    // Rebuild MuSquaredWorker:
+    // (Re)build MuSquaredWorker:
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
@@ -359,5 +359,14 @@ const common::physical_optimization::OptimizationList& Runner::getOptimizationLi
 
 quantum::linear_algebra::FactoriesList Runner::getDataStructuresFactories() const {
     return dataStructuresFactories_;
+}
+
+const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>&
+Runner::getEigendecompositor() {
+    if (!eigendecompositor_->BuildSpectraWasCalled()) {
+        BuildSpectra();
+    }
+
+    return eigendecompositor_;
 }
 }  // namespace runner

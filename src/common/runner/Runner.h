@@ -33,9 +33,6 @@ class Runner {
     // constructor for Runner with no optimizations and default algebra package:
     explicit Runner(model::ModelInput model);
 
-    // SPECTRUM OPERATIONS
-    void BuildSpectra();
-
     // CHIT OPERATIONS
     void initializeExperimentalValues(
         const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_data,
@@ -52,14 +49,14 @@ class Runner {
     std::optional<std::shared_ptr<const model::operators::Operator>>
         getOperator(common::QuantityEnum) const;
     const space::Space& getSpace() const;
-    const Spectrum& getSpectrum(common::QuantityEnum) const;
-    std::optional<std::reference_wrapper<const Matrix>> getMatrix(common::QuantityEnum) const;
+    const Spectrum& getSpectrum(common::QuantityEnum);
+    std::optional<std::reference_wrapper<const Matrix>> getMatrix(common::QuantityEnum);
     std::optional<std::shared_ptr<const model::operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
     const Spectrum&
-    getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
+    getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&);
     std::optional<std::reference_wrapper<const Matrix>>
-    getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
+    getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&);
     const magnetic_susceptibility::MagneticSusceptibilityController&
     getMagneticSusceptibilityController();
     const model::symbols::SymbolicWorker& getSymbolicWorker() const;
@@ -72,12 +69,17 @@ class Runner {
     quantum::linear_algebra::FactoriesList dataStructuresFactories_;
     std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor_;
 
+    // SPECTRUM OPERATIONS
+    void BuildSpectra();
+    // CHIT OPERATIONS
     void BuildMuSquaredWorker();
 
     void initializeDerivatives();
 
     const model::Model& getModel() const;
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
+
+    const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>& getEigendecompositor();
 
     double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,
