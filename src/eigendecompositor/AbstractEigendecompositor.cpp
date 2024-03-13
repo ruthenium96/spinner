@@ -11,6 +11,7 @@ void AbstractEigendecompositor::BuildSpectra(
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<const model::operators::Operator>>& derivatives_operators,
     const space::Space& space) {
+    buildSpectraWasCalled = true;
     {
         auto operators_to_calculate = operators;
         auto derivatives_operators_to_calculate = derivatives_operators;
@@ -29,5 +30,9 @@ void AbstractEigendecompositor::BuildSpectra(
     }
 
     finalize();
+}
+
+bool AbstractEigendecompositor::BuildSpectraWasCalled() const {
+    return buildSpectraWasCalled;
 }
 }  // namespace eigendecompositor
