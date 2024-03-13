@@ -410,7 +410,6 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            runner.initializeDerivatives();
             runner.BuildSpectra();
 
             auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
@@ -517,7 +516,6 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g_D)
                 magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            runner.initializeDerivatives();
             runner.BuildSpectra();
 
             auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];

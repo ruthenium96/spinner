@@ -33,9 +33,6 @@ class Runner {
     // constructor for Runner with no optimizations and default algebra package:
     explicit Runner(model::ModelInput model);
 
-    // TODO: This function is public only for tests. Fix it?
-    void initializeDerivatives();
-
     // SPECTRUM OPERATIONS
     void BuildSpectra();
 
@@ -76,6 +73,8 @@ class Runner {
     std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor_;
 
     void BuildMuSquaredWorker();
+
+    void initializeDerivatives();
 
     const model::Model& getModel() const;
     const common::physical_optimization::OptimizationList& getOptimizationList() const;

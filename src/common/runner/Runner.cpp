@@ -186,6 +186,8 @@ void Runner::initializeExperimentalValues(
 std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {
     // TODO: it is awful. Fix it somehow, this code should be moved from Runner.
 
+    initializeDerivatives();
+
     std::map<model::symbols::SymbolName, double> answer;
 
     for (const auto& changeable_symbol :
