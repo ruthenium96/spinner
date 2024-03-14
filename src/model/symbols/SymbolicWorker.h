@@ -58,7 +58,7 @@ class SymbolicWorker {
     double getValueOfName(const SymbolName& symbol_name) const;
 
   private:
-    const size_t number_of_spins_;
+    size_t number_of_spins_;
 
     // TODO: Can we move all of this to SymbolName and rename it to Symbol?
     //  maybe except of value.
