@@ -42,9 +42,8 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
                 std::move(degeneracy_vector),
                 std::move(s_squared_vector),
                 g_factor);
-    } else {
+    } else if (model.is_g_sz_squared_initialized()) {
         auto g_sz_squared_vector = factories.createVector();
-        // TODO: check if g_sz_squared has been initialized
         for (const auto& subspectrum :
              eigendecompositor->getSpectrum(common::gSz_total_squared)->get().blocks) {
             g_sz_squared_vector->concatenate_with(subspectrum.raw_data);
@@ -55,6 +54,8 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
                 std::move(energy_vector),
                 std::move(degeneracy_vector),
                 std::move(g_sz_squared_vector));
+    } else {
+        throw std::invalid_argument("Cannot construct magnetic_susceptibility::worker");
     }
 
     if (symbolic_worker.isThetaInitialized()) {
