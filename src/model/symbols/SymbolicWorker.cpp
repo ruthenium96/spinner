@@ -22,12 +22,12 @@ SymbolicWorker& SymbolicWorker::assignSymbolToIsotropicExchange(
         throw std::invalid_argument("This parameter has been already specified");
     }
 
-    if (getSymbolData(symbol_name).type_enum != SymbolTypeEnum::not_specified
+    if (getSymbolData(symbol_name).type_enum.has_value()
         && getSymbolData(symbol_name).type_enum != SymbolTypeEnum::J) {
         throw std::invalid_argument(
             symbol_name.get_name() + " has been already specified as not J parameter");
     }
-    if (getSymbolData(symbol_name).type_enum == SymbolTypeEnum::not_specified) {
+    if (!getSymbolData(symbol_name).type_enum.has_value()) {
         modifySymbolData(symbol_name).type_enum = SymbolTypeEnum::J;
     }
 
@@ -39,12 +39,12 @@ SymbolicWorker& SymbolicWorker::assignSymbolToIsotropicExchange(
 
 SymbolicWorker&
 SymbolicWorker::assignSymbolToGFactor(const SymbolName& symbol_name, size_t center_a) {
-    if (getSymbolData(symbol_name).type_enum != SymbolTypeEnum::not_specified
+    if (getSymbolData(symbol_name).type_enum.has_value()
         && getSymbolData(symbol_name).type_enum != SymbolTypeEnum::g_factor) {
         throw std::invalid_argument(
             symbol_name.get_name() + " has been already specified as not g factor parameter");
     }
-    if (getSymbolData(symbol_name).type_enum == SymbolTypeEnum::not_specified) {
+    if (!getSymbolData(symbol_name).type_enum.has_value()) {
         modifySymbolData(symbol_name).type_enum = SymbolTypeEnum::g_factor;
     }
 
@@ -58,12 +58,12 @@ SymbolicWorker::assignSymbolToGFactor(const SymbolName& symbol_name, size_t cent
 }
 
 SymbolicWorker& SymbolicWorker::assignSymbolToTheta(const SymbolName& symbol_name) {
-    if (getSymbolData(symbol_name).type_enum != SymbolTypeEnum::not_specified
+    if (getSymbolData(symbol_name).type_enum.has_value()
         && getSymbolData(symbol_name).type_enum != SymbolTypeEnum::Theta) {
         throw std::invalid_argument(
             symbol_name.get_name() + " has been already specified as not Theta parameter");
     }
-    if (getSymbolData(symbol_name).type_enum == SymbolTypeEnum::not_specified) {
+    if (!getSymbolData(symbol_name).type_enum.has_value()) {
         modifySymbolData(symbol_name).type_enum = SymbolTypeEnum::Theta;
     }
 
@@ -74,12 +74,12 @@ SymbolicWorker& SymbolicWorker::assignSymbolToTheta(const SymbolName& symbol_nam
 
 SymbolicWorker&
 SymbolicWorker::assignSymbolToZFSNoAnisotropy(const SymbolName& symbol_name, size_t center_a) {
-    if (getSymbolData(symbol_name).type_enum != SymbolTypeEnum::not_specified
+    if (getSymbolData(symbol_name).type_enum.has_value()
         && getSymbolData(symbol_name).type_enum != SymbolTypeEnum::D) {
         throw std::invalid_argument(
             symbol_name.get_name() + " has been already specified as not D parameter");
     }
-    if (getSymbolData(symbol_name).type_enum == SymbolTypeEnum::not_specified) {
+    if (!getSymbolData(symbol_name).type_enum.has_value()) {
         modifySymbolData(symbol_name).type_enum = SymbolTypeEnum::D;
     }
 
@@ -96,7 +96,7 @@ SymbolName SymbolicWorker::addSymbol(
     const std::string& name_string,
     double initial_value,
     bool is_changeable,
-    SymbolTypeEnum type_enum) {
+    std::optional<SymbolTypeEnum> type_enum) {
     if (name_string.empty()) {
         throw std::invalid_argument("Name of Symbol should be non-empty");
     }
@@ -112,7 +112,7 @@ SymbolName SymbolicWorker::addSymbol(
     const std::string& name_string,
     double initial_value,
     bool is_changeable) {
-    return addSymbol(name_string, initial_value, is_changeable, SymbolTypeEnum::not_specified);
+    return addSymbol(name_string, initial_value, is_changeable, std::nullopt);
 }
 
 SymbolName SymbolicWorker::addSymbol(const std::string& name_string, double initial_value) {

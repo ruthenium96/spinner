@@ -12,7 +12,7 @@
 
 namespace model::symbols {
 
-enum SymbolTypeEnum { not_specified, J, g_factor, Theta, D };
+enum SymbolTypeEnum { J, g_factor, Theta, D };
 
 struct ZFSSymbols {
     SymbolName D;
@@ -46,7 +46,7 @@ class SymbolicWorker {
         const std::string& name_string,
         double initial_value,
         bool is_changeable,
-        SymbolTypeEnum type_enum);
+        std::optional<SymbolTypeEnum> type_enum);
     SymbolName addSymbol(const std::string& name, double initial_value, bool is_changeable);
     SymbolName addSymbol(const std::string& name, double initial_value);
 
@@ -65,7 +65,7 @@ class SymbolicWorker {
     struct SymbolData {
         double value;
         bool is_changeable;
-        SymbolTypeEnum type_enum;
+        std::optional<SymbolTypeEnum> type_enum;
     };
 
     std::optional<std::vector<std::vector<std::optional<SymbolName>>>>
