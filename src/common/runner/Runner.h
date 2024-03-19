@@ -87,7 +87,6 @@ class Runner {
         std::vector<double>&,
         bool isGradientRequired);
 
-    // todo: can we use std::variant for these two structures?
     std::optional<magnetic_susceptibility::MagneticSusceptibilityController>
         magnetic_susceptibility_controller_;
     std::optional<std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>>

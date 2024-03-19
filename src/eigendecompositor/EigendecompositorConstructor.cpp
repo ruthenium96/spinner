@@ -28,7 +28,6 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
         symbolic_worker.getAllNames(model::symbols::D).size();
     if (number_of_all_J == 1 && number_of_all_D == 0
         || number_of_all_J == 0 && number_of_all_D == 1) {
-        // TODO: the symbol_name can be unique, but fixed. This needs to be taken into account.
         model::symbols::SymbolName symbol_name;
         if (number_of_all_J == 1) {
             symbol_name = symbolic_worker.getChangeableNames(model::symbols::J)[0];
