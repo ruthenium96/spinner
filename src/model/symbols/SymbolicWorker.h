@@ -47,10 +47,8 @@ class SymbolicWorker {
     SymbolName addSymbol(
         const std::string& name_string,
         double initial_value,
-        bool is_changeable,
-        std::optional<SymbolTypeEnum> type_enum);
-    SymbolName addSymbol(const std::string& name, double initial_value, bool is_changeable);
-    SymbolName addSymbol(const std::string& name, double initial_value);
+        bool is_changeable = true,
+        std::optional<SymbolTypeEnum> type_enum = std::nullopt);
 
     void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
 

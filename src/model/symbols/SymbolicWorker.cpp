@@ -109,17 +109,6 @@ SymbolName SymbolicWorker::addSymbol(
     return symbol_name;
 }
 
-SymbolName SymbolicWorker::addSymbol(
-    const std::string& name_string,
-    double initial_value,
-    bool is_changeable) {
-    return addSymbol(name_string, initial_value, is_changeable, std::nullopt);
-}
-
-SymbolName SymbolicWorker::addSymbol(const std::string& name_string, double initial_value) {
-    return addSymbol(name_string, initial_value, true);
-}
-
 std::vector<SymbolName> SymbolicWorker::getAllNames(SymbolTypeEnum type_enum) const {
     std::vector<SymbolName> answer;
     for (const auto& [symbol_name, symbol_data] : symbolsProperties_) {
