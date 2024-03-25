@@ -48,7 +48,11 @@ void optimNMAdapter::optimize(
     auto adaptedSignatureFunction = adaptSignature(oneStepFunction);
     auto changeable_values_eigen = convertFromSTLToEigen(changeable_values);
 
-    optim::nm(changeable_values_eigen, adaptedSignatureFunction, nullptr);
+    optim::algo_settings_t algo_settings;
+    algo_settings.rel_objfn_change_tol = 1E-10;
+    algo_settings.rel_sol_change_tol = 1E-16;
+
+    optim::nm(changeable_values_eigen, adaptedSignatureFunction, nullptr, algo_settings);
 
     changeable_values = convertFromEigenToSTL(changeable_values_eigen);
 }

@@ -58,8 +58,10 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
 }
 
 void ConsistentModelOptimizationList::InitializeDerivatives() {
-    for (const auto& [pair, shared_ptr] : model_.getOperatorDerivatives()) {
-        derivatives_for_explicit_construction_[pair] = shared_ptr;
+    if (derivatives_for_explicit_construction_.empty()) {
+        for (const auto& [pair, shared_ptr] : model_.getOperatorDerivatives()) {
+            derivatives_for_explicit_construction_[pair] = shared_ptr;
+        }
     }
 }
 

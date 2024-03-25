@@ -66,7 +66,7 @@ TEST(symbolic_worker, throw_set_new_value_to_unchangeable_symbol) {
     model::symbols::SymbolicWorker symbols_(10);
 
     auto unchangeable =
-        symbols_.addSymbol("Unchangeable", NAN, false, model::symbols::not_specified);
+        symbols_.addSymbol("Unchangeable", NAN, false, std::nullopt);
 
     EXPECT_THROW(
         symbols_.setNewValueToChangeableSymbol(unchangeable, INFINITY),
@@ -80,7 +80,7 @@ TEST(symbolic_worker, throw_specified_not_as_J_symbol) {
     double gChangeable = 2;
 
     auto not_specified =
-        symbols_.addSymbol("not_specified", NAN, true, model::symbols::not_specified);
+        symbols_.addSymbol("not_specified", NAN, true, std::nullopt);
     symbols_.assignSymbolToIsotropicExchange(not_specified, 1, 3);
     auto g_changeable =
         symbols_.addSymbol("gChangeable", gChangeable, true, model::symbols::g_factor);
@@ -96,7 +96,7 @@ TEST(symbolic_worker, throw_specified_not_as_g_symbol) {
     double JChangeable = 10;
 
     auto not_specified =
-        symbols_.addSymbol("not_specified", NAN, true, model::symbols::not_specified);
+        symbols_.addSymbol("not_specified", NAN, true, std::nullopt);
     symbols_.assignSymbolToGFactor(not_specified, 1);
     auto J_changeable = symbols_.addSymbol("JChangeable", JChangeable, true, model::symbols::J);
     EXPECT_THROW(symbols_.assignSymbolToGFactor(J_changeable, 2), std::invalid_argument);

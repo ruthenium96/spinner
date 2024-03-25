@@ -12,7 +12,7 @@ else ()
     )
     FetchContent_MakeAvailable(googletest)
     include_directories(${CMAKE_SOURCE_DIR}/libs/googletest/googletest/include)
-    message(" ***  GTest was downloaded")
+    message(" *** GTest was downloaded")
 endif ()
 
 add_library(tests_tools
@@ -33,6 +33,7 @@ add_executable(spinner_test
         unit_tests/interactions_test.cpp
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
+        unit_tests/parser_tests.cpp
         non_hamiltonian_operators_tests.cpp
         unit_tests/magnetic_susceptibility_tests.cpp
         integration_tests/spectrum_builder_tests.cpp)
@@ -93,7 +94,8 @@ endif ()
 target_link_libraries(tests_tools gtest gtest_main)
 
 target_link_libraries(spinner_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra eigendecompositor)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra eigendecompositor
+        input)
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver eigendecompositor)

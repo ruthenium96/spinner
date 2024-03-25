@@ -15,6 +15,8 @@ class ModelInput {
     const symbols::SymbolicWorker& getSymbolicWorker() const;
     symbols::SymbolicWorker& modifySymbolicWorker();
     const std::vector<spin_algebra::Multiplicity>& getMults() const;
+    bool operator==(const ModelInput& rhs) const = default;
+    bool operator!=(const ModelInput& rhs) const = default;
 
   private:
     symbols::SymbolicWorker symbols_;

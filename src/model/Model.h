@@ -27,7 +27,6 @@ class Model {
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
 
     // These methods are not 'const' because they return non-const pointers.
-    // TODO: fix it using C++20 std::views?
     const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>& getOperators();
     const std::map<
         std::pair<common::QuantityEnum, symbols::SymbolName>,

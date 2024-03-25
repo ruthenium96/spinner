@@ -85,7 +85,6 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
         {
             runner::Runner runner(model);
 
-            runner.BuildSpectra();
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
@@ -95,7 +94,6 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
             optimizationList.TzSort();
             runner::Runner runner(model, optimizationList);
 
-            runner.BuildSpectra();
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
@@ -126,7 +124,6 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
 
             runner::Runner runner(model, optimizationList);
 
-            runner.BuildSpectra();
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
@@ -139,7 +136,6 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
 
             runner::Runner runner(model, optimizationList);
 
-            runner.BuildSpectra();
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
@@ -167,7 +163,6 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
 
             runner::Runner runner(model, optimizationList);
 
-            runner.BuildSpectra();
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
@@ -177,7 +172,6 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
             optimizationList.TzSort().Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
             runner::Runner runner(model, optimizationList);
 
-            runner.BuildSpectra();
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
