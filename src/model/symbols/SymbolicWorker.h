@@ -17,6 +17,8 @@ enum SymbolTypeEnum { J, g_factor, Theta, D };
 struct ZFSSymbols {
     SymbolName D;
     std::optional<SymbolName> E;
+    bool operator==(const ZFSSymbols& rhs) const = default;
+    bool operator!=(const ZFSSymbols& rhs) const = default;
 };
 
 class SymbolicWorker {
@@ -57,6 +59,9 @@ class SymbolicWorker {
     std::vector<SymbolName> getChangeableNames() const;
     double getValueOfName(const SymbolName& symbol_name) const;
 
+    bool operator==(const SymbolicWorker& rhs) const = default;
+    bool operator!=(const SymbolicWorker& rhs) const = default;
+
   private:
     size_t number_of_spins_;
 
@@ -66,6 +71,8 @@ class SymbolicWorker {
         double value;
         bool is_changeable;
         std::optional<SymbolTypeEnum> type_enum;
+        bool operator==(const SymbolData& rhs) const = default;
+        bool operator!=(const SymbolData& rhs) const = default;
     };
 
     std::optional<std::vector<std::vector<std::optional<SymbolName>>>>
