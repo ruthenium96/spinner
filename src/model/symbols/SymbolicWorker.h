@@ -65,14 +65,11 @@ class SymbolicWorker {
   private:
     size_t number_of_spins_;
 
-    // TODO: Can we move all of this to SymbolName and rename it to Symbol?
-    //  maybe except of value.
-    struct SymbolData {
-        double value;
+    struct SymbolProperty {
         bool is_changeable;
         std::optional<SymbolTypeEnum> type_enum;
-        bool operator==(const SymbolData& rhs) const = default;
-        bool operator!=(const SymbolData& rhs) const = default;
+        bool operator==(const SymbolProperty& rhs) const = default;
+        bool operator!=(const SymbolProperty& rhs) const = default;
     };
 
     std::optional<std::vector<std::vector<std::optional<SymbolName>>>>
@@ -81,13 +78,14 @@ class SymbolicWorker {
     std::optional<SymbolName> symbolic_Theta_;
     std::optional<std::vector<std::optional<ZFSSymbols>>> symbolic_ZFS_;
 
-    std::map<SymbolName, SymbolData> symbolsMap;
+    std::map<SymbolName, SymbolProperty> symbolsProperties_;
+    std::map<SymbolName, double> symbolsValues_;
 
   public:
-    SymbolData getSymbolData(const SymbolName& symbol_name) const;
+    SymbolProperty getSymbolProperty(const SymbolName& symbol_name) const;
 
   private:
-    SymbolData& modifySymbolData(const SymbolName& symbol_name);
+    SymbolProperty& modifySymbolProperty(const SymbolName& symbol_name);
 };
 
 }  // namespace model::symbols
