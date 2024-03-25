@@ -17,3 +17,5 @@ add_subdirectory(nonlinear_solver)
 add_subdirectory(space)
 add_subdirectory(spin_algebra)
 
+add_executable(spinner_main main.cpp)
+target_link_libraries(spinner_main input)
