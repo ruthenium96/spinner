@@ -9,7 +9,7 @@ FetchContent_MakeAvailable(magic_enum)
 include_directories(${magic_enum_SOURCE_DIR}/)
 
 message("Trying to find system yaml-cpp...")
-find_package(yaml-cpp REQUIRED)
+find_package(yaml-cpp)
 if (yaml-cpp_FOUND)
     include_directories(${YAML_CPP_SOURCE_DIR} ${YAML_CPP_SOURCE_DIR}/include/ ${YAML_CPP_SOURCE_DIR}/yaml-cpp)
     message(" *** System yaml-cpp was found")
