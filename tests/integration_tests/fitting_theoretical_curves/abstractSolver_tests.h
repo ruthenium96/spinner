@@ -18,7 +18,7 @@ class fitting_magnetic_susceptibility_simple: public testing::Test {
     void initializeJRing(model::ModelInput& modelInput, const model::symbols::SymbolName& J) {
         size_t size = modelInput.getMults().size();
         for (size_t i = 0; i < size; ++i) {
-            modelInput.modifySymbolicWorker().assignSymbolToIsotropicExchange(J, i, (i + 1) % size);
+            modelInput.assignSymbolToIsotropicExchange(J, i, (i + 1) % size);
         }
     }
 };
@@ -42,12 +42,12 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
             std::vector<spin_algebra::Multiplicity> mults = {2};
             model::ModelInput model(mults);
             double J_value = Theta_exact;
-            auto Theta = model.modifySymbolicWorker().addSymbol("Theta", J_value);
-            model.modifySymbolicWorker().assignSymbolToTheta(Theta);
+            auto Theta = model.addSymbol("Theta", J_value);
+            model.assignSymbolToTheta(Theta);
             double g_value = g_exact;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value, false);
+            auto g = model.addSymbol("g", g_value, false);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -64,12 +64,12 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
             std::vector<spin_algebra::Multiplicity> mults = {2};
             model::ModelInput model(mults);
             double Theta_value = -10.0;
-            auto Theta = model.modifySymbolicWorker().addSymbol("Theta", Theta_value);
-            model.modifySymbolicWorker().assignSymbolToTheta(Theta);
+            auto Theta = model.addSymbol("Theta", Theta_value);
+            model.assignSymbolToTheta(Theta);
             double g_value = 2.0;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value, false);
+            auto g = model.addSymbol("g", g_value, false);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -110,16 +110,15 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = J_exact;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-            model.modifySymbolicWorker()
-                .assignSymbolToIsotropicExchange(J, 0, 1)
+            auto J = model.addSymbol("J", J_value);
+            model.assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
             double g_value = g_exact;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
+            auto g = model.addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -136,16 +135,15 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = -10.0;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-            model.modifySymbolicWorker()
-                .assignSymbolToIsotropicExchange(J, 0, 1)
+            auto J = model.addSymbol("J", J_value);
+            model.assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
             double g_value = 2.0;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
+            auto g = model.addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -186,13 +184,13 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = J_exact;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
 
             double g_value = g_exact;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
+            auto g = model.addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -209,13 +207,13 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = -10.0;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
 
             double g_value = g_exact;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
+            auto g = model.addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -257,13 +255,13 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = J_exact;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
 
             double g_value = g_exact;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
+            auto g = model.addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -280,13 +278,13 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
             model::ModelInput model(mults);
             double J_value = 40;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
 
             double g_value = g_exact;
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_value);
+            auto g = model.addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -328,13 +326,13 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
             model::ModelInput model(mults);
             double g_one_value = g_one_exact;
             double g_two_value = g_two_exact;
-            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_one_value);
-            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_two_value);
+            auto g_one = model.addSymbol("g1", g_one_value);
+            auto g_two = model.addSymbol("g2", g_two_value);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
+                model.assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
+                model.assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);
@@ -350,13 +348,13 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         {
             model::ModelInput model(mults);
             double g_two_value = 3.0;
-            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_one_exact, false);
-            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_two_value);
+            auto g_one = model.addSymbol("g1", g_one_exact, false);
+            auto g_two = model.addSymbol("g2", g_two_value);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
+                model.assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
+                model.assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);
@@ -399,17 +397,17 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         {
             model::ModelInput model(mults);
             double J_value = J_exact;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
             double g_one_value = g_one_exact;
             double g_two_value = g_two_exact;
-            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_one_value);
-            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_two_value);
+            auto g_one = model.addSymbol("g1", g_one_value);
+            auto g_two = model.addSymbol("g2", g_two_value);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
+                model.assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
+                model.assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);
@@ -425,16 +423,16 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
         {
             model::ModelInput model(mults);
             double J_value = -50.0;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
             double g_two_value = 3.0;
-            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_one_exact, false);
-            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_two_value);
+            auto g_one = model.addSymbol("g1", g_one_exact, false);
+            auto g_two = model.addSymbol("g2", g_two_value);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
+                model.assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
+                model.assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);
@@ -477,14 +475,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_3333_
         {
             model::ModelInput model(mults);
             double J_value = J_exact;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
             double D_value = D_exact;
-            auto D = model.modifySymbolicWorker().addSymbol("D", D_value);
-            model.modifySymbolicWorker().assignSymbolToZFSNoAnisotropy(D, 0);
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_exact, false);
+            auto D = model.addSymbol("D", D_value);
+            model.assignSymbolToZFSNoAnisotropy(D, 0);
+            auto g = model.addSymbol("g", g_exact, false);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -500,15 +498,15 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_3333_
         {
             model::ModelInput model(mults);
             double J_value = -50.0;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
+            auto J = model.addSymbol("J", J_value);
             this->initializeJRing(model, J);
             double D_value = 20;
-            auto D = model.modifySymbolicWorker().addSymbol("D", D_value);
-            model.modifySymbolicWorker().assignSymbolToZFSNoAnisotropy(D, 0);
+            auto D = model.addSymbol("D", D_value);
+            model.assignSymbolToZFSNoAnisotropy(D, 0);
 
-            auto g = model.modifySymbolicWorker().addSymbol("g", g_exact, false);
+            auto g = model.addSymbol("g", g_exact, false);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -551,21 +549,21 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
         {
             model::ModelInput model(mults);
             double J_value = J_exact;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-            model.modifySymbolicWorker()
+            auto J = model.addSymbol("J", J_value);
+            model
                 .assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
             double g_one_value = g_one_exact;
             double g_two_value = g_two_exact;
-            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_one_value);
-            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_two_value);
+            auto g_one = model.addSymbol("g1", g_one_value);
+            auto g_two = model.addSymbol("g2", g_two_value);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
+                model.assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
+                model.assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);
@@ -581,21 +579,20 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
         {
             model::ModelInput model(mults);
             double J_value = -45.0;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-            model.modifySymbolicWorker()
-                .assignSymbolToIsotropicExchange(J, 0, 1)
+            auto J = model.addSymbol("J", J_value);
+            model.assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
             double g_one_value = 1.8;
             double g_two_value = 3.0;
-            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_one_value);
-            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_two_value);
+            auto g_one = model.addSymbol("g1", g_one_value);
+            auto g_two = model.addSymbol("g2", g_two_value);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
+                model.assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
+                model.assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);

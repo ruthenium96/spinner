@@ -21,16 +21,15 @@ TEST(
         {
             model::ModelInput model(mults);
             double J_value = J_exact;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-            model.modifySymbolicWorker()
-                .assignSymbolToIsotropicExchange(J, 0, 1)
+            auto J = model.addSymbol("J", J_value);
+            model.assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
             double g_value = g_exact;
-            auto g = model.modifySymbolicWorker().addSymbol("g1", g_value);
+            auto g = model.addSymbol("g1", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g, i);
+                model.assignSymbolToGFactor(g, i);
             }
 
             runner::Runner runner(model);
@@ -46,21 +45,20 @@ TEST(
         {
             model::ModelInput model(mults);
             double J_value = -45.0;
-            auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-            model.modifySymbolicWorker()
-                .assignSymbolToIsotropicExchange(J, 0, 1)
+            auto J = model.addSymbol("J", J_value);
+            model.assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
                 .assignSymbolToIsotropicExchange(J, 2, 3)
                 .assignSymbolToIsotropicExchange(J, 3, 0);
             double g_one_value = 1.8;
             double g_two_value = 2.2;
-            auto g_one = model.modifySymbolicWorker().addSymbol("g1", g_one_value);
-            auto g_two = model.modifySymbolicWorker().addSymbol("g2", g_two_value);
+            auto g_one = model.addSymbol("g1", g_one_value);
+            auto g_two = model.addSymbol("g2", g_two_value);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_one, i);
+                model.assignSymbolToGFactor(g_one, i);
             }
             for (size_t i = mults.size() / 2; i < mults.size(); ++i) {
-                model.modifySymbolicWorker().assignSymbolToGFactor(g_two, i);
+                model.assignSymbolToGFactor(g_two, i);
             }
 
             runner::Runner runner(model);

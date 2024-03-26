@@ -70,14 +70,12 @@ void initialize_five_center_mirror_symmetry_exchange_chain(
     model::ModelInput& model,
     double external,
     double internal) {
-    auto Jexternal = model.modifySymbolicWorker().addSymbol("J1", external);
-    model.modifySymbolicWorker()
-        .assignSymbolToIsotropicExchange(Jexternal, 0, 1)
+    auto Jexternal = model.addSymbol("J1", external);
+    model.assignSymbolToIsotropicExchange(Jexternal, 0, 1)
         .assignSymbolToIsotropicExchange(Jexternal, 3, 4);
 
-    auto Jinternal = model.modifySymbolicWorker().addSymbol("J2", internal);
-    model.modifySymbolicWorker()
-        .assignSymbolToIsotropicExchange(Jinternal, 1, 2)
+    auto Jinternal = model.addSymbol("J2", internal);
+    model.assignSymbolToIsotropicExchange(Jinternal, 1, 2)
         .assignSymbolToIsotropicExchange(Jinternal, 2, 3);
 }
 
@@ -166,14 +164,12 @@ void initialize_four_centers_exchange_rectangle(
     model::ModelInput& model,
     double first,
     double second) {
-    auto Jfirst = model.modifySymbolicWorker().addSymbol("J1", first);
-    model.modifySymbolicWorker()
-        .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
+    auto Jfirst = model.addSymbol("J1", first);
+    model.assignSymbolToIsotropicExchange(Jfirst, 0, 1)
         .assignSymbolToIsotropicExchange(Jfirst, 2, 3);
 
-    auto Jsecond = model.modifySymbolicWorker().addSymbol("J2", second);
-    model.modifySymbolicWorker()
-        .assignSymbolToIsotropicExchange(Jsecond, 1, 2)
+    auto Jsecond = model.addSymbol("J2", second);
+    model.assignSymbolToIsotropicExchange(Jsecond, 1, 2)
         .assignSymbolToIsotropicExchange(Jsecond, 3, 0);
 }
 
@@ -309,9 +305,8 @@ TEST(spectrum_final_equivalence, rectangle) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initialize_three_centers_exchange_triangle(model::ModelInput& model, double first) {
-    auto Jfirst = model.modifySymbolicWorker().addSymbol("J1", first);
-    model.modifySymbolicWorker()
-        .assignSymbolToIsotropicExchange(Jfirst, 0, 1)
+    auto Jfirst = model.addSymbol("J1", first);
+    model.assignSymbolToIsotropicExchange(Jfirst, 0, 1)
         .assignSymbolToIsotropicExchange(Jfirst, 1, 2)
         .assignSymbolToIsotropicExchange(Jfirst, 2, 0);
 }

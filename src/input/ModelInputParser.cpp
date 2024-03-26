@@ -175,26 +175,26 @@ model::ModelInput ModelInputParser::returnModifiedModelInput(
     bool is_symbol_fixed,
     model::symbols::SymbolTypeEnum symbol_type) {
     auto new_model_input = old_model_input;
-    auto symbol_name = new_model_input.modifySymbolicWorker().addSymbol(
+    auto symbol_name = new_model_input.addSymbol(
         symbol_name_string,
         value,
         !is_symbol_fixed,
         symbol_type);
 
     if (symbol_type == model::symbols::Theta) {
-        new_model_input.modifySymbolicWorker().assignSymbolToTheta(symbol_name);
+        new_model_input.assignSymbolToTheta(symbol_name);
     } else if (symbol_type == model::symbols::g_factor) {
         auto center_node = parameter_node["centers"];
         if (center_node.IsSequence()) {
             auto centers_vector = center_node.as<std::vector<size_t>>();
             for (auto center : centers_vector) {
-                new_model_input.modifySymbolicWorker().assignSymbolToGFactor(symbol_name, center);
+                new_model_input.assignSymbolToGFactor(symbol_name, center);
             }
         } else {
             auto center_text = center_node.as<std::string>();
             if (center_text == "all") {
                 for (size_t center = 0; center < new_model_input.getMults().size(); ++center) {
-                    new_model_input.modifySymbolicWorker().assignSymbolToGFactor(symbol_name, center);
+                    new_model_input.assignSymbolToGFactor(symbol_name, center);
                 }
             } else {
                 throw std::invalid_argument("Incorrect value of model::parameters::centers: " + center_text);
@@ -203,13 +203,13 @@ model::ModelInput ModelInputParser::returnModifiedModelInput(
     } else if (symbol_type == model::symbols::D) {
         auto centers_vector = parameter_node["centers"].as<std::vector<size_t>>();
         for (auto center : centers_vector) {
-            new_model_input.modifySymbolicWorker().assignSymbolToZFSNoAnisotropy(symbol_name, center);
+            new_model_input.assignSymbolToZFSNoAnisotropy(symbol_name, center);
         }
     } else if (symbol_type == model::symbols::J) {
         auto pairs_vector = parameter_node["pairs"]
                                 .as<std::vector<std::pair<size_t, size_t>>>();
         for (auto pair : pairs_vector) {
-            new_model_input.modifySymbolicWorker().assignSymbolToIsotropicExchange(
+            new_model_input.assignSymbolToIsotropicExchange(
                 symbol_name, pair.first, pair.second);
         }
     }

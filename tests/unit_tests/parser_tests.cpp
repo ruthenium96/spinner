@@ -302,15 +302,11 @@ parameters:
         auto parser = input::ModelInputParser(YAML::Load(string));
 
         auto model = model::ModelInput({2, 2, 2, 2});
-        auto J1 = model.modifySymbolicWorker()
-                      .addSymbol("J1", -10, false);
-        auto J2 = model.modifySymbolicWorker()
-                      .addSymbol("J2", +10, true);
-        auto theta = model.modifySymbolicWorker()
-                         .addSymbol("theta", -3.0, true);
-        auto g = model.modifySymbolicWorker().addSymbol("g", 2.0, true, model::symbols::g_factor);
-        model.modifySymbolicWorker()
-            .assignSymbolToIsotropicExchange(J1, 0, 1)
+        auto J1 = model.addSymbol("J1", -10, false);
+        auto J2 = model.addSymbol("J2", +10, true);
+        auto theta = model.addSymbol("theta", -3.0, true);
+        auto g = model.addSymbol("g", 2.0, true, model::symbols::g_factor);
+        model.assignSymbolToIsotropicExchange(J1, 0, 1)
             .assignSymbolToIsotropicExchange(J1, 2, 3)
             .assignSymbolToIsotropicExchange(J2, 3, 0)
             .assignSymbolToIsotropicExchange(J2, 1, 2)

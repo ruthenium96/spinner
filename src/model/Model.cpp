@@ -9,7 +9,7 @@
 
 namespace model {
 Model::Model(ModelInput modelInput) :
-    numericalWorker_(modelInput.modifySymbolicWorker(), modelInput.getMults().size()),
+    numericalWorker_(modelInput.getSymbolicWorker(), modelInput.getMults().size()),
     converter_(modelInput.getMults()) {
     operators_map_[common::Energy] = std::make_shared<operators::Operator>();
     InitializeSSquared();

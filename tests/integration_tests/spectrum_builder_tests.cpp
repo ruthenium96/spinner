@@ -79,8 +79,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {
         model::ModelInput model(mults);
 
         double J_value = 10;
-        auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-        model.modifySymbolicWorker().assignSymbolToIsotropicExchange(J, 0, 1);
+        auto J = model.addSymbol("J", J_value);
+        model.assignSymbolToIsotropicExchange(J, 0, 1);
         //
         {
             runner::Runner runner(model);
@@ -109,9 +109,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
     for (const auto& mults : vector_of_mults) {
         model::ModelInput model(mults);
         double J_value = 10;
-        auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-        model.modifySymbolicWorker()
-            .assignSymbolToIsotropicExchange(J, 0, 1)
+        auto J = model.addSymbol("J", J_value);
+        model.assignSymbolToIsotropicExchange(J, 0, 1)
             .assignSymbolToIsotropicExchange(J, 1, 2)
             .assignSymbolToIsotropicExchange(J, 2, 3)
             .assignSymbolToIsotropicExchange(J, 3, 0);
@@ -151,9 +150,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
     for (const auto& mults : vector_of_mults) {
         model::ModelInput model(mults);
         double J_value = 10;
-        auto J = model.modifySymbolicWorker().addSymbol("J", J_value);
-        model.modifySymbolicWorker()
-            .assignSymbolToIsotropicExchange(J, 0, 1)
+        auto J = model.addSymbol("J", J_value);
+        model.assignSymbolToIsotropicExchange(J, 0, 1)
             .assignSymbolToIsotropicExchange(J, 1, 2)
             .assignSymbolToIsotropicExchange(J, 2, 0);
         // S3_SYMMETRIZE

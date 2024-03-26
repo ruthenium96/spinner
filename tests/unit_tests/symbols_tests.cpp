@@ -25,16 +25,15 @@ TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_initialized) {
     model::ModelInput modelInput(mults);
 
     double J_value = 10;
-    auto J = modelInput.modifySymbolicWorker().addSymbol("J", J_value);
-    modelInput.modifySymbolicWorker()
-        .assignSymbolToIsotropicExchange(J, 0, 1)
+    auto J = modelInput.addSymbol("J", J_value);
+    modelInput.assignSymbolToIsotropicExchange(J, 0, 1)
         .assignSymbolToIsotropicExchange(J, 1, 2)
         .assignSymbolToIsotropicExchange(J, 2, 3)
         .assignSymbolToIsotropicExchange(J, 3, 0);
 
     double g_value = 2.0;
-    auto g = modelInput.modifySymbolicWorker().addSymbol("g", g_value);
-    modelInput.modifySymbolicWorker().assignSymbolToGFactor(g, 0);
+    auto g = modelInput.addSymbol("g", g_value);
+    modelInput.assignSymbolToGFactor(g, 0);
 
     EXPECT_THROW(runner::Runner runner(modelInput), std::invalid_argument);
 }
@@ -45,17 +44,15 @@ TEST(symbolic_worker, throw_2222_gfactor_only_one_g_was_not_initialized) {
     model::ModelInput modelInput(mults);
 
     double J_value = 10;
-    auto J = modelInput.modifySymbolicWorker().addSymbol("J", J_value);
-    modelInput.modifySymbolicWorker()
-        .assignSymbolToIsotropicExchange(J, 0, 1)
+    auto J = modelInput.addSymbol("J", J_value);
+    modelInput.assignSymbolToIsotropicExchange(J, 0, 1)
         .assignSymbolToIsotropicExchange(J, 1, 2)
         .assignSymbolToIsotropicExchange(J, 2, 3)
         .assignSymbolToIsotropicExchange(J, 3, 0);
 
     double g_value = 2.0;
-    auto g = modelInput.modifySymbolicWorker().addSymbol("g", g_value);
-    modelInput.modifySymbolicWorker()
-        .assignSymbolToGFactor(g, 0)
+    auto g = modelInput.addSymbol("g", g_value);
+    modelInput.assignSymbolToGFactor(g, 0)
         .assignSymbolToGFactor(g, 1)
         .assignSymbolToGFactor(g, 2);
 
