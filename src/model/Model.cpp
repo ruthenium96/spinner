@@ -205,4 +205,10 @@ symbols::NumericalWorker& Model::getNumericalWorker() {
 const symbols::NumericalWorker& Model::getNumericalWorker() const {
     return numericalWorker_;
 }
+
+void Model::setNewValueToChangeableSymbol(
+    const symbols::SymbolName& symbol_name,
+    double new_value) {
+    numericalWorker_.setNewValueToChangeableSymbol(symbol_name, new_value);
+}
 }  // namespace model

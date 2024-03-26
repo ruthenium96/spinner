@@ -13,7 +13,9 @@ class Model {
     // TODO: remove it?
     const symbols::SymbolicWorker& getSymbolicWorker() const;
     const symbols::NumericalWorker& getNumericalWorker() const;
-    symbols::NumericalWorker& getNumericalWorker();
+
+    void
+    setNewValueToChangeableSymbol(const model::symbols::SymbolName& symbol_name, double new_value);
 
     bool is_s_squared_initialized() const;
     bool is_g_sz_squared_initialized() const;
@@ -48,6 +50,8 @@ class Model {
         bool zfs_derivative = false;
     };
     OperatorsHistory operators_history_;
+
+    symbols::NumericalWorker& getNumericalWorker();
 
     void InitializeIsotropicExchange();
     void InitializeIsotropicExchangeDerivatives();
