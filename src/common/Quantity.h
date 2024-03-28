@@ -1,7 +1,6 @@
 #ifndef SPINNER_QUANTITYENUM_H
 #define SPINNER_QUANTITYENUM_H
 
-#include <ostream>
 #include <string>
 
 #include "src/entities/matrix/Matrix.h"
@@ -19,7 +18,5 @@ struct Quantity {
     Spectrum spectrum_;
 };
 }  // namespace common
-
-std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
 
 #endif  //SPINNER_QUANTITYENUM_H

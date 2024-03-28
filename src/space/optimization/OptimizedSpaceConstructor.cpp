@@ -40,11 +40,6 @@ Space OptimizedSpaceConstructor::construct(
         // Symmetrization breaks normalization, because of using integer values of coefficients.
         spaceIsNormalized = false;
 
-        //        if (space_history_.isNonAbelianSimplified && !new_group.properties.is_abelian) {
-        //            throw std::invalid_argument(
-        //                "Symmetrization after using of non-Abelian simplifier causes bugs.");
-        //        }
-
         Symmetrizer symmetrizer(indexConverter, group, factories);
         space = symmetrizer.apply(std::move(space));
 
@@ -52,18 +47,6 @@ Space OptimizedSpaceConstructor::construct(
         //            ++space_history_.number_of_non_simplified_abelian_groups;
         //        }
     }
-    //    if (space_history_.number_of_non_simplified_abelian_groups == 0) {
-    //        return;
-    //    }
-    //    if (space_history_.number_of_non_simplified_abelian_groups != 1) {
-    //        throw std::invalid_argument(
-    //            "Non-Abelian simplification after using of two Non-Abelian Symmetrizers "
-    //            "currently is not allowed.");
-    //    }
-    //    space::optimization::NonAbelianSimplifier nonAbelianSimplifier(factories);
-    //    space_ = nonAbelianSimplifier.apply(std::move(space_));
-    //    space_history_.number_of_non_simplified_abelian_groups = 0;
-    //    space_history_.isNonAbelianSimplified = true;
 
     if (!spaceIsNormalized) {
         for (auto& subspace : space.getBlocks()) {

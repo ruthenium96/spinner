@@ -4,6 +4,7 @@ add_library(common
         runner/Runner.cpp
         runner/Executer.cpp runner/Executer.h
         Quantity.cpp
+        PrintingFunctions.cpp PrintingFunctions.h
         physical_optimization/OptimizationList.cpp physical_optimization/OptimizationList.h
         runner/ConsistentModelOptimizationList.h runner/ConsistentModelOptimizationList.cpp
         MumxHash.h)

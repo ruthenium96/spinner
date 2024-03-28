@@ -89,8 +89,6 @@ void ModelInputParser::parametersParser(YAML::Node parameters_node) {
 }
 
 void ModelInputParser::parameterParser(YAML::Node parameter_node) {
-    std::cout << parameter_node << std::endl;
-
     auto symbol_name_string = extractValue<std::string>(parameter_node, "name");
     auto is_symbol_fixed = extractValue<bool>(parameter_node, "fixed");
     auto symbol_type = extractValue<
