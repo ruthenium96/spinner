@@ -9,4 +9,7 @@ add_library(common
         runner/ConsistentModelOptimizationList.h runner/ConsistentModelOptimizationList.cpp
         MumxHash.h)
 
-target_link_libraries(common model space magnetic_susceptibility nonlinear_solver eigendecompositor)
+find_package(spdlog)
+#todo: download if necessary
+
+target_link_libraries(common model space magnetic_susceptibility nonlinear_solver eigendecompositor spdlog::spdlog)
