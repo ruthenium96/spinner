@@ -26,3 +26,5 @@ add_library(magnetic_susceptibility
         magnetic_susceptibility/assistant/WeightingScheme.cpp
         magnetic_susceptibility/assistant/WeightingScheme.h
         magnetic_susceptibility/worker/WorkerConstructor.cpp magnetic_susceptibility/worker/WorkerConstructor.h)
+
+target_link_libraries(magnetic_susceptibility common)

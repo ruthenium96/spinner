@@ -4,6 +4,8 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "src/common/Logger.h"
+
 namespace magnetic_susceptibility {
 
 ExperimentalValuesWorker::ExperimentalValuesWorker(
@@ -17,6 +19,15 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
 
     experimental_values_type_ = experimental_values_type;
     number_of_centers_ratio_ = number_of_centers_ratio;
+
+    common::Logger::debug_msg("Initial experimental values:");
+    for (size_t i = 0; i < experimental_mu_squared_.size(); ++i) {
+        common::Logger::debug(
+            "{:.8e}    {:.8e}",
+            experimental_values.at(i).temperature,
+            experimental_values.at(i).value);
+    }
+    common::Logger::separate(0, common::debug);
 
     if (experimental_values_type == mu_squared_in_bohr_magnetons_squared) {
         // DO NOTHING
@@ -52,6 +63,17 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
         double value = experimental_mu_squared_[i].value;
         weighted_sum_of_squares_of_experiment_ += weights_.at(i) * value * value;
     }
+
+    common::Logger::verbose_msg("Experimental values, corrected by ratio and in mu-squared, and weights:");
+    for (size_t i = 0; i < experimental_mu_squared_.size(); ++i) {
+        common::Logger::verbose(
+            "{:.8e}    {:.8e}    {:.8e}",
+            experimental_mu_squared_.at(i).temperature,
+            experimental_mu_squared_.at(i).value,
+            weights_.at(i));
+    }
+    common::Logger::separate(0, common::verbose);
+
 }
 
 double ExperimentalValuesWorker::calculateResidualError() const {
