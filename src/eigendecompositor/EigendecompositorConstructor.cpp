@@ -1,5 +1,6 @@
 #include "EigendecompositorConstructor.h"
 
+#include "src/common/Logger.h"
 #include "src/eigendecompositor/ExactEigendecompositor.h"
 #include "src/eigendecompositor/ExplicitQuantitiesEigendecompositor.h"
 #include "src/eigendecompositor/ImplicitSSquareEigendecompositor.h"
@@ -13,6 +14,8 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
     const auto& indexConverter =
         consistentModelOptimizationList.getModel().getIndexConverter();
 
+    common::Logger::detailed_msg("Eigendecompositor information:");
+    common::Logger::detailed("ExactEigendecompositor will be used");
     std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor =
         std::make_unique<eigendecompositor::ExactEigendecompositor>(
             indexConverter,
@@ -37,6 +40,10 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
         auto getter = [&symbolic_worker, symbol_name]() {
             return symbolic_worker.getValueOfName(symbol_name);
         };
+        common::Logger::detailed(
+            "OneSymbolInHamiltonianEigendecompositor will be used, "
+            "the name of the parameter is {}.",
+            symbol_name.get_name());
         eigendecompositor =
             std::make_unique<eigendecompositor::OneSymbolInHamiltonianEigendecompositor>(
                 std::move(eigendecompositor),
@@ -44,15 +51,19 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
     }
 
     if (consistentModelOptimizationList.getOptimizationList().isSSquaredTransformed()) {
+        common::Logger::detailed("ImplicitSSquareEigendecompositor will be used.");
         eigendecompositor = std::make_unique<eigendecompositor::ImplicitSSquareEigendecompositor>(
             std::move(eigendecompositor),
             factories);
     }
 
+    common::Logger::detailed("ExplicitQuantitiesEigendecompositor will be used.");
     eigendecompositor = std::make_unique<eigendecompositor::ExplicitQuantitiesEigendecompositor>(
         std::move(eigendecompositor),
         indexConverter,
         factories);
+
+    common::Logger::separate(0, common::detailed);
 
     return std::move(eigendecompositor);
 }
