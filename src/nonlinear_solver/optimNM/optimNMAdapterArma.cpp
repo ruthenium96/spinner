@@ -1,6 +1,7 @@
 #include "optimNMAdapter.h"
 
 #include <armadillo>
+#include "src/common/Logger.h"
 
 // Do not use OpenMP in solver: it leads to race condition in Runner.
 #define OPTIM_DONT_USE_OPENMP
@@ -47,8 +48,14 @@ void optimNMAdapter::optimize(
     optim::algo_settings_t algo_settings;
     algo_settings.rel_objfn_change_tol = 1E-10;
     algo_settings.rel_sol_change_tol = 1E-16;
+    if (common::Logger::get_level() <= common::PrintLevel::debug) {
+        algo_settings.print_level = 3;
+    }
 
+    auto spdlog_buffer = common::SpdlogStreamMsg(common::debug);
+    auto coutbuf = std::cout.rdbuf(&spdlog_buffer);
     optim::nm(changeable_values_arma, adaptedSignatureFunction, nullptr, algo_settings);
+    std::cout.rdbuf(coutbuf);
 
     changeable_values = convertFromArmaToSTL(changeable_values_arma);
 }
