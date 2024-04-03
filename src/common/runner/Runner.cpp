@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include "src/common/Logger.h"
+#include "src/common/PrintingFunctions.h"
 #include "src/eigendecompositor/EigendecompositorConstructor.h"
 #include "src/entities/magnetic_susceptibility/worker/WorkerConstructor.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
@@ -240,13 +242,16 @@ void Runner::minimizeResidualError(
             return stepOfRegression(capture0, changeable_values, gradient, isGradientRequired);
         };
 
+    common::preRegressionPrint(
+        consistentModelOptimizationList_.getOperatorsForExplicitConstruction(),
+        consistentModelOptimizationList_.getDerivativeOperatorsForExplicitConstruction());
+
     solver->optimize(oneStepFunction, changeable_values);
 
-    for (size_t i = 0; i < changeable_names.size(); ++i) {
-        std::cout << changeable_names[i].get_name() << ": " << changeable_values[i] << std::endl;
-    }
-    std::cout << "RSS = " << getMagneticSusceptibilityController().calculateResidualError()
-              << std::endl;
+    common::postRegressionPrint(
+        changeable_names,
+        changeable_values,
+        getMagneticSusceptibilityController().calculateResidualError());
 }
 
 double Runner::stepOfRegression(

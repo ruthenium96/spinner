@@ -64,16 +64,9 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
         weighted_sum_of_squares_of_experiment_ += weights_.at(i) * value * value;
     }
 
-    common::Logger::verbose_msg("Experimental values, corrected by ratio and in mu-squared, and weights:");
-    for (size_t i = 0; i < experimental_mu_squared_.size(); ++i) {
-        common::Logger::verbose(
-            "{:.8e}    {:.8e}    {:.8e}",
-            experimental_mu_squared_.at(i).temperature,
-            experimental_mu_squared_.at(i).value,
-            weights_.at(i));
-    }
-    common::Logger::separate(0, common::verbose);
-
+    common::experimentalValuesPrint(
+        getExperimentalMuSquared(),
+        getWeights());
 }
 
 double ExperimentalValuesWorker::calculateResidualError() const {
