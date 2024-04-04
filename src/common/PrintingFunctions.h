@@ -1,9 +1,12 @@
 #ifndef SPINNER_PRINTINGFUNCTIONS_H
 #define SPINNER_PRINTINGFUNCTIONS_H
 
+#include <fmt/ostream.h>
+
 #include <ostream>
 
 #include "Quantity.h"
+#include "src/eigendecompositor/AbstractEigendecompositor.h"
 #include "src/entities/BlockProperties.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/entities/matrix/Matrix.h"
@@ -18,6 +21,7 @@ std::ostream& operator<<(std::ostream& os, const space::Space& space);
 std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace);
 std::ostream& operator<<(std::ostream& os, const Spectrum& spectrum);
 std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum);
+template <> struct fmt::formatter<Spectrum> : fmt::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix);
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
