@@ -32,6 +32,7 @@ void AbstractEigendecompositor::BuildSpectra(
         BuildSubspectra(i, subspace);
         common::Logger::debug_msg("block {} is finished", i);
     }
+    common::Logger::separate(2, common::debug);
 
     finalize();
 }

@@ -117,6 +117,7 @@ void postRegressionPrint(
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         common::Logger::basic("{}: {}", changeable_names[i].get_name(), changeable_values[i]);
     }
+    common::Logger::separate(2, common::basic);
     common::Logger::basic("Loss function = {}", rss);
     common::Logger::separate(0, common::basic);
 }
@@ -128,6 +129,7 @@ void stepOfRegressionStartPrint(
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         common::Logger::verbose("{}: {}", changeable_names[i].get_name(), changeable_values[i]);
     }
+    common::Logger::separate(2, common::verbose);
 }
 
 void stepOfRegressionFinishPrint(double loss) {

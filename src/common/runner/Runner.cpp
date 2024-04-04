@@ -161,7 +161,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::J,
             std::move(derivative_map));
         answer[changeable_symbol] = value;
-        //        std::cout << "dRSS/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
     }
 
     for (const auto& changeable_symbol :
@@ -179,7 +179,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::D,
             std::move(derivative_map));
         answer[changeable_symbol] = value;
-        //        std::cout << "dRSS/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
     }
 
     for (const auto& changeable_symbol :
@@ -199,7 +199,7 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::g_factor,
             std::move(map));
         answer[changeable_symbol] = value;
-        //        std::cout << "dRSS/d" << changeable_symbol.get_name() << " = " << value << std::endl;
+        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
     }
 
     // Theta calculation:
@@ -213,8 +213,9 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
             model::symbols::Theta,
             std::move(empty_map));
         answer[Theta_name] = value;
-        //        std::cout << "dRSS/d" << Theta_name.get_name() << " = " << value << std::endl;
+        common::Logger::debug("d(Loss function)/d{}: {}", Theta_name.get_name(), value);
     }
+    common::Logger::separate(2, common::debug);
 
     return answer;
 }
