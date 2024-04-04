@@ -1,6 +1,7 @@
 #ifndef SPINNER_PARSER_H
 #define SPINNER_PARSER_H
 
+#include "src/input/ControlParser.h"
 #include "src/input/JobParser.h"
 #include "src/input/ModelInputParser.h"
 #include "src/input/OptimizationsParser.h"
@@ -26,6 +27,7 @@ class Parser {
     std::optional<input::ModelInputParser> model_input_parser_;
     std::optional<input::OptimizationsParser> optimizations_list_parser_;
     std::optional<input::JobParser> job_parser_;
+    std::optional<input::ControlParser> control_parser_;
 };
 
 }  // namespace input

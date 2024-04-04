@@ -24,6 +24,7 @@ std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
 
 namespace common {
+void inputPrint(const std::string& input_string);
 void preRegressionPrint(
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>& quantities,
     const std::map<

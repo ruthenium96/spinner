@@ -79,6 +79,12 @@ std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity_
 }
 
 namespace common {
+void inputPrint(const std::string& input_string) {
+    common::Logger::verbose_msg("Input file:");
+    common::Logger::verbose("{}", input_string);
+    common::Logger::separate(0, common::verbose);
+}
+
 void preRegressionPrint(
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>& quantities,
     const std::map<

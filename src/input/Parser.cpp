@@ -1,12 +1,24 @@
 #include "Parser.h"
 #include "Tools.h"
 
+#include "src/common/PrintingFunctions.h"
+
 #include <yaml-cpp/yaml.h>
 
 namespace input {
 
 Parser::Parser(const std::string& filename) {
     auto input_node = YAML::LoadFile(filename);
+
+    // save initial input into variable:
+    auto initial_input_string = Dump(input_node);
+
+    // create ControlParser and set correct print_level inside
+    control_parser_.emplace(extractValue<YAML::Node>(input_node, "control"));
+
+    // print initial input with correct print_level
+    common::inputPrint(initial_input_string);
+
     model_input_parser_.emplace(extractValue<YAML::Node>(input_node, "model_input"));
 
     optimizations_list_parser_.emplace(extractValue<YAML::Node>(input_node, "optimizations"));
