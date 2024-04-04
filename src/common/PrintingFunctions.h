@@ -39,6 +39,8 @@ void initialExperimentalValuesPrint(
 void experimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_mu_squared,
     const std::vector<double>& weights);
+void theoreticalValuesPrint(
+    const std::vector<magnetic_susceptibility::ValueAtTemperature>& theor_values);
 }
 
 #endif  //SPINNER_PRINTINGFUNCTIONS_H

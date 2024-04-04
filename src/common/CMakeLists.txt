@@ -11,4 +11,6 @@ add_library(common
 find_package(spdlog)
 #todo: download if necessary
 
-target_link_libraries(common model space magnetic_susceptibility nonlinear_solver eigendecompositor spdlog::spdlog)
+
+target_link_libraries(common model space magnetic_susceptibility nonlinear_solver eigendecompositor
+        spdlog::spdlog magic_enum)

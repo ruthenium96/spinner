@@ -1,6 +1,6 @@
 #include "Executer.h"
 
-#include "src/common/Logger.h"
+#include "src/common/PrintingFunctions.h"
 
 namespace runner {
 void Executer::execute(input::Parser parser) {
@@ -10,22 +10,21 @@ void Executer::execute(input::Parser parser) {
         auto runner = runner::Runner(model_input, optimization_list);
 
         if (parser.getTemperaturesForSimulation().has_value()) {
+            std::vector<magnetic_susceptibility::ValueAtTemperature> theor_values;
             for (auto temp : parser.getTemperaturesForSimulation().value()) {
                 double value = runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(temp);
-                common::Logger::basic("{:.8}    {:.8}", temp, value);
+                theor_values.push_back({temp, value});
             }
+
+            common::theoreticalValuesPrint(theor_values);
         } else if (parser.getNonlinearSolver().has_value()) {
             runner.initializeExperimentalValues(parser.getExperimentalValuesWorker().value());
 
             runner.minimizeResidualError(parser.getNonlinearSolver().value());
-
-            common::Logger::basic_msg("\nMuSquared, Temperature");
             auto theor_final = runner.getMagneticSusceptibilityController().getTheoreticalValues();
-            for (auto [temperature, value] : theor_final) {
-                common::Logger::basic("{:.8e}    {:.8e}", temperature, value);
-            }
+
+            common::theoreticalValuesPrint(theor_final);
         }
     }
-    common::Logger::separate(0, common::basic);
 }
 }  // namespace runner

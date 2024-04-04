@@ -148,4 +148,15 @@ void experimentalValuesPrint(
     }
     common::Logger::separate(0, common::verbose);
 }
+
+// todo: also print magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type
+void theoreticalValuesPrint(
+    const std::vector<magnetic_susceptibility::ValueAtTemperature>& theor_values) {
+    common::Logger::basic_msg("\nValue, Temperature");
+    for (auto [temperature, value] : theor_values) {
+        common::Logger::basic("{:.8e}    {:.8e}", temperature, value);
+    }
+    common::Logger::separate(0, common::basic);
+}
+
 }
