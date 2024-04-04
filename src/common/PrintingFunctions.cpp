@@ -121,6 +121,20 @@ void postRegressionPrint(
     common::Logger::separate(0, common::basic);
 }
 
+void initialExperimentalValuesPrint(
+    const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_values,
+    magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type) {
+    common::Logger::debug_msg("Initial experimental values in {}:",
+                              magic_enum::enum_name(experimental_values_type));
+    for (size_t i = 0; i < experimental_values.size(); ++i) {
+        common::Logger::debug(
+            "{:.8e}    {:.8e}",
+            experimental_values.at(i).temperature,
+            experimental_values.at(i).value);
+    }
+    common::Logger::separate(0, common::debug);
+}
+
 void experimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_mu_squared,
     const std::vector<double>& weights) {

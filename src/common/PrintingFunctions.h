@@ -33,6 +33,9 @@ void postRegressionPrint(
     const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
     double rss);
+void initialExperimentalValuesPrint(
+    const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_values,
+    magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type);
 void experimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_mu_squared,
     const std::vector<double>& weights);

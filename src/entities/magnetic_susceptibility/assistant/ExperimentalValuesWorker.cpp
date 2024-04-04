@@ -4,7 +4,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "src/common/Logger.h"
+#include "src/common/PrintingFunctions.h"
 
 namespace magnetic_susceptibility {
 
@@ -20,14 +20,7 @@ ExperimentalValuesWorker::ExperimentalValuesWorker(
     experimental_values_type_ = experimental_values_type;
     number_of_centers_ratio_ = number_of_centers_ratio;
 
-    common::Logger::debug_msg("Initial experimental values:");
-    for (size_t i = 0; i < experimental_mu_squared_.size(); ++i) {
-        common::Logger::debug(
-            "{:.8e}    {:.8e}",
-            experimental_values.at(i).temperature,
-            experimental_values.at(i).value);
-    }
-    common::Logger::separate(0, common::debug);
+    common::initialExperimentalValuesPrint(experimental_values, experimental_values_type);
 
     if (experimental_values_type == mu_squared_in_bohr_magnetons_squared) {
         // DO NOTHING
