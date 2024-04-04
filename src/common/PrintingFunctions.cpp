@@ -2,6 +2,8 @@
 
 #include "src/common/Logger.h"
 
+#include <magic_enum.hpp>
+
 std::ostream& operator<<(std::ostream& os, const space::Space& space) {
     for (const space::Subspace& subspace : space.getBlocks()) {
         os << subspace;
@@ -72,7 +74,7 @@ std::ostream& operator<<(std::ostream& os, const BlockProperties& properties) {
 }
 
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity_enum) {
-    os << "Quantity type: " << common::get_quantity_name(quantity_enum) << std::endl;
+    os << "Quantity type: " << magic_enum::enum_name(quantity_enum) << std::endl;
     return os;
 }
 
@@ -89,14 +91,17 @@ void preRegressionPrint(
 
     std::string quantities_names;
     for (const auto& [value, _] : quantities) {
-        quantities_names += get_quantity_name(value) + ", ";
+        quantities_names += magic_enum::enum_name(value);
+        quantities_names += ", ";
     }
     common::Logger::verbose("Quantities: {}", quantities_names);
 
     if (!derivatives.empty()) {
         std::string derivative_names;
         for (const auto& [pair, _] : derivatives) {
-            derivative_names += "d(" + get_quantity_name(pair.first) + ")/d" + pair.second.get_name() + ", ";
+            derivative_names += "d(";
+            derivative_names += magic_enum::enum_name(pair.first);
+            derivative_names += ")/d" + pair.second.get_name() + ", ";
         }
         common::Logger::verbose("Derivatives: {}", derivative_names);
     }

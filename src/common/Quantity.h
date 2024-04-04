@@ -11,8 +11,6 @@ enum QuantityEnum {
     Energy,
     S_total_squared, gSz_total_squared };
 
-std::string get_quantity_name(common::QuantityEnum);
-
 struct Quantity {
     Matrix matrix_;
     Spectrum spectrum_;
