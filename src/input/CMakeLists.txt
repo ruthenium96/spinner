@@ -30,7 +30,8 @@ add_library(input
         Tools.cpp Tools.h
         ModelInputParser.cpp ModelInputParser.h
         OptimizationsParser.cpp OptimizationsParser.h
-        JobParser.cpp JobParser.h)
+        JobParser.cpp JobParser.h
+        ControlParser.cpp ControlParser.h)
 
 add_definitions(-D_LBFGSppAdapter_BUILT=${Eigen3_FOUND}) # necessary for using of lbfgs-cpp
 
