@@ -266,9 +266,7 @@ double Runner::stepOfRegression(
             changeable_values[i]);
     }
 
-    //    for (size_t i = 0; i < changeable_names.size(); ++i) {
-    //        std::cout << changeable_names[i].get_name() << " = " << changeable_values[i] << std::endl;
-    //    }
+    common::stepOfRegressionStartPrint(changeable_names, changeable_values);
 
     // (Re)build Eigendecompositor:
     BuildSpectra();
@@ -278,8 +276,6 @@ double Runner::stepOfRegression(
     // Calculate residual error and write it to external variable:
     double residual_error = getMagneticSusceptibilityController().calculateResidualError();
 
-    std::cout << "RSS = " << residual_error << std::endl << std::endl;
-
     if (isGradientRequired) {
         // Calculate derivatives...
         std::map<model::symbols::SymbolName, double> map_gradient = calculateTotalDerivatives();
@@ -288,6 +284,8 @@ double Runner::stepOfRegression(
             gradient[i] = map_gradient[changeable_names[i]];
         }
     }
+
+    common::stepOfRegressionFinishPrint(residual_error);
 
     return residual_error;
 }

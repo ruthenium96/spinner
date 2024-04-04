@@ -121,6 +121,20 @@ void postRegressionPrint(
     common::Logger::separate(0, common::basic);
 }
 
+void stepOfRegressionStartPrint(
+    const std::vector<model::symbols::SymbolName>& changeable_names,
+    const std::vector<double>& changeable_values) {
+    common::Logger::verbose_msg("New step of regression has started with values:");
+    for (size_t i = 0; i < changeable_names.size(); ++i) {
+        common::Logger::verbose("{}: {}", changeable_names[i].get_name(), changeable_values[i]);
+    }
+}
+
+void stepOfRegressionFinishPrint(double loss) {
+    common::Logger::verbose("Loss function = {}", loss);
+    common::Logger::separate(1, common::verbose);
+}
+
 void initialExperimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_values,
     magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type) {
