@@ -55,6 +55,8 @@ job:
       dimension: chiT_in_cm_cubed_kelvin_per_mol
       ratio: 1.0
       weights: per_interval
+control:
+  print_level: basic
 
 # The answer of calculation:
 #
