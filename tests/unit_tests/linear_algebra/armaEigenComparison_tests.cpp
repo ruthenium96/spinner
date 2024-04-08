@@ -4,6 +4,11 @@
 #include "tests/tools/AllSymmetricMatrixFactories.h"
 #include "tests/tools/GenerateSameMatrix.h"
 
+inline int sign_f(double a, double b)
+{
+    return -2 * (std::signbit(a) ^ std::signbit(b)) + 1;
+}
+
 TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -97,10 +102,8 @@ TEST(linearAlgebraFactories, eigendecomposition) {
                 int sign;
                 for (size_t i = 0; i < size; ++i) {
                     if (i == 0) {
-                        sign = -2
-                                * (std::signbit(armaEigenCouple.eigenvectors->at(j, i))
-                                   ^ std::signbit(eigenEigenCouple.eigenvectors->at(j, i)))
-                            + 1;
+                        sign = sign_f(armaEigenCouple.eigenvectors->at(j, i),
+                                    eigenEigenCouple.eigenvectors->at(j, i));
                     }
                     // TODO: epsilon
                     EXPECT_NEAR(
