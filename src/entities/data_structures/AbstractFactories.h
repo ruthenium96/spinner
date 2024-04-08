@@ -27,6 +27,8 @@ class AbstractSparseTransformFactory {
     virtual std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
     virtual std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) = 0;
+
+    ~AbstractSparseTransformFactory() = default;
 };
 
 }  // namespace quantum::linear_algebra
