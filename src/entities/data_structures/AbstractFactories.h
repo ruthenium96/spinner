@@ -7,6 +7,9 @@
 #include "AbstractSymmetricMatrix.h"
 
 namespace quantum::linear_algebra {
+
+enum Precision { SINGLE, DOUBLE };
+
 class AbstractDenseTransformAndDiagonalizeFactory {
   public:
     static std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> defaultFactory();
@@ -19,6 +22,15 @@ class AbstractDenseTransformAndDiagonalizeFactory {
     virtual std::unique_ptr<AbstractDenseVector> createVector() = 0;
 
     ~AbstractDenseTransformAndDiagonalizeFactory() = default;
+  private:
+    Precision precision_ = Precision::DOUBLE;
+  public:
+    void setPrecision(Precision precision) {
+        precision_ = precision;
+    }
+    Precision getPrecision() const {
+        return precision_;
+    }
 };
 
 class AbstractSparseTransformFactory {
