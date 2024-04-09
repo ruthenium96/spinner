@@ -5,6 +5,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "src/common/Logger.h"
+#include "src/entities/data_structures/FactoriesList.h"
 
 namespace input {
 
@@ -12,8 +13,10 @@ class ControlParser {
   public:
     explicit ControlParser(YAML::Node control_node);
     common::PrintLevel getPrintLevel() const;
+    const std::optional<quantum::linear_algebra::FactoriesList>& getFactoriesList() const;
   private:
     std::optional<common::PrintLevel> print_level_;
+    std::optional<quantum::linear_algebra::FactoriesList> factoriesList_;
 };
 
 }  // namespace input

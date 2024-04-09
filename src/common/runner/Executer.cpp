@@ -5,9 +5,10 @@
 namespace runner {
 void Executer::execute(input::Parser parser) {
     auto optimization_list = parser.getOptimizationList().value();
+    auto factoriesList = parser.getFactoriesList().value();
 
     for (const auto& model_input : parser.getModelInputs()) {
-        auto runner = runner::Runner(model_input, optimization_list);
+        auto runner = runner::Runner(model_input, optimization_list, factoriesList);
 
         if (parser.getTemperaturesForSimulation().has_value()) {
             std::vector<magnetic_susceptibility::ValueAtTemperature> theor_values;
