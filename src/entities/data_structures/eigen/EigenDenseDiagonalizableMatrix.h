@@ -17,11 +17,11 @@ class EigenDenseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
     void print(std::ostream& os) const override;
     void resize(uint32_t size);
 
-    const Eigen::MatrixXd& getDenseDiagonalizableMatrix() const;
-    Eigen::MatrixXd& modifyDenseDiagonalizableMatrix();
+    const Eigen::Matrix<double, -1, -1>& getDenseDiagonalizableMatrix() const;
+    Eigen::Matrix<double, -1, -1>& modifyDenseDiagonalizableMatrix();
 
   private:
-    Eigen::MatrixXd denseDiagonalizableMatrix_;
+    Eigen::Matrix<double, -1, -1> denseDiagonalizableMatrix_;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_EIGENDENSEDIAGONALIZABLEMATRIX_H

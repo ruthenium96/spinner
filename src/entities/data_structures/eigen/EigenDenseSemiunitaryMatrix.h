@@ -20,12 +20,12 @@ class EigenDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const override;
 
-    const Eigen::MatrixXd& getDenseSemiunitaryMatrix() const;
-    Eigen::MatrixXd& modifyDenseSemiunitaryMatrix();
+    const Eigen::Matrix<double, -1, -1>& getDenseSemiunitaryMatrix() const;
+    Eigen::Matrix<double, -1, -1>& modifyDenseSemiunitaryMatrix();
     void normalize() override;
 
   private:
-    Eigen::MatrixXd denseSemiunitaryMatrix_;
+    Eigen::Matrix<double, -1, -1> denseSemiunitaryMatrix_;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_EIGENDENSESEMIUNITARYMATRIX_H

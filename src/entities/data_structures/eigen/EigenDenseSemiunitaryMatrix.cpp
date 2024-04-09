@@ -41,11 +41,11 @@ std::unique_ptr<AbstractDiagonalizableMatrix> EigenDenseSemiunitaryMatrix::unita
     return eigenLogic.unitaryTransform(matrix_to_transform, *this);
 }
 
-const Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {
+const Eigen::Matrix<double, -1, -1>& EigenDenseSemiunitaryMatrix::getDenseSemiunitaryMatrix() const {
     return denseSemiunitaryMatrix_;
 }
 
-Eigen::MatrixXd& EigenDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
+Eigen::Matrix<double, -1, -1>& EigenDenseSemiunitaryMatrix::modifyDenseSemiunitaryMatrix() {
     return denseSemiunitaryMatrix_;
 }
 

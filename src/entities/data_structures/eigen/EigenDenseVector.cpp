@@ -9,17 +9,17 @@ void EigenDenseVector::resize(uint32_t new_size) {
 void EigenDenseVector::concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) {
     auto rhs_ = downcast_ptr(rhs);
 
-    Eigen::VectorXd tmp(vector_.size() + rhs_->vector_.size());
+    Eigen::Vector<double, -1> tmp(vector_.size() + rhs_->vector_.size());
     tmp << vector_, rhs_->vector_;
 
     vector_ = tmp;
 }
 
 void EigenDenseVector::add_identical_values(size_t number, double value) {
-    Eigen::VectorXd tmp(number);
+    Eigen::Vector<double, -1> tmp(number);
     tmp.fill(value);
 
-    Eigen::VectorXd tmptmp(vector_.size() + number);
+    Eigen::Vector<double, -1> tmptmp(vector_.size() + number);
     tmptmp << vector_, tmp;
     vector_ = tmptmp;
 }
@@ -72,11 +72,11 @@ void EigenDenseVector::print(std::ostream& os) const {
     os << vector_ << std::endl;
 }
 
-Eigen::VectorXd& EigenDenseVector::modifyDenseVector() {
+Eigen::Vector<double, -1>& EigenDenseVector::modifyDenseVector() {
     return vector_;
 }
 
-const Eigen::VectorXd& EigenDenseVector::getDenseVector() {
+const Eigen::Vector<double, -1>& EigenDenseVector::getDenseVector() {
     return vector_;
 }
 

@@ -49,11 +49,11 @@ void EigenDenseDiagonalizableMatrix::resize(uint32_t size) {
     denseDiagonalizableMatrix_.fill(0);
 }
 
-const Eigen::MatrixXd& EigenDenseDiagonalizableMatrix::getDenseDiagonalizableMatrix() const {
+const Eigen::Matrix<double, -1, -1>& EigenDenseDiagonalizableMatrix::getDenseDiagonalizableMatrix() const {
     return denseDiagonalizableMatrix_;
 }
 
-Eigen::MatrixXd& EigenDenseDiagonalizableMatrix::modifyDenseDiagonalizableMatrix() {
+Eigen::Matrix<double, -1, -1>& EigenDenseDiagonalizableMatrix::modifyDenseDiagonalizableMatrix() {
     return denseDiagonalizableMatrix_;
 }
 }  // namespace quantum::linear_algebra
