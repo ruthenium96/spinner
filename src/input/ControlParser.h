@@ -15,6 +15,8 @@ class ControlParser {
     common::PrintLevel getPrintLevel() const;
     const std::optional<quantum::linear_algebra::FactoriesList>& getFactoriesList() const;
   private:
+    void constructFactoriesList(YAML::Node& control_node);
+
     std::optional<common::PrintLevel> print_level_;
     std::optional<quantum::linear_algebra::FactoriesList> factoriesList_;
 };
