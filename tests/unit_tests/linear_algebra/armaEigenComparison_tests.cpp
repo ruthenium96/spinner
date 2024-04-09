@@ -179,7 +179,7 @@ TEST(linearAlgebraFactories, unitary_transformation) {
                     for (size_t l = 0; l < size; ++l) {
                         double epsilon = std::max(
                             std::abs(transformedMatrix_i->at(k, l) * 1e-5),
-                            1e-2);
+                            3e-2);
                         EXPECT_NEAR(
                             transformedMatrix_i->at(k, l),
                             transformedMatrix_j->at(k, l),
@@ -230,7 +230,7 @@ TEST(linearAlgebraFactories, unitary_transformation_and_return_main_diagonal) {
                 const auto& transformedMainDiagonal_j = denseTransformedMainDiagonal[j];
                 for (size_t k = 0; k < size; ++k) {
                     double epsilon = std::max(
-                        std::abs(transformedMainDiagonal_i->at(k) * 1e-5),
+                        std::abs(transformedMainDiagonal_i->at(k) * 1e-4),
                         5e-3);
                     EXPECT_NEAR(
                         transformedMainDiagonal_i->at(k),
