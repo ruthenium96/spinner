@@ -53,13 +53,13 @@ class Model {
 
     symbols::NumericalWorker& getNumericalWorker();
 
-    void InitializeIsotropicExchange();
-    void InitializeIsotropicExchangeDerivatives();
-    void InitializeZeroFieldSplitting();
-    void InitializeZeroFieldSplittingDerivative();
-    void InitializeSSquared();
-    void InitializeGSzSquared();
-    void InitializeGSzSquaredDerivatives();
+    void constructIsotropicExchange();
+    void constructIsotropicExchangeDerivatives();
+    void constructZeroFieldSplitting();
+    void constructZeroFieldSplittingDerivative();
+    void constructSSquared();
+    void constructGSzSquared();
+    void constructGSzSquaredDerivatives();
 
     std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>> operators_map_;
     std::map<

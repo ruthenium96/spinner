@@ -12,24 +12,24 @@ Model::Model(ModelInput modelInput) :
     numericalWorker_(modelInput.getSymbolicWorker(), modelInput.getMults().size()),
     converter_(modelInput.getMults()) {
     operators_map_[common::Energy] = std::make_shared<operators::Operator>();
-    InitializeSSquared();
+    constructSSquared();
     if (getSymbolicWorker().isGFactorInitialized()) {
-        InitializeGSzSquared();
-        InitializeGSzSquaredDerivatives();
+        constructGSzSquared();
+        constructGSzSquaredDerivatives();
     }
 
     if (getSymbolicWorker().isZFSInitialized()) {
-        InitializeZeroFieldSplitting();
-        InitializeZeroFieldSplittingDerivative();
+        constructZeroFieldSplitting();
+        constructZeroFieldSplittingDerivative();
     }
 
     if (getSymbolicWorker().isIsotropicExchangeInitialized()) {
-        InitializeIsotropicExchange();
-        InitializeIsotropicExchangeDerivatives();
+        constructIsotropicExchange();
+        constructIsotropicExchangeDerivatives();
     }
 }
 
-void Model::InitializeSSquared() {
+void Model::constructSSquared() {
     if (operators_history_.s_squared) {
         return;
     }
@@ -40,7 +40,7 @@ void Model::InitializeSSquared() {
     operators_history_.s_squared = true;
 }
 
-void Model::InitializeGSzSquared() {
+void Model::constructGSzSquared() {
     if (operators_history_.g_sz_squared) {
         return;
     }
@@ -54,7 +54,7 @@ void Model::InitializeGSzSquared() {
     operators_history_.g_sz_squared = true;
 }
 
-void Model::InitializeIsotropicExchange() {
+void Model::constructIsotropicExchange() {
     if (operators_history_.isotropic_exchange_in_hamiltonian) {
         return;
     }
@@ -65,7 +65,7 @@ void Model::InitializeIsotropicExchange() {
     operators_history_.isotropic_exchange_in_hamiltonian = true;
 }
 
-void Model::InitializeZeroFieldSplitting() {
+void Model::constructZeroFieldSplitting() {
     if (operators_history_.zfs_in_hamiltonian) {
         return;
     }
@@ -80,7 +80,7 @@ void Model::InitializeZeroFieldSplitting() {
     operators_history_.zfs_in_hamiltonian = true;
 }
 
-void Model::InitializeIsotropicExchangeDerivatives() {
+void Model::constructIsotropicExchangeDerivatives() {
     if (operators_history_.isotropic_exchange_derivatives) {
         return;
     }
@@ -98,7 +98,7 @@ void Model::InitializeIsotropicExchangeDerivatives() {
     operators_history_.isotropic_exchange_derivatives = true;
 }
 
-void Model::InitializeZeroFieldSplittingDerivative() {
+void Model::constructZeroFieldSplittingDerivative() {
     if (operators_history_.zfs_derivative) {
         return;
     }
@@ -119,7 +119,7 @@ void Model::InitializeZeroFieldSplittingDerivative() {
     }
 }
 
-void Model::InitializeGSzSquaredDerivatives() {
+void Model::constructGSzSquaredDerivatives() {
     if (operators_history_.g_sz_squared_derivatives) {
         return;
     }
