@@ -105,7 +105,7 @@ void ScalarProductTerm::add_scalar_product_nondiagonal_part(
         // For index_of_vector we add to (index_of_vector, index_of_new_vector).
         // If there will be no breaking return, lately index_of_new_vector
         // will add to (index_of_new_vector, index_of_vector), and it will lead to double adding
-        // because of the properties of assign_to_position (it adds to both (i,j) and (j,i)).
+        // because of the properties of add_to_position (it adds to both (i,j) and (j,i)).
         return;
     }
 
