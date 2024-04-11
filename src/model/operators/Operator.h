@@ -23,18 +23,12 @@ class Operator {
         std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters);
 
     bool empty() const;
-    const std::vector<std::unique_ptr<const ZeroCenterTerm>>& getZeroCenterTerms() const;
-    const std::vector<std::unique_ptr<const OneCenterTerm>>& getOneCenterTerms() const;
-    const std::vector<std::unique_ptr<const TwoCenterTerm>>& getTwoCenterTerms() const;
+    const std::vector<std::unique_ptr<const Term>>& getTerms() const;
 
-    void emplace_back(std::unique_ptr<const ZeroCenterTerm>&& term);
-    void emplace_back(std::unique_ptr<const OneCenterTerm>&& term);
-    void emplace_back(std::unique_ptr<const TwoCenterTerm>&& term);
+    void emplace_back(std::unique_ptr<const Term>&& term);
 
   private:
-    std::vector<std::unique_ptr<const ZeroCenterTerm>> zero_center_terms;
-    std::vector<std::unique_ptr<const OneCenterTerm>> one_center_terms;
-    std::vector<std::unique_ptr<const TwoCenterTerm>> two_center_terms;
+    std::vector<std::unique_ptr<const Term>> terms_;
 };
 }  // namespace model::operators
 

@@ -30,13 +30,7 @@ Submatrix::Submatrix(
 
     for (auto index_of_lexicographic_vector_k : lexicografical_vectors_to_built) {
         // BUILDING k-th ROW OF INITIAL_MATRIX
-        for (auto& term : new_operator.getZeroCenterTerms()) {
-            term->construct(*matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
-        }
-        for (auto& term : new_operator.getOneCenterTerms()) {
-            term->construct(*matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
-        }
-        for (auto& term : new_operator.getTwoCenterTerms()) {
+        for (auto& term : new_operator.getTerms()) {
             term->construct(*matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
         }
     }
