@@ -26,7 +26,7 @@ ScalarProductTerm::ScalarProductTerm(
     coefficients_(std::move(parameters)) {}
 
 void ScalarProductTerm::construct(
-    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>&
+    quantum::linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a,
@@ -47,7 +47,7 @@ std::unique_ptr<TwoCenterTerm> ScalarProductTerm::clone() const {
 }
 
 void ScalarProductTerm::add_scalar_product(
-    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>& matrix,
+    quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
     uint32_t index_of_vector,
     uint32_t center_a,
     uint32_t center_b,
@@ -62,7 +62,7 @@ void ScalarProductTerm::add_scalar_product(
     // Saz Sbz
     double diagonal_value = (projection_of_center_a - converter_.get_spins()[center_a])
         * (projection_of_center_b - converter_.get_spins()[center_b]) * factor;
-    matrix->add_to_position(diagonal_value, index_of_vector, index_of_vector);
+    matrix.add_to_position(diagonal_value, index_of_vector, index_of_vector);
 
     // Sa+ Sb-
     add_scalar_product_nondiagonal_part(
@@ -86,7 +86,7 @@ void ScalarProductTerm::add_scalar_product(
 }
 
 void ScalarProductTerm::add_scalar_product_nondiagonal_part(
-    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>& matrix,
+    quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
     uint32_t index_of_vector,
     uint32_t plus_center,
     uint32_t minus_center,
@@ -117,7 +117,7 @@ void ScalarProductTerm::add_scalar_product_nondiagonal_part(
     double factor_b = projection_of_minus_center
         * (2 * converter_.get_spins()[minus_center] + 1 - projection_of_minus_center);
 
-    matrix->add_to_position(
+    matrix.add_to_position(
         0.5 * sqrt(factor_a * factor_b) * factor,
         index_of_vector,
         index_of_new_vector);

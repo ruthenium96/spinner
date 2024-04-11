@@ -11,7 +11,7 @@ class ConstantTerm: public ZeroCenterTerm {
     std::unique_ptr<ZeroCenterTerm> clone() const override;
 
     void construct(
-        std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>&
+        quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         uint32_t index_of_vector) const override;
 

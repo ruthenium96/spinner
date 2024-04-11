@@ -14,7 +14,7 @@ class ScalarProductTerm: public TwoCenterTerm {
     std::unique_ptr<TwoCenterTerm> clone() const override;
 
     void construct(
-        std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>&
+        quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
         uint32_t center_a,
@@ -24,13 +24,13 @@ class ScalarProductTerm: public TwoCenterTerm {
     const lexicographic::IndexConverter converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
     void add_scalar_product(
-        std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>& matrix,
+        quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
         uint32_t index_of_vector,
         uint32_t center_a,
         uint32_t center_b,
         double factor) const;
     void add_scalar_product_nondiagonal_part(
-        std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>& matrix,
+        quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
         uint32_t index_of_vector,
         uint32_t plus_center,
         uint32_t minus_center,

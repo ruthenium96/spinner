@@ -19,7 +19,7 @@ SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     prefactor_(prefactor) {}
 
 void SzSzTwoCenterTerm::construct(
-    std::unique_ptr<quantum::linear_algebra::AbstractSymmetricMatrix>&
+    quantum::linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     uint32_t index_of_vector,
     uint32_t center_a,
@@ -33,7 +33,7 @@ void SzSzTwoCenterTerm::construct(
     // Saz Sbz
     double diagonal_value = (projection_of_center_a - converter_.get_spins()[center_a])
         * (projection_of_center_b - converter_.get_spins()[center_b]) * factor;
-    matrix_in_lexicografical_basis->add_to_position(
+    matrix_in_lexicografical_basis.add_to_position(
         diagonal_value,
         index_of_vector,
         index_of_vector);
