@@ -13,6 +13,9 @@ class TwoDNumericalParameters {
     explicit TwoDNumericalParameters(size_t size, T default_value) {
         data_ = std::vector<std::vector<T>>(size, std::vector<T>(size, default_value));
     }
+    size_t size() const {
+        return data_.size();
+    }
     T& at(size_t i, size_t j) {
         return data_.at(i).at(j);
     }
@@ -29,6 +32,9 @@ class OneDNumericalParameters {
   public:
     explicit OneDNumericalParameters(size_t size, T default_value) {
         data_ = std::vector<T>(size, default_value);
+    }
+    size_t size() const {
+        return data_.size();
     }
     T& at(size_t i) {
         return data_.at(i);
