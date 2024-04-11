@@ -8,7 +8,7 @@ class ConstantTerm: public ZeroCenterTerm {
   public:
     explicit ConstantTerm(std::shared_ptr<const double> constant);
 
-    std::unique_ptr<ZeroCenterTerm> clone() const override;
+    std::unique_ptr<Term> clone() const override;
 
     void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&

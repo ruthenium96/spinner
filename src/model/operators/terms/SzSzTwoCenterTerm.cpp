@@ -7,6 +7,7 @@ namespace model::operators {
 SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     lexicographic::IndexConverter converter,
     std::shared_ptr<const TwoDNumericalParameters<double>> parameters) :
+    TwoCenterTerm(converter.get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(parameters)) {}
 
@@ -14,6 +15,7 @@ SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     lexicographic::IndexConverter converter,
     std::shared_ptr<const TwoDNumericalParameters<double>> parameters,
     double prefactor) :
+    TwoCenterTerm(converter.get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(parameters)),
     prefactor_(prefactor) {}
@@ -39,7 +41,7 @@ void SzSzTwoCenterTerm::construct(
         index_of_vector);
 }
 
-std::unique_ptr<TwoCenterTerm> SzSzTwoCenterTerm::clone() const {
+std::unique_ptr<Term> SzSzTwoCenterTerm::clone() const {
     return std::make_unique<SzSzTwoCenterTerm>(converter_, coefficients_, prefactor_);
 }
 

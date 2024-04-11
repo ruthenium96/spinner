@@ -13,7 +13,7 @@ void ConstantTerm::construct(
 ConstantTerm::ConstantTerm(std::shared_ptr<const double> constant) :
     constant_(std::move(constant)) {}
 
-std::unique_ptr<ZeroCenterTerm> ConstantTerm::clone() const {
+std::unique_ptr<Term> ConstantTerm::clone() const {
     return std::make_unique<ConstantTerm>(constant_);
 }
 }  // namespace model::operators

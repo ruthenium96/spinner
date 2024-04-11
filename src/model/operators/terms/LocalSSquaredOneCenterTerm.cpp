@@ -5,7 +5,7 @@
 
 namespace model::operators {
 
-std::unique_ptr<OneCenterTerm> LocalSSquaredOneCenterTerm::clone() const {
+std::unique_ptr<Term> LocalSSquaredOneCenterTerm::clone() const {
     return std::make_unique<LocalSSquaredOneCenterTerm>(converter_, coefficients_, prefactor_);
 }
 void LocalSSquaredOneCenterTerm::construct(
@@ -30,12 +30,15 @@ LocalSSquaredOneCenterTerm::LocalSSquaredOneCenterTerm(
     lexicographic::IndexConverter converter,
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients,
     double prefactor) :
+    OneCenterTerm(converter.get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)),
     prefactor_(prefactor) {}
+
 LocalSSquaredOneCenterTerm::LocalSSquaredOneCenterTerm(
     lexicographic::IndexConverter converter,
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients) :
+    OneCenterTerm(converter.get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)) {}
 }  // namespace model::operators

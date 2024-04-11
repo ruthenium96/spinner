@@ -5,6 +5,7 @@
 
 namespace model::operators {
 ScalarProductTerm::ScalarProductTerm(lexicographic::IndexConverter converter) :
+    TwoCenterTerm(converter.get_mults().size()),
     converter_(std::move(converter)) {
     size_t number_of_spins = converter_.get_mults().size();
     auto mutable_coefficients =
@@ -22,6 +23,7 @@ ScalarProductTerm::ScalarProductTerm(lexicographic::IndexConverter converter) :
 ScalarProductTerm::ScalarProductTerm(
     lexicographic::IndexConverter converter,
     std::shared_ptr<const TwoDNumericalParameters<double>> parameters) :
+    TwoCenterTerm(converter.get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(parameters)) {}
 
@@ -42,7 +44,7 @@ void ScalarProductTerm::construct(
     }
 }
 
-std::unique_ptr<TwoCenterTerm> ScalarProductTerm::clone() const {
+std::unique_ptr<Term> ScalarProductTerm::clone() const {
     return std::make_unique<ScalarProductTerm>(converter_, coefficients_);
 }
 

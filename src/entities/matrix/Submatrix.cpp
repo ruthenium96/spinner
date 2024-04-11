@@ -33,22 +33,11 @@ Submatrix::Submatrix(
         for (auto& term : new_operator.getZeroCenterTerms()) {
             term->construct(*matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
         }
-        for (int center_a = 0; center_a < converter.get_mults().size(); ++center_a) {
-            for (auto& term : new_operator.getOneCenterTerms()) {
-                term->construct(
-                    *matrix_in_lexicografical_basis,
-                    index_of_lexicographic_vector_k,
-                    center_a);
-            }
-            for (int center_b = center_a + 1; center_b < converter.get_mults().size(); ++center_b) {
-                for (auto& term : new_operator.getTwoCenterTerms()) {
-                    term->construct(
-                        *matrix_in_lexicografical_basis,
-                        index_of_lexicographic_vector_k,
-                        center_a,
-                        center_b);
-                }
-            }
+        for (auto& term : new_operator.getOneCenterTerms()) {
+            term->construct(*matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
+        }
+        for (auto& term : new_operator.getTwoCenterTerms()) {
+            term->construct(*matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
         }
     }
 

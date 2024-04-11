@@ -9,38 +9,80 @@
 #include "src/model/NumericalParameters.h"
 
 namespace model::operators {
-class ZeroCenterTerm {
+class Term {
   public:
-    // This method is required for deep copy of std::vector<std::unique_ptr<ZeroCenterTerm>>
-    virtual std::unique_ptr<ZeroCenterTerm> clone() const = 0;
+    // This method is required for deep copy of std::vector<std::unique_ptr<Term>>
+    virtual std::unique_ptr<Term> clone() const = 0;
     virtual void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         uint32_t index_of_vector) const = 0;
-    virtual ~ZeroCenterTerm() = default;
+    virtual ~Term() = default;
 };
 
-class OneCenterTerm {
+class ZeroCenterTerm : public Term {
   public:
-    virtual std::unique_ptr<OneCenterTerm> clone() const = 0;
+    void construct(
+        quantum::linear_algebra::AbstractSymmetricMatrix&
+            matrix_in_lexicografical_basis,
+        uint32_t index_of_vector) const override = 0;
+    ~ZeroCenterTerm() override = default;
+};
+
+class OneCenterTerm : public Term {
+  private:
+    size_t numberOfCenters_;
+  public:
+    size_t getNumberOfCenters() const {
+        return numberOfCenters_;
+    }
+    explicit OneCenterTerm(size_t numberOfCenters) : numberOfCenters_(numberOfCenters) {}
     virtual void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
         uint32_t center_a) const = 0;
-    virtual ~OneCenterTerm() = default;
+    void construct(
+        quantum::linear_algebra::AbstractSymmetricMatrix& matrix_in_lexicografical_basis,
+        uint32_t index_of_vector) const override {
+        for (int center_a = 0; center_a < getNumberOfCenters(); ++center_a) {
+            construct(
+                matrix_in_lexicografical_basis,
+                index_of_vector,
+                center_a);
+        }
+    };
+    ~OneCenterTerm() override = default;
 };
 
-class TwoCenterTerm {
+class TwoCenterTerm : public Term {
+  private:
+    size_t numberOfCenters_;
   public:
-    virtual std::unique_ptr<TwoCenterTerm> clone() const = 0;
+    size_t getNumberOfCenters() const {
+        return numberOfCenters_;
+    }
+    explicit TwoCenterTerm(size_t numberOfCenters) : numberOfCenters_(numberOfCenters) {}
     virtual void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         uint32_t index_of_vector,
         uint32_t center_a,
         uint32_t center_b) const = 0;
-    virtual ~TwoCenterTerm() = default;
+    void construct(
+        quantum::linear_algebra::AbstractSymmetricMatrix& matrix_in_lexicografical_basis,
+        uint32_t index_of_vector) const override {
+        for (int center_a = 0; center_a < getNumberOfCenters(); ++center_a) {
+            for (int center_b = center_a + 1; center_b < getNumberOfCenters(); ++center_b) {
+                construct(
+                    matrix_in_lexicografical_basis,
+                    index_of_vector,
+                    center_a,
+                    center_b);
+            }
+        }
+    };
+    ~TwoCenterTerm() override = default;
 };
 }  // namespace model::operators
 

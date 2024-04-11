@@ -11,7 +11,7 @@ class ScalarProductTerm: public TwoCenterTerm {
         lexicographic::IndexConverter converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters);
 
-    std::unique_ptr<TwoCenterTerm> clone() const override;
+    std::unique_ptr<Term> clone() const override;
 
     void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&

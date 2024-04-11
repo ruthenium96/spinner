@@ -4,7 +4,7 @@
 #include <utility>
 
 namespace model::operators {
-std::unique_ptr<OneCenterTerm> SzSzOneCenterTerm::clone() const {
+std::unique_ptr<Term> SzSzOneCenterTerm::clone() const {
     return std::make_unique<SzSzOneCenterTerm>(converter_, coefficients_);
 }
 
@@ -32,6 +32,7 @@ void SzSzOneCenterTerm::construct(
 SzSzOneCenterTerm::SzSzOneCenterTerm(
     lexicographic::IndexConverter converter,
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients) :
+    OneCenterTerm(converter.get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)) {}
 }  // namespace model::operators
