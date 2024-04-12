@@ -12,12 +12,10 @@ S2Transformer::S2Transformer(
     const spin_algebra::RepresentationsMultiplier& representationsMultiplier) :
     converter_(std::move(converter)),
     factories_(std::move(factories)),
-    order_of_summation_(std::move(order_of_summation)) {
-    sorted_s_squared_states_ = spin_algebra::SSquaredState::addAllMultiplicitiesAndSort(
-        converter_.get_mults(),
-        order_of_summation_,
-        representationsMultiplier);
-}
+    order_of_summation_(std::move(order_of_summation)),
+    ssquared_converter_(converter_.get_mults(),
+                        order_of_summation_,
+                        representationsMultiplier) {}
 
 space::Space S2Transformer::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
@@ -98,7 +96,7 @@ S2Transformer::constructTransformationMatrix(
             for (size_t k = 0; k < all_coeffs.size(); ++k) {
                 const auto& projections = all_projections.at(k);
                 const double coeff = all_coeffs.at(k);
-                value += total_CG_coefficient(s_squared_state, projections) / coeff;
+                value += ssquared_converter_.total_CG_coefficient(s_squared_state, projections) / coeff;
                 acc++;
             }
             // something like "averaging" of value:
@@ -122,32 +120,6 @@ S2Transformer::constructTransformationMatrix(
         number_of_s2_states,
         number_of_sz_states);
     return transformation_matrix;
-}
-
-double S2Transformer::total_CG_coefficient(
-    const spin_algebra::SSquaredState& s_squared_state,
-    const std::vector<double>& projections) const {
-    double c = 1;
-
-    for (const auto& instruction : *order_of_summation_) {
-        size_t pos_one = instruction.positions_of_summands[0];
-        size_t pos_two = instruction.positions_of_summands[1];
-        size_t pos_sum = instruction.position_of_sum;
-
-        double spin_one = ((double)s_squared_state.getMultiplicity(pos_one) - 1.0) / 2.0;
-        double spin_two = ((double)s_squared_state.getMultiplicity(pos_two) - 1.0) / 2.0;
-        double spin_sum = ((double)s_squared_state.getMultiplicity(pos_sum) - 1.0) / 2.0;
-
-        double proj_one = projections[pos_one];
-        double proj_two = projections[pos_two];
-        c *= clebshGordanCalculator_
-                 .clebsh_gordan_coefficient(spin_one, spin_two, spin_sum, proj_one, proj_two);
-        if (c == 0.0) {
-            return c;
-        }
-    }
-
-    return c;
 }
 
 std::vector<double> S2Transformer::construct_projections(uint32_t lex_index) const {

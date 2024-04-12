@@ -6,6 +6,7 @@
 #include "src/spin_algebra/GroupAdapter.h"
 #include "src/spin_algebra/MultiplicityDirectSum.h"
 #include "src/spin_algebra/OrderOfSummation.h"
+#include "src/spin_algebra/SSquaredConverter.h"
 #include "src/spin_algebra/SSquaredState.h"
 
 spin_algebra::MultiplicityDirectSum
@@ -185,17 +186,17 @@ TEST(addAllMultiplicitiesAndSort, 2222) {
 
     for (const auto& [groups, correct_answer] : input_and_correct_answers) {
         auto group_adapter = spin_algebra::GroupAdapter(groups, number_of_initial_mults);
-        auto sorted_sum = spin_algebra::SSquaredState::addAllMultiplicitiesAndSort(
+        auto converter = spin_algebra::SSquaredConverter(
             mults,
             group_adapter.getOrderOfSummations(),
             group_adapter.getRepresentationMultiplier());
 
         for (const auto& [properties, number] : correct_answer) {
-            EXPECT_EQ(number, sorted_sum.at(properties).size())
+            EXPECT_EQ(number, converter.block_with_property(properties)->get().size())
                 << "The number of states with multiplicity = " << properties.multiplicity
                 << " and representation " << representationName(properties.representations)
                 << " should be equal to " << number << ", but actually is equal to "
-                << sorted_sum.at(properties).size();
+                << converter.block_with_property(properties)->get().size();
         }
     }
 }

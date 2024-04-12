@@ -1,7 +1,6 @@
 #ifndef SPINNER_SSQUAREDSTATE_H
 #define SPINNER_SSQUAREDSTATE_H
 
-#include <map>
 #include <memory>
 #include <vector>
 
@@ -17,6 +16,7 @@ class SSquaredState {
     std::vector<Multiplicity> intermediateMultiplicities_;
     // first vector over different centers, second -- over different groups
     std::vector<std::vector<std::optional<uint8_t>>> intermediateRepresentations_;
+  public:
     SSquaredState(
         std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities,
         size_t number_of_summations,
@@ -24,7 +24,6 @@ class SSquaredState {
     void setMultiplicity(size_t number, Multiplicity multiplicity);
     void setRepresentations(size_t number, std::vector<std::optional<uint8_t>> representation);
 
-  public:
     struct Properties {
         Multiplicity multiplicity;
         std::vector<uint8_t> representations;
@@ -35,10 +34,6 @@ class SSquaredState {
     const std::vector<std::optional<uint8_t>>& getRepresentations(size_t number) const;
     size_t getSize() const;
     Properties back() const;
-    static std::map<Properties, std::vector<SSquaredState>> addAllMultiplicitiesAndSort(
-        const std::vector<Multiplicity>& multiplicities_to_sum,
-        const std::shared_ptr<const OrderOfSummation>& order_of_summation,
-        const spin_algebra::RepresentationsMultiplier& representationsMultiplier);
 };
 
 }  // namespace spin_algebra

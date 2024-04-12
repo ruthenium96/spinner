@@ -12,6 +12,7 @@ add_library(spin_algebra
         OrderOfSummation.cpp OrderOfSummation.h
         GroupAdapter.cpp GroupAdapter.h
         RepresentationsMultiplier.cpp RepresentationsMultiplier.h
-        ClebshGordanCalculator.cpp ClebshGordanCalculator.h)
+        ClebshGordanCalculator.cpp ClebshGordanCalculator.h
+        SSquaredConverter.cpp SSquaredConverter.h)
 
 target_link_libraries(spin_algebra wignerSymbols)
