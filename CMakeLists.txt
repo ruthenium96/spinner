@@ -14,6 +14,15 @@ if (OPENMP_FOUND)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
+# Fast hashmap:
+FetchContent_Declare(
+        emhash
+        GIT_REPOSITORY https://github.com/ktprime/emhash.git
+        GIT_TAG "2e3edc378373b331afa8bd570d657bf3f1229b86"
+)
+FetchContent_MakeAvailable(emhash)
+include_directories(${emhash_SOURCE_DIR}/)
+
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_subdirectory(examples)
