@@ -31,6 +31,7 @@ class SSquaredState {
     };
 
     Multiplicity getMultiplicity(size_t number) const;
+    double getSpin(size_t number) const;
     const std::vector<std::optional<uint8_t>>& getRepresentations(size_t number) const;
     size_t getSize() const;
     Properties back() const;

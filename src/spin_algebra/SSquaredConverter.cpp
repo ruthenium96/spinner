@@ -167,9 +167,9 @@ double SSquaredConverter::total_CG_coefficient(
         size_t pos_two = instruction.positions_of_summands[1];
         size_t pos_sum = instruction.position_of_sum;
 
-        double spin_one = ((double)s_squared_state.getMultiplicity(pos_one) - 1.0) / 2.0;
-        double spin_two = ((double)s_squared_state.getMultiplicity(pos_two) - 1.0) / 2.0;
-        double spin_sum = ((double)s_squared_state.getMultiplicity(pos_sum) - 1.0) / 2.0;
+        double spin_one = s_squared_state.getSpin(pos_one);
+        double spin_two = s_squared_state.getSpin(pos_two);
+        double spin_sum = s_squared_state.getSpin(pos_sum);
 
         double proj_one = projections[pos_one];
         double proj_two = projections[pos_two];

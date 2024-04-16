@@ -63,4 +63,8 @@ void SSquaredState::setRepresentations(
     intermediateRepresentations_[number] = std::move(representation);
 }
 
+double SSquaredState::getSpin(size_t number) const {
+    return ((double)getMultiplicity(number) - 1.0) / 2.0;
+}
+
 }  // namespace spin_algebra
