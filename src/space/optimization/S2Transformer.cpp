@@ -8,13 +8,10 @@ namespace space::optimization {
 S2Transformer::S2Transformer(
     lexicographic::IndexConverter converter,
     quantum::linear_algebra::FactoriesList factories,
-    std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation,
-    const spin_algebra::RepresentationsMultiplier& representationsMultiplier) :
+    std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter) :
     converter_(std::move(converter)),
     factories_(std::move(factories)),
-    ssquared_converter_(converter_.get_mults(),
-                        order_of_summation,
-                        representationsMultiplier) {}
+    ssquared_converter_(std::move(ssquared_converter)) {}
 
 space::Space S2Transformer::apply(Space&& space) const {
     std::vector<Subspace> vector_result;
@@ -35,10 +32,11 @@ space::Space S2Transformer::apply(Space&& space) const {
         subspace_properties.multiplicity = current_mult;
         subspace_properties.representations = subspace.properties.representation;
 
-        if (sorted_s_squared_states_.count(subspace_properties) == 0) {
+        auto mb_ssquared_states = ssquared_converter_->block_with_property(subspace_properties);
+        if (!mb_ssquared_states.has_value()) {
             continue;
         }
-        const auto& s_squared_states = sorted_s_squared_states_.at(subspace_properties);
+        const auto& s_squared_states = mb_ssquared_states.value().get();
 
         subspace.dense_semiunitary_matrix =
             constructTransformationMatrix(s_squared_states, subspace);
@@ -64,13 +62,15 @@ S2Transformer::constructTransformationMatrix(
     const auto number_of_s2_states = s_squared_states.size();
     auto transformation_matrix =
         factories_.createDenseSemiunitaryMatrix(number_of_s2_states, number_of_sz_states);
+    const auto& ssquared_converter = *ssquared_converter_;
 
 #pragma omp parallel for shared( \
-        number_of_s2_states, \
+            number_of_s2_states, \
             number_of_sz_states, \
             s_squared_states, \
+            ssquared_converter, \
             subspace, \
-            transformation_matrix) default(none)
+            transformation_matrix) default(none) schedule(static)
     for (size_t j = 0; j < number_of_sz_states; ++j) {
         auto iterator = subspace.decomposition->GetNewIterator(j);
         std::vector<std::vector<double>> all_projections;
@@ -95,7 +95,7 @@ S2Transformer::constructTransformationMatrix(
             for (size_t k = 0; k < all_coeffs.size(); ++k) {
                 const auto& projections = all_projections.at(k);
                 const double coeff = all_coeffs.at(k);
-                value += ssquared_converter_.total_CG_coefficient(s_squared_state, projections) / coeff;
+                value += ssquared_converter.total_CG_coefficient(s_squared_state, projections) / coeff;
                 acc++;
             }
             // something like "averaging" of value:
@@ -131,7 +131,7 @@ std::vector<double> S2Transformer::construct_projections(uint32_t lex_index) con
             - converter_.get_spins()[a];
     }
 
-    for (const auto& instruction : *ssquared_converter_.getOrderOfSummation()) {
+    for (const auto& instruction : *ssquared_converter_->getOrderOfSummation()) {
         projections[instruction.position_of_sum] = 0;
         for (const auto& pos : instruction.positions_of_summands) {
             projections[instruction.position_of_sum] += projections[pos];

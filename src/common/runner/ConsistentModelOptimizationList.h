@@ -20,6 +20,8 @@ class ConsistentModelOptimizationList {
     const model::Model& getModel() const;
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
 
+    std::shared_ptr<spin_algebra::SSquaredConverter> getSSquaredConverter() const;
+
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
     getOperatorsForExplicitConstruction() const;
     const std::map<
@@ -36,6 +38,8 @@ class ConsistentModelOptimizationList {
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<const model::operators::Operator>>
         derivatives_for_explicit_construction_;
+
+    std::shared_ptr<spin_algebra::SSquaredConverter> ssquared_converter_;
 };
 }  // namespace runner
 

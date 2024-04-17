@@ -82,15 +82,10 @@ Space OptimizedSpaceConstructor::construct(
     }
 
     if (optimizationList.isSSquaredTransformed()) {
-        const auto number_of_mults = indexConverter.get_mults().size();
-        auto group_adapter =
-            spin_algebra::GroupAdapter(optimizationList.getGroupsToApply(), number_of_mults);
-
         S2Transformer transformer(
             indexConverter,
             factories,
-            group_adapter.getOrderOfSummations(),
-            group_adapter.getRepresentationMultiplier());
+            consistentModelOptimizationList.getSSquaredConverter());
 
         common::Logger::detailed_msg("S2-transformation has started.");
         space = transformer.apply(std::move(space));

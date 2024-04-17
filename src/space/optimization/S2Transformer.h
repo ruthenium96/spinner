@@ -18,8 +18,7 @@ class S2Transformer {
     S2Transformer(
         lexicographic::IndexConverter converter,
         quantum::linear_algebra::FactoriesList factories,
-        std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation,
-        const spin_algebra::RepresentationsMultiplier& representationsMultiplier);
+        std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter);
 
     space::Space apply(space::Space&& space) const;
 
@@ -34,7 +33,7 @@ class S2Transformer {
     const lexicographic::IndexConverter converter_;
     const quantum::linear_algebra::FactoriesList factories_;
 
-    spin_algebra::SSquaredConverter ssquared_converter_;
+    std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter_;
 };
 }  // namespace space::optimization
 #endif  //SPINNER_S2TRANSFORMER_H
