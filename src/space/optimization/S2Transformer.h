@@ -34,7 +34,6 @@ class S2Transformer {
     const lexicographic::IndexConverter converter_;
     const quantum::linear_algebra::FactoriesList factories_;
 
-    std::shared_ptr<const spin_algebra::OrderOfSummation> order_of_summation_;
     spin_algebra::SSquaredConverter ssquared_converter_;
 };
 }  // namespace space::optimization

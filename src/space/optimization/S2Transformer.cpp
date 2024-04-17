@@ -12,9 +12,8 @@ S2Transformer::S2Transformer(
     const spin_algebra::RepresentationsMultiplier& representationsMultiplier) :
     converter_(std::move(converter)),
     factories_(std::move(factories)),
-    order_of_summation_(std::move(order_of_summation)),
     ssquared_converter_(converter_.get_mults(),
-                        order_of_summation_,
+                        order_of_summation,
                         representationsMultiplier) {}
 
 space::Space S2Transformer::apply(Space&& space) const {
@@ -132,7 +131,7 @@ std::vector<double> S2Transformer::construct_projections(uint32_t lex_index) con
             - converter_.get_spins()[a];
     }
 
-    for (const auto& instruction : *order_of_summation_) {
+    for (const auto& instruction : *ssquared_converter_.getOrderOfSummation()) {
         projections[instruction.position_of_sum] = 0;
         for (const auto& pos : instruction.positions_of_summands) {
             projections[instruction.position_of_sum] += projections[pos];
