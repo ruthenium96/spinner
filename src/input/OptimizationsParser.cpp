@@ -34,6 +34,9 @@ void OptimizationsParser::customParser(YAML::Node custom_node) {
     if (extractValue<YAML::Node>(custom_node, "s2_transformer").IsDefined()) {
         optimizations_list_->SSquaredTransform();
     }
+    if (extractValue<YAML::Node>(custom_node, "ito_calculator").IsDefined()) {
+        optimizations_list_->ITOCalculate();
+    }
 
     throw_if_node_is_not_empty(custom_node);
 }

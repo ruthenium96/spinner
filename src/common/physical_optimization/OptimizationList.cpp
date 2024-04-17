@@ -16,15 +16,13 @@ OptimizationList& OptimizationList::EliminatePositiveProjections() {
     if (!isTzSorted_) {
         throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
     }
-    // TODO: can we eliminate positive projections after S2-Transformation?
-    //  if we can, does it have any sense?
     isPositiveProjectionsEliminated_ = true;
     return *this;
 }
 
 OptimizationList& OptimizationList::SSquaredTransform() {
     if (!isTzSorted_) {
-        throw std::invalid_argument("Cannot perform S2-transformation without without tz-sort");
+        throw std::invalid_argument("Cannot perform S2-transformation without tz-sort");
         // actually, can, but it is inefficient
     }
     for (const auto& group : groupsToApply_) {
@@ -34,6 +32,14 @@ OptimizationList& OptimizationList::SSquaredTransform() {
         }
     }
     isSSquaredTransformed_ = true;
+    return *this;
+}
+
+OptimizationList& OptimizationList::ITOCalculate() {
+    if (!isSSquaredTransformed_) {
+        throw std::invalid_argument("Cannot perform ITO-calculation without S2-transformation");
+    }
+    isITOCalculated_ = true;
     return *this;
 }
 
@@ -57,14 +63,6 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
     if (isSSquaredTransformed_) {
         throw std::invalid_argument("Cannot symmetrize *AFTER* S2-transformation");
     }
-    //    // TODO: symmetrizer does not work correct after non-Abelian simplifier. Fix it.
-    //    if (space_history_.isNonAbelianSimplified && !new_group.properties.is_abelian) {
-    //        throw std::invalid_argument(
-    //            "Symmetrization after using of non-Abelian simplifier causes bugs.");
-    //    }
-    //    if (!new_group.properties.is_abelian) {
-    //        ++space_history_.number_of_non_simplified_abelian_groups;
-    //    }
     groupsToApply_.emplace_back(std::move(new_group));
 
     return *this;
@@ -87,6 +85,10 @@ bool OptimizationList::isPositiveProjectionsEliminated() const {
 
 bool OptimizationList::isSSquaredTransformed() const {
     return isSSquaredTransformed_;
+}
+
+bool OptimizationList::isITOCalculated() const {
+    return isITOCalculated_;
 }
 
 const std::vector<group::Group>& OptimizationList::getGroupsToApply() const {

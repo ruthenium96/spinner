@@ -9,6 +9,7 @@ class OptimizationList {
     OptimizationList& TzSort();
     OptimizationList& EliminatePositiveProjections();
     OptimizationList& SSquaredTransform();
+    OptimizationList& ITOCalculate();
     OptimizationList& Symmetrize(group::Group new_group);
     OptimizationList&
     Symmetrize(group::Group::GroupTypeEnum group_name, std::vector<group::Permutation> generators);
@@ -17,12 +18,14 @@ class OptimizationList {
     bool isTzSorted() const;
     bool isPositiveProjectionsEliminated() const;
     bool isSSquaredTransformed() const;
+    bool isITOCalculated() const;
     const std::vector<group::Group>& getGroupsToApply() const;
 
   private:
     bool isTzSorted_ = false;
     bool isPositiveProjectionsEliminated_ = false;
     bool isSSquaredTransformed_ = false;
+    bool isITOCalculated_ = false;
     std::vector<group::Group> groupsToApply_;
     // TODO: something about NonAbelianSimplifier
 };
