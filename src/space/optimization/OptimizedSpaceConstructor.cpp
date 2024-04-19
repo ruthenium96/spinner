@@ -88,6 +88,8 @@ Space OptimizedSpaceConstructor::construct(
             consistentModelOptimizationList.getSSquaredConverter());
 
         common::Logger::detailed_msg("S2-transformation has started.");
+        common::orderOfSummationPrint(
+            *consistentModelOptimizationList.getSSquaredConverter()->getOrderOfSummation());
         space = transformer.apply(std::move(space));
         common::Logger::detailed_msg("S2-transformation is finished.");
     }

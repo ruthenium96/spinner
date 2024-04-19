@@ -181,4 +181,13 @@ void theoreticalValuesPrint(
     common::Logger::separate(0, common::basic);
 }
 
+void orderOfSummationPrint(const spin_algebra::OrderOfSummation& order_of_summation) {
+    common::Logger::verbose_msg("Order of spin summation:");
+    for (const auto& instruction : order_of_summation) {
+        common::Logger::verbose("{} -> {}",
+                                fmt::join(instruction.positions_of_summands, " + "),
+                                instruction.position_of_sum);
+    }
+}
+
 }
