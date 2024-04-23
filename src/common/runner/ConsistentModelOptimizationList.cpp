@@ -44,12 +44,12 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     operators_for_explicit_construction_[common::Energy] =
         model_.getOperator(common::Energy).value();
     if (getOptimizationList().isSSquaredTransformed()) {
-        const auto number_of_mults = getModel().getIndexConverter().get_mults().size();
+        const auto number_of_mults = getModel().getIndexConverter()->get_mults().size();
         auto group_adapter =
             spin_algebra::GroupAdapter(optimizationList_.getGroupsToApply(), number_of_mults);
 
         ssquared_converter_ = std::make_shared<spin_algebra::SSquaredConverter>(
-            getModel().getIndexConverter().get_mults(),
+            getModel().getIndexConverter()->get_mults(),
             group_adapter.getOrderOfSummations(),
             group_adapter.getRepresentationMultiplier());
         return;
@@ -106,7 +106,7 @@ void checkModelOptimizationListConsistence(
     // Symmetrizer can be applied for all types of Hamiltonian terms...
     for (const auto& group : optimizationList.getGroupsToApply()) {
         // ...if spins invariant to group elements:
-        checkMultiplicitiesGroupConsistence(model.getIndexConverter().get_mults(), group);
+        checkMultiplicitiesGroupConsistence(model.getIndexConverter()->get_mults(), group);
         // ...if Hamiltonian terms invariant to group elements:
         checkAllSymbolNamesGroupConsistence(model.getSymbolicWorker(), group);
     }

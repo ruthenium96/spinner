@@ -3,9 +3,9 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
-double sum_of_s_squared(const lexicographic::IndexConverter& indexConverter) {
+double sum_of_s_squared(std::shared_ptr<const lexicographic::IndexConverter> indexConverter) {
     double sum_of_s_squared = 0;
-    for (auto spin : indexConverter.get_spins()) {
+    for (auto spin : indexConverter->get_spins()) {
         sum_of_s_squared += spin * (spin + 1);
     }
     return sum_of_s_squared;

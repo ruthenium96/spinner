@@ -29,7 +29,7 @@ Space TzSorter::apply(Space&& space) const {
             // NB: there is no validation of the fact, that all indexes of decomposition
             // correspond to the same projection value, user should check it yourself.
             uint32_t index = subspace_parent.decomposition->GetNewIterator(l)->getNext().index;
-            uint8_t ntz_proj = converter_.convert_lex_index_to_tz_projection(index);
+            uint8_t ntz_proj = converter_->convert_lex_index_to_tz_projection(index);
             size_t j = (max_ntz_proj + 1) * i + ntz_proj;
             vector_result[j].decomposition->move_vector_from(l, subspace_parent.decomposition);
         }
@@ -41,10 +41,10 @@ Space TzSorter::apply(Space&& space) const {
 }
 
 TzSorter::TzSorter(
-    lexicographic::IndexConverter indexes,
+    std::shared_ptr<const lexicographic::IndexConverter> indexes,
     quantum::linear_algebra::FactoriesList factories) :
     converter_(std::move(indexes)),
     factories_(std::move(factories)) {
-    max_ntz_proj = converter_.get_max_ntz_proj();
+    max_ntz_proj = converter_->get_max_ntz_proj();
 }
 }  // namespace space::optimization

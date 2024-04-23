@@ -6,7 +6,7 @@
 namespace space::optimization {
 
 S2Transformer::S2Transformer(
-    lexicographic::IndexConverter converter,
+    std::shared_ptr<const lexicographic::IndexConverter> converter,
     quantum::linear_algebra::FactoriesList factories,
     std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter) :
     converter_(std::move(converter)),
@@ -25,7 +25,7 @@ space::Space S2Transformer::apply(Space&& space) const {
         // |2 * ntz_value - 2 * max_total_spin - 1 + 1| + 1 =
         // |2 * ntz_value - max_total_proj + 1| + 1
         auto ntz_value = subspace.properties.n_proj.value();
-        int a = 2 * (int)ntz_value + 1 - (int)converter_.get_max_ntz_proj();
+        int a = 2 * (int)ntz_value + 1 - (int)converter_->get_max_ntz_proj();
         spin_algebra::Multiplicity current_mult = std::abs(a) + 1;
 
         spin_algebra::SSquaredState::Properties subspace_properties;
@@ -122,13 +122,13 @@ S2Transformer::constructTransformationMatrix(
 }
 
 std::vector<double> S2Transformer::construct_projections(uint32_t lex_index) const {
-    const auto number_of_mults = converter_.get_mults().size();
+    const auto number_of_mults = converter_->get_mults().size();
 
     std::vector<double> projections;
     projections.resize(2 * number_of_mults - 1);
     for (size_t a = 0; a < number_of_mults; ++a) {
-        projections[a] = converter_.convert_lex_index_to_one_sz_projection(lex_index, a)
-            - converter_.get_spins()[a];
+        projections[a] = converter_->convert_lex_index_to_one_sz_projection(lex_index, a)
+            - converter_->get_spins()[a];
     }
 
     for (const auto& instruction : *ssquared_converter_->getOrderOfSummation()) {

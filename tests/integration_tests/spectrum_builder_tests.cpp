@@ -37,36 +37,36 @@ void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner::Runner& runner) {
     auto mb_energy_matrix = runner.getMatrix(common::Energy);
     if (mb_energy_matrix.has_value()) {
         EXPECT_EQ(
-            runner.getIndexConverter().get_total_space_size(),
+            runner.getIndexConverter()->get_total_space_size(),
             size_of_matrix_with_degeneracy(mb_energy_matrix.value()));
         EXPECT_EQ(
-            runner.getIndexConverter().get_total_space_size(),
+            runner.getIndexConverter()->get_total_space_size(),
             size_of_matrix_without_degeneracy(mb_energy_matrix.value()));
     }
     auto mb_s_squared_matrix = runner.getMatrix(common::S_total_squared);
     if (mb_s_squared_matrix.has_value()) {
         EXPECT_EQ(
-            runner.getIndexConverter().get_total_space_size(),
+            runner.getIndexConverter()->get_total_space_size(),
             size_of_matrix_with_degeneracy(mb_s_squared_matrix.value()));
         EXPECT_EQ(
-            runner.getIndexConverter().get_total_space_size(),
+            runner.getIndexConverter()->get_total_space_size(),
             size_of_matrix_without_degeneracy(mb_s_squared_matrix.value()));
     }
 }
 
 void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
     EXPECT_EQ(
-        runner.getIndexConverter().get_total_space_size(),
+        runner.getIndexConverter()->get_total_space_size(),
         size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
     EXPECT_EQ(
-        runner.getIndexConverter().get_total_space_size(),
+        runner.getIndexConverter()->get_total_space_size(),
         size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
     EXPECT_EQ(
-        runner.getIndexConverter().get_total_space_size(),
+        runner.getIndexConverter()->get_total_space_size(),
         size_of_spectrum_with_degeneracy(
             runner.getSpectrum(common::QuantityEnum::S_total_squared)));
     EXPECT_EQ(
-        runner.getIndexConverter().get_total_space_size(),
+        runner.getIndexConverter()->get_total_space_size(),
         size_of_spectrum_without_degeneracy(
             runner.getSpectrum(common::QuantityEnum::S_total_squared)));
 }

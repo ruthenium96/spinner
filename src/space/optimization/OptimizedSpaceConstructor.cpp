@@ -26,13 +26,13 @@ namespace space::optimization {
 Space OptimizedSpaceConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
     const quantum::linear_algebra::FactoriesList& factories) {
-    const lexicographic::IndexConverter& indexConverter =
+    std::shared_ptr<const lexicographic::IndexConverter> indexConverter =
         consistentModelOptimizationList.getModel().getIndexConverter();
     const common::physical_optimization::OptimizationList& optimizationList =
         consistentModelOptimizationList.getOptimizationList();
 
     Space space = Space(
-        consistentModelOptimizationList.getModel().getIndexConverter().get_total_space_size(),
+        consistentModelOptimizationList.getModel().getIndexConverter()->get_total_space_size(),
         factories);
 
     bool spaceIsNormalized = true;
@@ -48,7 +48,7 @@ Space OptimizedSpaceConstructor::construct(
     common::Logger::separate(1, common::PrintLevel::detailed);
 
     if (optimizationList.isPositiveProjectionsEliminated()) {
-        uint32_t max_ntz_proj = indexConverter.get_max_ntz_proj();
+        uint32_t max_ntz_proj = indexConverter->get_max_ntz_proj();
 
         PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
         common::Logger::detailed_msg("Positive projections elimination has started.");

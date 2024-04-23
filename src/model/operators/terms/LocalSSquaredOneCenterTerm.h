@@ -7,10 +7,10 @@ namespace model::operators {
 class LocalSSquaredOneCenterTerm: public OneCenterTerm {
   public:
     LocalSSquaredOneCenterTerm(
-        lexicographic::IndexConverter converter,
+        std::shared_ptr<const lexicographic::IndexConverter> converter,
         std::shared_ptr<const OneDNumericalParameters<double>> coefficients);
     LocalSSquaredOneCenterTerm(
-        lexicographic::IndexConverter converter,
+        std::shared_ptr<const lexicographic::IndexConverter> converter,
         std::shared_ptr<const OneDNumericalParameters<double>> coefficients,
         double prefactor);
     std::unique_ptr<Term> clone() const override;
@@ -21,7 +21,7 @@ class LocalSSquaredOneCenterTerm: public OneCenterTerm {
         uint32_t center_a) const override;
 
   private:
-    const lexicographic::IndexConverter converter_;
+    std::shared_ptr<const lexicographic::IndexConverter> converter_;
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients_;
     const double prefactor_ = 1;
 };

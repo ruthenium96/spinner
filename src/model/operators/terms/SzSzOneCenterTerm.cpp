@@ -17,11 +17,11 @@ void SzSzOneCenterTerm::construct(
 
     if (!std::isnan(factor)) {
         uint32_t projection_of_center_a =
-            converter_.convert_lex_index_to_one_sz_projection(index_of_vector, center_a);
+            converter_->convert_lex_index_to_one_sz_projection(index_of_vector, center_a);
 
         // Saz Saz
-        double diagonal_value = (projection_of_center_a - converter_.get_spins()[center_a])
-            * (projection_of_center_a - converter_.get_spins()[center_a]) * factor;
+        double diagonal_value = (projection_of_center_a - converter_->get_spins()[center_a])
+            * (projection_of_center_a - converter_->get_spins()[center_a]) * factor;
         matrix_in_lexicografical_basis.add_to_position(
             diagonal_value,
             index_of_vector,
@@ -30,9 +30,9 @@ void SzSzOneCenterTerm::construct(
 }
 
 SzSzOneCenterTerm::SzSzOneCenterTerm(
-    lexicographic::IndexConverter converter,
+    std::shared_ptr<const lexicographic::IndexConverter> converter,
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients) :
-    OneCenterTerm(converter.get_mults().size()),
+    OneCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)) {}
 }  // namespace model::operators

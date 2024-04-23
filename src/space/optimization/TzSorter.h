@@ -11,13 +11,13 @@ namespace space::optimization {
 class TzSorter {
   public:
     explicit TzSorter(
-        lexicographic::IndexConverter converter,
+        std::shared_ptr<const lexicographic::IndexConverter>,
         quantum::linear_algebra::FactoriesList factories);
 
     Space apply(Space&& space) const;
 
   private:
-    const lexicographic::IndexConverter converter_;
+    std::shared_ptr<const lexicographic::IndexConverter> converter_;
     const quantum::linear_algebra::FactoriesList factories_;
     uint32_t max_ntz_proj;
 };

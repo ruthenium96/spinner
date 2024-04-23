@@ -6,9 +6,9 @@
 namespace model::operators {
 class ScalarProductTerm: public TwoCenterTerm {
   public:
-    explicit ScalarProductTerm(lexicographic::IndexConverter converter);
+    explicit ScalarProductTerm(std::shared_ptr<const lexicographic::IndexConverter> converter);
     ScalarProductTerm(
-        lexicographic::IndexConverter converter,
+        std::shared_ptr<const lexicographic::IndexConverter> converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters);
 
     std::unique_ptr<Term> clone() const override;
@@ -21,7 +21,7 @@ class ScalarProductTerm: public TwoCenterTerm {
         uint32_t center_b) const override;
 
   private:
-    const lexicographic::IndexConverter converter_;
+    std::shared_ptr<const lexicographic::IndexConverter> converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
     void add_scalar_product(
         quantum::linear_algebra::AbstractSymmetricMatrix& matrix,

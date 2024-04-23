@@ -16,7 +16,7 @@ namespace space::optimization {
 class S2Transformer {
   public:
     S2Transformer(
-        lexicographic::IndexConverter converter,
+        std::shared_ptr<const lexicographic::IndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories,
         std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter);
 
@@ -30,7 +30,7 @@ class S2Transformer {
         const space::Subspace& subspace) const;
     std::vector<double> construct_projections(uint32_t lex_index) const;
 
-    const lexicographic::IndexConverter converter_;
+    std::shared_ptr<const lexicographic::IndexConverter> converter_;
     const quantum::linear_algebra::FactoriesList factories_;
 
     std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter_;

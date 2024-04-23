@@ -35,11 +35,11 @@ class Model {
         std::shared_ptr<operators::Operator>>&
     getOperatorDerivatives();
 
-    const lexicographic::IndexConverter& getIndexConverter() const;
+    std::shared_ptr<const lexicographic::IndexConverter> getIndexConverter() const;
 
   private:
     symbols::NumericalWorker numericalWorker_;
-    const lexicographic::IndexConverter converter_;
+    std::shared_ptr<const lexicographic::IndexConverter> converter_;
     struct OperatorsHistory {
         bool isotropic_exchange_in_hamiltonian = false;
         bool s_squared = false;

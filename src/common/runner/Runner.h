@@ -45,7 +45,7 @@ class Runner {
     std::map<model::symbols::SymbolName, double> calculateTotalDerivatives();
     void minimizeResidualError(std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>);
 
-    const lexicographic::IndexConverter& getIndexConverter() const;
+    std::shared_ptr<const lexicographic::IndexConverter> getIndexConverter() const;
     std::optional<std::shared_ptr<const model::operators::Operator>>
         getOperator(common::QuantityEnum) const;
     const space::Space& getSpace() const;

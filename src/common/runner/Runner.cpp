@@ -71,7 +71,7 @@ Runner::getOperator(common::QuantityEnum quantity_enum) const {
     return getModel().getOperator(quantity_enum);
 }
 
-const lexicographic::IndexConverter& Runner::getIndexConverter() const {
+std::shared_ptr<const lexicographic::IndexConverter> Runner::getIndexConverter() const {
     return getModel().getIndexConverter();
 }
 
