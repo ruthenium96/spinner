@@ -27,6 +27,7 @@ std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
 
+// todo: move it to class in different file
 namespace common {
 void inputPrint(const std::string& input_string);
 void preRegressionPrint(

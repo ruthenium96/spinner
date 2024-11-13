@@ -5,7 +5,7 @@
 #include "src/input/Parser.h"
 
 int main(int argc, char *argv[]) {
-    common::Logger::set_pattern("[%C/%m/%d %H:%M:%S.%e] %v");
+    common::Logger::set_pattern("[%C/%m/%d %H:%M:%S.%e] [%t] %v");
     if (argc == 1) {
         common::Logger::error_msg("Missing input file.");
         return -1;

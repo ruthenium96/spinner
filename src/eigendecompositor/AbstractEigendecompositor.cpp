@@ -24,6 +24,10 @@ void AbstractEigendecompositor::BuildSpectra(
         assert(derivatives_operators_to_calculate.size() == 0);
     }
 
+    // todo: MemoryManager will have the special function: it will estimate required
+    //  memory for each block and pick num_threads based on the sum of max values
+    //  thus, openblas_num_threads can be set as floor(max_threads / num_threads)
+
     common::Logger::debug_msg("Eigendecomposition of...");
 #pragma omp parallel for shared(space, operators, derivatives_operators) default(shared)
     for (size_t i = 0; i < space.getBlocks().size(); ++i) {

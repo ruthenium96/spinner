@@ -55,6 +55,8 @@ void Runner::BuildSpectra() {
         consistentModelOptimizationList_.getOperatorsForExplicitConstruction(),
         consistentModelOptimizationList_.getDerivativeOperatorsForExplicitConstruction(),
         getSpace());
+    // todo: all possible values! through magic_enum
+    common::Logger::trace("{}", getSpectrum(common::Energy));
 }
 
 std::optional<std::reference_wrapper<const Matrix>>

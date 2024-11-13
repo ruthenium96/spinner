@@ -10,6 +10,13 @@ add_library(common
 
 find_package(spdlog)
 #todo: download if necessary
+# Include(FetchContent)
+#FetchContent_Declare(
+#    spdlog
+#    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+#    GIT_TAG v1.9.2
+#)
+#FetchContent_MakeAvailable(spdlog)
 
 
 target_link_libraries(common model space magnetic_susceptibility nonlinear_solver eigendecompositor
