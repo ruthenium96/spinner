@@ -7,11 +7,14 @@
 #include "src/model/operators/terms/SzSzOneCenterTerm.h"
 #include "src/model/operators/terms/SzSzTwoCenterTerm.h"
 
+#include "src/model/operators/terms/ScalarProductITOTerm.h"
+
 namespace model {
 Model::Model(ModelInput modelInput) :
     numericalWorker_(modelInput.getSymbolicWorker(), modelInput.getMults().size()),
     converter_(std::make_shared<lexicographic::IndexConverter>(modelInput.getMults())) {
     operators_map_[common::Energy] = std::make_shared<operators::Operator>();
+    operators_map_ito_[common::Energy] = std::make_shared<operators::Operator>();
     constructSSquared();
     if (getSymbolicWorker().isGFactorInitialized()) {
         constructGSzSquared();
@@ -63,6 +66,19 @@ void Model::constructIsotropicExchange() {
             converter_,
             getNumericalWorker().getIsotropicExchangeParameters()));
     operators_history_.isotropic_exchange_in_hamiltonian = true;
+}
+
+void Model::constructIsotropicExchangeITO(const std::shared_ptr<const spin_algebra::SSquaredConverter>& sSquaredConverter) {
+    if (operators_history_.isotropic_exchange_in_ito_hamiltonian) {
+        return;
+    }
+    operators_map_ito_[common::Energy]->emplace_back(
+        std::make_unique<const operators::ScalarProductITOTerm>(
+            sSquaredConverter,
+            getNumericalWorker().getIsotropicExchangeParameters()
+            )
+    );
+    operators_history_.isotropic_exchange_in_ito_hamiltonian = true;
 }
 
 void Model::constructZeroFieldSplitting() {
@@ -151,6 +167,14 @@ std::optional<std::shared_ptr<const operators::Operator>>
 Model::getOperator(common::QuantityEnum quantity_enum) const {
     if (operators_map_.contains(quantity_enum)) {
         return operators_map_.at(quantity_enum);
+    }
+    return std::nullopt;
+}
+
+std::optional<std::shared_ptr<const operators::Operator>>
+Model::getITOOperator(common::QuantityEnum quantity_enum) const {
+    if (operators_map_ito_.contains(quantity_enum)) {
+        return operators_map_ito_.at(quantity_enum);
     }
     return std::nullopt;
 }

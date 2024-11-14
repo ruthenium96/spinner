@@ -2,6 +2,7 @@
 #define SPINNER_MODEL_H
 
 #include "ModelInput.h"
+#include "src/spin_algebra/SSquaredConverter.h"
 #include "symbols/NumericalWorker.h"
 
 namespace model {
@@ -16,6 +17,10 @@ class Model {
 
     void
     setNewValueToChangeableSymbol(const model::symbols::SymbolName& symbol_name, double new_value);
+
+    void constructIsotropicExchangeITO(const std::shared_ptr<const spin_algebra::SSquaredConverter>&);
+    std::optional<std::shared_ptr<const operators::Operator>>
+        getITOOperator(common::QuantityEnum) const;
 
     bool is_s_squared_initialized() const;
     bool is_g_sz_squared_initialized() const;
@@ -48,7 +53,9 @@ class Model {
         bool g_sz_squared_derivatives = false;
         bool zfs_in_hamiltonian = false;
         bool zfs_derivative = false;
+        bool isotropic_exchange_in_ito_hamiltonian = false;
     };
+    std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter_;
     OperatorsHistory operators_history_;
 
     symbols::NumericalWorker& getNumericalWorker();
@@ -66,6 +73,8 @@ class Model {
         std::pair<common::QuantityEnum, symbols::SymbolName>,
         std::shared_ptr<operators::Operator>>
         derivatives_map_;
+
+    std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>> operators_map_ito_;
 };
 
 }  // namespace model

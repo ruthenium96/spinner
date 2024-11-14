@@ -41,6 +41,27 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     // this function throw an exception if ModelInput and OptimizationList are inconsistent
     checkModelOptimizationListConsistence(model_, optimizationList_);
 
+    if (getOptimizationList().isSSquaredTransformed()) {
+        const auto number_of_mults = getModel().getIndexConverter()->get_mults().size();
+        auto group_adapter =
+            spin_algebra::GroupAdapter(optimizationList_.getGroupsToApply(), number_of_mults);
+
+        ssquared_converter_ = std::make_shared<spin_algebra::SSquaredConverter>(
+            getModel().getIndexConverter()->get_mults(),
+            group_adapter.getOrderOfSummations(),
+            group_adapter.getRepresentationMultiplier());
+
+        if (getOptimizationList().isITOCalculated()) {
+            model_.constructIsotropicExchangeITO(ssquared_converter_);
+            operators_for_explicit_construction_[common::Energy] =
+                model_.getITOOperator(common::Energy).value();
+        } else {
+            operators_for_explicit_construction_[common::Energy] =
+                model_.getOperator(common::Energy).value();
+        }
+        return;
+    }
+
     operators_for_explicit_construction_[common::Energy] =
         model_.getOperator(common::Energy).value();
     if (getOptimizationList().isSSquaredTransformed()) {

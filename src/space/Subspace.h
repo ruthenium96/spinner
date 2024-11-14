@@ -4,6 +4,7 @@
 #include "src/entities/BlockProperties.h"
 #include "src/entities/data_structures/AbstractDenseSemiunitaryMatrix.h"
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
+#include "src/spin_algebra/SSquaredState.h"
 
 namespace space {
 struct Subspace {
@@ -11,6 +12,7 @@ struct Subspace {
     std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix> decomposition;
     std::optional<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
         dense_semiunitary_matrix;
+    std::optional<std::vector<size_t>> ssquared_indexes;
 
     explicit Subspace(
         std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&&,

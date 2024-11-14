@@ -87,10 +87,14 @@ Space OptimizedSpaceConstructor::construct(
     }
 
     if (optimizationList.isSSquaredTransformed()) {
+
+        bool ito = consistentModelOptimizationList.getOptimizationList().isITOCalculated();
+
         S2Transformer transformer(
             indexConverter,
             factories,
-            consistentModelOptimizationList.getSSquaredConverter());
+            consistentModelOptimizationList.getSSquaredConverter(),
+            ito);
 
         common::Logger::detailed_msg("S2-transformation has started.");
         common::orderOfSummationPrint(

@@ -24,6 +24,11 @@ class SSquaredConverter {
         const spin_algebra::SSquaredState& s_squared_state,
         const std::vector<double>& projections) const;
 
+    double total_9j_coefficient(
+        const spin_algebra::SSquaredState& left,
+        const spin_algebra::SSquaredState& right,
+        const std::vector<uint8_t>& ranks) const;
+
     std::optional<std::vector<size_t>> indexes_with_property(SSquaredState::Properties) const;
     std::optional<std::reference_wrapper<const std::vector<SSquaredState>>>
         block_with_property(SSquaredState::Properties) const;

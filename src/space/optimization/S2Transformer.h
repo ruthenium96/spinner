@@ -18,7 +18,8 @@ class S2Transformer {
     S2Transformer(
         std::shared_ptr<const lexicographic::IndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories,
-        std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter);
+        std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter,
+        bool ito = false);
 
     space::Space apply(space::Space&& space) const;
 
@@ -32,6 +33,7 @@ class S2Transformer {
 
     std::shared_ptr<const lexicographic::IndexConverter> converter_;
     const quantum::linear_algebra::FactoriesList factories_;
+    bool ito_;
 
     std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter_;
 };

@@ -1,7 +1,31 @@
 #include "SSquaredConverter.h"
 
 #include <cassert>
+#include <cmath>
 #include <numeric>
+
+namespace {
+inline double local_product(const spin_algebra::SSquaredState& state, const std::vector<uint8_t>& ranks) {
+    double answer = 1;
+
+    // todo: it is not the best solution:
+    // state.getSize() is N + (N - 1) spins, thus:
+    size_t initial_size = (state.getSize() + 1) / 2;
+
+    for (size_t i = 0; i < initial_size; ++i) {
+        double spin = state.getSpin(i);
+        if (ranks[i] == 0) {
+            answer *= sqrt(2 * spin + 1);
+        } else if (ranks[i] == 1) {
+            answer *= sqrt(spin * (spin + 1) * (2 * spin + 1));
+        } else {
+            throw std::invalid_argument("askjdfbjaksdbng");
+        }
+    }
+
+    return answer;
+}
+}
 
 namespace spin_algebra {
 SSquaredConverter::SSquaredConverter(
@@ -110,8 +134,11 @@ SSquaredConverter::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) c
 
 const SSquaredState& SSquaredConverter::at(size_t number) const {
     auto it =
-        std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number);
+        std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number, std::less_equal<>());
     auto start_of_block = *it;
+    if (start_of_block > number) {
+        start_of_block = *(--it);
+    }
     auto number_of_block = std::distance(cumulative_sum_.begin(), it);
     auto number_in_block = number - start_of_block;
     assert(number_in_block >= 0);
@@ -121,8 +148,11 @@ const SSquaredState& SSquaredConverter::at(size_t number) const {
 
 size_t SSquaredConverter::number_in_block(size_t number) const {
     auto it =
-        std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number);
+        std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number, std::less_equal<>());
     auto start_of_block = *it;
+    if (start_of_block > number) {
+        start_of_block = *(--it);
+    }
     auto number_in_block = number - start_of_block;
 
     return number_in_block;
@@ -147,8 +177,8 @@ SSquaredConverter::indexes_with_property(SSquaredState::Properties properties) c
 
 const std::vector<SSquaredState>& SSquaredConverter::block_with_number(size_t number) const {
     auto it =
-        std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number);
-    auto number_of_block = std::distance(cumulative_sum_.begin(), it);
+        std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number, std::less_equal<>());
+    auto number_of_block = std::distance(cumulative_sum_.begin(), it) - 1;
 
     return states_.at(number_of_block);
 }
@@ -181,5 +211,57 @@ double SSquaredConverter::total_CG_coefficient(
     }
 
     return c;
+}
+
+double SSquaredConverter::total_9j_coefficient(
+    const SSquaredState& left,
+    const SSquaredState& right,
+    const std::vector<uint8_t>& ranks) const {
+    // product of ninejs
+    double ninejs = 1;
+    for (const auto& instruction : *getOrderOfSummation()) {
+        size_t pos_one = instruction.positions_of_summands[0];
+        size_t pos_two = instruction.positions_of_summands[1];
+        size_t pos_fin = instruction.position_of_sum;
+
+        double left_one = left.getSpin(pos_one);
+        double left_two = left.getSpin(pos_two);
+        double left_fin = left.getSpin(pos_fin);
+
+        double right_one = right.getSpin(pos_one);
+        double right_two = right.getSpin(pos_two);
+        double right_fin = right.getSpin(pos_fin);
+
+        uint8_t rank_one = ranks.at(pos_one);
+        uint8_t rank_two = ranks.at(pos_two);
+        uint8_t rank_fin = ranks.at(pos_fin);
+
+        ninejs *= clebshGordanCalculator_.ninej_element(left_one, left_two, left_fin,
+                                                        right_one, right_two, right_fin,
+                                                        rank_one, rank_two, rank_fin);
+        if (ninejs == 0) {
+            return 0;
+        }
+    }
+
+    // product of square roots
+    double square_roots_prod = 1;
+    for (const auto& instruction : *getOrderOfSummation()) {
+        size_t pos_fin = instruction.position_of_sum;
+
+        double mult_left_fin = left.getMultiplicity(pos_fin);
+        double mult_right_fin = right.getMultiplicity(pos_fin);
+        uint8_t rank_fin = ranks.at(pos_fin);
+
+        square_roots_prod *= sqrt((2 * rank_fin + 1) * (mult_left_fin) * (mult_right_fin));
+    }
+
+    // product of strange things:
+    // TODO: can be calculated only once if we swap left and right
+    double local_prod = local_product(right, ranks);
+
+    double final_mult = left.getMultiplicity(left.getSize() - 1);
+
+    return ninejs * square_roots_prod * local_prod / sqrt(final_mult);
 }
 }  // namespace spin_algebra

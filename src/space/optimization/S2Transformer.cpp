@@ -8,7 +8,9 @@ namespace space::optimization {
 S2Transformer::S2Transformer(
     std::shared_ptr<const lexicographic::IndexConverter> converter,
     quantum::linear_algebra::FactoriesList factories,
-    std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter) :
+    std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter,
+    bool ito) :
+    ito_(ito),
     converter_(std::move(converter)),
     factories_(std::move(factories)),
     ssquared_converter_(std::move(ssquared_converter)) {}
@@ -32,14 +34,24 @@ space::Space S2Transformer::apply(Space&& space) const {
         subspace_properties.multiplicity = current_mult;
         subspace_properties.representations = subspace.properties.representation;
 
-        auto mb_ssquared_states = ssquared_converter_->block_with_property(subspace_properties);
-        if (!mb_ssquared_states.has_value()) {
-            continue;
-        }
-        const auto& s_squared_states = mb_ssquared_states.value().get();
+        if (ito_) {
+            auto mb_indexes_of_block = ssquared_converter_->indexes_with_property(subspace_properties);
+            if (!mb_indexes_of_block.has_value()) {
+                continue;
+            }
+            const auto& indexes_of_block = mb_indexes_of_block.value();
 
-        subspace.dense_semiunitary_matrix =
-            constructTransformationMatrix(s_squared_states, subspace);
+            subspace.ssquared_indexes = indexes_of_block;
+        } else {
+            auto mb_ssquared_states = ssquared_converter_->block_with_property(subspace_properties);
+            if (!mb_ssquared_states.has_value()) {
+                continue;
+            }
+            const auto& s_squared_states = mb_ssquared_states.value().get();
+
+            subspace.dense_semiunitary_matrix =
+                constructTransformationMatrix(s_squared_states, subspace);
+        }
 
         subspace.properties.total_mult = current_mult;
         subspace.properties.degeneracy *= current_mult;
