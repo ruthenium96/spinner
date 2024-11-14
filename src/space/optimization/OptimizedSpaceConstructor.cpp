@@ -38,7 +38,12 @@ Space OptimizedSpaceConstructor::construct(
     bool spaceIsNormalized = true;
 
     if (optimizationList.isTzSorted()) {
-        TzSorter tz_sorter(indexConverter, factories);
+        auto index_to_tz_projection_functor = [indexConverter](uint32_t index){
+            return indexConverter->convert_lex_index_to_tz_projection(index);
+        };
+        uint32_t max_ntz_proj = indexConverter->get_max_ntz_proj();
+
+        TzSorter tz_sorter(index_to_tz_projection_functor, max_ntz_proj, factories);
         common::Logger::detailed_msg("Tz-sortation has started.");
         space = tz_sorter.apply(std::move(space));
         common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));

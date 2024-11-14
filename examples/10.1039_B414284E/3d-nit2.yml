@@ -38,6 +38,8 @@ job:
       weights: per_interval
 control:
   print_level: basic
+  dense_precision: double
+  dense_algebra_package: arma
 
 # The answer of calculation:
 #
