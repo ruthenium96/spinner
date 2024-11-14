@@ -46,6 +46,7 @@ optimizations:
       - group_name: S2
         generators: [[3, 4, 5, 0, 1, 2]]
     s2_transformer:
+    ito_calculator:
 job:
   mode: fit
   fit:
