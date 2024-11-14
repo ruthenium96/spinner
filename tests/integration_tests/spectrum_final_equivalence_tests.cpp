@@ -66,6 +66,93 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+void initialize_two_center_system(
+    model::ModelInput& model,
+    double J_value) {
+    auto J = model.addSymbol("J1", J_value);
+    model.assignSymbolToIsotropicExchange(J, 0, 1);
+}
+
+TEST(spectrum_final_equivalence, two_center) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2},
+        {3, 3},
+        {4, 4},
+        {5, 5},
+        {6, 6},
+        {7, 7},
+        {8, 8}};
+    std::vector<double> js = {-50, -100, -80, -66, -40.1, -20, -10, -1.01, 1, 2, 10, 20, 33, 46, 50, 75, 100};
+    for (const auto& mults : multss) {
+        for (auto J_value : js) {
+            group::Group group(group::Group::S2, {{1, 0}});
+
+            model::ModelInput model(mults);
+            initialize_two_center_system(model, J_value);
+
+            runner::Runner runner_simple(model);
+
+            // TZ_SORTER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort();
+                runner::Runner runner_tz_sorted(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections();
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // SYMMETRIZER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.Symmetrize(group);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + SYMMETRIZER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().Symmetrize(group);
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().Symmetrize(group);
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + S2_TRANSFORMER
+            {
+                common::physical_optimization::OptimizationList optimizationList;
+                optimizationList.TzSort()
+                    .EliminatePositiveProjections()
+                    .Symmetrize(group)
+                    .SSquaredTransform();
+
+                runner::Runner runner(model, optimizationList);
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }
+            }
+            }
+            }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 void initialize_five_center_mirror_symmetry_exchange_chain(
     model::ModelInput& model,
     double external,
