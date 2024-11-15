@@ -56,22 +56,34 @@ SSquaredConverter::SSquaredConverter(
             MultiplicityDirectSum mult_two(history.getMultiplicity(pos_two));
             auto mult_direct_sum = mult_one * mult_two;
             for (auto mult_sum : mult_direct_sum.getMultiplicities()) {
-                const auto& representations_one = history.getRepresentations(pos_one);
-                const auto& representations_two = history.getRepresentations(pos_two);
-                auto representations_sum = representationsMultiplier.multiplyRepresentations(
-                    representations_one,
-                    representations_two,
-                    instruction.number_of_group,
-                    mult_one.getMultiplicities().at(0),
-                    mult_two.getMultiplicities().at(0),
-                    mult_sum);
                 temp_result.push_back(history);
                 temp_result.back().setMultiplicity(pos_sum, mult_sum);
-                temp_result.back().setRepresentations(pos_sum, std::move(representations_sum));
             }
         }
         std::swap(result_of_summation, temp_result);
         temp_result.clear();
+    }
+
+    for (const auto& instruction : *order_of_summation_) {
+        assert(instruction.positions_of_summands.size() == 2);
+        size_t pos_one = instruction.positions_of_summands[0];
+        size_t pos_two = instruction.positions_of_summands[1];
+        size_t pos_sum = instruction.position_of_sum;
+        for (auto& history : result_of_summation) {
+            auto mult_one= history.getMultiplicity(pos_one);
+            auto mult_two= history.getMultiplicity(pos_two);
+            auto mult_sum= history.getMultiplicity(pos_sum);
+            const auto& representations_one = history.getRepresentations(pos_one);
+            const auto& representations_two = history.getRepresentations(pos_two);
+            auto representations_sum = representationsMultiplier.multiplyRepresentations(
+                representations_one,
+                representations_two,
+                instruction.number_of_group,
+                mult_one,
+                mult_two,
+                mult_sum);
+            history.setRepresentations(pos_sum, representations_sum);
+        }
     }
 
     for (auto& history : result_of_summation) {
