@@ -4,7 +4,7 @@
 #include <numeric>
 #include <utility>
 
-#include "src/common/lexicographic/IndexConverter.h"
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/space/Space.h"
 #include "src/spin_algebra/ClebshGordanCalculator.h"
@@ -16,7 +16,7 @@ namespace space::optimization {
 class S2Transformer {
   public:
     S2Transformer(
-        std::shared_ptr<const lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories,
         std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter,
         bool ito = false);
@@ -31,7 +31,7 @@ class S2Transformer {
         const space::Subspace& subspace) const;
     std::vector<double> construct_projections(uint32_t lex_index) const;
 
-    std::shared_ptr<const lexicographic::IndexConverter> converter_;
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter_;
     const quantum::linear_algebra::FactoriesList factories_;
     bool ito_;
 

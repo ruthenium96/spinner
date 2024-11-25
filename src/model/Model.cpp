@@ -12,7 +12,7 @@
 namespace model {
 Model::Model(ModelInput modelInput) :
     numericalWorker_(modelInput.getSymbolicWorker(), modelInput.getMults().size()),
-    converter_(std::make_shared<lexicographic::IndexConverter>(modelInput.getMults())) {
+    converter_(std::make_shared<index_converter::lexicographic::IndexConverter>(modelInput.getMults())) {
     operators_map_[common::Energy] = std::make_shared<operators::Operator>();
     operators_map_ito_[common::Energy] = std::make_shared<operators::Operator>();
     constructSSquared();
@@ -159,7 +159,7 @@ void Model::constructGSzSquaredDerivatives() {
     operators_history_.g_sz_squared_derivatives = true;
 }
 
-std::shared_ptr<const lexicographic::IndexConverter> Model::getIndexConverter() const {
+std::shared_ptr<const index_converter::lexicographic::IndexConverter> Model::getIndexConverter() const {
     return converter_;
 }
 

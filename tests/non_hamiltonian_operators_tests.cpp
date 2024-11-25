@@ -211,7 +211,7 @@ TEST(
         model::ModelInput model(mults);
 
         runner::Runner runner(model);
-        lexicographic::IndexConverter converter(mults);
+        index_converter::lexicographic::IndexConverter converter(mults);
 
         Matrix s_squared_matrix = Matrix(
             runner.getSpace(),

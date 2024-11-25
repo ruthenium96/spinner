@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "gtest/gtest.h"
-#include "src/common/lexicographic/IndexConverter.h"
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/entities/data_structures/AbstractFactories.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/model/operators/terms/ConstantTerm.h"
@@ -12,7 +12,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
         {{2, 2, 2, 2}, {3, 3, 3}, {2, 3, 4, 5}, {4, 4, 4, 4, 4}};
     for (const auto& mults : vector_of_mults) {
         // Construct Converter
-        auto converter = std::make_shared<lexicographic::IndexConverter>(mults);
+        auto converter = std::make_shared<index_converter::lexicographic::IndexConverter>(mults);
 
         auto factories_ = quantum::linear_algebra::FactoriesList();
 
@@ -52,7 +52,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
     std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults = {{1}, {2}, {3}, {4}, {5}, {6}};
     for (const auto& mults : vector_of_mults) {
         // Construct Converter
-        auto converter = std::make_shared<lexicographic::IndexConverter>(mults);
+        auto converter = std::make_shared<index_converter::lexicographic::IndexConverter>(mults);
 
         auto factories_ = quantum::linear_algebra::FactoriesList();
 
@@ -98,7 +98,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         ptr_to_js->at(0, 1) = J;
 
         // Construct Converter
-        auto converter = std::make_shared<lexicographic::IndexConverter>(mults);
+        auto converter = std::make_shared<index_converter::lexicographic::IndexConverter>(mults);
 
         auto factories_ = quantum::linear_algebra::FactoriesList();
 

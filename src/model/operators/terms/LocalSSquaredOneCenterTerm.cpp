@@ -28,7 +28,7 @@ void LocalSSquaredOneCenterTerm::construct(
 }
 
 LocalSSquaredOneCenterTerm::LocalSSquaredOneCenterTerm(
-    std::shared_ptr<const lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients,
     double prefactor) :
     OneCenterTerm(converter->get_mults().size()),
@@ -37,7 +37,7 @@ LocalSSquaredOneCenterTerm::LocalSSquaredOneCenterTerm(
     prefactor_(prefactor) {}
 
 LocalSSquaredOneCenterTerm::LocalSSquaredOneCenterTerm(
-    std::shared_ptr<const lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients) :
     OneCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),

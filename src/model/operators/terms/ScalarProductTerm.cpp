@@ -4,7 +4,7 @@
 #include <utility>
 
 namespace model::operators {
-ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const lexicographic::IndexConverter> converter) :
+ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter) :
     TwoCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)) {
     size_t number_of_spins = converter_->get_mults().size();
@@ -21,7 +21,7 @@ ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const lexicographic::IndexC
 }
 
 ScalarProductTerm::ScalarProductTerm(
-    std::shared_ptr<const lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     std::shared_ptr<const TwoDNumericalParameters<double>> parameters) :
     TwoCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),

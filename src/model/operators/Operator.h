@@ -16,9 +16,9 @@ class Operator {
     Operator& operator=(Operator&&) noexcept = default;
     ~Operator() = default;
 
-    static Operator s_squared(std::shared_ptr<const lexicographic::IndexConverter> converter);
+    static Operator s_squared(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter);
     static Operator g_sz_squared(
-        std::shared_ptr<const lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
         std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
         std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters);
 

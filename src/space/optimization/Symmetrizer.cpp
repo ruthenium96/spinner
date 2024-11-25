@@ -6,7 +6,7 @@
 namespace space::optimization {
 
 Symmetrizer::Symmetrizer(
-    std::shared_ptr<const lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
     group::Group group,
     quantum::linear_algebra::FactoriesList factories) :
     converter_(std::move(converter)),
@@ -98,21 +98,21 @@ Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32
     auto iterator = subspace.decomposition->GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
-        std::vector<uint8_t> nzs = converter_->convert_lex_index_to_all_sz_projections(item.index);
-        std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
+        auto permutated_indexes = 
+            converter_->convert_index_to_permutated_indexes(item.index, group_);
 
         for (uint8_t g = 0; g < group_.properties.group_size; ++g) {
-            uint32_t permutated_lex =
-                converter_->convert_sz_projections_to_lex_index(permutated_vectors[g]);
+            uint32_t permutated_index = permutated_indexes[g];
             for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
                 for (uint8_t projector = 0;
                      projector < group_.properties.number_of_projectors_of_representation[repr];
                      ++projector) {
+                    double value = group_.properties.coefficients_of_projectors[repr][projector][g]
+                        * item.value;
                     projections[repr]->add_to_position(
-                        group_.properties.coefficients_of_projectors[repr][projector][g]
-                            * item.value,
+                        value,
                         projector,
-                        permutated_lex);
+                        permutated_index);
                 }
             }
         }

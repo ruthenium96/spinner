@@ -19,7 +19,7 @@ inline double local_product(const spin_algebra::SSquaredState& state, const std:
         } else if (ranks[i] == 1) {
             answer *= sqrt(spin * (spin + 1) * (2 * spin + 1));
         } else {
-            throw std::invalid_argument("askjdfbjaksdbng");
+            throw std::invalid_argument("We can calculate local products only for ranks 0 and 1");
         }
     }
 
@@ -122,7 +122,7 @@ SSquaredConverter::block_with_property(SSquaredState::Properties properties) con
 std::vector<uint8_t>
 SSquaredConverter::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) const {
 // todo: cache results, there is just O(N^3) memory required
-    std::vector<uint8_t> answer(number_of_all_mults_, 255);
+    std::vector<uint8_t> answer(number_of_all_mults_, 255); // 255 is for "not initialized yet".
 
     for (size_t i = 0; i < number_of_initial_mults_; ++i) {
         if (i == center_a || i == center_b) {

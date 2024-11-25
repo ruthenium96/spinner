@@ -5,7 +5,7 @@ Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {}
 Matrix::Matrix(
     const space::Space& space,
     const model::operators::Operator& new_operator,
-    std::shared_ptr<const lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     const quantum::linear_algebra::FactoriesList& factories) {
     blocks.reserve(space.getBlocks().size());
 

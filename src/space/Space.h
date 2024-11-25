@@ -6,7 +6,6 @@
 #include <map>
 
 #include "Subspace.h"
-#include "src/common/lexicographic/IndexConverter.h"
 #include "src/entities/data_structures/FactoriesList.h"
 
 namespace space {

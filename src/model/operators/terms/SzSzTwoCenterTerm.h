@@ -6,11 +6,11 @@ namespace model::operators {
 class SzSzTwoCenterTerm: public TwoCenterTerm {
   public:
     SzSzTwoCenterTerm(
-        std::shared_ptr<const lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> parameters,
         double prefactor);
     SzSzTwoCenterTerm(
-        std::shared_ptr<const lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> parameters);
     std::unique_ptr<Term> clone() const override;
     void construct(
@@ -21,7 +21,7 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
         uint32_t center_b) const override;
 
   private:
-    std::shared_ptr<const lexicographic::IndexConverter> converter_;
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
     double prefactor_ = 1;
 };

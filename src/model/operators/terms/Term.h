@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <memory>
 
-#include "src/common/lexicographic/IndexConverter.h"
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 #include "src/model/NumericalParameters.h"
 

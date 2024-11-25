@@ -6,7 +6,7 @@
 #include "src/model/operators/terms/SzSzTwoCenterTerm.h"
 
 namespace model::operators {
-Operator Operator::s_squared(std::shared_ptr<const lexicographic::IndexConverter> converter) {
+Operator Operator::s_squared(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter) {
     Operator s_squared_operator_;
     auto sum_of_s_squared = std::make_shared<double>(0);
     for (double spin : converter->get_spins()) {
@@ -20,7 +20,7 @@ Operator Operator::s_squared(std::shared_ptr<const lexicographic::IndexConverter
 }
 
 Operator Operator::g_sz_squared(
-    std::shared_ptr<const lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
     std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) {
     Operator g_sz_squared_operator_;

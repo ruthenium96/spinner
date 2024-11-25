@@ -1,5 +1,6 @@
 add_library(common
-        lexicographic/IndexConverter.cpp lexicographic/IndexConverter.h
+        index_converter/lexicographic/IndexConverter.cpp index_converter/lexicographic/IndexConverter.h
+        index_converter/AbstractIndexConverter.cpp index_converter/AbstractIndexConverter.h
         Logger.h
         runner/Runner.cpp
         runner/Executer.cpp runner/Executer.h

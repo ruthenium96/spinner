@@ -6,7 +6,7 @@
 namespace space::optimization {
 
 S2Transformer::S2Transformer(
-    std::shared_ptr<const lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     quantum::linear_algebra::FactoriesList factories,
     std::shared_ptr<const spin_algebra::SSquaredConverter> ssquared_converter,
     bool ito) :
