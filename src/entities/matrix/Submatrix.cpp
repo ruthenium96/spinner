@@ -42,11 +42,8 @@ void Submatrix::classicConstructor(
         }
     }
 
-    for (auto index_of_lexicographic_vector_k : lexicografical_vectors_to_built) {
-        // BUILDING k-th ROW OF INITIAL_MATRIX
-        for (auto& term : new_operator.getTerms()) {
-            term->construct(*matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
-        }
+    for (auto& term : new_operator.getTerms()) {
+        term->construct(*matrix_in_lexicografical_basis, lexicografical_vectors_to_built);
     }
 
     properties = subspace.properties;
@@ -73,11 +70,11 @@ void Submatrix::itoConstructor(
 
     common::Logger::error("size: {}", size);
 
-    for (size_t k : subspace.ssquared_indexes.value()) {
-        for (auto& term : new_operator.getTerms()) {
-            term->construct(*matrix_in_ssquared_basis,k);
-        }
-    }
+    // for (size_t k : subspace.ssquared_indexes.value()) {
+    //     for (auto& term : new_operator.getTerms()) {
+    //         term->construct(*matrix_in_ssquared_basis,k);
+    //     }
+    // }
     raw_data = std::move(matrix_in_ssquared_basis);
     properties = subspace.properties;
 }

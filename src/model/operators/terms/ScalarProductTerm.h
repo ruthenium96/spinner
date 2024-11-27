@@ -3,6 +3,9 @@
 
 #include "Term.h"
 
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
+#include "src/model/NumericalParameters.h"
+
 namespace model::operators {
 class ScalarProductTerm: public TwoCenterTerm {
   public:
@@ -16,7 +19,7 @@ class ScalarProductTerm: public TwoCenterTerm {
     void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
-        uint32_t index_of_vector,
+        const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a,
         uint32_t center_b) const override;
 

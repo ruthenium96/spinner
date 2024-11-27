@@ -3,6 +3,9 @@
 
 #include "Term.h"
 
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
+#include "src/model/NumericalParameters.h"
+
 namespace model::operators {
 class LocalSSquaredOneCenterTerm: public OneCenterTerm {
   public:
@@ -17,7 +20,7 @@ class LocalSSquaredOneCenterTerm: public OneCenterTerm {
     void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
-        uint32_t index_of_vector,
+        const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a) const override;
 
   private:

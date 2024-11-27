@@ -3,6 +3,7 @@
 
 #include "Term.h"
 #include "src/spin_algebra/SSquaredConverter.h"
+#include "src/model/NumericalParameters.h"
 
 namespace model::operators {
 
@@ -17,7 +18,7 @@ class ScalarProductITOTerm : public TwoCenterTerm {
     void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix,
-        uint32_t index_of_vector,
+        const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a,
         uint32_t center_b) const override;
 
@@ -27,7 +28,7 @@ class ScalarProductITOTerm : public TwoCenterTerm {
 
     void add_scalar_product(
     quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
-    uint32_t index_of_vector,
+    const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
     uint32_t center_b,
     double factor) const;

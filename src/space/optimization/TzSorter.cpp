@@ -45,6 +45,6 @@ TzSorter::TzSorter(
     quantum::linear_algebra::FactoriesList factories) :
     converter_(std::move(converter)),
     factories_(std::move(factories)) {
-        max_ntz_proj_ = converter_->get_max_ntz_proj();
-    }
+    max_ntz_proj_ = converter_->get_max_ntz_proj();
+}
 }  // namespace space::optimization

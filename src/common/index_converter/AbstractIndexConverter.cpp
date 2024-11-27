@@ -15,9 +15,9 @@ index_converter::AbstractIndexConverter::AbstractIndexConverter(
         spins_[i] = (mults_[i] - 1) / 2.0;
     }
 
-        // We want to get 2T + 1 (projections are counted from zero to multiplicity),
+    // We want to get 2T + 1 (projections are counted from zero to multiplicity),
     // where T = sum_{1}^{N} S_i. So 2T + 1 = sum_{1}^{N} (2S_i + 1) - N + 1.
-    max_ntz_proj_=  std::accumulate(get_mults().begin(), get_mults().end(), 1 - get_mults().size());
+    max_ntz_proj_= std::accumulate(get_mults().begin(), get_mults().end(), 1 - get_mults().size());
 
 }
 

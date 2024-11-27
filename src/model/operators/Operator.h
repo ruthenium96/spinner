@@ -4,7 +4,9 @@
 #include <memory>
 #include <vector>
 
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/model/operators/terms/Term.h"
+#include "src/model/NumericalParameters.h"
 
 namespace model::operators {
 class Operator {

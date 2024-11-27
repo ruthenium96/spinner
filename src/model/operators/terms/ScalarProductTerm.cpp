@@ -30,17 +30,19 @@ ScalarProductTerm::ScalarProductTerm(
 void ScalarProductTerm::construct(
     quantum::linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
-    uint32_t index_of_vector,
+    const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
     uint32_t center_b) const {
     if (!std::isnan(coefficients_->at(center_a, center_b))) {
         double factor = -2 * coefficients_->at(center_a, center_b);
-        add_scalar_product(
-            matrix_in_lexicografical_basis,
-            index_of_vector,
-            center_a,
-            center_b,
-            factor);
+        for (const auto& index_of_vector : indexes_of_vectors) {
+            add_scalar_product(
+                matrix_in_lexicografical_basis,
+                index_of_vector,
+                center_a,
+                center_b,
+                factor);
+        }
     }
 }
 

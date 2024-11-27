@@ -12,7 +12,7 @@ std::unique_ptr<Term> LocalSSquaredOneCenterTerm::clone() const {
 void LocalSSquaredOneCenterTerm::construct(
     quantum::linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
-    uint32_t index_of_vector,
+    const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a) const {
     double factor = coefficients_->at(center_a) * prefactor_;
 
@@ -20,10 +20,12 @@ void LocalSSquaredOneCenterTerm::construct(
         double spin = converter_->get_spins()[center_a];
 
         double diagonal_value = factor * spin * (spin + 1);
-        matrix_in_lexicografical_basis.add_to_position(
-            diagonal_value,
-            index_of_vector,
-            index_of_vector);
+        for (const auto index_of_vector : indexes_of_vectors) {
+            matrix_in_lexicografical_basis.add_to_position(
+                diagonal_value,
+                index_of_vector,
+                index_of_vector);
+        }
     }
 }
 

@@ -13,7 +13,7 @@ class ConstantTerm: public ZeroCenterTerm {
     void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
-        uint32_t index_of_vector) const override;
+        const std::set<unsigned int>& indexes_of_vectors) const override;
 
   private:
     std::shared_ptr<const double> constant_;
