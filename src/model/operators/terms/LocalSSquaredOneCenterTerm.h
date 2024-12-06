@@ -3,17 +3,17 @@
 
 #include "Term.h"
 
-#include "src/common/index_converter/lexicographic/IndexConverter.h"
+#include "src/common/index_converter/AbstractIndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
 namespace model::operators {
 class LocalSSquaredOneCenterTerm: public OneCenterTerm {
   public:
     LocalSSquaredOneCenterTerm(
-        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         std::shared_ptr<const OneDNumericalParameters<double>> coefficients);
     LocalSSquaredOneCenterTerm(
-        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         std::shared_ptr<const OneDNumericalParameters<double>> coefficients,
         double prefactor);
     std::unique_ptr<Term> clone() const override;
@@ -24,7 +24,7 @@ class LocalSSquaredOneCenterTerm: public OneCenterTerm {
         uint32_t center_a) const override;
 
   private:
-    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter_;
+    std::shared_ptr<const index_converter::AbstractIndexConverter> converter_;
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients_;
     const double prefactor_ = 1;
 };
