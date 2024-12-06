@@ -1,4 +1,7 @@
 #include "IndexConverter.h"
+#include <functional>
+#include <numeric>
+#include "src/common/index_converter/AbstractIndexConverter.h"
 
 namespace index_converter::lexicographic {
 
@@ -37,20 +40,21 @@ uint32_t IndexConverter::convert_sz_projections_to_lex_index(
     return lex;
 }
 
-std::vector<uint32_t>
+std::vector<IndexWithSign>
 IndexConverter::convert_index_to_permutated_indexes(
     uint32_t index, const group::Group& group) const {
     std::vector<uint8_t> nzs = convert_lex_index_to_all_sz_projections(index);
     std::vector<std::vector<uint8_t>> permutated_vectors = group.permutate(nzs);
 
-    std::vector<uint32_t> answer;
+    std::vector<IndexWithSign> answer;
     answer.resize(permutated_vectors.size());
 
     for (uint8_t g = 0; g < permutated_vectors.size(); ++g) {
-        answer[g] = convert_sz_projections_to_lex_index(permutated_vectors[g]);
+        answer[g].index = convert_sz_projections_to_lex_index(permutated_vectors[g]);
+        answer[g].sign = +1;
     }
 
-    return std::move(answer);
+    return answer;
 }
 
 uint8_t IndexConverter::convert_index_to_tz_projection(

@@ -98,17 +98,17 @@ Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32
     auto iterator = subspace.decomposition->GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
-        auto permutated_indexes = 
+        auto permutated_indexes_and_signs = 
             converter_->convert_index_to_permutated_indexes(item.index, group_);
 
         for (uint8_t g = 0; g < group_.properties.group_size; ++g) {
-            uint32_t permutated_index = permutated_indexes[g];
+            uint32_t permutated_index = permutated_indexes_and_signs[g].index;
             for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
                 for (uint8_t projector = 0;
                      projector < group_.properties.number_of_projectors_of_representation[repr];
                      ++projector) {
                     double value = group_.properties.coefficients_of_projectors[repr][projector][g]
-                        * item.value;
+                        * item.value * permutated_indexes_and_signs[g].sign;
                     projections[repr]->add_to_position(
                         value,
                         projector,
