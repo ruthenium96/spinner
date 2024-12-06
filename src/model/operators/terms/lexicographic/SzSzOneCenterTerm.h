@@ -1,11 +1,12 @@
-#ifndef SPINNER_SZSZONECENTERTERM_H
-#define SPINNER_SZSZONECENTERTERM_H
-#include "Term.h"
+#ifndef SPINNER_LEXSZSZONECENTERTERM_H
+#define SPINNER_LEXSZSZONECENTERTERM_H
+
+#include "src/model/operators/terms/Term.h"
 
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators {
+namespace model::operators::lexicographic {
 
 class SzSzOneCenterTerm: public OneCenterTerm {
   public:
@@ -23,5 +24,5 @@ class SzSzOneCenterTerm: public OneCenterTerm {
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter_;
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients_;
 };
-}  // namespace model::operators
-#endif  //SPINNER_SZSZONECENTERTERM_H
+}  // namespace model::operators::lexicographic
+#endif  //SPINNER_LEXSZSZONECENTERTERM_H

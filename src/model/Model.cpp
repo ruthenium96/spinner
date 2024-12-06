@@ -3,9 +3,9 @@
 #include <utility>
 
 #include "src/model/operators/terms/LocalSSquaredOneCenterTerm.h"
-#include "src/model/operators/terms/ScalarProductTerm.h"
-#include "src/model/operators/terms/SzSzOneCenterTerm.h"
-#include "src/model/operators/terms/SzSzTwoCenterTerm.h"
+#include "src/model/operators/terms/lexicographic/ScalarProductTerm.h"
+#include "src/model/operators/terms/lexicographic/SzSzOneCenterTerm.h"
+#include "src/model/operators/terms/lexicographic/SzSzTwoCenterTerm.h"
 
 #include "src/model/operators/terms/ScalarProductITOTerm.h"
 
@@ -62,7 +62,7 @@ void Model::constructIsotropicExchange() {
         return;
     }
     operators_map_[common::Energy]->emplace_back(
-        std::make_unique<const operators::ScalarProductTerm>(
+        std::make_unique<const operators::lexicographic::ScalarProductTerm>(
             converter_,
             getNumericalWorker().getIsotropicExchangeParameters()));
     operators_history_.isotropic_exchange_in_hamiltonian = true;
@@ -92,7 +92,7 @@ void Model::constructZeroFieldSplitting() {
             D_parameters,
             -1.0 / 3.0));
     operators_map_[common::Energy]->emplace_back(
-        std::make_unique<const operators::SzSzOneCenterTerm>(converter_, D_parameters));
+        std::make_unique<const operators::lexicographic::SzSzOneCenterTerm>(converter_, D_parameters));
     operators_history_.zfs_in_hamiltonian = true;
 }
 
@@ -104,7 +104,7 @@ void Model::constructIsotropicExchangeDerivatives() {
     for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::J)) {
         operators::Operator operator_derivative = operators::Operator();
         operator_derivative.emplace_back(
-            std::make_unique<const operators::ScalarProductTerm>(
+            std::make_unique<const operators::lexicographic::ScalarProductTerm>(
                 converter_,
                 getNumericalWorker().constructIsotropicExchangeDerivativeParameters(symbol)));
         derivatives_map_[{common::Energy, symbol}] =
@@ -127,7 +127,7 @@ void Model::constructZeroFieldSplittingDerivative() {
                 derivative_parameters,
                 -1.0 / 3.0));
         operator_derivative.emplace_back(
-            std::make_unique<const operators::SzSzOneCenterTerm>(
+            std::make_unique<const operators::lexicographic::SzSzOneCenterTerm>(
                 converter_,
                 derivative_parameters));
         derivatives_map_[{common::Energy, symbol}] =
@@ -145,9 +145,9 @@ void Model::constructGSzSquaredDerivatives() {
         operators::Operator operator_derivative = operators::Operator();
         auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
         operator_derivative.emplace_back(
-            std::make_unique<operators::SzSzOneCenterTerm>(converter_, pair_of_parameters.first));
+            std::make_unique<operators::lexicographic::SzSzOneCenterTerm>(converter_, pair_of_parameters.first));
         operator_derivative.emplace_back(
-            std::make_unique<const operators::SzSzTwoCenterTerm>(
+            std::make_unique<const operators::lexicographic::SzSzTwoCenterTerm>(
                 converter_,
                 pair_of_parameters.second,
                 2));

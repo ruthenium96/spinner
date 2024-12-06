@@ -2,7 +2,7 @@
 
 #include <utility>
 
-namespace model::operators {
+namespace model::operators::lexicographic {
 
 SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
@@ -47,4 +47,4 @@ std::unique_ptr<Term> SzSzTwoCenterTerm::clone() const {
     return std::make_unique<SzSzTwoCenterTerm>(converter_, coefficients_, prefactor_);
 }
 
-}  // namespace model::operators
+}  // namespace model::operators::lexicographic

@@ -2,9 +2,9 @@ add_library(model
         ModelInput.h ModelInput.cpp
         operators/Operator.h operators/Operator.cpp
         operators/terms/ConstantTerm.h operators/terms/ConstantTerm.cpp
-        operators/terms/ScalarProductTerm.h operators/terms/ScalarProductTerm.cpp
-        operators/terms/SzSzTwoCenterTerm.cpp operators/terms/SzSzTwoCenterTerm.h
-        operators/terms/SzSzOneCenterTerm.cpp operators/terms/SzSzOneCenterTerm.h
+        operators/terms/lexicographic/ScalarProductTerm.h operators/terms/lexicographic/ScalarProductTerm.cpp
+        operators/terms/lexicographic/SzSzTwoCenterTerm.cpp operators/terms/lexicographic/SzSzTwoCenterTerm.h
+        operators/terms/lexicographic/SzSzOneCenterTerm.cpp operators/terms/lexicographic/SzSzOneCenterTerm.h
         operators/terms/LocalSSquaredOneCenterTerm.cpp operators/terms/LocalSSquaredOneCenterTerm.h
         operators/terms/ScalarProductITOTerm.cpp operators/terms/ScalarProductITOTerm.h
         operators/terms/Term.h

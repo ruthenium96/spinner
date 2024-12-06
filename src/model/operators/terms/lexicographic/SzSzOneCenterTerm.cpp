@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-namespace model::operators {
+namespace model::operators::lexicographic {
 std::unique_ptr<Term> SzSzOneCenterTerm::clone() const {
     return std::make_unique<SzSzOneCenterTerm>(converter_, coefficients_);
 }
@@ -37,4 +37,4 @@ SzSzOneCenterTerm::SzSzOneCenterTerm(
     OneCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)) {}
-}  // namespace model::operators
+}  // namespace model::operators::lexicographic

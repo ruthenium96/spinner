@@ -1,12 +1,12 @@
-#ifndef SPINNER_SZSZTWOCENTERTERM_H
-#define SPINNER_SZSZTWOCENTERTERM_H
+#ifndef SPINNER_LEXSZSZTWOCENTERTERM_H
+#define SPINNER_LEXSZSZTWOCENTERTERM_H
 
-#include "Term.h"
+#include "src/model/operators/terms/Term.h"
 
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators {
+namespace model::operators::lexicographic {
 class SzSzTwoCenterTerm: public TwoCenterTerm {
   public:
     SzSzTwoCenterTerm(
@@ -29,5 +29,5 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
     double prefactor_ = 1;
 };
-}  // namespace model::operators
-#endif  //SPINNER_SZSZTWOCENTERTERM_H
+}  // namespace model::operators::lexicographic
+#endif  //SPINNER_LEXSZSZTWOCENTERTERM_H

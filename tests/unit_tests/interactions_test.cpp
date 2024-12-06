@@ -5,7 +5,7 @@
 #include "src/entities/data_structures/AbstractFactories.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/model/operators/terms/ConstantTerm.h"
-#include "src/model/operators/terms/ScalarProductTerm.h"
+#include "src/model/operators/terms/lexicographic/ScalarProductTerm.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
     std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
@@ -62,7 +62,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         // Construct Operator
         model::operators::Operator operator_;
         operator_.emplace_back(
-            std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
+            std::make_unique<model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js));
 
         // Build Matrix
         Matrix matrix = Matrix(space_, operator_, converter, factories_);
@@ -108,7 +108,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         // Construct Operator
         model::operators::Operator operator_;
         operator_.emplace_back(
-            std::make_unique<model::operators::ScalarProductTerm>(converter, ptr_to_js));
+            std::make_unique<model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js));
 
         // Create Factory:
         auto factory_ =
