@@ -11,9 +11,9 @@ bool has_duplicates(std::vector<T> vector) {
 }
 }  // namespace
 
-namespace spin_algebra {
+namespace index_converter::s_squared {
 
-std::shared_ptr<const OrderOfSummation> spin_algebra::OrderOfSummation::constructFromOrbits(
+std::shared_ptr<const OrderOfSummation> OrderOfSummation::constructFromOrbits(
     const std::vector<std::vector<std::set<size_t>>>& all_groups_orbits_of_mults,
     size_t number_of_mults,
     size_t number_of_summation) {
@@ -23,7 +23,7 @@ std::shared_ptr<const OrderOfSummation> spin_algebra::OrderOfSummation::construc
         number_of_mults + number_of_summation - 1,
         std::nullopt);
 
-    auto order_of_summations = std::make_shared<spin_algebra::OrderOfSummation>();
+    auto order_of_summations = std::make_shared<OrderOfSummation>();
 
     for (size_t number_of_group = 0; number_of_group < all_groups_orbits_of_mults.size();
          ++number_of_group) {
@@ -98,4 +98,9 @@ size_t OrderOfSummation::size() const {
     return instructions_.size();
 }
 
-}  // namespace spin_algebra
+const std::vector<OrderOfSummation::AdditionInstruction>& OrderOfSummation::getInstructions() const {
+    return instructions_;
+}
+
+
+}  // namespace index_converter::s_squared

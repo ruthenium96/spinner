@@ -7,7 +7,7 @@
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TzSorter.h"
 #include "src/spin_algebra/GroupAdapter.h"
-#include "src/spin_algebra/OrderOfSummation.h"
+#include "src/common/index_converter/s_squared/OrderOfSummation.h"
 
 namespace {
 std::vector<size_t> sizes_of_blocks(const space::Space& space) {

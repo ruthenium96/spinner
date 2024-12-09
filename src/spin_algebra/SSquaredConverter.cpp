@@ -30,7 +30,7 @@ inline double local_product(const spin_algebra::SSquaredState& state, const std:
 namespace spin_algebra {
 SSquaredConverter::SSquaredConverter(
     const std::vector<Multiplicity>& multiplicities_to_sum,
-    const std::shared_ptr<const OrderOfSummation>& order_of_summation,
+    const std::shared_ptr<const index_converter::s_squared::OrderOfSummation>& order_of_summation,
     const RepresentationsMultiplier& representationsMultiplier):
     order_of_summation_(order_of_summation) {
 
@@ -64,7 +64,7 @@ SSquaredConverter::SSquaredConverter(
         temp_result.clear();
     }
 
-    for (const auto& instruction : *order_of_summation_) {
+    for (const auto& instruction : order_of_summation_->getInstructions()) {
         assert(instruction.positions_of_summands.size() == 2);
         size_t pos_one = instruction.positions_of_summands[0];
         size_t pos_two = instruction.positions_of_summands[1];
@@ -195,7 +195,7 @@ const std::vector<SSquaredState>& SSquaredConverter::block_with_number(size_t nu
     return states_.at(number_of_block);
 }
 
-std::shared_ptr<const OrderOfSummation> SSquaredConverter::getOrderOfSummation() const {
+std::shared_ptr<const index_converter::s_squared::OrderOfSummation> SSquaredConverter::getOrderOfSummation() const {
     return order_of_summation_;
 }
 

@@ -9,6 +9,11 @@ add_library(common
         runner/ConsistentModelOptimizationList.h runner/ConsistentModelOptimizationList.cpp
         MumxHash.h)
 
+add_library(index_converter
+        index_converter/lexicographic/IndexConverter.cpp index_converter/lexicographic/IndexConverter.h
+        index_converter/AbstractIndexConverter.cpp index_converter/AbstractIndexConverter.h
+        index_converter/s_squared/OrderOfSummation.cpp index_converter/s_squared/OrderOfSummation.h)
+
 find_package(spdlog)
 #todo: download if necessary
 # Include(FetchContent)
@@ -20,5 +25,5 @@ find_package(spdlog)
 #FetchContent_MakeAvailable(spdlog)
 
 
-target_link_libraries(common model space magnetic_susceptibility nonlinear_solver eigendecompositor
+target_link_libraries(common index_converter model space magnetic_susceptibility nonlinear_solver eigendecompositor
         spdlog::spdlog magic_enum)

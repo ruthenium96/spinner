@@ -3,17 +3,18 @@
 
 #include <memory>
 #include <optional>
+#include <set>
 #include <vector>
 
-#include "set"
 
-namespace spin_algebra {
+namespace index_converter::s_squared {
 
 class OrderOfSummation {
   public:
     struct AdditionInstruction {
         std::vector<uint64_t> positions_of_summands;
         uint64_t position_of_sum;
+        // TODO: delete it
         std::optional<size_t> number_of_group = std::nullopt;
     };
 
@@ -24,10 +25,11 @@ class OrderOfSummation {
     std::vector<AdditionInstruction>::const_iterator begin() const;
     std::vector<AdditionInstruction>::const_iterator end() const;
     const AdditionInstruction& at(size_t i) const;
+    const std::vector<AdditionInstruction>& getInstructions() const;
     size_t size() const;
 
   private:
     std::vector<AdditionInstruction> instructions_;
 };
-}  // namespace spin_algebra
+}  // namespace index_converter::s_squared
 #endif  //SPINNER_ORDEROFSUMMATION_H

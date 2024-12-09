@@ -50,7 +50,7 @@ void experimentalValuesPrint(
     const std::vector<double>& weights);
 void theoreticalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& theor_values);
-void orderOfSummationPrint(const spin_algebra::OrderOfSummation& order_of_summation);
+void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& order_of_summation);
 }
 
 #endif  //SPINNER_PRINTINGFUNCTIONS_H

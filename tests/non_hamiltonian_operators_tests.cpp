@@ -5,9 +5,12 @@
 #include "src/common/runner/Runner.h"
 #include "src/spin_algebra/GroupAdapter.h"
 #include "src/spin_algebra/MultiplicityDirectSum.h"
-#include "src/spin_algebra/OrderOfSummation.h"
+#include "src/common/index_converter/s_squared/OrderOfSummation.h"
 #include "src/spin_algebra/SSquaredConverter.h"
 #include "src/spin_algebra/SSquaredState.h"
+
+#include <functional>
+#include <numeric>
 
 spin_algebra::MultiplicityDirectSum
 spin_addition(const std::vector<spin_algebra::MultiplicityDirectSum>& mults) {
@@ -67,7 +70,7 @@ TEST(spin_addition, 44) {
 }
 
 void allMultiplicitiesWereSummedExactlyOnce(
-    const spin_algebra::OrderOfSummation& order_of_summation,
+    const index_converter::s_squared::OrderOfSummation& order_of_summation,
     size_t number_of_all_mults) {
     std::vector<bool> multiplicity_was_summed(number_of_all_mults - 1, false);
     for (const auto& instruction : order_of_summation) {
@@ -85,7 +88,7 @@ void allMultiplicitiesWereSummedExactlyOnce(
 }
 
 void allMultiplicitiesAreReachableLeftToRight(
-    const spin_algebra::OrderOfSummation& order_of_summation,
+    const index_converter::s_squared::OrderOfSummation& order_of_summation,
     size_t number_of_initial_mults,
     size_t number_of_all_mults) {
     std::vector<bool> multiplicity_are_reachable(number_of_all_mults, false);

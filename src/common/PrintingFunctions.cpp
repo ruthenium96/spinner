@@ -181,7 +181,7 @@ void theoreticalValuesPrint(
     common::Logger::separate(0, common::basic);
 }
 
-void orderOfSummationPrint(const spin_algebra::OrderOfSummation& order_of_summation) {
+void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& order_of_summation) {
     common::Logger::verbose_msg("Order of spin summation:");
     for (const auto& instruction : order_of_summation) {
         common::Logger::verbose("{} -> {}",

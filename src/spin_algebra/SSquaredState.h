@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "MultiplicityDirectSum.h"
-#include "OrderOfSummation.h"
+#include "src/common/index_converter/s_squared/OrderOfSummation.h"
 #include "RepresentationsMultiplier.h"
 
 namespace spin_algebra {
