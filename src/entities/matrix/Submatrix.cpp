@@ -15,18 +15,6 @@ Submatrix::Submatrix(
     const model::operators::Operator& new_operator,
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     const quantum::linear_algebra::FactoriesList& factories) {
-    if (!subspace.ssquared_indexes.has_value()) {
-        classicConstructor(subspace, new_operator, converter, factories);
-    } else {
-        itoConstructor(subspace, new_operator, converter, factories);
-    }
-}
-
-void Submatrix::classicConstructor(
-    const space::Subspace& subspace,
-    const model::operators::Operator& new_operator,
-    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
-    const quantum::linear_algebra::FactoriesList& factories) {
     auto totalSpaceSize = converter->get_total_space_size();
     auto matrix_in_lexicografical_basis = factories.createSparseSymmetricMatrix(totalSpaceSize);
 
@@ -57,24 +45,4 @@ void Submatrix::classicConstructor(
     if (subspace.dense_semiunitary_matrix.has_value()) {
         raw_data = subspace.dense_semiunitary_matrix.value()->unitaryTransform(raw_data);
     }
-}
-
-void Submatrix::itoConstructor(
-    const space::Subspace& subspace,
-    const model::operators::Operator& new_operator,
-    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
-    const quantum::linear_algebra::FactoriesList& factories) {
-    uint32_t size = subspace.ssquared_indexes->size();
-
-    auto matrix_in_ssquared_basis = factories.createDenseDiagonalizableMatrix(size);
-
-    common::Logger::error("size: {}", size);
-
-    // for (size_t k : subspace.ssquared_indexes.value()) {
-    //     for (auto& term : new_operator.getTerms()) {
-    //         term->construct(*matrix_in_ssquared_basis,k);
-    //     }
-    // }
-    raw_data = std::move(matrix_in_ssquared_basis);
-    properties = subspace.properties;
 }

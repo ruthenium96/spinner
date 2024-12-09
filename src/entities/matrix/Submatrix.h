@@ -22,16 +22,6 @@ struct Submatrix {
         const model::operators::Operator& new_operator,
         std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
         const quantum::linear_algebra::FactoriesList& factories);
-
-    void classicConstructor(const space::Subspace& subspace,
-                            const model::operators::Operator& new_operator,
-                            std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
-                            const quantum::linear_algebra::FactoriesList& factories);
-
-    void itoConstructor(const space::Subspace& subspace,
-                        const model::operators::Operator& new_operator,
-                        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
-                        const quantum::linear_algebra::FactoriesList& factories);
 };
 
 #endif  //SPINNER_SUBMATRIX_H
