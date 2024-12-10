@@ -9,7 +9,8 @@
 
 namespace group {
 
-using Permutation = std::vector<uint8_t>;
+using PermutationArrayType = uint8_t;
+using Permutation = std::vector<PermutationArrayType>;
 using CayleyTable = std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>;
 
 class Group {
@@ -54,8 +55,6 @@ class Group {
     };
 
     explicit Group(GroupTypeEnum group_name, std::vector<Permutation> generators);
-
-    std::vector<std::vector<uint8_t>> permutate(const std::vector<uint8_t>& initial) const;
 
     size_t size_of_permutations() const;
 

@@ -8,6 +8,9 @@
 #include "src/space/optimization/TzSorter.h"
 #include "src/spin_algebra/GroupAdapter.h"
 #include "src/common/index_converter/s_squared/OrderOfSummation.h"
+#include "src/common/index_converter/lexicographic/IndexPermutator.h"
+#include "src/common/index_converter/s_squared/IndexPermutator.h"
+
 
 namespace {
 std::vector<size_t> sizes_of_blocks(const space::Space& space) {
@@ -63,7 +66,16 @@ Space OptimizedSpaceConstructor::construct(
         spaceIsNormalized = false;
 
         const auto& group = optimizationList.getGroupsToApply().at(i);
-        Symmetrizer symmetrizer(indexConverter, group, factories);
+        std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator;
+        if (optimizationList.isITOCalculated()) {
+            permutator = 
+                std::make_shared<index_converter::s_squared::IndexPermutator>(sSquaredIndexConverter, group);
+        } else {
+            permutator = 
+                std::make_shared<index_converter::lexicographic::IndexPermutator>(lexIndexConverter, group);
+        }
+
+        Symmetrizer symmetrizer(permutator, group, factories);
         common::Logger::detailed_msg("Symmetrization has started.");
         space = symmetrizer.apply(std::move(space));
         common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));

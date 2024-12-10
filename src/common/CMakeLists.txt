@@ -1,6 +1,4 @@
 add_library(common
-        index_converter/lexicographic/IndexConverter.cpp index_converter/lexicographic/IndexConverter.h
-        index_converter/AbstractIndexConverter.cpp index_converter/AbstractIndexConverter.h
         Logger.h
         runner/Runner.cpp
         runner/Executer.cpp runner/Executer.h
@@ -11,7 +9,11 @@ add_library(common
 
 add_library(index_converter
         index_converter/lexicographic/IndexConverter.cpp index_converter/lexicographic/IndexConverter.h
+        index_converter/lexicographic/IndexPermutator.cpp index_converter/lexicographic/IndexPermutator.h
         index_converter/AbstractIndexConverter.cpp index_converter/AbstractIndexConverter.h
+        index_converter/s_squared/IndexConverter.cpp index_converter/s_squared/IndexConverter.h
+        index_converter/s_squared/IndexPermutator.cpp index_converter/s_squared/IndexPermutator.h
+        index_converter/s_squared/Level.cpp index_converter/s_squared/Level.h
         index_converter/s_squared/OrderOfSummation.cpp index_converter/s_squared/OrderOfSummation.h)
 
 find_package(spdlog)

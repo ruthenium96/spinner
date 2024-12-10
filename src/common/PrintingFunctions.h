@@ -16,6 +16,7 @@
 #include "src/model/symbols/SymbolName.h"
 #include "src/space/Space.h"
 #include "src/space/Subspace.h"
+#include "src/common/index_converter/s_squared/IndexConverter.h"
 
 std::ostream& operator<<(std::ostream& os, const space::Space& space);
 std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace);
@@ -51,6 +52,7 @@ void experimentalValuesPrint(
 void theoreticalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& theor_values);
 void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& order_of_summation);
-}
+void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverter& index_converter);
+} // namespace common
 
 #endif  //SPINNER_PRINTINGFUNCTIONS_H

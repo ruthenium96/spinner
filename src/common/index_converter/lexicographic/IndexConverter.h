@@ -1,5 +1,5 @@
-#ifndef SPINNER_INDEXES_H
-#define SPINNER_INDEXES_H
+#ifndef SPINNER_LEXINDEXCONVERTER_H
+#define SPINNER_LEXINDEXCONVERTER_H
 
 #include <cstdint>
 #include <vector>
@@ -14,8 +14,6 @@ class IndexConverter : public AbstractIndexConverter {
     std::vector<uint8_t> convert_lex_index_to_all_sz_projections(uint32_t lex) const;
     uint8_t convert_lex_index_to_one_sz_projection(uint32_t lex, uint32_t center) const;
     uint32_t convert_sz_projections_to_lex_index(const std::vector<uint8_t>& nzs) const;
-    std::vector<IndexWithSign> convert_index_to_permutated_indexes(uint32_t index, 
-                                                              const group::Group& group) const override;
 
     uint8_t convert_index_to_tz_projection(uint32_t index) const override;
 
@@ -27,4 +25,4 @@ class IndexConverter : public AbstractIndexConverter {
 };
 }  // namespace index_converter::lexicographic
 
-#endif  // SPINNER_INDEXES_H
+#endif  // SPINNER_LEXINDEXCONVERTER_H

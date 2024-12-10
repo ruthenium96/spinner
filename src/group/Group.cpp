@@ -116,18 +116,6 @@ Group::Group(GroupTypeEnum group_name, std::vector<Permutation> generators) :
     }
 }
 
-std::vector<std::vector<uint8_t>> Group::permutate(const std::vector<uint8_t>& initial) const {
-    std::vector<std::vector<uint8_t>> permutated_vectors(properties.group_size);
-    for (size_t i = 0; i < properties.group_size; ++i) {
-        permutated_vectors[i].resize(initial.size());
-        for (size_t j = 0; j < initial.size(); ++j) {
-            size_t position = elements_[i][j];
-            permutated_vectors[i][position] = initial[j];
-        }
-    }
-    return permutated_vectors;
-}
-
 // Returns the indexes of multiplicity centers, forming the same orbit.
 std::vector<std::set<size_t>> Group::construct_orbits_of_mults() const {
     std::vector<std::set<size_t>> orbits_of_mults;

@@ -3,6 +3,7 @@
 #include "src/common/Logger.h"
 
 #include <magic_enum.hpp>
+#include <string>
 
 std::ostream& operator<<(std::ostream& os, const space::Space& space) {
     for (const space::Subspace& subspace : space.getBlocks()) {
@@ -190,4 +191,24 @@ void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& o
     }
 }
 
+void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverter& index_converter) {
+    common::Logger::debug("Indexes to states mapping. Initial multiplicities: [{}] were skipped.", 
+        fmt::join(index_converter.get_mults(), " "));
+    for (auto index = 0; index < index_converter.get_total_space_size(); ++index) {
+        auto state = index_converter.convert_index_to_state(index);
+
+        // TODO: avoid using strings:
+        std::string level_string;
+        for (int i = index_converter.get_mults().size(); i < state.first.getSize(); ++i) {
+            level_string += std::to_string(state.first.getMultiplicity(i));
+        }
+
+        common::Logger::debug("{} -> |{};{}>",
+        index,
+        level_string,
+        state.second);
+    }
+    common::Logger::separate(0, common::debug);
 }
+
+} // namespace common

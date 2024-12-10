@@ -6,10 +6,10 @@
 namespace space::optimization {
 
 Symmetrizer::Symmetrizer(
-    std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
+    std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator,
     group::Group group,
     quantum::linear_algebra::FactoriesList factories) :
-    converter_(std::move(converter)),
+    permutator_(std::move(permutator)),
     group_(std::move(group)),
     factories_(std::move(factories)) {}
 
@@ -92,14 +92,14 @@ Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32
     for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
         projections.emplace_back(std::move(factories_.createSparseSemiunitaryMatrix(
             group_.properties.number_of_projectors_of_representation[repr],
-            converter_->get_total_space_size())));
+            permutator_->get_total_space_size())));
     }
 
     auto iterator = subspace.decomposition->GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
         auto permutated_indexes_and_signs = 
-            converter_->convert_index_to_permutated_indexes(item.index, group_);
+            permutator_->convert_index_to_permutated_indexes(item.index);
 
         for (uint8_t g = 0; g < group_.properties.group_size; ++g) {
             uint32_t permutated_index = permutated_indexes_and_signs[g].index;
