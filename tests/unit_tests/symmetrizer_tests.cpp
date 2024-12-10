@@ -160,6 +160,17 @@ TEST(symmetrizer, 4444) {
         EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
         EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
     }
+    // S2 * other S2
+    {
+        common::physical_optimization::OptimizationList optimizationList;
+        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
+            .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList},
+            factories);
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+    }
 }
 
 TEST(symmetrizer, 333) {
