@@ -1,6 +1,7 @@
 #ifndef SPINNER_CONSISTENTMODELOPTIMIZATIONLIST_H
 #define SPINNER_CONSISTENTMODELOPTIMIZATIONLIST_H
 
+#include <memory>
 #include "src/common/physical_optimization/OptimizationList.h"
 #include "src/model/Model.h"
 
@@ -30,7 +31,7 @@ class ConsistentModelOptimizationList {
     getDerivativeOperatorsForExplicitConstruction() const;
 
   private:
-    model::Model model_;
+    std::unique_ptr<model::Model> model_;
     common::physical_optimization::OptimizationList optimizationList_;
     std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>
         operators_for_explicit_construction_;
