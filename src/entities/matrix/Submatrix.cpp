@@ -13,7 +13,7 @@ Submatrix::Submatrix(
 Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
-    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
     const quantum::linear_algebra::FactoriesList& factories) {
     auto totalSpaceSize = converter->get_total_space_size();
     auto matrix_in_lexicografical_basis = factories.createSparseSymmetricMatrix(totalSpaceSize);

@@ -2,6 +2,8 @@ add_library(matrix
         matrix/Matrix.cpp matrix/Matrix.h
         matrix/Submatrix.cpp matrix/Submatrix.h)
 
+target_link_libraries(matrix model)
+
 add_library(spectrum
         spectrum/Spectrum.cpp spectrum/Spectrum.h spectrum/Subspectrum.cpp spectrum/Subspectrum.h)
 

@@ -5,7 +5,6 @@
 
 #include "ClebshGordanCalculator.h"
 #include "SSquaredState.h"
-#include "src/common/index_converter/s_squared/State.h"
 
 namespace spin_algebra {
 

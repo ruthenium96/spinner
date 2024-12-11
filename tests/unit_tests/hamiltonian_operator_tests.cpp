@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "src/common/runner/Runner.h"
+#include "src/common/runner/ConsistentModelOptimizationList.h"
 
 TEST(hamiltonian_operator, throw_isotropic_exchange_same_center_22_333_4444_23456) {
     std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
@@ -22,12 +22,12 @@ TEST(hamiltonian_operator, exchange_interaction_22_333_4444_23456) {
     for (const auto& mults : vector_of_mults) {
         model::ModelInput modelInput(mults);
 
+        // explicitly initialize isotropic exchange:
         auto J = modelInput.addSymbol("J", 10);
         modelInput.assignSymbolToIsotropicExchange(J, 0, 1);
-        // explicitly initialize isotropic exchange:
 
-        model::Model model(modelInput);
+        runner::ConsistentModelOptimizationList model_and_optimization(modelInput, common::physical_optimization::OptimizationList());
 
-        EXPECT_EQ(model.getOperator(common::QuantityEnum::Energy).value()->getTerms().size(), 1);
+        EXPECT_EQ(model_and_optimization.getModel().getOperator(common::QuantityEnum::Energy).value()->getTerms().size(), 1);
     }
 }

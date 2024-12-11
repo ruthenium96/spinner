@@ -6,7 +6,7 @@ namespace eigendecompositor {
 
 ExplicitQuantitiesEigendecompositor::ExplicitQuantitiesEigendecompositor(
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
-    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
+    std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
     quantum::linear_algebra::FactoriesList factories_list) :
     eigendecompositor_(std::move(eigendecompositor)),
     converter_(std::move(converter)),

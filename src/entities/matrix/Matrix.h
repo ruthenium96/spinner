@@ -13,7 +13,7 @@ struct Matrix {
     Matrix(
         const space::Space& space,
         const model::operators::Operator& new_operator,
-        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         const quantum::linear_algebra::FactoriesList& factories);
 
     std::vector<Submatrix> blocks;

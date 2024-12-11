@@ -9,7 +9,7 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
   public:
     ExplicitQuantitiesEigendecompositor(
         std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
-        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
+        std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories_list);
     std::optional<std::reference_wrapper<const Spectrum>>
     getSpectrum(common::QuantityEnum quantity_enum) const override;
@@ -36,7 +36,7 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
 
   private:
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor_;
-    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter_;
+    std::shared_ptr<const index_converter::AbstractIndexConverter> converter_;
     quantum::linear_algebra::FactoriesList factories_list_;
     std::map<common::QuantityEnum, common::Quantity> quantities_map_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, common::Quantity>

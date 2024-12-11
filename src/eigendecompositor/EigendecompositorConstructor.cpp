@@ -12,7 +12,7 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
     const quantum::linear_algebra::FactoriesList& factories) {
 
     const auto& indexConverter =
-        consistentModelOptimizationList.getModel().getIndexConverter();
+        consistentModelOptimizationList.getIndexConverter();
 
     common::Logger::detailed_msg("Eigendecompositor information:");
     common::Logger::detailed("ExactEigendecompositor will be used");

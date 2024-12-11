@@ -14,4 +14,4 @@ add_library(model
         symbols/SymbolName.h symbols/SymbolName.cpp
         Model.cpp Model.h)
 
-target_link_libraries(model group)
+target_link_libraries(model group index_converter)
