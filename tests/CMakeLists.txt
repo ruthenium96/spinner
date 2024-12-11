@@ -30,6 +30,7 @@ add_executable(spinner_test
         unit_tests/consistentModelOptimizationList_tests.cpp
         unit_tests/symmetrizer_tests.cpp
         unit_tests/non_abelian_simplifier_tests.cpp
+        unit_tests/index_converters_tests.cpp
         unit_tests/interactions_test.cpp
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
