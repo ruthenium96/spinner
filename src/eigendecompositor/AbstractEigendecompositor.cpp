@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include "src/common/Logger.h"
+#include "src/common/Quantity.h"
 
 namespace eigendecompositor {
 

@@ -25,15 +25,9 @@ class SSquaredConverter {
         const spin_algebra::SSquaredState& s_squared_state,
         const std::vector<double>& projections) const;
 
-    double total_9j_coefficient(
-        const spin_algebra::SSquaredState& left,
-        const spin_algebra::SSquaredState& right,
-        const std::vector<uint8_t>& ranks) const;
-
     std::optional<std::vector<size_t>> indexes_with_property(SSquaredState::Properties) const;
     std::optional<std::reference_wrapper<const std::vector<SSquaredState>>>
         block_with_property(SSquaredState::Properties) const;
-    std::vector<uint8_t> constructRanksOfTZero(uint32_t center_a, uint32_t center_b) const;
   private:
     std::shared_ptr<const index_converter::s_squared::OrderOfSummation> order_of_summation_;
     std::vector<std::vector<SSquaredState>> states_;
