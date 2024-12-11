@@ -18,6 +18,8 @@ class AbstractIndexConverter {
 
     uint32_t get_max_ntz_proj() const;
 
+    virtual ~AbstractIndexConverter() = default;
+
   private:
 	  std::vector<spin_algebra::Multiplicity> mults_;
     std::vector<double> spins_;

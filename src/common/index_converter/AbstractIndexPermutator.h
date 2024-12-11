@@ -16,6 +16,8 @@ class AbstractIndexPermutator {
 public:
     virtual std::vector<IndexWithSign> convert_index_to_permutated_indexes(uint32_t index) const = 0;
     virtual uint32_t get_total_space_size() const = 0;
+    virtual ~AbstractIndexPermutator() = default;
+
 };
 } // namespace index_converter
 
