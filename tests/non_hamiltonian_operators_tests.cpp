@@ -7,7 +7,7 @@
 #include "src/spin_algebra/MultiplicityDirectSum.h"
 #include "src/common/index_converter/s_squared/OrderOfSummation.h"
 #include "src/spin_algebra/SSquaredConverter.h"
-#include "src/spin_algebra/SSquaredState.h"
+#include "src/spin_algebra/SSquaredLevelAndRepresentations.h"
 
 #include <functional>
 #include <numeric>
@@ -168,7 +168,7 @@ TEST(addAllMultiplicitiesAndSort, 2222) {
 
     std::vector<std::pair<
         std::vector<group::Group>,
-        std::map<spin_algebra::SSquaredState::Properties, size_t>>>
+        std::map<spin_algebra::SSquaredLevelAndRepresentations::Properties, size_t>>>
         input_and_correct_answers;
 
     input_and_correct_answers.push_back({{}, {{{5, {}}, 1}, {{3, {}}, 3}, {{1, {}}, 2}}});

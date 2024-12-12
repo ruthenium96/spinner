@@ -1,27 +1,23 @@
-#ifndef SPINNER_SSQUAREDSTATE_H
-#define SPINNER_SSQUAREDSTATE_H
+#ifndef SPINNER_SSQUAREDLEVELANDREPRESENTATIONS_H
+#define SPINNER_SSQUAREDLEVELANDREPRESENTATIONS_H
 
 #include <memory>
+#include <optional>
 #include <vector>
 
-#include "MultiplicityDirectSum.h"
-#include "src/common/index_converter/s_squared/OrderOfSummation.h"
-#include "RepresentationsMultiplier.h"
+#include "src/common/index_converter/s_squared/Level.h"
 
 namespace spin_algebra {
 
-class SSquaredState {
+class SSquaredLevelAndRepresentations : public index_converter::s_squared::Level {
   private:
-    std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities_;
-    std::vector<Multiplicity> intermediateMultiplicities_;
     // first vector over different centers, second -- over different groups
     std::vector<std::vector<std::optional<uint8_t>>> intermediateRepresentations_;
   public:
-    SSquaredState(
+    SSquaredLevelAndRepresentations(
         std::shared_ptr<std::vector<Multiplicity>> initialMultiplicities,
         size_t number_of_summations,
         size_t number_of_representations = 0);
-    void setMultiplicity(size_t number, Multiplicity multiplicity);
     void setRepresentations(size_t number, std::vector<std::optional<uint8_t>> representation);
 
     struct Properties {
@@ -30,13 +26,11 @@ class SSquaredState {
         std::strong_ordering operator<=>(const Properties& rhs) const = default;
     };
 
-    Multiplicity getMultiplicity(size_t number) const;
     double getSpin(size_t number) const;
     const std::vector<std::optional<uint8_t>>& getRepresentations(size_t number) const;
-    size_t getSize() const;
     Properties back() const;
 };
 
 }  // namespace spin_algebra
 
-#endif  //SPINNER_SSQUAREDSTATE_H
+#endif  //SPINNER_SSQUAREDLEVELANDREPRESENTATIONS_H

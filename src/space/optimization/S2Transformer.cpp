@@ -28,7 +28,7 @@ space::Space S2Transformer::apply(Space&& space) const {
         int a = 2 * (int)ntz_value + 1 - (int)converter_->get_max_ntz_proj();
         spin_algebra::Multiplicity current_mult = std::abs(a) + 1;
 
-        spin_algebra::SSquaredState::Properties subspace_properties;
+        spin_algebra::SSquaredLevelAndRepresentations::Properties subspace_properties;
         subspace_properties.multiplicity = current_mult;
         subspace_properties.representations = subspace.properties.representation;
 
@@ -56,7 +56,7 @@ space::Space S2Transformer::apply(Space&& space) const {
 
 std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
 S2Transformer::constructTransformationMatrix(
-    const std::vector<spin_algebra::SSquaredState>& s_squared_states,
+    const std::vector<spin_algebra::SSquaredLevelAndRepresentations>& s_squared_states,
     const Subspace& subspace) const {
     const auto number_of_sz_states = subspace.decomposition->size_cols();
     const auto number_of_s2_states = s_squared_states.size();

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <numeric>
 #include "src/spin_algebra/Multiplicity.h"
+#include "src/spin_algebra/MultiplicityDirectSum.h"
 
 namespace spin_algebra {
 SSquaredConverter::SSquaredConverter(
@@ -15,12 +16,12 @@ SSquaredConverter::SSquaredConverter(
     number_of_initial_mults_ = multiplicities_to_sum.size();
     number_of_all_mults_ = number_of_initial_mults_ + order_of_summation_->size();
 
-    auto empty_history = SSquaredState(
+    auto empty_history = SSquaredLevelAndRepresentations(
         std::make_shared<std::vector<Multiplicity>>(multiplicities_to_sum),
         order_of_summation_->size(),
         representationsMultiplier.getNumberOfRepresentations());
 
-    std::vector<SSquaredState> result_of_summation = {empty_history};
+    std::vector<SSquaredLevelAndRepresentations> result_of_summation = {empty_history};
 
     for (const auto& instruction : *order_of_summation_) {
         // we currently do not support cases with three or more summands:
@@ -28,7 +29,7 @@ SSquaredConverter::SSquaredConverter(
         size_t pos_one = instruction.positions_of_summands[0];
         size_t pos_two = instruction.positions_of_summands[1];
         size_t pos_sum = instruction.position_of_sum;
-        std::vector<SSquaredState> temp_result;
+        std::vector<SSquaredLevelAndRepresentations> temp_result;
         for (const auto& history : result_of_summation) {
             MultiplicityDirectSum mult_one(history.getMultiplicity(pos_one));
             MultiplicityDirectSum mult_two(history.getMultiplicity(pos_two));
@@ -87,8 +88,8 @@ SSquaredConverter::SSquaredConverter(
     }
 }
 
-std::optional<std::reference_wrapper<const std::vector<SSquaredState>>>
-SSquaredConverter::block_with_property(SSquaredState::Properties properties) const {
+std::optional<std::reference_wrapper<const std::vector<SSquaredLevelAndRepresentations>>>
+SSquaredConverter::block_with_property(SSquaredLevelAndRepresentations::Properties properties) const {
     const auto property_iterator = properties_indexes_.find(properties);
     if (property_iterator == properties_indexes_.end()) {
         return std::nullopt;
@@ -97,7 +98,7 @@ SSquaredConverter::block_with_property(SSquaredState::Properties properties) con
     }
 }
 
-const SSquaredState& SSquaredConverter::at(size_t number) const {
+const SSquaredLevelAndRepresentations& SSquaredConverter::at(size_t number) const {
     auto it =
         std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number, std::less_equal<>());
     auto start_of_block = *it;
@@ -124,7 +125,7 @@ size_t SSquaredConverter::number_in_block(size_t number) const {
 }
 
 std::optional<std::vector<size_t>>
-SSquaredConverter::indexes_with_property(SSquaredState::Properties properties) const {
+SSquaredConverter::indexes_with_property(SSquaredLevelAndRepresentations::Properties properties) const {
     const auto property_iterator = properties_indexes_.find(properties);
     if (property_iterator == properties_indexes_.end()) {
         return std::nullopt;
@@ -140,7 +141,7 @@ SSquaredConverter::indexes_with_property(SSquaredState::Properties properties) c
     }
 }
 
-const std::vector<SSquaredState>& SSquaredConverter::block_with_number(size_t number) const {
+const std::vector<SSquaredLevelAndRepresentations>& SSquaredConverter::block_with_number(size_t number) const {
     auto it =
         std::lower_bound(cumulative_sum_.begin(), cumulative_sum_.end(), number, std::less_equal<>());
     auto number_of_block = std::distance(cumulative_sum_.begin(), it) - 1;
@@ -153,7 +154,7 @@ std::shared_ptr<const index_converter::s_squared::OrderOfSummation> SSquaredConv
 }
 
 double SSquaredConverter::total_CG_coefficient(
-    const SSquaredState& s_squared_state,
+    const SSquaredLevelAndRepresentations& s_squared_state,
     const std::vector<double>& projections) const {
     double c = 1;
 

@@ -8,7 +8,7 @@ include_directories(${wignersymbols_SOURCE_DIR}/include/)
 
 add_library(spin_algebra
         MultiplicityDirectSum.cpp MultiplicityDirectSum.h
-        SSquaredState.cpp SSquaredState.h
+        SSquaredLevelAndRepresentations.cpp SSquaredLevelAndRepresentations.h
         GroupAdapter.cpp GroupAdapter.h
         RepresentationsMultiplier.cpp RepresentationsMultiplier.h
         ClebshGordanCalculator.cpp ClebshGordanCalculator.h

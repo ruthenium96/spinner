@@ -10,7 +10,7 @@
 #include "src/spin_algebra/ClebshGordanCalculator.h"
 #include "src/spin_algebra/RepresentationsMultiplier.h"
 #include "src/spin_algebra/SSquaredConverter.h"
-#include "src/spin_algebra/SSquaredState.h"
+#include "src/spin_algebra/SSquaredLevelAndRepresentations.h"
 
 namespace space::optimization {
 class S2Transformer {
@@ -26,7 +26,7 @@ class S2Transformer {
     // TODO: move these functions to another class?
     std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>
     constructTransformationMatrix(
-        const std::vector<spin_algebra::SSquaredState>& history,
+        const std::vector<spin_algebra::SSquaredLevelAndRepresentations>& history,
         const space::Subspace& subspace) const;
     std::vector<double> construct_projections(uint32_t lex_index) const;
 
