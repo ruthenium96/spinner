@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <iostream>
 #include <utility>
 #include <vector>
 
@@ -182,25 +183,16 @@ void ScalarProductTerm::construct_overlapping_levels(const index_converter::s_sq
 
     answer.clear();
     answer.push_back(empty_level);
+    std::vector<index_converter::s_squared::Level> temp_result;
 
     for (const auto& instruction : converter_->getOrderOfSummation()->getInstructions()) {
         auto pos_one = instruction.positions_of_summands[0];
         auto pos_two = instruction.positions_of_summands[1];
         auto pos_fin = instruction.position_of_sum;
-        std::vector<index_converter::s_squared::Level> temp_result;
         temp_result.reserve(answer.capacity());
 
-        for (const auto& incomplete_state : answer) {
-            if (ranks[pos_one] == 0) {
-                if (incomplete_state.getMultiplicity(pos_one) != level.getMultiplicity(pos_one)) {
-                    continue;
-                }
-            }
-            if (ranks[pos_two] == 0) {
-                if (incomplete_state.getMultiplicity(pos_two) != level.getMultiplicity(pos_two)) {
-                    continue;
-                }
-            }
+        for (int i = 0; i < answer.size(); ++i) {
+            auto incomplete_state = std::move(answer[i]);
 
             std::vector<spin_algebra::Multiplicity> to_add_multiplicities = {level.getMultiplicity(pos_fin)};
             if (ranks[pos_fin] == 1) {
@@ -219,10 +211,16 @@ void ScalarProductTerm::construct_overlapping_levels(const index_converter::s_sq
                     to_add_multiplicities.push_back(level.getMultiplicity(pos_fin) + 2);
                 }
             }
-            for (const auto& to_add_multiplicity : to_add_multiplicities) {
+            // Reuse incomplete_state at least once.
+            // Surprisingly, it significantly speeds up the execution of this function.
+            for (int i = 0; i + 1 < to_add_multiplicities.size(); ++i) {
+                auto to_add_multiplicity = to_add_multiplicities[i];
                 temp_result.push_back(incomplete_state);
                 temp_result.back().setMultiplicity(pos_fin, to_add_multiplicity);
             }
+            auto to_add_multiplicity = to_add_multiplicities.back();
+            temp_result.push_back(std::move(incomplete_state));
+            temp_result.back().setMultiplicity(pos_fin, to_add_multiplicity);
         }
 
         std::swap(answer, temp_result);
