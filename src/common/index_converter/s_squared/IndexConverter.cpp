@@ -104,27 +104,29 @@ std::pair<const Level&, uint8_t> IndexConverter::convert_index_to_state(uint32_t
     auto index_of_block = std::distance(cumulative_sum_.begin(), block_iterator);
     auto multiplicity_of_block = s_squared_levels_[index_of_block][0].total();
 
-    auto number_of_state = index_in_block / multiplicity_of_block;
+    auto number_of_level = index_in_block / multiplicity_of_block;
     auto unshifted_projection = index_in_block % multiplicity_of_block;
 
-    return {s_squared_levels_[index_of_block][number_of_state], unshifted_projection};
+    // TODO: return projection instead of unshifted_projection?
+    return {s_squared_levels_[index_of_block][number_of_level], unshifted_projection};
 }
 
-std::optional<uint32_t> IndexConverter::convert_state_to_index(const Level& state, uint8_t projection) const {
-    auto total_multiplicity = state.total();
+// TODO: work with projection instead of unshifted_projection?
+std::optional<uint32_t> IndexConverter::convert_state_to_index(const Level& level, uint8_t projection) const {
+    auto total_multiplicity = level.total();
 
     auto index_of_block = (total_multiplicity - 1) / 2;
 
     const auto& block = s_squared_levels_[index_of_block];
 
-    auto iterator_in_block = std::lower_bound(block.begin(), block.end(), state);
-    if (iterator_in_block == block.end() || std::is_neq(*iterator_in_block <=> state)) {
+    auto iterator_in_block = std::lower_bound(block.begin(), block.end(), level);
+    if (iterator_in_block == block.end() || std::is_neq(*iterator_in_block <=> level)) {
         return std::nullopt;
     }
     
-    auto number_of_state = std::distance(block.begin(), iterator_in_block);
+    auto number_of_level = std::distance(block.begin(), iterator_in_block);
 
-    auto index_in_block = number_of_state * total_multiplicity + projection;
+    auto index_in_block = number_of_level * total_multiplicity + projection;
 
     return index_in_block + cumulative_sum_[index_of_block];
 }
