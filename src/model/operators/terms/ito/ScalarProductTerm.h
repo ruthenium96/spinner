@@ -40,7 +40,8 @@ class ScalarProductTerm : public TwoCenterTerm {
     double total_9j_coefficient(
         const index_converter::s_squared::Level& left,
         const index_converter::s_squared::Level& right,
-        const std::vector<uint8_t>& ranks) const;
+        const std::vector<uint8_t>& ranks,
+        double local_prod) const;
 
     void construct_overlapping_levels(const index_converter::s_squared::Level& level, 
         const std::vector<uint8_t>& ranks,

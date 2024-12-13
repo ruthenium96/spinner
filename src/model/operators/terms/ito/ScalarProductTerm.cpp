@@ -11,20 +11,21 @@
 #include "src/spin_algebra/Multiplicity.h"
 
 namespace {
-// todo: this value can be calculated once per ranks
 inline double local_product(const std::vector<spin_algebra::Multiplicity>& mults, const std::vector<uint8_t>& ranks) {
     double answer = 1;
 
     for (size_t i = 0; i < mults.size(); ++i) {
         double spin = ((double)mults[i] - 1) / 2;
         if (ranks[i] == 0) {
-            answer *= sqrt(2 * spin + 1);
+            answer *= 2 * spin + 1;
         } else if (ranks[i] == 1) {
-            answer *= sqrt(spin * (spin + 1) * (2 * spin + 1));
+            answer *= spin * (spin + 1) * (2 * spin + 1);
         } else {
             throw std::invalid_argument("We can calculate local products only for ranks 0 and 1");
         }
     }
+
+    answer = sqrt(answer);
 
     return answer;
 }
@@ -71,6 +72,8 @@ void ScalarProductTerm::add_scalar_product(
         const auto& level_left = state_left.first;
         auto projection = state_left.second;
 
+        double local_prod = local_product(*level_left.getInitialMultiplicities(), ranks);
+
         construct_overlapping_levels(level_left, ranks, levels_right);
         for (const auto& level_right : levels_right) {
             auto mb_index_of_vector_col = converter_->convert_state_to_index(level_right, projection);
@@ -81,7 +84,7 @@ void ScalarProductTerm::add_scalar_product(
             if (index_of_vector_col < index_of_vector_row) {
                 continue;
             }
-            double total_9j = total_9j_coefficient(level_left, level_right, ranks);
+            double total_9j = total_9j_coefficient(level_left, level_right, ranks, local_prod);
             double value = factor * total_9j;
             if (value != 0.0) {
                 matrix.add_to_position(value, index_of_vector_row, index_of_vector_col);
@@ -126,7 +129,8 @@ ScalarProductTerm::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) c
 double ScalarProductTerm::total_9j_coefficient(
     const index_converter::s_squared::Level& left,
     const index_converter::s_squared::Level& right,
-    const std::vector<uint8_t>& ranks) const {
+    const std::vector<uint8_t>& ranks,
+    double local_prod) const {
     // product of ninejs
     double ninejs = 1;
     // product of square roots
@@ -156,16 +160,12 @@ double ScalarProductTerm::total_9j_coefficient(
             return 0;
         }
 
-        double mult_left_fin = left.getMultiplicity(pos_fin);
-        double mult_right_fin = right.getMultiplicity(pos_fin);
+        double mult_left_fin = 2.0 * left_fin + 1.0;
+        double mult_right_fin = 2.0 * right_fin + 1.0;
 
         square_roots_prod *= (2 * rank_fin + 1) * (mult_left_fin) * (mult_right_fin);
     }
     square_roots_prod = sqrt(square_roots_prod);
-
-    // product of strange things:
-    // TODO: can be calculated only once if we swap left and right
-    double local_prod = local_product(*right.getInitialMultiplicities(), ranks);
 
     double final_mult = left.getMultiplicity(left.getSize() - 1);
 
@@ -193,8 +193,9 @@ void ScalarProductTerm::construct_overlapping_levels(const index_converter::s_sq
 
         for (int i = 0; i < answer.size(); ++i) {
             auto incomplete_state = std::move(answer[i]);
+            auto mult_fin_level = level.getMultiplicity(pos_fin);
 
-            std::vector<spin_algebra::Multiplicity> to_add_multiplicities = {level.getMultiplicity(pos_fin)};
+            std::vector<spin_algebra::Multiplicity> to_add_multiplicities = {mult_fin_level};
             if (ranks[pos_fin] == 1) {
                 auto mult_one = incomplete_state.getMultiplicity(pos_one);
                 auto mult_two = incomplete_state.getMultiplicity(pos_two);
@@ -204,11 +205,11 @@ void ScalarProductTerm::construct_overlapping_levels(const index_converter::s_sq
                 auto min_multiplicity_sum = max_multiplicity - min_multiplicity + 1;
                 auto max_multiplicity_sum = max_multiplicity + min_multiplicity - 1;
 
-                if (min_multiplicity_sum + 2 <= level.getMultiplicity(pos_fin)) {
-                    to_add_multiplicities.push_back(level.getMultiplicity(pos_fin) - 2);
+                if (min_multiplicity_sum + 2 <= mult_fin_level) {
+                    to_add_multiplicities.push_back(mult_fin_level - 2);
                 }
-                if (max_multiplicity_sum >= level.getMultiplicity(pos_fin) + 2) {
-                    to_add_multiplicities.push_back(level.getMultiplicity(pos_fin) + 2);
+                if (max_multiplicity_sum >= mult_fin_level + 2) {
+                    to_add_multiplicities.push_back(mult_fin_level + 2);
                 }
             }
             // Reuse incomplete_state at least once.
