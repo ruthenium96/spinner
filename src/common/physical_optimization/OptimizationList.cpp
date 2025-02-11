@@ -4,6 +4,10 @@
 
 namespace common::physical_optimization {
 
+OptimizationList::OptimizationList(BasisType basis_type) {
+    basis_type_ = basis_type;
+}
+
 OptimizationList& OptimizationList::TzSort() {
     if (isSSquaredTransformed_) {
         throw std::invalid_argument("Cannot TzSort *AFTER* S2-transformation");
@@ -21,6 +25,9 @@ OptimizationList& OptimizationList::EliminatePositiveProjections() {
 }
 
 OptimizationList& OptimizationList::SSquaredTransform() {
+    if (basis_type_ == ITO) {
+        throw std::invalid_argument("Cannot use S2-transformation with ITO-basis");
+    }
     if (!isTzSorted_) {
         throw std::invalid_argument("Cannot perform S2-transformation without tz-sort");
         // actually, can, but it is inefficient
@@ -32,14 +39,6 @@ OptimizationList& OptimizationList::SSquaredTransform() {
         }
     }
     isSSquaredTransformed_ = true;
-    return *this;
-}
-
-OptimizationList& OptimizationList::ITOCalculate() {
-    if (!isSSquaredTransformed_) {
-        throw std::invalid_argument("Cannot perform ITO-calculation without S2-transformation");
-    }
-    isITOCalculated_ = true;
     return *this;
 }
 
@@ -60,6 +59,9 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
             throw std::invalid_argument("Groups do not commute!");
         }
     }
+    if (basis_type_ == ITO && !new_group.properties.is_abelian) {
+        throw std::invalid_argument("Currently cannot perform use ITO-basis with non-Abelian symmetries");
+    }
     if (isSSquaredTransformed_) {
         throw std::invalid_argument("Cannot symmetrize *AFTER* S2-transformation");
     }
@@ -75,6 +77,14 @@ OptimizationList& OptimizationList::Symmetrize(
     return Symmetrize(new_group);
 }
 
+bool OptimizationList::isLexBasis() const {
+    return basis_type_ == LEX;
+}
+
+bool OptimizationList::isITOBasis() const {
+    return basis_type_ == ITO;
+}
+
 bool OptimizationList::isTzSorted() const {
     return isTzSorted_;
 }
@@ -85,10 +95,6 @@ bool OptimizationList::isPositiveProjectionsEliminated() const {
 
 bool OptimizationList::isSSquaredTransformed() const {
     return isSSquaredTransformed_;
-}
-
-bool OptimizationList::isITOCalculated() const {
-    return isITOCalculated_;
 }
 
 const std::vector<group::Group>& OptimizationList::getGroupsToApply() const {

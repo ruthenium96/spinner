@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "src/common/physical_optimization/OptimizationList.h"
 #include "src/input/JobParser.h"
 #include "src/input/ModelInputParser.h"
 #include "src/input/OptimizationsParser.h"
@@ -82,12 +83,6 @@ TEST(parser_tests, optimizations_parser_modes) {
 mode: none
 )"""";
     EXPECT_NO_THROW(input::OptimizationsParser(YAML::Load(none_string)));
-
-    std::string empty_custom_string = R""""(
-mode: custom
-custom:
-)"""";
-    EXPECT_NO_THROW(input::OptimizationsParser(YAML::Load(empty_custom_string)));
 }
 
 TEST(parser_tests, optimizations_parser_throw) {
@@ -115,13 +110,44 @@ custom:
 )"""";
         EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(string)));
     }
-}
-
-TEST(parser_tests, optimizations_parser_custom) {
     {
         std::string string = R""""(
 mode: custom
 custom:
+)"""";
+        EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(string)));
+    }
+}
+
+TEST(parser_tests, optimizations_parser_basises) {
+    std::string lex_string = R""""(
+mode: custom
+custom:
+  basis: lex
+)"""";
+    EXPECT_NO_THROW(input::OptimizationsParser(YAML::Load(lex_string)));
+
+    std::string ito_string = R""""(
+mode: custom
+custom:
+  basis: ito
+)"""";
+    EXPECT_NO_THROW(input::OptimizationsParser(YAML::Load(ito_string)));
+
+        std::string wrong_basis_string = R""""(
+mode: custom
+custom:
+  basis: _wrong_basis_
+)"""";
+    EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(wrong_basis_string)));
+}
+
+TEST(parser_tests, optimizations_parser_custom_lex) {
+    {
+        std::string string = R""""(
+mode: custom
+custom:
+  basis: lex
 )"""";
         auto parser = input::OptimizationsParser(YAML::Load(string));
 
@@ -133,11 +159,13 @@ custom:
         EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
         EXPECT_FALSE(optimizationList.isSSquaredTransformed());
         EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
+        EXPECT_TRUE(optimizationList.isLexBasis());
     }
     {
         std::string string = R""""(
 mode: custom
 custom:
+  basis: lex
   tz_sorter:
   positive_tz_eliminator:
   s2_transformer:
@@ -152,11 +180,13 @@ custom:
         EXPECT_TRUE(optimizationList.isPositiveProjectionsEliminated());
         EXPECT_TRUE(optimizationList.isSSquaredTransformed());
         EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
+        EXPECT_TRUE(optimizationList.isLexBasis());
     }
     {
         std::string string = R""""(
 mode: custom
 custom:
+  basis: lex
   symmetrizer:
     - group_name: S2
       generators: [[3, 4, 5, 0, 1, 2]]
@@ -173,6 +203,69 @@ custom:
         EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
         EXPECT_FALSE(optimizationList.isSSquaredTransformed());
         EXPECT_EQ(optimizationList.getGroupsToApply().size(), 2);
+        EXPECT_TRUE(optimizationList.isLexBasis());
+    }
+}
+
+TEST(parser_tests, optimizations_parser_custom_ito) {
+    {
+        std::string string = R""""(
+mode: custom
+custom:
+  basis: ito
+)"""";
+        auto parser = input::OptimizationsParser(YAML::Load(string));
+
+        EXPECT_NO_THROW(parser.getOptimizationList().value());
+
+        const auto& optimizationList = parser.getOptimizationList().value();
+
+        EXPECT_FALSE(optimizationList.isTzSorted());
+        EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
+        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
+        EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
+        EXPECT_TRUE(optimizationList.isITOBasis());
+    }
+    {
+        std::string string = R""""(
+mode: custom
+custom:
+  basis: ITO
+  tz_sorter:
+  positive_tz_eliminator:
+)"""";
+        auto parser = input::OptimizationsParser(YAML::Load(string));
+
+        EXPECT_NO_THROW(parser.getOptimizationList().value());
+
+        const auto& optimizationList = parser.getOptimizationList().value();
+
+        EXPECT_TRUE(optimizationList.isTzSorted());
+        EXPECT_TRUE(optimizationList.isPositiveProjectionsEliminated());
+        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
+        EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
+        EXPECT_TRUE(optimizationList.isITOBasis());
+    }
+    {
+        std::string string = R""""(
+mode: custom
+custom:
+  basis: ito
+  symmetrizer:
+    - group_name: S2
+      generators: [[3, 4, 5, 0, 1, 2]]
+)"""";
+        auto parser = input::OptimizationsParser(YAML::Load(string));
+
+        EXPECT_NO_THROW(parser.getOptimizationList().value());
+
+        const auto& optimizationList = parser.getOptimizationList().value();
+
+        EXPECT_FALSE(optimizationList.isTzSorted());
+        EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
+        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
+        EXPECT_EQ(optimizationList.getGroupsToApply().size(), 1);
+        EXPECT_TRUE(optimizationList.isITOBasis());
     }
 }
 
