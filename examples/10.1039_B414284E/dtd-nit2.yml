@@ -17,12 +17,12 @@ model_input:
 optimizations:
   mode: custom
   custom:
+    basis: ito
     tz_sorter:
     positive_tz_eliminator:
     symmetrizer:
       - group_name: S2
         generators: [[1, 0]]
-    s2_transformer:
 job:
   mode: fit
   fit:
@@ -34,6 +34,8 @@ job:
       weights: per_interval
 control:
   print_level: basic
+  dense_precision: double
+  dense_algebra_package: arma
 
 # The answer of calculation:
 #

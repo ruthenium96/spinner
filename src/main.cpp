@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "src/common/Logger.h"
 #include "src/common/runner/Executer.h"
 #include "src/input/Parser.h"

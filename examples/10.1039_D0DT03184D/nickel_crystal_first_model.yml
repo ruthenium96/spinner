@@ -38,6 +38,7 @@ model_input:
 optimizations:
   mode: custom
   custom:
+    basis: lex
     tz_sorter:
     positive_tz_eliminator:
     symmetrizer:
@@ -54,6 +55,8 @@ job:
       weights: per_interval
 control:
   print_level: basic
+  dense_precision: double
+  dense_algebra_package: arma
 
 # The answer of calculation:
 #
