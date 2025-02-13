@@ -57,18 +57,18 @@ void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner::Runner& runner) {
 void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
     EXPECT_EQ(
         runner.getIndexConverter()->get_total_space_size(),
-        size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)->get()));
     EXPECT_EQ(
         runner.getIndexConverter()->get_total_space_size(),
-        size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)));
+        size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)->get()));
     EXPECT_EQ(
         runner.getIndexConverter()->get_total_space_size(),
         size_of_spectrum_with_degeneracy(
-            runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+            runner.getSpectrum(common::QuantityEnum::S_total_squared)->get()));
     EXPECT_EQ(
         runner.getIndexConverter()->get_total_space_size(),
         size_of_spectrum_without_degeneracy(
-            runner.getSpectrum(common::QuantityEnum::S_total_squared)));
+            runner.getSpectrum(common::QuantityEnum::S_total_squared)->get()));
 }
 
 TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {

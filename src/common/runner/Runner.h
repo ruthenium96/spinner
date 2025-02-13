@@ -49,7 +49,7 @@ class Runner {
     std::optional<std::shared_ptr<const model::operators::Operator>>
         getOperator(common::QuantityEnum) const;
     const space::Space& getSpace() const;
-    const Spectrum& getSpectrum(common::QuantityEnum);
+    std::optional<std::reference_wrapper<const Spectrum>> getSpectrum(common::QuantityEnum);
     std::optional<std::reference_wrapper<const Matrix>> getMatrix(common::QuantityEnum);
     std::optional<std::shared_ptr<const model::operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;

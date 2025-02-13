@@ -2,8 +2,10 @@
 
 #include <utility>
 
+#include "magic_enum.hpp"
 #include "src/common/Logger.h"
 #include "src/common/PrintingFunctions.h"
+#include "src/common/Quantity.h"
 #include "src/eigendecompositor/EigendecompositorConstructor.h"
 #include "src/entities/magnetic_susceptibility/worker/WorkerConstructor.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
@@ -55,8 +57,13 @@ void Runner::BuildSpectra() {
         consistentModelOptimizationList_.getOperatorsForExplicitConstruction(),
         consistentModelOptimizationList_.getDerivativeOperatorsForExplicitConstruction(),
         getSpace());
-    // todo: all possible values! through magic_enum
-    common::Logger::trace("{}", getSpectrum(common::Energy));
+    for (const auto& quantity_enum : magic_enum::enum_values<common::QuantityEnum>()) {
+        auto maybe_spectrum = getSpectrum(quantity_enum);
+        if (maybe_spectrum.has_value()) {
+            common::Logger::trace("Spectrum of {}:\n", magic_enum::enum_name(quantity_enum));
+            common::Logger::trace("{}", maybe_spectrum->get());
+        }
+    }
 }
 
 std::optional<std::reference_wrapper<const Matrix>>
@@ -64,8 +71,9 @@ Runner::getMatrix(common::QuantityEnum quantity_enum) {
     return getEigendecompositor()->getMatrix(quantity_enum);
 }
 
-const Spectrum& Runner::getSpectrum(common::QuantityEnum quantity_enum) {
-    return getEigendecompositor()->getSpectrum(quantity_enum)->get();
+std::optional<std::reference_wrapper<const Spectrum>> 
+Runner::getSpectrum(common::QuantityEnum quantity_enum) {
+    return getEigendecompositor()->getSpectrum(quantity_enum);
 }
 
 std::optional<std::shared_ptr<const model::operators::Operator>>

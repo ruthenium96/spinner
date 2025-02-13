@@ -16,7 +16,7 @@ std::vector<EnergyAndSSquared> construct_final_vector(runner::Runner& runner) {
     auto s_squared_vector = factory.createVector();
     auto degeneracy_vector = factory.createVector();
 
-    for (const auto& subspectrum : runner.getSpectrum(common::Energy).blocks) {
+    for (const auto& subspectrum : runner.getSpectrum(common::Energy)->get().blocks) {
         energy_vector->concatenate_with(subspectrum.raw_data);
         degeneracy_vector->add_identical_values(
             subspectrum.raw_data->size(),
@@ -24,7 +24,7 @@ std::vector<EnergyAndSSquared> construct_final_vector(runner::Runner& runner) {
     }
     energy_vector->subtract_minimum();
 
-    for (const auto& subspectrum : runner.getSpectrum(common::S_total_squared).blocks) {
+    for (const auto& subspectrum : runner.getSpectrum(common::S_total_squared)->get().blocks) {
         s_squared_vector->concatenate_with(subspectrum.raw_data);
     }
 
