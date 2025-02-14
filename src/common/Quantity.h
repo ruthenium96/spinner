@@ -1,8 +1,6 @@
 #ifndef SPINNER_QUANTITYENUM_H
 #define SPINNER_QUANTITYENUM_H
 
-#include <string>
-
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
 

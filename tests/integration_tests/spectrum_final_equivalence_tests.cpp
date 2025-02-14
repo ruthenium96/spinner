@@ -1,37 +1,58 @@
+#include <cstddef>
+#include <optional>
 #include "gtest/gtest.h"
+#include "magic_enum.hpp"
+#include "src/common/Quantity.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 #include "src/common/runner/Runner.h"
 
-struct EnergyAndSSquared {
-    std::partial_ordering operator<=>(const EnergyAndSSquared&) const = default;
-    double energy;
-    double s_squared;
-};
+using QuantumValues = std::array<std::optional<double>, magic_enum::enum_count<common::QuantityEnum>()>;
 
-std::vector<EnergyAndSSquared> construct_final_vector(runner::Runner& runner) {
-    std::vector<EnergyAndSSquared> vector;
+std::vector<QuantumValues> construct_final_vector(runner::Runner& runner) {
+    std::vector<QuantumValues> vector;
 
     auto factory = runner.getDataStructuresFactories();
-    auto energy_vector = factory.createVector();
-    auto s_squared_vector = factory.createVector();
     auto degeneracy_vector = factory.createVector();
 
+    std::array<std::optional<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>, 
+        magic_enum::enum_count<common::QuantityEnum>()> values_vectors;
+
+    for (const auto& quantity_enum_ : magic_enum::enum_values<common::QuantityEnum>()) {
+        if (runner.getSpectrum(quantity_enum_).has_value()) {
+            values_vectors[magic_enum::enum_integer<common::QuantityEnum>(quantity_enum_)] 
+                = factory.createVector();
+        } else {
+            values_vectors[magic_enum::enum_integer<common::QuantityEnum>(quantity_enum_)] 
+                = std::nullopt;
+        }
+    }
+
     for (const auto& subspectrum : runner.getSpectrum(common::Energy)->get().blocks) {
-        energy_vector->concatenate_with(subspectrum.raw_data);
         degeneracy_vector->add_identical_values(
             subspectrum.raw_data->size(),
             subspectrum.properties.degeneracy);
     }
-    energy_vector->subtract_minimum();
 
-    for (const auto& subspectrum : runner.getSpectrum(common::S_total_squared)->get().blocks) {
-        s_squared_vector->concatenate_with(subspectrum.raw_data);
+    for (int j = 0; j < values_vectors.size(); ++j) {
+        const auto& quantity_enum_ = magic_enum::enum_value<common::QuantityEnum>(j);
+        if (values_vectors[j].has_value()) {
+            for (const auto& subspectrum : runner.getSpectrum(quantity_enum_)->get().blocks) {
+                values_vectors[j]->get()->concatenate_with(subspectrum.raw_data);
+            }
+        }
     }
 
+    values_vectors[magic_enum::enum_integer<common::QuantityEnum>(common::Energy)]->get()->subtract_minimum();
+
     for (size_t i = 0; i < degeneracy_vector->size(); ++i) {
-        EnergyAndSSquared energy_and_s_squared = {energy_vector->at(i), s_squared_vector->at(i)};
+        QuantumValues quantum_values;
+        for (size_t j = 0; j < values_vectors.size(); ++j) {
+            if (values_vectors[j].has_value()) {
+                quantum_values[j] = values_vectors[j].value()->at(i);
+            }
+        }
         for (size_t j = 0; j < (size_t)degeneracy_vector->at(i); ++j) {
-            vector.push_back(energy_and_s_squared);
+            vector.push_back(quantum_values);
         }
     }
     std::stable_sort(vector.begin(), vector.end());
@@ -43,25 +64,44 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
     auto first_vector = construct_final_vector(simple);
     auto second_vector = construct_final_vector(second);
 
-    double s_squared_sum_first = 0;
-    double s_squared_sum_second = 0;
+    QuantumValues quantum_values_sum_first;
+    QuantumValues quantum_values_sum_second;
+
+    for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
+        if (j == magic_enum::enum_integer<common::QuantityEnum>(common::Energy)) {
+            continue;
+        }
+        if (first_vector.at(0)[j].has_value() && second_vector.at(0)[j].has_value()) {
+            quantum_values_sum_first[j] = 0;
+            quantum_values_sum_second[j] = 0;
+        }
+    }
+
     double last_energy = INFINITY;
 
     for (size_t i = 0; i < first_vector.size(); ++i) {
         // TODO: epsilon
-        EXPECT_NEAR(first_vector[i].energy, second_vector[i].energy, 1e-9);
-        // TODO: now s2-squared values can be incorrect,
-        // EXPECT_NEAR(first_vector[i].s_squared, second_vector[i].s_squared, 1e-9);
+        EXPECT_NEAR(first_vector[i][magic_enum::enum_integer<common::QuantityEnum>(common::Energy)].value(), 
+            second_vector[i][magic_enum::enum_integer<common::QuantityEnum>(common::Energy)].value(), 1e-9);
 
-        // TODO: but sum of s_squared for degenerate eigenvectors is correct
-        if (std::abs(last_energy - first_vector[i].energy) > 1e-5) {
-            EXPECT_NEAR(s_squared_sum_first, s_squared_sum_second, 1e-3);
-            s_squared_sum_first = 0;
-            s_squared_sum_second = 0;
+        // TODO: values may differ, but the sums of values for degenerate eigenvectors should be the same
+        if (std::abs(last_energy - first_vector[i][magic_enum::enum_integer<common::QuantityEnum>(common::Energy)].value()) > 1e-5) {
+            for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
+                if (quantum_values_sum_first[j].has_value() && quantum_values_sum_second[j].has_value()) {
+                    EXPECT_NEAR(quantum_values_sum_first[j].value(), quantum_values_sum_second[j].value(), 1e-3);
+                    quantum_values_sum_first[j] = 0;
+                    quantum_values_sum_second[j] = 0;
+                }
+            }
         }
-        s_squared_sum_first += first_vector[i].s_squared;
-        s_squared_sum_second += second_vector[i].s_squared;
-        last_energy = first_vector[i].energy;
+        for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
+            const auto& quantity_enum_ = magic_enum::enum_value<common::QuantityEnum>(j);
+            if (quantum_values_sum_first[j].has_value() && quantum_values_sum_second[j].has_value()) {
+                quantum_values_sum_first[j].value() += first_vector[i][quantity_enum_].value();
+                quantum_values_sum_second[j].value() += second_vector[i][quantity_enum_].value();  
+            }
+        }
+        last_energy = first_vector[i][magic_enum::enum_integer<common::QuantityEnum>(common::Energy)].value();
     }
 }
 
