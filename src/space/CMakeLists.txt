@@ -4,6 +4,7 @@ add_library(space
         Subspace.h Subspace.cpp
         optimization/Symmetrizer.cpp optimization/Symmetrizer.h
         optimization/TzSorter.cpp optimization/TzSorter.h
+        optimization/TSquaredSorter.cpp optimization/TSquaredSorter.h
         optimization/PositiveProjectionsEliminator.cpp optimization/PositiveProjectionsEliminator.h
         optimization/NonAbelianSimplifier.cpp optimization/NonAbelianSimplifier.h
         optimization/OptimizedSpaceConstructor.cpp optimization/OptimizedSpaceConstructor.h

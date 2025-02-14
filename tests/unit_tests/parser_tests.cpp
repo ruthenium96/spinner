@@ -167,6 +167,7 @@ mode: custom
 custom:
   basis: lex
   tz_sorter:
+  tsquared_sorter:
   positive_tz_eliminator:
   s2_transformer:
 )"""";

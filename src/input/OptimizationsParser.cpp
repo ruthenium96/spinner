@@ -32,6 +32,9 @@ void OptimizationsParser::customParser(YAML::Node custom_node) {
     if (extractValue<YAML::Node>(custom_node, "tz_sorter").IsDefined()) {
         optimizations_list_->TzSort();
     }
+    if (extractValue<YAML::Node>(custom_node, "tsquared_sorter").IsDefined()) {
+        optimizations_list_->TSquaredSort();
+    }
     if (extractValue<YAML::Node>(custom_node, "positive_tz_eliminator").IsDefined()) {
         optimizations_list_->EliminatePositiveProjections();
     }

@@ -16,6 +16,11 @@ OptimizationList& OptimizationList::TzSort() {
     return *this;
 }
 
+OptimizationList& OptimizationList::TSquaredSort() {
+    isTSquaredSorted_ = true;
+    return *this;
+}
+
 OptimizationList& OptimizationList::EliminatePositiveProjections() {
     if (!isTzSorted_) {
         throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
@@ -31,6 +36,9 @@ OptimizationList& OptimizationList::SSquaredTransform() {
     if (!isTzSorted_) {
         throw std::invalid_argument("Cannot perform S2-transformation without tz-sort");
         // actually, can, but it is inefficient
+    }
+    if (!isTSquaredSorted_) {
+        throw std::invalid_argument("Cannot perform S2-transformation without t2-sort");
     }
     for (const auto& group : groupsToApply_) {
         if (!group.properties.is_abelian) {
@@ -87,6 +95,10 @@ bool OptimizationList::isITOBasis() const {
 
 bool OptimizationList::isTzSorted() const {
     return isTzSorted_;
+}
+
+bool OptimizationList::isTSquaredSorted() const {
+    return isTSquaredSorted_;
 }
 
 bool OptimizationList::isPositiveProjectionsEliminated() const {

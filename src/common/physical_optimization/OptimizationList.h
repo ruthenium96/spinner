@@ -13,6 +13,7 @@ class OptimizationList {
     explicit OptimizationList(BasisType basis_type = BasisType::LEX);
 
     OptimizationList& TzSort();
+    OptimizationList& TSquaredSort();
     OptimizationList& EliminatePositiveProjections();
     OptimizationList& SSquaredTransform();
     OptimizationList& Symmetrize(group::Group new_group);
@@ -23,12 +24,14 @@ class OptimizationList {
     bool isLexBasis() const;
     bool isITOBasis() const;
     bool isTzSorted() const;
+    bool isTSquaredSorted() const;
     bool isPositiveProjectionsEliminated() const;
     bool isSSquaredTransformed() const;
     const std::vector<group::Group>& getGroupsToApply() const;
 
   private:
     bool isTzSorted_ = false;
+    bool isTSquaredSorted_ = false;
     bool isPositiveProjectionsEliminated_ = false;
     bool isSSquaredTransformed_ = false;
     std::vector<group::Group> groupsToApply_;

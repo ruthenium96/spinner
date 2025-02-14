@@ -152,7 +152,10 @@ TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_ZFS)
         .assignSymbolToZFSNoAnisotropy(D, 0);
 
     common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+    optimizationList.TzSort()
+        .TSquaredSort()
+        .EliminatePositiveProjections()
+        .SSquaredTransform();
 
     EXPECT_THROW(
         runner::ConsistentModelOptimizationList(model, optimizationList),
@@ -178,9 +181,26 @@ TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_diff
         .assignSymbolToGFactor(g_two, 3);
 
     common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort().EliminatePositiveProjections().SSquaredTransform();
+    optimizationList.TzSort()
+        .TSquaredSort()
+        .EliminatePositiveProjections()
+        .SSquaredTransform();
 
     EXPECT_THROW(
         runner::ConsistentModelOptimizationList(model, optimizationList),
         std::invalid_argument);
+}
+
+TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_without_TSquaredSort) {
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort();
+
+    EXPECT_THROW(optimizationList.SSquaredTransform(), std::invalid_argument);
+}
+
+TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_without_TzSort) {
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TSquaredSort();
+
+    EXPECT_THROW(optimizationList.SSquaredTransform(), std::invalid_argument);
 }

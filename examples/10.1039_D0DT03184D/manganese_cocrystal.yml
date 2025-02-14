@@ -42,6 +42,7 @@ optimizations:
   custom:
     basis: lex
     tz_sorter:
+    tsquared_sorter:
     positive_tz_eliminator:
     symmetrizer:
       - group_name: S2
