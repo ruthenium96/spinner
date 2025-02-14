@@ -22,8 +22,11 @@ OptimizationList& OptimizationList::TSquaredSort() {
 }
 
 OptimizationList& OptimizationList::EliminatePositiveProjections() {
-    if (!isTzSorted_) {
+    if (isLexBasis() && !isTzSorted_) {
         throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
+    }
+    if (isITOBasis() && (!isTzSorted_ || !isTSquaredSorted_)) {
+        throw std::invalid_argument("Cannot eliminate non-minimal projections without tz-sort or t2-sort");
     }
     isPositiveProjectionsEliminated_ = true;
     return *this;

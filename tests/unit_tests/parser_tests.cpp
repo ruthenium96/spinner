@@ -233,6 +233,7 @@ mode: custom
 custom:
   basis: ITO
   tz_sorter:
+  tsquared_sorter:
   positive_tz_eliminator:
 )"""";
         auto parser = input::OptimizationsParser(YAML::Load(string));

@@ -1,10 +1,12 @@
 #include "OptimizedSpaceConstructor.h"
 
 #include "src/common/Logger.h"
+#include "src/common/physical_optimization/OptimizationList.h"
 #include "src/space/optimization/NonAbelianSimplifier.h"
 #include "src/space/optimization/PositiveProjectionsEliminator.h"
 #include "src/space/optimization/S2Transformer.h"
 #include "src/space/optimization/Symmetrizer.h"
+#include "src/space/optimization/TSquaredSorter.h"
 #include "src/space/optimization/TzSorter.h"
 #include "src/spin_algebra/GroupAdapter.h"
 #include "src/common/index_converter/s_squared/OrderOfSummation.h"
@@ -35,7 +37,7 @@ Space OptimizedSpaceConstructor::construct(
         consistentModelOptimizationList.getOptimizationList();
 
     Space space = Space(
-        consistentModelOptimizationList.getModel().getIndexConverter()->get_total_space_size(),
+        indexConverter->get_total_space_size(),
         factories);
 
     bool spaceIsNormalized = true;
@@ -49,6 +51,14 @@ Space OptimizedSpaceConstructor::construct(
     }
 
     common::Logger::separate(1, common::PrintLevel::detailed);
+
+    if (optimizationList.isITOBasis() && optimizationList.isTSquaredSorted()) {
+        TSquaredSorter tsquared_sorter(sSquaredIndexConverter, factories);
+        common::Logger::detailed_msg("T2-sortation has started.");
+        space = tsquared_sorter.apply(std::move(space));
+        common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+        common::Logger::detailed_msg("T2-sortation is finished.");
+    }
 
     if (optimizationList.isPositiveProjectionsEliminated()) {
         uint32_t max_ntz_proj = indexConverter->get_max_ntz_proj();
@@ -67,7 +77,7 @@ Space OptimizedSpaceConstructor::construct(
 
         const auto& group = optimizationList.getGroupsToApply().at(i);
         std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator;
-        if (optimizationList.isITOCalculated()) {
+        if (optimizationList.isITOBasis()) {
             permutator = 
                 std::make_shared<index_converter::s_squared::IndexPermutator>(sSquaredIndexConverter, group);
         } else {
@@ -93,8 +103,7 @@ Space OptimizedSpaceConstructor::construct(
         }
     }
 
-    if (optimizationList.isSSquaredTransformed() && 
-        !consistentModelOptimizationList.getOptimizationList().isITOCalculated()) {
+    if (optimizationList.isSSquaredTransformed()) {
 
         S2Transformer transformer(
             lexIndexConverter,
