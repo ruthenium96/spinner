@@ -43,7 +43,7 @@ optimizations:
     basis: lex
     tz_sorter:
     tsquared_sorter:
-    positive_tz_eliminator:
+    nonminimal_tz_eliminator:
     symmetrizer:
       - group_name: S2
         generators: [[3, 4, 5, 0, 1, 2]]

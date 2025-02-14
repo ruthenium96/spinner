@@ -14,6 +14,7 @@ class OptimizationList {
 
     OptimizationList& TzSort();
     OptimizationList& TSquaredSort();
+    OptimizationList& EliminateNonMininalProjections();
     OptimizationList& EliminatePositiveProjections();
     OptimizationList& SSquaredTransform();
     OptimizationList& Symmetrize(group::Group new_group);
@@ -26,6 +27,7 @@ class OptimizationList {
     bool isTzSorted() const;
     bool isTSquaredSorted() const;
     bool isPositiveProjectionsEliminated() const;
+    bool isNonMinimalProjectionsEliminated() const;
     bool isSSquaredTransformed() const;
     const std::vector<group::Group>& getGroupsToApply() const;
 
@@ -33,6 +35,7 @@ class OptimizationList {
     bool isTzSorted_ = false;
     bool isTSquaredSorted_ = false;
     bool isPositiveProjectionsEliminated_ = false;
+    bool isNonMinimalProjectionsEliminated_ = false;
     bool isSSquaredTransformed_ = false;
     std::vector<group::Group> groupsToApply_;
     BasisType basis_type_;

@@ -168,7 +168,7 @@ custom:
   basis: lex
   tz_sorter:
   tsquared_sorter:
-  positive_tz_eliminator:
+  nonminimal_tz_eliminator:
   s2_transformer:
 )"""";
         auto parser = input::OptimizationsParser(YAML::Load(string));
@@ -178,7 +178,7 @@ custom:
         const auto& optimizationList = parser.getOptimizationList().value();
 
         EXPECT_TRUE(optimizationList.isTzSorted());
-        EXPECT_TRUE(optimizationList.isPositiveProjectionsEliminated());
+        EXPECT_TRUE(optimizationList.isNonMinimalProjectionsEliminated());
         EXPECT_TRUE(optimizationList.isSSquaredTransformed());
         EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
         EXPECT_TRUE(optimizationList.isLexBasis());

@@ -22,13 +22,24 @@ OptimizationList& OptimizationList::TSquaredSort() {
 }
 
 OptimizationList& OptimizationList::EliminatePositiveProjections() {
-    if (isLexBasis() && !isTzSorted_) {
+    if (isNonMinimalProjectionsEliminated_) {
+        throw std::invalid_argument("Cannot simultaneously eliminate both non-minimal and positive projections");
+    }
+    if (!isTzSorted_) {
         throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
     }
-    if (isITOBasis() && (!isTzSorted_ || !isTSquaredSorted_)) {
+    isPositiveProjectionsEliminated_ = true;
+    return *this;
+}
+
+OptimizationList& OptimizationList::EliminateNonMininalProjections() {
+    if (isPositiveProjectionsEliminated_) {
+        throw std::invalid_argument("Cannot simultaneously eliminate both positive and non-minimal projections");
+    }
+    if (!isTzSorted_ || !isTSquaredSorted_) {
         throw std::invalid_argument("Cannot eliminate non-minimal projections without tz-sort or t2-sort");
     }
-    isPositiveProjectionsEliminated_ = true;
+    isNonMinimalProjectionsEliminated_ = true;
     return *this;
 }
 
@@ -38,10 +49,12 @@ OptimizationList& OptimizationList::SSquaredTransform() {
     }
     if (!isTzSorted_) {
         throw std::invalid_argument("Cannot perform S2-transformation without tz-sort");
-        // actually, can, but it is inefficient
     }
     if (!isTSquaredSorted_) {
         throw std::invalid_argument("Cannot perform S2-transformation without t2-sort");
+    }
+    if (!isNonMinimalProjectionsEliminated_) {
+        throw std::invalid_argument("Cannot perform S2-transformation without elimination of non-minimal projections");
     }
     for (const auto& group : groupsToApply_) {
         if (!group.properties.is_abelian) {
@@ -106,6 +119,10 @@ bool OptimizationList::isTSquaredSorted() const {
 
 bool OptimizationList::isPositiveProjectionsEliminated() const {
     return isPositiveProjectionsEliminated_;
+}
+
+bool OptimizationList::isNonMinimalProjectionsEliminated() const {
+    return isNonMinimalProjectionsEliminated_;
 }
 
 bool OptimizationList::isSSquaredTransformed() const {

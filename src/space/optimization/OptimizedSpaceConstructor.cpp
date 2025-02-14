@@ -1,9 +1,11 @@
 #include "OptimizedSpaceConstructor.h"
+#include <memory>
 
 #include "src/common/Logger.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 #include "src/space/optimization/NonAbelianSimplifier.h"
 #include "src/space/optimization/PositiveProjectionsEliminator.h"
+#include "src/space/optimization/NonMinimalProjectionsEliminator.h"
 #include "src/space/optimization/S2Transformer.h"
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TSquaredSorter.h"
@@ -68,6 +70,17 @@ Space OptimizedSpaceConstructor::construct(
         space = positiveProjectionsEliminator.apply(std::move(space));
         common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
         common::Logger::detailed_msg("Positive projections elimination is finished.");
+        common::Logger::separate(1, common::detailed);
+    }
+
+    if (optimizationList.isNonMinimalProjectionsEliminated() && optimizationList.isITOBasis()) {
+        uint32_t max_ntz_proj = indexConverter->get_max_ntz_proj();
+
+        NonMinimalProjectionsEliminator nonMinimalProjectionsEliminator(max_ntz_proj);
+        common::Logger::detailed_msg("Non-minimal projections elimination has started.");
+        space = nonMinimalProjectionsEliminator.apply(std::move(space));
+        common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+        common::Logger::detailed_msg("Non-minimal projections elimination is finished.");
         common::Logger::separate(1, common::detailed);
     }
 

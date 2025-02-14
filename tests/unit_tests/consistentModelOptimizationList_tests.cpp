@@ -154,7 +154,7 @@ TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_ZFS)
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.TzSort()
         .TSquaredSort()
-        .EliminatePositiveProjections()
+        .EliminateNonMininalProjections()
         .SSquaredTransform();
 
     EXPECT_THROW(
@@ -183,7 +183,7 @@ TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_diff
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.TzSort()
         .TSquaredSort()
-        .EliminatePositiveProjections()
+        .EliminateNonMininalProjections()
         .SSquaredTransform();
 
     EXPECT_THROW(
@@ -191,16 +191,23 @@ TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_diff
         std::invalid_argument);
 }
 
-TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_without_TSquaredSort) {
+TEST(consistentModelOptimizationList_tests, throw_NonMinimalProjectionsEliminator_withour_TSquaredSort) {
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.TzSort();
 
-    EXPECT_THROW(optimizationList.SSquaredTransform(), std::invalid_argument);
+    EXPECT_THROW(optimizationList.EliminateNonMininalProjections(), std::invalid_argument);
 }
 
-TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_without_TzSort) {
+TEST(consistentModelOptimizationList_tests, throw_NonMinimalProjectionsEliminator_withour_TzSort) {
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.TSquaredSort();
+
+    EXPECT_THROW(optimizationList.EliminateNonMininalProjections(), std::invalid_argument);
+}
+
+TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_without_NonMininalProjectionsElimination) {
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.TzSort().TSquaredSort();
 
     EXPECT_THROW(optimizationList.SSquaredTransform(), std::invalid_argument);
 }

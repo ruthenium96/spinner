@@ -21,12 +21,12 @@ space::Space S2Transformer::apply(Space&& space) const {
         Subspace& subspace = space.getBlocks()[i];
 
         // It is total_proj + max_total_spin = ntz_value
-        // We need 2 * |total_proj| + 1 = 2 * |ntz_value - max_total_spin| + 1 =
-        // |2 * ntz_value - 2 * max_total_spin - 1 + 1| + 1 =
-        // |2 * ntz_value - max_total_proj + 1| + 1
+        // We need 2 * (-total_proj) + 1 = - 2 * (ntz_value - max_total_spin) + 1 =
+        // - (2 * ntz_value - 2 * max_total_spin - 1 + 1) + 1 =
+        // - (2 * ntz_value - max_total_proj + 1) + 1
         auto ntz_value = subspace.properties.n_proj.value();
-        int a = 2 * (int)ntz_value + 1 - (int)converter_->get_max_ntz_proj();
-        spin_algebra::Multiplicity current_mult = std::abs(a) + 1;
+        int a = - (2 * (int)ntz_value + 1 - (int)converter_->get_max_ntz_proj());
+        spin_algebra::Multiplicity current_mult = a + 1;
 
         spin_algebra::SSquaredLevelAndRepresentations::Properties subspace_properties;
         subspace_properties.multiplicity = current_mult;
@@ -43,10 +43,6 @@ space::Space S2Transformer::apply(Space&& space) const {
 
         subspace.properties.total_mult = current_mult;
         subspace.properties.degeneracy *= current_mult;
-        // TODO: for cases with TzSorter and without PositiveProjectionsEliminator:
-        if (current_mult != 1) {
-            subspace.properties.degeneracy /= 2;
-        }
 
         vector_result.emplace_back(std::move(subspace));
     }
