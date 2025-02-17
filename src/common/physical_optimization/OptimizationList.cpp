@@ -86,8 +86,8 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
     if (basis_type_ == ITO && !new_group.properties.is_abelian) {
         throw std::invalid_argument("Currently cannot perform use ITO-basis with non-Abelian symmetries");
     }
-    if (isSSquaredTransformed_) {
-        throw std::invalid_argument("Cannot symmetrize *AFTER* S2-transformation");
+    if (isSSquaredTransformed_ && !new_group.properties.is_abelian) {
+        throw std::invalid_argument("Currently cannot perform S2-transformation with non-Abelian symmetries");
     }
     groupsToApply_.emplace_back(std::move(new_group));
 

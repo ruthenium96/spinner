@@ -13,7 +13,7 @@ TEST(consistentModelOptimizationList_tests, throw_noncommutative_groups) {
     EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0, 2}}), std::invalid_argument);
 }
 
-TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_pemutation) {
+TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_permutation) {
     std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4};
     model::ModelInput model(mults);
     common::physical_optimization::OptimizationList optimizationList;

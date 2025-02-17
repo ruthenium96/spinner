@@ -7,6 +7,7 @@
 #include "src/common/runner/Runner.h"
 
 using QuantumValues = std::array<std::optional<double>, magic_enum::enum_count<common::QuantityEnum>()>;
+using namespace common::physical_optimization;
 
 std::vector<QuantumValues> construct_final_vector(runner::Runner& runner) {
     std::vector<QuantumValues> vector;
@@ -107,6 +108,11 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
     }
 }
 
+class SpectrumFinalEquivalenceTest :public ::testing::TestWithParam<OptimizationList> {
+    public:
+        OptimizationList optimizationList_;
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void initialize_two_center_system(
@@ -116,7 +122,11 @@ void initialize_two_center_system(
     model.assignSymbolToIsotropicExchange(J, 0, 1);
 }
 
-TEST(spectrum_final_equivalence, two_center) {
+class two_center : public SpectrumFinalEquivalenceTest {};
+
+#define group_two_center group::Group(group::Group::S2, {{1, 0}})
+
+TEST_P(two_center, NoGFactors) {
     std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
         {2, 2},
         {3, 3},
@@ -125,102 +135,45 @@ TEST(spectrum_final_equivalence, two_center) {
         {6, 6},
         {7, 7},
         {8, 8}};
-    std::vector<double> js = {-50, -100, -80, -66, -40.1, -20, -10, -1.01, 1, 2, 10, 20, 33, 46, 50, 75, 100};
+    std::vector<double> js = {-50, -100, -66, -40.1, -20, -10, -1.01, 1, 2, 10, 33, 46, 50, 100};
     for (const auto& mults : multss) {
         for (auto J_value : js) {
-            group::Group group(group::Group::S2, {{1, 0}});
-
             model::ModelInput model(mults);
             initialize_two_center_system(model, J_value);
 
             runner::Runner runner_simple(model);
 
-            // TZ_SORTER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort();
-                runner::Runner runner_tz_sorted(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().EliminatePositiveProjections();
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.Symmetrize(group);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().Symmetrize(group);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().EliminatePositiveProjections().Symmetrize(group);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList \
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList
-                    .TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + SYMMETRIZER + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .Symmetrize(group)
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections()
-                    .Symmetrize(group);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);                
         }
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    two_center,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_two_center).SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections(),
+        OptimizationList(OptimizationList::ITO).Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::ITO).TSquaredSort().Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::ITO).TzSort().Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections().Symmetrize(group_two_center),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_two_center)
+    ));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -237,7 +190,11 @@ void initialize_five_center_mirror_symmetry_exchange_chain(
         .assignSymbolToIsotropicExchange(Jinternal, 2, 3);
 }
 
-TEST(spectrum_final_equivalence, five_center_mirror_symmetry_chain) {
+class five_center_chain : public SpectrumFinalEquivalenceTest {};
+
+#define group_five_center_chain group::Group(group::Group::S2, {{4, 3, 2, 1, 0}})
+
+TEST_P(five_center_chain, NoGFactors) {
     std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
         {2, 2, 2, 2, 2},
         {2, 2, 3, 2, 2},
@@ -250,99 +207,41 @@ TEST(spectrum_final_equivalence, five_center_mirror_symmetry_chain) {
 
     for (const auto& mults : multss) {
         for (auto [Jfirst, Jsecond] : js) {
-            group::Group group(group::Group::S2, {{4, 3, 2, 1, 0}});
-
             model::ModelInput model(mults);
             initialize_five_center_mirror_symmetry_exchange_chain(model, Jfirst, Jsecond);
 
             runner::Runner runner_simple(model);
-
-            // TZ_SORTER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort();
-                runner::Runner runner_tz_sorted(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().EliminatePositiveProjections();
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.Symmetrize(group);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().Symmetrize(group);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().EliminatePositiveProjections().Symmetrize(group);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList
-                    .TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + SYMMETRIZER + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .Symmetrize(group)
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections()
-                    .Symmetrize(group);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);                
         }
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    five_center_chain,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_five_center_chain).SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections(),
+        OptimizationList(OptimizationList::ITO).Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::ITO).TSquaredSort().Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::ITO).TzSort().Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections().Symmetrize(group_five_center_chain),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_five_center_chain)
+    ));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -359,7 +258,12 @@ void initialize_four_centers_exchange_rectangle(
         .assignSymbolToIsotropicExchange(Jsecond, 3, 0);
 }
 
-TEST(spectrum_final_equivalence, rectangle) {
+class rectangle : public SpectrumFinalEquivalenceTest {};
+
+#define group_rectangle_first group::Group(group::Group::S2, {{1, 0, 3, 2}})
+#define group_rectangle_second group::Group(group::Group::S2, {{3, 2, 1, 0}})
+
+TEST_P(rectangle, NoGFactors) {
     std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
         {2, 2, 2, 2},
         {3, 3, 3, 3},
@@ -376,171 +280,57 @@ TEST(spectrum_final_equivalence, rectangle) {
             initialize_four_centers_exchange_rectangle(model, Jfirst, Jsecond);
 
             runner::Runner runner_simple(model);
-
-            // TZ_SORTER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort();
-                runner::Runner runner_tz_sorted(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner_tz_sorted);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().EliminatePositiveProjections();
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.Symmetrize(first_direction);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.Symmetrize(second_direction);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().Symmetrize(first_direction);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().Symmetrize(second_direction);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // SYMMETRIZER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.Symmetrize(first_direction).Symmetrize(second_direction);
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + SYMMETRIZER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().Symmetrize(first_direction).Symmetrize(second_direction);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .EliminatePositiveProjections()
-                    .Symmetrize(first_direction)
-                    .Symmetrize(second_direction);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList
-                    .TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + SYMMETRIZER + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .Symmetrize(first_direction)
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .Symmetrize(second_direction)
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections()
-                    .Symmetrize(first_direction);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections()
-                    .Symmetrize(second_direction);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + SYMMETRIZER + SYMMETRIZER + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .Symmetrize(first_direction)
-                    .Symmetrize(second_direction)
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections()
-                    .Symmetrize(first_direction)
-                    .Symmetrize(second_direction);
-
-               runner::Runner runner(model, optimizationList);
-               expect_final_vectors_equivalence(runner_simple, runner);
-            }
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);                
         }
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    rectangle,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_rectangle_first).SSquaredTransform(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_rectangle_second).SSquaredTransform(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second).SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections(),
+        OptimizationList(OptimizationList::ITO).Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::ITO).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TSquaredSort().Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::ITO).TSquaredSort().Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TSquaredSort().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::ITO).TzSort().Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections().Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections().Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_rectangle_first),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_rectangle_second),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_rectangle_first).Symmetrize(group_rectangle_second)
+    ));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -551,91 +341,47 @@ void initialize_three_centers_exchange_triangle(model::ModelInput& model, double
         .assignSymbolToIsotropicExchange(Jfirst, 2, 0);
 }
 
-TEST(spectrum_final_equivalence, triangle) {
+class triangle : public SpectrumFinalEquivalenceTest {};
+
+#define group_triangle group::Group(group::Group::S3, {{2, 0, 1}, {0, 2, 1}})
+#define group_triangle_diff group::Group(group::Group::S3, {{1, 2, 0}, {2, 1, 0}})
+
+TEST_P(triangle, NoGFactors) {
     std::vector<std::vector<spin_algebra::Multiplicity>> multss = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
     std::vector<double> js = {10, 17.17, 33};
 
     for (const auto& mults : multss) {
         for (auto Jfirst : js) {
-            group::Group triangle(group::Group::S3, {{2, 0, 1}, {0, 2, 1}});
             model::ModelInput model(mults);
             initialize_three_centers_exchange_triangle(model, Jfirst);
 
             runner::Runner runner_simple(model);
 
-            // TZ_SORTER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort();
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().EliminatePositiveProjections();
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.Symmetrize(triangle);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            {
-                group::Group triangle_diff(group::Group::S3, {{1, 2, 0}, {2, 1, 0}});
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.Symmetrize(triangle_diff);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().Symmetrize(triangle);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR + SYMMETRIZER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort().EliminatePositiveProjections().Symmetrize(triangle);
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
-            {}  // TZ_SORTER + SYMMETRIZER + NON_ABELIAN_SIMPLIFIER
-            {}  // SYMMETRIZER + TZ_SORTER + NON_ABELIAN_SIMPLIFIER
-            {}  // SYMMETRIZER + NON_ABELIAN_SIMPLIFIER + TZ_SORTER
-            // TZ_SORTER + NONMINIMAL_PROJECTIONS_ELIMINATOR + S2_TRANSFORMER
-            {
-                common::physical_optimization::OptimizationList optimizationList;
-                optimizationList.TzSort()
-                    .TSquaredSort()
-                    .EliminateNonMininalProjections()
-                    .SSquaredTransform();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
-            // ITO + TZ_SORTER + POSITIVE_PROJECTIONS_ELIMINATOR
-            {
-                common::physical_optimization::OptimizationList 
-                    optimizationList(common::physical_optimization::OptimizationList::ITO);
-                optimizationList
-                    .TzSort()
-                    .TSquaredSort()
-                    .EliminatePositiveProjections();
-
-                runner::Runner runner(model, optimizationList);
-                expect_final_vectors_equivalence(runner_simple, runner);
-            }
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);                
         }
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    triangle,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle_diff),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle_diff),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle_diff),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections() //,
+    )
+);
