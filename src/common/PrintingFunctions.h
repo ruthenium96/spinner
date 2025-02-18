@@ -24,6 +24,7 @@ std::ostream& operator<<(std::ostream& os, const Spectrum& spectrum);
 std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum);
 template <> struct fmt::formatter<Spectrum> : fmt::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix);
+template <> struct fmt::formatter<Matrix> : fmt::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);

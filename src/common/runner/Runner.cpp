@@ -58,6 +58,11 @@ void Runner::BuildSpectra() {
         consistentModelOptimizationList_.getDerivativeOperatorsForExplicitConstruction(),
         getSpace());
     for (const auto& quantity_enum : magic_enum::enum_values<common::QuantityEnum>()) {
+        auto maybe_matrix = getMatrix(quantity_enum);
+        if (maybe_matrix.has_value()) {
+            common::Logger::trace("Matrix of {}:\n", magic_enum::enum_name(quantity_enum));
+            common::Logger::trace("{}", maybe_matrix->get());
+        }
         auto maybe_spectrum = getSpectrum(quantity_enum);
         if (maybe_spectrum.has_value()) {
             common::Logger::trace("Spectrum of {}:\n", magic_enum::enum_name(quantity_enum));
