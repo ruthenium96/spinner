@@ -105,38 +105,55 @@ double ClebshGordanCalculator::ninej_element(
             return 0;
         }
         return 1 / sqrt((2 * left_one + 1) * (2 * left_two + 1) * (2 * left_fin + 1));
-    } else if (rank_one == 0 && rank_two == 1 && rank_fin == 1) {
+    } else if (rank_one == 0 && rank_two == rank_fin) {
         if (left_one != right_one) {
             return 0;
         }
         double answer = 1;
-        if ((int) (left_one + right_two + left_fin + 1) % 2 == 1) {
+        if ((int) (left_one + right_two + left_fin + rank_two) % 2 == 1) {
             answer *= -1;
         }
-        answer /= sqrt(3 * (2 * left_one + 1));
-        answer *= wigner6j_coefficient(right_fin, left_fin, 1, left_two, right_two, left_one);
+        answer /= sqrt((2 * rank_two + 1) * (2 * left_one + 1));
+        answer *= wigner6j_coefficient(right_fin, left_fin, rank_two, left_two, right_two, left_one);
         return answer;
-    } else if (rank_one == 1 && rank_two == 0 && rank_fin == 1) {
+    } else if (rank_one == rank_fin && rank_two == 0) {
         if (left_two != right_two) {
             return 0;
         }
         double answer = 1;
-        if ((int) (left_one + right_fin + left_two + 1) % 2 == 1) {
+        if ((int) (left_one + right_fin + left_two + rank_one) % 2 == 1) {
             answer *= -1;
         }
-        answer /= sqrt(3 * (2 * left_two + 1));
-        answer *= wigner6j_coefficient(right_one, left_one, 1, left_fin, right_fin, left_two);
+        answer /= sqrt((2 * rank_one + 1) * (2 * left_two + 1));
+        answer *= wigner6j_coefficient(right_one, left_one, rank_one, left_fin, right_fin, left_two);
         return answer;
-    } else if (rank_one == 1 && rank_two == 1 && rank_fin == 0) {
+    } else if (rank_one == rank_two && rank_fin == 0) {
         if (left_fin != right_fin) {
             return 0;
         }
         double answer = 1;
-        if ((int) (right_one + left_two + left_fin + 1) % 2 == 1) {
+        if ((int) (right_one + left_two + left_fin + rank_one) % 2 == 1) {
             answer *= -1;
         }
-        answer /= sqrt(3 * (2 * left_fin + 1));
-        answer *= wigner6j_coefficient(left_one, right_one, 1, right_two, left_two, left_fin);
+        answer /= sqrt((2 * rank_one + 1) * (2 * left_fin + 1));
+        answer *= wigner6j_coefficient(left_one, right_one, rank_one, right_two, left_two, left_fin);
+        return answer;
+    } else if (rank_one == 1 && rank_two == 1 && rank_fin == 2) {
+        // x can be right_one - 1, right_one and right_one + 1 due triangle rule
+        double answer = 0;
+        for (double x = right_one - 1; x <= right_one + 1; ++x) {
+            if (x < 0) {
+                continue;
+            }
+            double temp_answer = 2 * x + 1;
+            temp_answer *= wigner6j_coefficient(left_one, right_one, 1, 1, 2, x);
+            temp_answer *= wigner6j_coefficient(left_two, right_two, 1, right_one, x, right_fin);
+            temp_answer *= wigner6j_coefficient(left_fin, right_fin, 2, x, left_one, left_two);
+            answer += temp_answer;
+        }
+        if ((int)(2 * right_one) % 2 == 1) {
+            answer *= -1;
+        }
         return answer;
     } else {
         std::string ranks = std::to_string(rank_one) + " " + std::to_string(rank_two) + " " + std::to_string(rank_fin); 
