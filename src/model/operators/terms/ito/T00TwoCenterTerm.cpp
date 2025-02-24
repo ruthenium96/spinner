@@ -1,8 +1,7 @@
-#include "ScalarProductTerm.h"
+#include "T00TwoCenterTerm.h"
 
 #include <cmath>
 #include <cstdint>
-#include <iostream>
 #include <utility>
 #include <vector>
 

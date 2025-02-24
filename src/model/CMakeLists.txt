@@ -6,7 +6,7 @@ add_library(model
         operators/terms/lexicographic/SzSzTwoCenterTerm.cpp operators/terms/lexicographic/SzSzTwoCenterTerm.h
         operators/terms/lexicographic/SzSzOneCenterTerm.cpp operators/terms/lexicographic/SzSzOneCenterTerm.h
         operators/terms/LocalSSquaredOneCenterTerm.cpp operators/terms/LocalSSquaredOneCenterTerm.h
-        operators/terms/ito/ScalarProductTerm.cpp operators/terms/ito/ScalarProductTerm.h
+        operators/terms/ito/T00TwoCenterTerm.cpp operators/terms/ito/T00TwoCenterTerm.h
         operators/terms/ito/TotalSSquaredTerm.cpp operators/terms/ito/TotalSSquaredTerm.h
         operators/terms/Term.h
         operators/AbstractOperatorConstructor.h
