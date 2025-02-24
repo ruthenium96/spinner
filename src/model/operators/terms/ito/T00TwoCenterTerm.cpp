@@ -32,7 +32,7 @@ inline double local_product(const std::vector<spin_algebra::Multiplicity>& mults
 
 namespace model::operators::ito {
 
-ScalarProductTerm::ScalarProductTerm(
+T00TwoCenterTerm::T00TwoCenterTerm(
     std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
     std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters,
     double prefactor) :
@@ -41,7 +41,7 @@ ScalarProductTerm::ScalarProductTerm(
     coefficients_(std::move(isotropic_exchange_parameters)),
     prefactor_(prefactor) {}
 
-void ScalarProductTerm::construct(
+void T00TwoCenterTerm::construct(
     quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
@@ -57,7 +57,7 @@ void ScalarProductTerm::construct(
     }
 }
 
-void ScalarProductTerm::add_scalar_product(
+void T00TwoCenterTerm::add_scalar_product(
     quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
@@ -96,12 +96,12 @@ void ScalarProductTerm::add_scalar_product(
     }
 }
 
-std::unique_ptr<Term> ScalarProductTerm::clone() const {
-    return std::make_unique<ScalarProductTerm>(converter_, coefficients_, prefactor_);
+std::unique_ptr<Term> T00TwoCenterTerm::clone() const {
+    return std::make_unique<T00TwoCenterTerm>(converter_, coefficients_, prefactor_);
 }
 
 std::vector<uint8_t>
-ScalarProductTerm::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) const {
+T00TwoCenterTerm::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) const {
     // todo: cache results, there is just O(N^3) memory required
     auto number_of_initial_mults = converter_->get_mults().size();
     auto number_of_all_mults = number_of_initial_mults + 
@@ -129,7 +129,7 @@ ScalarProductTerm::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) c
     return answer;
 }
 
-double ScalarProductTerm::total_9j_coefficient(
+double T00TwoCenterTerm::total_9j_coefficient(
     const index_converter::s_squared::Level& left,
     const index_converter::s_squared::Level& right,
     const std::vector<uint8_t>& ranks,
@@ -175,7 +175,7 @@ double ScalarProductTerm::total_9j_coefficient(
     return ninejs * square_roots_prod * local_prod / sqrt(final_mult);
 }
 
-void ScalarProductTerm::construct_overlapping_levels(const index_converter::s_squared::Level& level, 
+void T00TwoCenterTerm::construct_overlapping_levels(const index_converter::s_squared::Level& level, 
     const std::vector<uint8_t>& ranks,
     std::vector<index_converter::s_squared::Level>& answer) const {
     auto number_of_summations = level.getInitialMultiplicities()->size();

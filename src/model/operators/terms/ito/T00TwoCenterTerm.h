@@ -8,9 +8,9 @@
 
 namespace model::operators::ito {
 
-class ScalarProductTerm : public TwoCenterTerm {
+class T00TwoCenterTerm : public TwoCenterTerm {
   public:
-    ScalarProductTerm(
+    T00TwoCenterTerm(
         std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters,
         double prefactor = 1);
