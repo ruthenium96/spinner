@@ -12,7 +12,8 @@ class ScalarProductTerm : public TwoCenterTerm {
   public:
     ScalarProductTerm(
         std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
-        std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters);
+        std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters,
+        double prefactor = 1);
 
     std::unique_ptr<Term> clone() const override;
 
@@ -26,6 +27,7 @@ class ScalarProductTerm : public TwoCenterTerm {
   private:
     std::shared_ptr<const index_converter::s_squared::IndexConverter> converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
+    const double prefactor_;
     spin_algebra::ClebshGordanCalculator clebshGordanCalculator_;
 
     void add_scalar_product(

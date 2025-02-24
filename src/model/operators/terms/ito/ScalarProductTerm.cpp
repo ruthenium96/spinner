@@ -35,10 +35,12 @@ namespace model::operators::ito {
 
 ScalarProductTerm::ScalarProductTerm(
     std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
-    std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters) :
+    std::shared_ptr<const TwoDNumericalParameters<double>> isotropic_exchange_parameters,
+    double prefactor) :
     TwoCenterTerm(isotropic_exchange_parameters->size()),
     converter_(converter),
-    coefficients_(std::move(isotropic_exchange_parameters)) {}
+    coefficients_(std::move(isotropic_exchange_parameters)),
+    prefactor_(prefactor) {}
 
 void ScalarProductTerm::construct(
     quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
@@ -46,7 +48,7 @@ void ScalarProductTerm::construct(
     uint32_t center_a,
     uint32_t center_b) const {
     if (!std::isnan(coefficients_->at(center_a, center_b))) {
-        double factor = 2 * sqrt(3) * coefficients_->at(center_a, center_b);
+        double factor = prefactor_ * coefficients_->at(center_a, center_b);
         add_scalar_product(
             matrix,
             indexes_of_vectors,
@@ -67,12 +69,12 @@ void ScalarProductTerm::add_scalar_product(
 
     std::vector<index_converter::s_squared::Level> levels_right;
 
+    double local_prod = local_product(converter_->get_mults(), ranks);
+
     for (const auto& index_of_vector_row : indexes_of_vectors) {
         const auto& state_left = converter_->convert_index_to_state(index_of_vector_row);
         const auto& level_left = state_left.first;
         auto projection = state_left.second;
-
-        double local_prod = local_product(*level_left.getInitialMultiplicities(), ranks);
 
         construct_overlapping_levels(level_left, ranks, levels_right);
         for (const auto& level_right : levels_right) {
@@ -85,6 +87,8 @@ void ScalarProductTerm::add_scalar_product(
                 continue;
             }
             double total_9j = total_9j_coefficient(level_left, level_right, ranks, local_prod);
+            // due to the Wigher-Echart theorem, we also need to multiply by CG-coefficient,
+            // but it is (S M 0 0; S M) = 1
             double value = factor * total_9j;
             if (value != 0.0) {
                 matrix.add_to_position(value, index_of_vector_row, index_of_vector_col);
@@ -94,7 +98,7 @@ void ScalarProductTerm::add_scalar_product(
 }
 
 std::unique_ptr<Term> ScalarProductTerm::clone() const {
-    return std::make_unique<ScalarProductTerm>(converter_, coefficients_);
+    return std::make_unique<ScalarProductTerm>(converter_, coefficients_, prefactor_);
 }
 
 std::vector<uint8_t>
