@@ -1,180 +1,65 @@
 #include "Model.h"
 
+#include <memory>
 #include <utility>
 
-#include "src/model/operators/terms/LocalSSquaredOneCenterTerm.h"
-#include "src/model/operators/terms/lexicographic/ScalarProductTerm.h"
-#include "src/model/operators/terms/lexicographic/SzSzOneCenterTerm.h"
-#include "src/model/operators/terms/lexicographic/SzSzTwoCenterTerm.h"
-
-#include "src/model/operators/terms/ScalarProductITOTerm.h"
+#include "src/model/operators/Operator.h"
 
 namespace model {
-Model::Model(ModelInput modelInput) :
+Model::Model(ModelInput modelInput, std::unique_ptr<operators::AbstractOperatorConstructor>&& operator_constructor) :
     numericalWorker_(modelInput.getSymbolicWorker(), modelInput.getMults().size()),
-    converter_(std::make_shared<index_converter::lexicographic::IndexConverter>(modelInput.getMults())) {
+    operator_constructor_(std::move(operator_constructor)) {
     operators_map_[common::Energy] = std::make_shared<operators::Operator>();
-    operators_map_ito_[common::Energy] = std::make_shared<operators::Operator>();
-    constructSSquared();
+    operators_map_[common::S_total_squared] = operator_constructor_->constructSSquared();
+    
     if (getSymbolicWorker().isGFactorInitialized()) {
-        constructGSzSquared();
-        constructGSzSquaredDerivatives();
+        operators_map_[common::gSz_total_squared] = operator_constructor_->constructGSzSquaredLike(
+            getNumericalWorker().getGGParameters().first,
+            getNumericalWorker().getGGParameters().second);
+
+        for (const auto& symbol :
+            getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
+            operators::Operator operator_derivative = operators::Operator();
+            auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
+            derivatives_map_[{common::gSz_total_squared, symbol}] = operator_constructor_->constructGSzSquaredLike(
+                pair_of_parameters.first,
+                pair_of_parameters.second
+            );
+        }
     }
 
     if (getSymbolicWorker().isZFSInitialized()) {
-        constructZeroFieldSplitting();
-        constructZeroFieldSplittingDerivative();
+        operator_constructor_->emplaceZeroFieldSplittingLike(
+            operators_map_[common::Energy], 
+            getNumericalWorker().getZFSParameters().first);
+
+        for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::D)) {
+            auto operator_derivative = std::make_shared<operators::Operator>();
+            auto derivative_parameters = getNumericalWorker().constructZFSDerivativeParameters(symbol);
+            operator_constructor_->emplaceZeroFieldSplittingLike(operator_derivative, derivative_parameters);
+            derivatives_map_[{common::Energy, symbol}] = operator_derivative;
+        }
     }
 
     if (getSymbolicWorker().isIsotropicExchangeInitialized()) {
-        constructIsotropicExchange();
-        constructIsotropicExchangeDerivatives();
+        operator_constructor_->emplaceIsotropicExchangeLike(
+            operators_map_[common::Energy],
+            getNumericalWorker().getIsotropicExchangeParameters());
+
+        for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::J)) {
+            auto operator_derivative = std::make_shared<operators::Operator>();
+            operator_constructor_->emplaceIsotropicExchangeLike(
+                operator_derivative, 
+                getNumericalWorker().constructIsotropicExchangeDerivativeParameters(symbol));
+            derivatives_map_[{common::Energy, symbol}] = operator_derivative;
+        }
     }
-}
-
-void Model::constructSSquared() {
-    if (operators_history_.s_squared) {
-        return;
-    }
-
-    operators_map_[common::S_total_squared] =
-        std::make_shared<operators::Operator>(operators::Operator::s_squared(converter_));
-
-    operators_history_.s_squared = true;
-}
-
-void Model::constructGSzSquared() {
-    if (operators_history_.g_sz_squared) {
-        return;
-    }
-
-    operators_map_[common::gSz_total_squared] =
-        std::make_shared<operators::Operator>(operators::Operator::g_sz_squared(
-            converter_,
-            getNumericalWorker().getGGParameters().first,
-            getNumericalWorker().getGGParameters().second));
-
-    operators_history_.g_sz_squared = true;
-}
-
-void Model::constructIsotropicExchange() {
-    if (operators_history_.isotropic_exchange_in_hamiltonian) {
-        return;
-    }
-    operators_map_[common::Energy]->emplace_back(
-        std::make_unique<const operators::lexicographic::ScalarProductTerm>(
-            converter_,
-            getNumericalWorker().getIsotropicExchangeParameters()));
-    operators_history_.isotropic_exchange_in_hamiltonian = true;
-}
-
-void Model::constructIsotropicExchangeITO(const std::shared_ptr<const spin_algebra::SSquaredConverter>& sSquaredConverter) {
-    if (operators_history_.isotropic_exchange_in_ito_hamiltonian) {
-        return;
-    }
-    operators_map_ito_[common::Energy]->emplace_back(
-        std::make_unique<const operators::ScalarProductITOTerm>(
-            sSquaredConverter,
-            getNumericalWorker().getIsotropicExchangeParameters()
-            )
-    );
-    operators_history_.isotropic_exchange_in_ito_hamiltonian = true;
-}
-
-void Model::constructZeroFieldSplitting() {
-    if (operators_history_.zfs_in_hamiltonian) {
-        return;
-    }
-    auto D_parameters = getNumericalWorker().getZFSParameters().first;
-    operators_map_[common::Energy]->emplace_back(
-        std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
-            converter_,
-            D_parameters,
-            -1.0 / 3.0));
-    operators_map_[common::Energy]->emplace_back(
-        std::make_unique<const operators::lexicographic::SzSzOneCenterTerm>(converter_, D_parameters));
-    operators_history_.zfs_in_hamiltonian = true;
-}
-
-void Model::constructIsotropicExchangeDerivatives() {
-    if (operators_history_.isotropic_exchange_derivatives) {
-        return;
-    }
-
-    for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::J)) {
-        operators::Operator operator_derivative = operators::Operator();
-        operator_derivative.emplace_back(
-            std::make_unique<const operators::lexicographic::ScalarProductTerm>(
-                converter_,
-                getNumericalWorker().constructIsotropicExchangeDerivativeParameters(symbol)));
-        derivatives_map_[{common::Energy, symbol}] =
-            std::make_shared<operators::Operator>(std::move(operator_derivative));
-    }
-
-    operators_history_.isotropic_exchange_derivatives = true;
-}
-
-void Model::constructZeroFieldSplittingDerivative() {
-    if (operators_history_.zfs_derivative) {
-        return;
-    }
-    for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::D)) {
-        operators::Operator operator_derivative = operators::Operator();
-        auto derivative_parameters = getNumericalWorker().constructZFSDerivativeParameters(symbol);
-        operator_derivative.emplace_back(
-            std::make_unique<const operators::LocalSSquaredOneCenterTerm>(
-                converter_,
-                derivative_parameters,
-                -1.0 / 3.0));
-        operator_derivative.emplace_back(
-            std::make_unique<const operators::lexicographic::SzSzOneCenterTerm>(
-                converter_,
-                derivative_parameters));
-        derivatives_map_[{common::Energy, symbol}] =
-            std::make_shared<operators::Operator>(std::move(operator_derivative));
-    }
-}
-
-void Model::constructGSzSquaredDerivatives() {
-    if (operators_history_.g_sz_squared_derivatives) {
-        return;
-    }
-
-    for (const auto& symbol :
-         getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
-        operators::Operator operator_derivative = operators::Operator();
-        auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
-        operator_derivative.emplace_back(
-            std::make_unique<operators::lexicographic::SzSzOneCenterTerm>(converter_, pair_of_parameters.first));
-        operator_derivative.emplace_back(
-            std::make_unique<const operators::lexicographic::SzSzTwoCenterTerm>(
-                converter_,
-                pair_of_parameters.second,
-                2));
-        // this two from summation in Submatrix: \sum_{a=1}^N \sum_{b=a+1}^N
-        derivatives_map_[{common::gSz_total_squared, symbol}] =
-            std::make_shared<operators::Operator>(std::move(operator_derivative));
-    }
-
-    operators_history_.g_sz_squared_derivatives = true;
-}
-
-std::shared_ptr<const index_converter::lexicographic::IndexConverter> Model::getIndexConverter() const {
-    return converter_;
 }
 
 std::optional<std::shared_ptr<const operators::Operator>>
 Model::getOperator(common::QuantityEnum quantity_enum) const {
     if (operators_map_.contains(quantity_enum)) {
         return operators_map_.at(quantity_enum);
-    }
-    return std::nullopt;
-}
-
-std::optional<std::shared_ptr<const operators::Operator>>
-Model::getITOOperator(common::QuantityEnum quantity_enum) const {
-    if (operators_map_ito_.contains(quantity_enum)) {
-        return operators_map_ito_.at(quantity_enum);
     }
     return std::nullopt;
 }
@@ -198,24 +83,13 @@ const std::
     return derivatives_map_;
 }
 
-bool Model::is_s_squared_initialized() const {
-    return operators_history_.s_squared;
-}
-
-bool Model::is_isotropic_exchange_derivatives_initialized() const {
-    return operators_history_.isotropic_exchange_derivatives;
-}
 
 bool Model::is_g_sz_squared_initialized() const {
-    return operators_history_.g_sz_squared;
+    return getSymbolicWorker().isGFactorInitialized();
 }
 
 bool Model::is_g_sz_squared_derivatives_initialized() const {
-    return operators_history_.g_sz_squared_derivatives;
-}
-
-bool Model::is_zero_field_splitting_initialized() const {
-    return operators_history_.zfs_in_hamiltonian;
+    return getSymbolicWorker().isGFactorInitialized();
 }
 
 const symbols::SymbolicWorker& Model::getSymbolicWorker() const {
