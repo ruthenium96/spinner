@@ -11,6 +11,7 @@ add_library(model
         operators/terms/Term.h
         operators/AbstractOperatorConstructor.h
         operators/LexOperatorConstructor.cpp operators/LexOperatorConstructor.h
+        operators/ITOOperatorConstructor.cpp operators/ITOOperatorConstructor.h
         symbols/SymbolicWorker.h symbols/SymbolicWorker.cpp
         symbols/NumericalWorker.cpp symbols/NumericalWorker.h
         symbols/SymbolName.h symbols/SymbolName.cpp
