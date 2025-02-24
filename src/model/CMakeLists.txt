@@ -9,6 +9,8 @@ add_library(model
         operators/terms/ito/ScalarProductTerm.cpp operators/terms/ito/ScalarProductTerm.h
         operators/terms/ito/TotalSSquaredTerm.cpp operators/terms/ito/TotalSSquaredTerm.h
         operators/terms/Term.h
+        operators/AbstractOperatorConstructor.h
+        operators/LexOperatorConstructor.cpp operators/LexOperatorConstructor.h
         symbols/SymbolicWorker.h symbols/SymbolicWorker.cpp
         symbols/NumericalWorker.cpp symbols/NumericalWorker.h
         symbols/SymbolName.h symbols/SymbolName.cpp
