@@ -8,6 +8,8 @@ add_library(model
         operators/terms/LocalSSquaredOneCenterTerm.cpp operators/terms/LocalSSquaredOneCenterTerm.h
         operators/terms/ito/T00TwoCenterTerm.cpp operators/terms/ito/T00TwoCenterTerm.h
         operators/terms/ito/TotalSSquaredTerm.cpp operators/terms/ito/TotalSSquaredTerm.h
+        operators/terms/ito/T20OneCenterTerm.cpp operators/terms/ito/T20OneCenterTerm.h
+        operators/terms/ito/T20TwoCenterTerm.cpp operators/terms/ito/T20TwoCenterTerm.h
         operators/terms/Term.h
         operators/AbstractOperatorConstructor.h
         operators/LexOperatorConstructor.cpp operators/LexOperatorConstructor.h

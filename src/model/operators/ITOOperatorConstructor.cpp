@@ -35,6 +35,10 @@ std::shared_ptr<Operator> ITOOperatorConstructor::constructSSquared() const {
     return s_squared_operator_;
 }
 
+// TODO: due to the structure of the tests and the absence of the field (hence degeneracy of states 
+//  of a level), GSzSquared may be constructed incorrectly, up to adding the wrong constant, 
+//  but summing over states of the level to the correct value. 
+//  We probably need to create new tests specifically for T20Terms.
 std::shared_ptr<Operator> ITOOperatorConstructor::constructGSzSquaredLike(
 	std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
 	std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const {
