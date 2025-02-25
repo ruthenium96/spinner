@@ -10,6 +10,7 @@ add_library(model
         operators/terms/ito/TotalSSquaredTerm.cpp operators/terms/ito/TotalSSquaredTerm.h
         operators/terms/ito/T20OneCenterTerm.cpp operators/terms/ito/T20OneCenterTerm.h
         operators/terms/ito/T20TwoCenterTerm.cpp operators/terms/ito/T20TwoCenterTerm.h
+        operators/terms/ito/WignerEckartHelper.cpp operators/terms/ito/WignerEckartHelper.h
         operators/terms/Term.h
         operators/AbstractOperatorConstructor.h
         operators/LexOperatorConstructor.cpp operators/LexOperatorConstructor.h

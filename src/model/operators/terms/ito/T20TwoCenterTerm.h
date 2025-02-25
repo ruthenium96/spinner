@@ -5,7 +5,7 @@
 
 #include "src/common/index_converter/s_squared/IndexConverter.h"
 #include "src/model/NumericalParameters.h"
-#include "src/spin_algebra/ClebshGordanCalculator.h"
+#include "WignerEckartHelper.h"
 
 namespace model::operators::ito {
 class T20TwoCenterTerm : public TwoCenterTerm {
@@ -23,8 +23,8 @@ class T20TwoCenterTerm : public TwoCenterTerm {
   private:
     std::shared_ptr<const index_converter::s_squared::IndexConverter> converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
-    spin_algebra::ClebshGordanCalculator clebshGordanCalculator_;
     double prefector_;
+    WignerEckartHelper wigner_eckart_helper_;
 
     void add_ttwo_term(
         quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
@@ -33,17 +33,6 @@ class T20TwoCenterTerm : public TwoCenterTerm {
         uint32_t center_b,
         double factor) const;
     std::vector<uint8_t> constructRanksOfTTwo(uint32_t center_a, uint32_t center_b) const;
-
-    double total_9j_coefficient(
-        const index_converter::s_squared::Level& left,
-        const index_converter::s_squared::Level& right,
-        const std::vector<uint8_t>& ranks,
-        double local_prod) const; 
-
-    void construct_overlapping_levels(const index_converter::s_squared::Level& level, 
-        const std::vector<uint8_t>& ranks,
-        std::vector<index_converter::s_squared::Level>& answer) const;
-        
 };
 
 } // namespace model::operators::ito
