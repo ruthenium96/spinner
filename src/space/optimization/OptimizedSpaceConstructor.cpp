@@ -11,7 +11,7 @@
 #include "src/space/optimization/TSquaredSorter.h"
 #include "src/space/optimization/TzSorter.h"
 #include "src/spin_algebra/GroupAdapter.h"
-#include "src/common/index_converter/s_squared/OrderOfSummation.h"
+#include "src/spin_algebra/SSquaredConverter.h"
 #include "src/common/index_converter/lexicographic/IndexPermutator.h"
 #include "src/common/index_converter/s_squared/IndexPermutator.h"
 
@@ -33,10 +33,13 @@ namespace space::optimization {
 Space OptimizedSpaceConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
     const quantum::linear_algebra::FactoriesList& factories) {
-    std::shared_ptr<const lexicographic::IndexConverter> indexConverter =
-        consistentModelOptimizationList.getModel().getIndexConverter();
+
     const common::physical_optimization::OptimizationList& optimizationList =
         consistentModelOptimizationList.getOptimizationList();
+
+    auto lexIndexConverter = consistentModelOptimizationList.getLexIndexConverter();
+    auto sSquaredIndexConverter = consistentModelOptimizationList.getSquareIndexConveter();
+    auto indexConverter = consistentModelOptimizationList.getIndexConverter();
 
     Space space = Space(
         indexConverter->get_total_space_size(),
@@ -117,15 +120,21 @@ Space OptimizedSpaceConstructor::construct(
     }
 
     if (optimizationList.isSSquaredTransformed()) {
+        const auto number_of_mults = indexConverter->get_mults().size();
+        auto group_adapter = spin_algebra::GroupAdapter(optimizationList.getGroupsToApply(), number_of_mults);
+        auto old_ssquared_converter = std::make_shared<spin_algebra::SSquaredConverter>(
+            indexConverter->get_mults(),
+            group_adapter.getOrderOfSummations(),
+            group_adapter.getRepresentationMultiplier());
 
         S2Transformer transformer(
             lexIndexConverter,
             factories,
-            consistentModelOptimizationList.getSSquaredConverter());
+            old_ssquared_converter);
 
         common::Logger::detailed_msg("S2-transformation has started.");
         common::orderOfSummationPrint(
-            *consistentModelOptimizationList.getSSquaredConverter()->getOrderOfSummation());
+            *old_ssquared_converter->getOrderOfSummation());
         space = transformer.apply(std::move(space));
         common::Logger::detailed_msg("S2-transformation is finished.");
     }

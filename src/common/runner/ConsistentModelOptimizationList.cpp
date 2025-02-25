@@ -1,7 +1,16 @@
 #include "ConsistentModelOptimizationList.h"
 
+#include <functional>
+#include <memory>
+#include <stdexcept>
 #include <utility>
 
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
+#include "src/common/index_converter/s_squared/IndexConverter.h"
+#include "src/common/physical_optimization/OptimizationList.h"
+#include "src/model/operators/AbstractOperatorConstructor.h"
+#include "src/model/operators/ITOOperatorConstructor.h"
+#include "src/model/operators/LexOperatorConstructor.h"
 #include "src/spin_algebra/GroupAdapter.h"
 
 namespace {
@@ -39,40 +48,29 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     optimizationList_(std::move(optimizationList)) {
     // this function throw an exception if ModelInput and OptimizationList are inconsistent
     checkModelOptimizationListConsistence(modelInput, optimizationList_);
-    model_ = std::make_unique<model::Model>(std::move(modelInput));
+    lex_index_converter_ = std::make_shared<index_converter::lexicographic::IndexConverter>(modelInput.getMults());
 
-    if (getOptimizationList().isSSquaredTransformed()) {
-        const auto number_of_mults = getModel().getIndexConverter()->get_mults().size();
+    std::unique_ptr<model::operators::AbstractOperatorConstructor> operator_constructor;
+    if (getOptimizationList().isITOBasis()) {
+        const auto number_of_mults = getIndexConverter()->get_mults().size();
         auto group_adapter =
             spin_algebra::GroupAdapter(optimizationList_.getGroupsToApply(), number_of_mults);
 
-        ssquared_converter_ = std::make_shared<spin_algebra::SSquaredConverter>(
-            getModel().getIndexConverter()->get_mults(),
-            group_adapter.getOrderOfSummations(),
-            group_adapter.getRepresentationMultiplier());
+        s_squared_index_converter_ = std::make_unique<index_converter::s_squared::IndexConverter>(
+            modelInput.getMults(), 
+            group_adapter.getOrderOfSummations());
 
-        if (getOptimizationList().isITOCalculated()) {
-            model_->constructIsotropicExchangeITO(s_squared_index_converter_);
-            operators_for_explicit_construction_[common::Energy] =
-                model_->getITOOperator(common::Energy).value();
-        } else {
-            operators_for_explicit_construction_[common::Energy] =
-                model_->getOperator(common::Energy).value();
-        }
-        return;
+        operator_constructor = std::make_unique<model::operators::ITOOperatorConstructor>(s_squared_index_converter_);
+    } else {
+        operator_constructor = std::make_unique<model::operators::LexOperatorConstructor>(lex_index_converter_);
     }
+
+    model_ = std::make_unique<model::Model>(std::move(modelInput), std::move(operator_constructor));
 
     operators_for_explicit_construction_[common::Energy] =
         model_->getOperator(common::Energy).value();
-    if (getOptimizationList().isSSquaredTransformed()) {
-        const auto number_of_mults = getModel().getIndexConverter()->get_mults().size();
-        auto group_adapter =
-            spin_algebra::GroupAdapter(optimizationList_.getGroupsToApply(), number_of_mults);
 
-        ssquared_converter_ = std::make_shared<spin_algebra::SSquaredConverter>(
-            getModel().getIndexConverter()->get_mults(),
-            group_adapter.getOrderOfSummations(),
-            group_adapter.getRepresentationMultiplier());
+    if (getOptimizationList().isSSquaredTransformed()) {
         return;
     }
     if (getModel().is_g_sz_squared_initialized()
@@ -114,9 +112,23 @@ ConsistentModelOptimizationList::getDerivativeOperatorsForExplicitConstruction()
     return derivatives_for_explicit_construction_;
 }
 
-std::shared_ptr<spin_algebra::SSquaredConverter>
-ConsistentModelOptimizationList::getSSquaredConverter() const {
-    return ssquared_converter_;
+std::shared_ptr<const index_converter::lexicographic::IndexConverter>
+ConsistentModelOptimizationList::getLexIndexConverter() const {
+    return lex_index_converter_;
+}
+
+std::shared_ptr<const index_converter::s_squared::IndexConverter> 
+ConsistentModelOptimizationList::getSquareIndexConveter() const {
+    return s_squared_index_converter_;
+}
+
+std::shared_ptr<const index_converter::AbstractIndexConverter>
+ConsistentModelOptimizationList::getIndexConverter() const {
+    if (getSquareIndexConveter() != nullptr) {
+        return getSquareIndexConveter();
+    } else {
+        return getLexIndexConverter();
+    }
 }
 }  // namespace runner
 
@@ -143,6 +155,11 @@ void checkModelOptimizationListConsistence(
             throw std::invalid_argument(
                 "S2-transformation cannot be applied to system with different g-factors");
         }
+    }
+    if (optimizationList.isNonMinimalProjectionsEliminated() && 
+        modelInput.getSymbolicWorker().isGFactorInitialized() &&
+        !modelInput.getSymbolicWorker().isAllGFactorsEqual()) {
+        throw std::invalid_argument("Cannot use Non-minimal Projections Eliminator for model with different g-factors");
     }
 }
 
