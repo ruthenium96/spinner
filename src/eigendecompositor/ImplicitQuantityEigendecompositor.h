@@ -1,16 +1,19 @@
-#ifndef SPINNER_IMPLICITSSQUAREEIGENDECOMPOSITOR_H
-#define SPINNER_IMPLICITSSQUAREEIGENDECOMPOSITOR_H
+#ifndef SPINNER_IMPLICITQUANTITYEIGENDECOMPOSITOR_H
+#define SPINNER_IMPLICITQUANTITYEIGENDECOMPOSITOR_H
 
 #include "AbstractEigendecompositor.h"
+#include "src/common/Quantity.h"
 
 namespace eigendecompositor {
 
 // This class implicitly calculate S^2 values using block_properties data (total_mult).
-class ImplicitSSquareEigendecompositor: public AbstractEigendecompositor {
+class ImplicitQuantityEigendecompositor: public AbstractEigendecompositor {
   public:
-    ImplicitSSquareEigendecompositor(
+    ImplicitQuantityEigendecompositor(
         std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
-        quantum::linear_algebra::FactoriesList factories_list);
+        quantum::linear_algebra::FactoriesList factories_list,
+        common::QuantityEnum quantity_implicit_enum,
+        uint32_t max_ntz_proj);
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
     BuildSubspectra(
         size_t number_of_block,
@@ -37,11 +40,15 @@ class ImplicitSSquareEigendecompositor: public AbstractEigendecompositor {
 
   private:
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor_;
-    Spectrum s_square_implicit_spectrum_;
+    uint32_t max_ntz_proj_;
+    Spectrum quantity_implicit_spectrum_;
+    common::QuantityEnum quantity_implicit_enum_;
     quantum::linear_algebra::FactoriesList factories_list_;
     bool first_iteration_has_been_done_ = false;
+
+    double calculate_value(const BlockProperties& properties) const;
 };
 
 }  // namespace eigendecompositor
 
-#endif  //SPINNER_IMPLICITSSQUAREEIGENDECOMPOSITOR_H
+#endif  //SPINNER_IMPLICITQUANTITYEIGENDECOMPOSITOR_H

@@ -25,6 +25,8 @@ class Model {
     bool is_g_sz_squared_initialized() const;
     bool is_g_sz_squared_derivatives_initialized() const;
 
+    bool gFactorsAreAllNoneOrAreTheSame() const;
+
     std::optional<std::shared_ptr<const operators::Operator>>
         getOperator(common::QuantityEnum) const;
     std::optional<std::shared_ptr<const operators::Operator>>

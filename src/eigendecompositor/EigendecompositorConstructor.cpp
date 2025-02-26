@@ -1,9 +1,10 @@
 #include "EigendecompositorConstructor.h"
 
 #include "src/common/Logger.h"
+#include "src/common/Quantity.h"
 #include "src/eigendecompositor/ExactEigendecompositor.h"
 #include "src/eigendecompositor/ExplicitQuantitiesEigendecompositor.h"
-#include "src/eigendecompositor/ImplicitSSquareEigendecompositor.h"
+#include "src/eigendecompositor/ImplicitQuantityEigendecompositor.h"
 #include "src/eigendecompositor/OneSymbolInHamiltonianEigendecompositor.h"
 
 namespace eigendecompositor {
@@ -50,11 +51,21 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
                 getter);
     }
 
-    if (consistentModelOptimizationList.getOptimizationList().isSSquaredTransformed()) {
-        common::Logger::detailed("ImplicitSSquareEigendecompositor will be used.");
-        eigendecompositor = std::make_unique<eigendecompositor::ImplicitSSquareEigendecompositor>(
+    if (consistentModelOptimizationList.isImplicitSSquarePossible()) {
+        common::Logger::detailed("ImplicitSSquareEigendecompositor will be used for S_total_squared.");
+        eigendecompositor = std::make_unique<eigendecompositor::ImplicitQuantityEigendecompositor>(
             std::move(eigendecompositor),
-            factories);
+            factories,
+            common::S_total_squared,
+            indexConverter->get_max_ntz_proj());
+    }
+    if (consistentModelOptimizationList.isImplicitMSquarePossible()) {
+        common::Logger::detailed("ImplicitSSquareEigendecompositor will be used for M_total_squared.");
+        eigendecompositor = std::make_unique<eigendecompositor::ImplicitQuantityEigendecompositor>(
+            std::move(eigendecompositor),
+            factories,
+            common::M_total_squared,
+            indexConverter->get_max_ntz_proj());
     }
 
     common::Logger::detailed("ExplicitQuantitiesEigendecompositor will be used.");

@@ -92,6 +92,11 @@ bool Model::is_g_sz_squared_derivatives_initialized() const {
     return getSymbolicWorker().isGFactorInitialized();
 }
 
+bool Model::gFactorsAreAllNoneOrAreTheSame() const {
+    return !getSymbolicWorker().isGFactorInitialized() ||
+    (getSymbolicWorker().isGFactorInitialized() && getSymbolicWorker().isAllGFactorsEqual());
+}
+
 const symbols::SymbolicWorker& Model::getSymbolicWorker() const {
     return numericalWorker_.getSymbolicWorker();
 }

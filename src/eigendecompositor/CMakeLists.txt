@@ -1,6 +1,6 @@
 add_library(eigendecompositor
         ExactEigendecompositor.cpp
-        ImplicitSSquareEigendecompositor.cpp ImplicitSSquareEigendecompositor.h
+        ImplicitQuantityEigendecompositor.cpp ImplicitQuantityEigendecompositor.h
         OneSymbolInHamiltonianEigendecompositor.cpp OneSymbolInHamiltonianEigendecompositor.h
         AbstractEigendecompositor.cpp
         ExplicitQuantitiesEigendecompositor.cpp ExplicitQuantitiesEigendecompositor.h

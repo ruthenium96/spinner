@@ -35,6 +35,9 @@ class ConsistentModelOptimizationList {
         std::shared_ptr<const model::operators::Operator>>&
     getDerivativeOperatorsForExplicitConstruction() const;
 
+    bool isImplicitSSquarePossible() const;
+    bool isImplicitMSquarePossible() const;
+
   private:
     std::unique_ptr<model::Model> model_;
     common::physical_optimization::OptimizationList optimizationList_;

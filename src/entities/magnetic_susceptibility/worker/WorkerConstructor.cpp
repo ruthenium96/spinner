@@ -1,10 +1,11 @@
 #include "WorkerConstructor.h"
+#include <stdexcept>
 
 #include "src/common/Logger.h"
 #include "src/common/Quantity.h"
 #include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
-#include "src/entities/magnetic_susceptibility/worker/UniqueGOnlySSquaredWorker.h"
+#include "src/entities/magnetic_susceptibility/worker/UniqueGWorker.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -34,19 +35,31 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         // and there is no field
         // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
         double g_factor = model.getNumericalWorker().getGFactorParameters()->at(0);
-        auto s_squared_vector = factories.createVector();
+        auto quantity_vector = factories.createVector();
 
-        for (const auto& subspectrum :
-             eigendecompositor->getSpectrum(common::S_total_squared).value().get().blocks) {
-            s_squared_vector->concatenate_with(subspectrum.raw_data);
+        if (eigendecompositor->getSpectrum(common::S_total_squared).has_value()) {
+            for (const auto& subspectrum :
+                eigendecompositor->getSpectrum(common::S_total_squared).value().get().blocks) {
+                    quantity_vector->concatenate_with(subspectrum.raw_data);
+            }   
+            common::Logger::detailed("UniqueGOnlySSquaredWorker will be used with S_total_squared.");
+        } else if (eigendecompositor->getSpectrum(common::M_total_squared).has_value()) {
+            for (const auto& subspectrum :
+                eigendecompositor->getSpectrum(common::M_total_squared).value().get().blocks) {
+                    quantity_vector->concatenate_with(subspectrum.raw_data);
+            }
+            // TODO: create in-place multiply_by function?
+            quantity_vector = quantity_vector->multiply_by(3);
+            common::Logger::detailed("UniqueGOnlySSquaredWorker will be used with M_total_squared.");
+        } else {
+            throw std::invalid_argument("UniqueGOnlySSquaredWorker cannot find Spectrum of S_total_squared or M_total_squared");
         }
 
-        common::Logger::detailed("UniqueGOnlySSquaredWorker will be used.");
         magnetic_susceptibility_worker =
-            std::make_unique<magnetic_susceptibility::worker::UniqueGOnlySSquaredWorker>(
+            std::make_unique<magnetic_susceptibility::worker::UniqueGWorker>(
                 std::move(energy_vector),
                 std::move(degeneracy_vector),
-                std::move(s_squared_vector),
+                std::move(quantity_vector),
                 g_factor);
     } else if (model.is_g_sz_squared_initialized()) {
         auto g_sz_squared_vector = factories.createVector();

@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <utility>
 
+#include "src/common/Quantity.h"
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/common/index_converter/s_squared/IndexConverter.h"
 #include "src/common/physical_optimization/OptimizationList.h"
@@ -70,7 +71,7 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     operators_for_explicit_construction_[common::Energy] =
         model_->getOperator(common::Energy).value();
 
-    if (getOptimizationList().isSSquaredTransformed()) {
+    if (isImplicitSSquarePossible() || isImplicitMSquarePossible()) {
         return;
     }
     if (getModel().is_g_sz_squared_initialized()
@@ -130,6 +131,19 @@ ConsistentModelOptimizationList::getIndexConverter() const {
         return getLexIndexConverter();
     }
 }
+
+bool ConsistentModelOptimizationList::isImplicitSSquarePossible() const {
+    return getModel().gFactorsAreAllNoneOrAreTheSame()
+    && !getModel().getSymbolicWorker().isZFSInitialized()
+    && getOptimizationList().isNonMinimalProjectionsEliminated();
+}
+
+bool ConsistentModelOptimizationList::isImplicitMSquarePossible() const {
+    return getModel().gFactorsAreAllNoneOrAreTheSame()
+    && !getOptimizationList().isNonMinimalProjectionsEliminated()
+    && getOptimizationList().isTzSorted();
+}
+
 }  // namespace runner
 
 namespace {
@@ -155,6 +169,9 @@ void checkModelOptimizationListConsistence(
             throw std::invalid_argument(
                 "S2-transformation cannot be applied to system with different g-factors");
         }
+    }
+    if (optimizationList.isLexBasis() && optimizationList.isTSquaredSorted() && !optimizationList.isSSquaredTransformed()) {
+        throw std::invalid_argument("In the case of lex basis, we cannot TSquared Sort without SSquared Transformer");
     }
     if (optimizationList.isNonMinimalProjectionsEliminated() && 
         modelInput.getSymbolicWorker().isGFactorInitialized() &&
