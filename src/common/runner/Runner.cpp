@@ -61,12 +61,12 @@ void Runner::BuildSpectra() {
         auto maybe_matrix = getMatrix(quantity_enum);
         if (maybe_matrix.has_value()) {
             common::Logger::trace("Matrix of {}:\n", magic_enum::enum_name(quantity_enum));
-            common::Logger::trace("{}", maybe_matrix->get());
+            common::Logger::trace("{}", maybe_matrix.value().get());
         }
         auto maybe_spectrum = getSpectrum(quantity_enum);
         if (maybe_spectrum.has_value()) {
             common::Logger::trace("Spectrum of {}:\n", magic_enum::enum_name(quantity_enum));
-            common::Logger::trace("{}", maybe_spectrum->get());
+            common::Logger::trace("{}", maybe_spectrum.value().get());
         }
     }
 }
@@ -99,7 +99,7 @@ std::optional<std::shared_ptr<const model::operators::Operator>> Runner::getOper
 const Spectrum& Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    return getEigendecompositor()->getSpectrumDerivative(quantity_enum, symbol)->get();
+    return getEigendecompositor()->getSpectrumDerivative(quantity_enum, symbol).value().get();
 }
 
 std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(

@@ -13,7 +13,7 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
     auto energy_vector = factories.createVector();
     auto degeneracy_vector = factories.createVector();
 
-    for (const auto& subspectrum : eigendecompositor->getSpectrum(common::Energy)->get().blocks) {
+    for (const auto& subspectrum : eigendecompositor->getSpectrum(common::Energy).value().get().blocks) {
         energy_vector->concatenate_with(subspectrum.raw_data);
         degeneracy_vector->add_identical_values(
             subspectrum.raw_data->size(),
@@ -32,7 +32,7 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         auto s_squared_vector = factories.createVector();
 
         for (const auto& subspectrum :
-             eigendecompositor->getSpectrum(common::S_total_squared)->get().blocks) {
+             eigendecompositor->getSpectrum(common::S_total_squared).value().get().blocks) {
             s_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 
@@ -45,7 +45,7 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
     } else if (model.is_g_sz_squared_initialized()) {
         auto g_sz_squared_vector = factories.createVector();
         for (const auto& subspectrum :
-             eigendecompositor->getSpectrum(common::gSz_total_squared)->get().blocks) {
+             eigendecompositor->getSpectrum(common::gSz_total_squared).value().get().blocks) {
             g_sz_squared_vector->concatenate_with(subspectrum.raw_data);
         }
 

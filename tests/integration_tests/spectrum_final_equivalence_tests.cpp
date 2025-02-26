@@ -29,7 +29,7 @@ std::vector<QuantumValues> construct_final_vector(runner::Runner& runner) {
         }
     }
 
-    for (const auto& subspectrum : runner.getSpectrum(common::Energy)->get().blocks) {
+    for (const auto& subspectrum : runner.getSpectrum(common::Energy).value().get().blocks) {
         degeneracy_vector->add_identical_values(
             subspectrum.raw_data->size(),
             subspectrum.properties.degeneracy);
@@ -38,13 +38,13 @@ std::vector<QuantumValues> construct_final_vector(runner::Runner& runner) {
     for (int j = 0; j < values_vectors.size(); ++j) {
         const auto& quantity_enum_ = magic_enum::enum_value<common::QuantityEnum>(j);
         if (values_vectors[j].has_value()) {
-            for (const auto& subspectrum : runner.getSpectrum(quantity_enum_)->get().blocks) {
-                values_vectors[j]->get()->concatenate_with(subspectrum.raw_data);
+            for (const auto& subspectrum : runner.getSpectrum(quantity_enum_).value().get().blocks) {
+                values_vectors[j].value().get()->concatenate_with(subspectrum.raw_data);
             }
         }
     }
 
-    values_vectors[magic_enum::enum_integer<common::QuantityEnum>(common::Energy)]->get()->subtract_minimum();
+    values_vectors[magic_enum::enum_integer<common::QuantityEnum>(common::Energy)].value().get()->subtract_minimum();
 
     for (size_t i = 0; i < degeneracy_vector->size(); ++i) {
         QuantumValues quantum_values;

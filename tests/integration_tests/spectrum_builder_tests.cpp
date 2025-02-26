@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "magic_enum.hpp"
 #include "src/common/runner/Runner.h"
 
 size_t size_of_matrix_without_degeneracy(const Matrix& matrix) {
@@ -55,20 +56,16 @@ void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner::Runner& runner) {
 }
 
 void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
-    EXPECT_EQ(
-        runner.getIndexConverter()->get_total_space_size(),
-        size_of_spectrum_with_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)->get()));
-    EXPECT_EQ(
-        runner.getIndexConverter()->get_total_space_size(),
-        size_of_spectrum_without_degeneracy(runner.getSpectrum(common::QuantityEnum::Energy)->get()));
-    EXPECT_EQ(
-        runner.getIndexConverter()->get_total_space_size(),
-        size_of_spectrum_with_degeneracy(
-            runner.getSpectrum(common::QuantityEnum::S_total_squared)->get()));
-    EXPECT_EQ(
-        runner.getIndexConverter()->get_total_space_size(),
-        size_of_spectrum_without_degeneracy(
-            runner.getSpectrum(common::QuantityEnum::S_total_squared)->get()));
+    for (const auto& quantity_enum_ : magic_enum::enum_values<common::QuantityEnum>()) {
+        if (runner.getSpectrum(quantity_enum_).has_value()) {
+            EXPECT_EQ(
+                runner.getIndexConverter()->get_total_space_size(),
+                size_of_spectrum_with_degeneracy(runner.getSpectrum(quantity_enum_).value().get()));
+            EXPECT_EQ(
+                runner.getIndexConverter()->get_total_space_size(),
+                size_of_spectrum_without_degeneracy(runner.getSpectrum(quantity_enum_).value().get()));        
+        }
+    }
 }
 
 TEST(matrix_and_spectrum_bulders, size_consistence_22_333_4444_23456) {

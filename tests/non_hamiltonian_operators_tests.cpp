@@ -195,11 +195,11 @@ TEST(addAllMultiplicitiesAndSort, 2222) {
             group_adapter.getRepresentationMultiplier());
 
         for (const auto& [properties, number] : correct_answer) {
-            EXPECT_EQ(number, converter.block_with_property(properties)->get().size())
+            EXPECT_EQ(number, converter.block_with_property(properties).value().get().size())
                 << "The number of states with multiplicity = " << properties.multiplicity
                 << " and representation " << representationName(properties.representations)
                 << " should be equal to " << number << ", but actually is equal to "
-                << converter.block_with_property(properties)->get().size();
+                << converter.block_with_property(properties).value().get().size();
         }
     }
 }
