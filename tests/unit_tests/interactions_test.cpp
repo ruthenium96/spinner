@@ -108,7 +108,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         // Construct Operator
         model::operators::Operator operator_;
         operator_.emplace_back(
-            std::make_unique<model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js));
+            std::make_unique<model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js, -2.0));
 
         // Create Factory:
         auto factory_ =

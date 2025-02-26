@@ -4,17 +4,17 @@
 #include <utility>
 
 namespace model::operators::lexicographic {
-ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter) :
+ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter, double value) :
     TwoCenterTerm(converter->get_mults().size()),
-    converter_(std::move(converter)) {
+    converter_(std::move(converter)),
+    prefactor_(1.0) {
     size_t number_of_spins = converter_->get_mults().size();
     auto mutable_coefficients =
         std::make_shared<TwoDNumericalParameters<double>>(number_of_spins, NAN);
     for (size_t i = 0; i < number_of_spins; ++i) {
         for (size_t j = i + 1; j < number_of_spins; ++j) {
-            // TODO: it does not looks good
-            mutable_coefficients->at(i, j) = -1;
-            mutable_coefficients->at(j, i) = -1;
+            mutable_coefficients->at(i, j) = value;
+            mutable_coefficients->at(j, i) = value;
         }
     }
     coefficients_ = mutable_coefficients;
@@ -22,10 +22,12 @@ ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const index_converter::lexi
 
 ScalarProductTerm::ScalarProductTerm(
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
-    std::shared_ptr<const TwoDNumericalParameters<double>> parameters) :
+    std::shared_ptr<const TwoDNumericalParameters<double>> parameters,
+    double prefactor) :
     TwoCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
-    coefficients_(std::move(parameters)) {}
+    coefficients_(std::move(parameters)),
+    prefactor_(prefactor) {}
 
 void ScalarProductTerm::construct(
     quantum::linear_algebra::AbstractSymmetricMatrix&
@@ -34,7 +36,7 @@ void ScalarProductTerm::construct(
     uint32_t center_a,
     uint32_t center_b) const {
     if (!std::isnan(coefficients_->at(center_a, center_b))) {
-        double factor = -2 * coefficients_->at(center_a, center_b);
+        double factor = coefficients_->at(center_a, center_b) * prefactor_;
         for (const auto& index_of_vector : indexes_of_vectors) {
             add_scalar_product(
                 matrix_in_lexicografical_basis,
@@ -47,7 +49,7 @@ void ScalarProductTerm::construct(
 }
 
 std::unique_ptr<Term> ScalarProductTerm::clone() const {
-    return std::make_unique<ScalarProductTerm>(converter_, coefficients_);
+    return std::make_unique<ScalarProductTerm>(converter_, coefficients_, prefactor_);
 }
 
 void ScalarProductTerm::add_scalar_product(

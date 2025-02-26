@@ -18,7 +18,8 @@ void LexOperatorConstructor::emplaceIsotropicExchangeLike(
 	hamiltonian->emplace_back(
 	std::make_unique<const operators::lexicographic::ScalarProductTerm>(
 		converter_,
-		parameters));
+		parameters,
+        -2.0)); // -2 comes from H_{HDvV} = -2J S_1 S_2
 }
 
 void LexOperatorConstructor::emplaceZeroFieldSplittingLike(
@@ -42,7 +43,7 @@ std::shared_ptr<Operator> LexOperatorConstructor::constructSSquared() const {
 	// (\sum_i S_i)^2 = \sum_i S_i^2 + ...
 	s_squared_operator_->emplace_back(std::make_unique<const ConstantTerm>(sum_of_s_squared));
 	// ... + 2 * \sum_i\sum_j (S_i, S_j). This ScalarProductTerm constructor does required job:
-	s_squared_operator_->emplace_back(std::make_unique<const lexicographic::ScalarProductTerm>(converter_));
+	s_squared_operator_->emplace_back(std::make_unique<const lexicographic::ScalarProductTerm>(converter_, 2.0));
     return s_squared_operator_;
 }
 
