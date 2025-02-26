@@ -60,4 +60,20 @@ std::shared_ptr<Operator> LexOperatorConstructor::constructGSzSquaredLike(
     return g_sz_squared_operator_;
 }
 
+std::shared_ptr<Operator> LexOperatorConstructor::constructGSquaredT00Like(
+    std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
+    std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const {
+
+    auto g_squared_T00_operator_ = std::make_shared<Operator>();
+
+    g_squared_T00_operator_->emplace_back(
+        std::make_unique<const LocalSSquaredOneCenterTerm>(converter_, diagonal_parameters, 1.0 / 3.0)
+    );
+
+    g_squared_T00_operator_->emplace_back(
+        std::make_unique<const lexicographic::ScalarProductTerm>(converter_, nondiagonal_parameters, 2.0 / 3.0)
+    );
+    return g_squared_T00_operator_;
+}
+
 } // namespace model::operators

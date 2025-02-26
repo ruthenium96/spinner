@@ -23,6 +23,10 @@ class AbstractOperatorConstructor {
     virtual std::shared_ptr<Operator> constructGSzSquaredLike(
         std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
         std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const = 0;
+
+    virtual std::shared_ptr<Operator> constructGSquaredT00Like(
+        std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
+        std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const = 0;
 };
 } // namespace model::operators
 

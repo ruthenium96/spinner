@@ -23,6 +23,10 @@ class ITOOperatorConstructor : public AbstractOperatorConstructor {
         std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
         std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const override;
 
+    std::shared_ptr<Operator> constructGSquaredT00Like(
+        std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
+        std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const override;
+  
   private:
     std::shared_ptr<index_converter::s_squared::IndexConverter> converter_;
 
