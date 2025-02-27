@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 
+#include "src/common/Quantity.h"
 #include "src/model/operators/Operator.h"
 
 namespace model {
@@ -19,7 +20,6 @@ Model::Model(ModelInput modelInput, std::unique_ptr<operators::AbstractOperatorC
 
         for (const auto& symbol :
             getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
-            operators::Operator operator_derivative = operators::Operator();
             auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
             derivatives_map_[{common::gSz_total_squared, symbol}] = operator_constructor_->constructGSzSquaredLike(
                 pair_of_parameters.first,
