@@ -5,7 +5,8 @@
 
 namespace magnetic_susceptibility::worker {
 
-// mu^2 = mu_B^2 * g_{iso}^2 * <S^2_{total}>
+// mu^2 = mu_B^2 * g_{iso}^2 * <S^2_{total}> or
+// mu^2 = 3 * mu_B^2 * g_{iso}^2 * <M^2_{total}>
 class UniqueGWorker: public BasicWorker {
   public:
     UniqueGWorker(

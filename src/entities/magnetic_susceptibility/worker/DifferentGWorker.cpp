@@ -1,20 +1,20 @@
-#include "GSzSquaredWorker.h"
+#include "DifferentGWorker.h"
 
 namespace magnetic_susceptibility::worker {
-GSzSquaredWorker::GSzSquaredWorker(
+DifferentGWorker::DifferentGWorker(
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy,
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& g_sz_squared) :
+    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& quantity) :
     BasicWorker(std::move(energy), std::move(degeneracy)),
-    g_sz_squared_(std::move(g_sz_squared)) {}
+    quantity_(std::move(quantity)) {}
 
-double GSzSquaredWorker::calculateTheoreticalMuSquared(double temperature) const {
+double DifferentGWorker::calculateTheoreticalMuSquared(double temperature) const {
     double g_sz_squared_averaged =
-        3 * ensemble_averager_.ensemble_average(g_sz_squared_, temperature);
+        3 * ensemble_averager_.ensemble_average(quantity_, temperature);
     return g_sz_squared_averaged;
 }
 
-std::vector<ValueAtTemperature> GSzSquaredWorker::calculateDerivative(
+std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
     std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
         values_derivatives_map) const {
@@ -36,10 +36,10 @@ std::vector<ValueAtTemperature> GSzSquaredWorker::calculateDerivative(
         const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_derivative =
             values_derivatives_map[common::Energy];
         for (size_t i = 0; i < temperatures.size(); ++i) {
-            double first_term = ensemble_averager_.ensemble_average(g_sz_squared_, temperatures[i])
+            double first_term = ensemble_averager_.ensemble_average(quantity_, temperatures[i])
                 * ensemble_averager_.ensemble_average(energy_derivative, temperatures[i]);
             double second_term = ensemble_averager_.ensemble_average(
-                g_sz_squared_->element_wise_multiplication(energy_derivative),
+                quantity_->element_wise_multiplication(energy_derivative),
                 temperatures[i]);
             double value = 3 * (first_term - second_term) / temperatures[i];
             derivatives[i] = {temperatures[i], value};
