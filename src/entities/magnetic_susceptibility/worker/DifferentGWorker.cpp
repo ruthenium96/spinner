@@ -9,9 +9,9 @@ DifferentGWorker::DifferentGWorker(
     quantity_(std::move(quantity)) {}
 
 double DifferentGWorker::calculateTheoreticalMuSquared(double temperature) const {
-    double g_sz_squared_averaged =
+    double quantity_averaged =
         3 * ensemble_averager_.ensemble_average(quantity_, temperature);
-    return g_sz_squared_averaged;
+    return quantity_averaged;
 }
 
 std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
