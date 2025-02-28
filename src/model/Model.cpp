@@ -84,17 +84,20 @@ const std::
 }
 
 
-bool Model::is_g_sz_squared_initialized() const {
-    return getSymbolicWorker().isGFactorInitialized();
-}
-
 bool Model::is_g_sz_squared_derivatives_initialized() const {
     return getSymbolicWorker().isGFactorInitialized();
 }
 
+bool Model::gFactorsAreNone() const {
+    return !getSymbolicWorker().isGFactorInitialized();
+}
+
+bool Model::gFactorsAreTheSame() const {
+    return !gFactorsAreNone() && getSymbolicWorker().isAllGFactorsEqual();
+}
+
 bool Model::gFactorsAreAllNoneOrAreTheSame() const {
-    return !getSymbolicWorker().isGFactorInitialized() ||
-    (getSymbolicWorker().isGFactorInitialized() && getSymbolicWorker().isAllGFactorsEqual());
+    return gFactorsAreNone() || gFactorsAreTheSame();
 }
 
 const symbols::SymbolicWorker& Model::getSymbolicWorker() const {
