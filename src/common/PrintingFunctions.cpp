@@ -94,6 +94,7 @@ void preRegressionPrint(
     common::Logger::basic_msg("Regression has started.");
     common::Logger::separate(1, common::basic);
 
+    // TODO: move this printing to another place
     common::Logger::verbose_msg("Quantities for explicit calculation:");
 
     std::string quantities_names;
