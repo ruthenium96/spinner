@@ -11,8 +11,8 @@ UniqueGWorker::UniqueGWorker(
     g_unique_(g_unique) {}
 
 double UniqueGWorker::calculateTheoreticalMuSquared(double temperature) const {
-    double s_squared_averaged = ensemble_averager_.ensemble_average(quantity_, temperature);
-    return g_unique_ * g_unique_ * s_squared_averaged;
+    double quantity_averaged = ensemble_averager_.ensemble_average(quantity_, temperature);
+    return g_unique_ * g_unique_ * quantity_averaged;
 }
 
 std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
