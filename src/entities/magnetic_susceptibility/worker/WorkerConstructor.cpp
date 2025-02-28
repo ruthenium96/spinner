@@ -4,13 +4,13 @@
 #include "src/common/Logger.h"
 #include "src/common/Quantity.h"
 #include "src/entities/magnetic_susceptibility/worker/CurieWeissWorker.h"
-#include "src/entities/magnetic_susceptibility/worker/GSzSquaredWorker.h"
+#include "src/entities/magnetic_susceptibility/worker/DifferentGWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/UniqueGWorker.h"
 
 namespace magnetic_susceptibility::worker {
 
 std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
-    const model::Model& model,
+    const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
     const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>& eigendecompositor,
     const quantum::linear_algebra::FactoriesList& factories) {
 
@@ -29,12 +29,14 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
 
     std::unique_ptr<magnetic_susceptibility::worker::AbstractWorker> magnetic_susceptibility_worker;
 
-    const auto& symbolic_worker = model.getSymbolicWorker();
+    const auto& symbolic_worker = consistentModelOptimizationList.getModel().getSymbolicWorker();
 
-    if (symbolic_worker.isAllGFactorsEqual() && !symbolic_worker.isZFSInitialized()) {
+    if (consistentModelOptimizationList.isImplicitMSquarePossible() 
+        || consistentModelOptimizationList.isImplicitSSquarePossible()
+        || consistentModelOptimizationList.isExplicitMSquarePossible()) {
         // and there is no field
         // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
-        double g_factor = model.getNumericalWorker().getGFactorParameters()->at(0);
+        double g_factor = consistentModelOptimizationList.getModel().getNumericalWorker().getGFactorParameters()->at(0);
         auto quantity_vector = factories.createVector();
 
         if (eigendecompositor->getSpectrum(common::S_total_squared).has_value()) {
@@ -61,19 +63,31 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
                 std::move(degeneracy_vector),
                 std::move(quantity_vector),
                 g_factor);
-    } else if (model.is_g_sz_squared_initialized()) {
-        auto g_sz_squared_vector = factories.createVector();
-        for (const auto& subspectrum :
-             eigendecompositor->getSpectrum(common::gSz_total_squared).value().get().blocks) {
-            g_sz_squared_vector->concatenate_with(subspectrum.raw_data);
+    } else if (consistentModelOptimizationList.isGSquaredT00Possible() 
+        || consistentModelOptimizationList.isGSzSquaredPossible()) {
+        auto quantity_vector = factories.createVector();
+
+        if (eigendecompositor->getSpectrum(common::g_squared_T00).has_value()) {
+            for (const auto& subspectrum :
+                eigendecompositor->getSpectrum(common::g_squared_T00).value().get().blocks) {
+                    quantity_vector->concatenate_with(subspectrum.raw_data);
+            }   
+            common::Logger::detailed("GSzSquaredWorker will be used with g_squared_T00.");
+        } else if (eigendecompositor->getSpectrum(common::gSz_total_squared).has_value()) {
+            for (const auto& subspectrum :
+                eigendecompositor->getSpectrum(common::gSz_total_squared).value().get().blocks) {
+                    quantity_vector->concatenate_with(subspectrum.raw_data);
+            }
+            common::Logger::detailed("GSzSquaredWorker will be used with gSz_total_squared.");
+        } else {
+            throw std::invalid_argument("GSzSquaredWorker cannot find Spectrum of g_squared_T00 or gSz_total_squared");
         }
 
-        common::Logger::detailed("GSzSquaredWorker will be used.");
         magnetic_susceptibility_worker =
-            std::make_unique<magnetic_susceptibility::worker::GSzSquaredWorker>(
+            std::make_unique<magnetic_susceptibility::worker::DifferentGWorker>(
                 std::move(energy_vector),
                 std::move(degeneracy_vector),
-                std::move(g_sz_squared_vector));
+                std::move(quantity_vector));
     } else {
         throw std::invalid_argument("Cannot construct magnetic_susceptibility::worker");
     }
@@ -83,7 +97,7 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         magnetic_susceptibility_worker =
             std::make_unique<magnetic_susceptibility::worker::CurieWeissWorker>(
                 std::move(magnetic_susceptibility_worker),
-                model.getNumericalWorker().getThetaParameter());
+                consistentModelOptimizationList.getModel().getNumericalWorker().getThetaParameter());
     }
 
     common::Logger::separate(0, common::detailed);

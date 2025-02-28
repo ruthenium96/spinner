@@ -111,7 +111,7 @@ std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(
 void Runner::BuildMuSquaredWorker() {
     auto magnetic_susceptibility_worker =
         magnetic_susceptibility::worker::WorkerConstructor::construct(
-            getModel(),
+            consistentModelOptimizationList_,
             getEigendecompositor(),
             getDataStructuresFactories());
 
