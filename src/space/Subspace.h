@@ -11,7 +11,6 @@ struct Subspace {
     std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix> decomposition;
     std::optional<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
         dense_semiunitary_matrix;
-    std::optional<std::vector<size_t>> ssquared_indexes;
 
     explicit Subspace(
         std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&&,
