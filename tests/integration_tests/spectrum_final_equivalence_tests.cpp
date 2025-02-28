@@ -75,8 +75,10 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
         if (j == magic_enum::enum_integer<common::QuantityEnum>(common::Energy)) {
             continue;
         }
-        if (first_vector.at(0)[j].has_value() && second_vector.at(0)[j].has_value()) {
+        if (first_vector.at(0)[j].has_value()) {
             quantum_values_sum_first[j] = 0;
+        }
+        if (second_vector.at(0)[j].has_value()) {
             quantum_values_sum_second[j] = 0;
         }
     }
@@ -91,17 +93,28 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
         // TODO: values may differ, but the sums of values for degenerate eigenvectors should be the same
         if (std::abs(last_energy - first_vector[i][magic_enum::enum_integer<common::QuantityEnum>(common::Energy)].value()) > 1e-5) {
             for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
-                if (quantum_values_sum_first[j].has_value() && quantum_values_sum_second[j].has_value()) {
-                    EXPECT_NEAR(quantum_values_sum_first[j].value(), quantum_values_sum_second[j].value(), 1e-3);
-                    quantum_values_sum_first[j] = 0;
-                    quantum_values_sum_second[j] = 0;
+                for (int k = 0; k < quantum_values_sum_second.size(); ++k) {
+                    if (quantum_values_sum_first[j].has_value() 
+                        && quantum_values_sum_second[k].has_value()) {
+                        if (magic_enum::enum_value<common::QuantityEnum>(j) != common::S_total_squared) {
+                            quantum_values_sum_first[j].value() *= 3;
+                        }
+                        if (magic_enum::enum_value<common::QuantityEnum>(k) != common::S_total_squared) {
+                            quantum_values_sum_second[k].value() *= 3;
+                        }
+                        EXPECT_NEAR(quantum_values_sum_first[j].value(), quantum_values_sum_second[k].value(), 1e-3);
+                        quantum_values_sum_first[j] = 0;
+                        quantum_values_sum_second[k] = 0;
+                    }
                 }
             }
         }
         for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
             const auto& quantity_enum_ = magic_enum::enum_value<common::QuantityEnum>(j);
-            if (quantum_values_sum_first[j].has_value() && quantum_values_sum_second[j].has_value()) {
+            if (quantum_values_sum_first[j].has_value()) {
                 quantum_values_sum_first[j].value() += first_vector[i][quantity_enum_].value();
+            }
+            if (quantum_values_sum_second[j].has_value()) {
                 quantum_values_sum_second[j].value() += second_vector[i][quantity_enum_].value();  
             }
         }
@@ -191,6 +204,33 @@ void initialize_five_center_mirror_symmetry_exchange_chain(
         .assignSymbolToIsotropicExchange(Jinternal, 2, 3);
 }
 
+void initialize_different_g_factors_for_five_centers(
+    model::ModelInput& model, 
+    double g04_v, 
+    double g13_v, 
+    double g2_v) {
+    auto g04 = model.addSymbol("g04", g04_v);
+    model.assignSymbolToGFactor(g04, 0).assignSymbolToGFactor(g04, 4);
+
+    auto g13 = model.addSymbol("g13", g13_v);
+    model.assignSymbolToGFactor(g13, 1).assignSymbolToGFactor(g13, 3);
+    
+    auto g2 = model.addSymbol("g2", g2_v);
+    model.assignSymbolToGFactor(g2, 2);
+}
+
+void initialize_same_g_factor_for_five_centers(
+    model::ModelInput& model, 
+    double g_v) {
+    auto g = model.addSymbol("g", g_v);
+    model
+        .assignSymbolToGFactor(g, 0)
+        .assignSymbolToGFactor(g, 1)
+        .assignSymbolToGFactor(g, 2)
+        .assignSymbolToGFactor(g, 3)
+        .assignSymbolToGFactor(g, 4);
+}
+
 class five_center_chain : public SpectrumFinalEquivalenceTest {};
 
 #define group_five_center_chain group::Group(group::Group::S2, {{4, 3, 2, 1, 0}})
@@ -214,6 +254,62 @@ TEST_P(five_center_chain, NoGFactors) {
             runner::Runner runner_simple(model);
             runner::Runner runner(model, GetParam());
             expect_final_vectors_equivalence(runner_simple, runner);                
+        }
+    }
+}
+
+TEST_P(five_center_chain, DifferentGFactors) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2, 2},
+        {2, 2, 4, 2, 2},
+        {3, 3, 2, 3, 3},
+        {3, 3, 3, 3, 3},
+        {3, 3, 4, 3, 3},
+        {4, 2, 4, 2, 4}};
+    std::vector<std::pair<double, double>> js =
+        {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
+    std::vector<std::array<double, 3>> gss = {
+        {2.0, 2.0, 2.0}, {2.0, 2.1, 2.2}, {3.1, 4.1, 5.1}
+    };
+
+    for (const auto& mults : multss) {
+        for (auto [Jfirst, Jsecond] : js) {
+            for (const auto gs : gss) {
+                model::ModelInput model(mults);
+                initialize_five_center_mirror_symmetry_exchange_chain(model, Jfirst, Jsecond);
+                initialize_different_g_factors_for_five_centers(model, gs[0], gs[1], gs[2]);
+
+                runner::Runner runner_simple(model);
+                runner::Runner runner(model, GetParam());
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }           
+        }
+    }
+}
+
+TEST_P(five_center_chain, SameGFactors) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2, 2},
+        {2, 2, 4, 2, 2},
+        {3, 3, 2, 3, 3},
+        {3, 3, 3, 3, 3},
+        {3, 3, 4, 3, 3},
+        {4, 2, 4, 2, 4}};
+    std::vector<std::pair<double, double>> js =
+        {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
+    std::vector<double> gs = {2.0, 2.1, 2.2, 3.1, 4.1, 5.1};
+
+    for (const auto& mults : multss) {
+        for (auto [Jfirst, Jsecond] : js) {
+            for (const auto g : gs) {
+                model::ModelInput model(mults);
+                initialize_five_center_mirror_symmetry_exchange_chain(model, Jfirst, Jsecond);
+                initialize_same_g_factor_for_five_centers(model, g);
+
+                runner::Runner runner_simple(model);
+                runner::Runner runner(model, GetParam());
+                expect_final_vectors_equivalence(runner_simple, runner);
+            }           
         }
     }
 }
