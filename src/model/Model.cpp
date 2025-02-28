@@ -12,16 +12,25 @@ Model::Model(ModelInput modelInput, std::unique_ptr<operators::AbstractOperatorC
     operator_constructor_(std::move(operator_constructor)) {
     operators_map_[common::Energy] = std::make_shared<operators::Operator>();
     operators_map_[common::S_total_squared] = operator_constructor_->constructSSquared();
+    operators_map_[common::M_total_squared] = operator_constructor_->constructMSquared();
     
     if (getSymbolicWorker().isGFactorInitialized()) {
         operators_map_[common::gSz_total_squared] = operator_constructor_->constructGSzSquaredLike(
             getNumericalWorker().getGGParameters().first,
             getNumericalWorker().getGGParameters().second);
 
+        operators_map_[common::g_squared_T00] = operator_constructor_->constructGSquaredT00Like(
+            getNumericalWorker().getGGParameters().first,
+            getNumericalWorker().getGGParameters().second);;
+    
         for (const auto& symbol :
             getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
             auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
             derivatives_map_[{common::gSz_total_squared, symbol}] = operator_constructor_->constructGSzSquaredLike(
+                pair_of_parameters.first,
+                pair_of_parameters.second
+            );
+            derivatives_map_[{common::g_squared_T00, symbol}] = operator_constructor_->constructGSquaredT00Like(
                 pair_of_parameters.first,
                 pair_of_parameters.second
             );
