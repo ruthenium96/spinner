@@ -6,13 +6,6 @@ namespace model::operators::lexicographic {
 
 SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
-    std::shared_ptr<const TwoDNumericalParameters<double>> parameters) :
-    TwoCenterTerm(converter->get_mults().size()),
-    converter_(std::move(converter)),
-    coefficients_(std::move(parameters)) {}
-
-SzSzTwoCenterTerm::SzSzTwoCenterTerm(
-    std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
     std::shared_ptr<const TwoDNumericalParameters<double>> parameters,
     double prefactor) :
     TwoCenterTerm(converter->get_mults().size()),

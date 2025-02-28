@@ -12,10 +12,7 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
     SzSzTwoCenterTerm(
         std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
         std::shared_ptr<const TwoDNumericalParameters<double>> parameters,
-        double prefactor);
-    SzSzTwoCenterTerm(
-        std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
-        std::shared_ptr<const TwoDNumericalParameters<double>> parameters);
+        double prefactor = 1);
     std::unique_ptr<Term> clone() const override;
     void construct(
         quantum::linear_algebra::AbstractSymmetricMatrix&
@@ -27,7 +24,7 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
   private:
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter_;
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
-    double prefactor_ = 1;
+    double prefactor_;
 };
 }  // namespace model::operators::lexicographic
 #endif  //SPINNER_LEXSZSZTWOCENTERTERM_H
