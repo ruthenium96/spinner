@@ -19,6 +19,8 @@ class LexOperatorConstructor : public AbstractOperatorConstructor {
         std::shared_ptr<const OneDNumericalParameters<double>> parameters) const override;
 
     std::shared_ptr<Operator> constructSSquared() const override;
+    std::shared_ptr<Operator> constructMSquared() const override;
+
     std::shared_ptr<Operator> constructGSzSquaredLike(
         std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
         std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const override;

@@ -3,6 +3,7 @@
 #include "src/model/operators/Operator.h"
 #include "src/model/operators/terms/ConstantTerm.h"
 #include "src/model/operators/terms/LocalSSquaredOneCenterTerm.h"
+#include "src/model/operators/terms/TotalMSquaredTerm.h"
 #include "src/model/operators/terms/lexicographic/ScalarProductTerm.h"
 #include "src/model/operators/terms/lexicographic/SzSzOneCenterTerm.h"
 #include "src/model/operators/terms/lexicographic/SzSzTwoCenterTerm.h"
@@ -45,6 +46,14 @@ std::shared_ptr<Operator> LexOperatorConstructor::constructSSquared() const {
 	// ... + 2 * \sum_i\sum_j (S_i, S_j). This ScalarProductTerm constructor does required job:
 	s_squared_operator_->emplace_back(std::make_unique<const lexicographic::ScalarProductTerm>(converter_, 2.0));
     return s_squared_operator_;
+}
+
+std::shared_ptr<Operator> LexOperatorConstructor::constructMSquared() const {
+    auto m_squared_operator_ = std::make_shared<Operator>();
+
+    m_squared_operator_->emplace_back(std::make_unique<TotalMSquaredTerm>(converter_));
+
+    return m_squared_operator_;
 }
 
 std::shared_ptr<Operator> LexOperatorConstructor::constructGSzSquaredLike(

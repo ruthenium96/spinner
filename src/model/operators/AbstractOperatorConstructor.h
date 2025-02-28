@@ -19,6 +19,7 @@ class AbstractOperatorConstructor {
         std::shared_ptr<const OneDNumericalParameters<double>> parameters) const = 0;
 
     virtual std::shared_ptr<Operator> constructSSquared() const = 0;
+    virtual std::shared_ptr<Operator> constructMSquared() const = 0;
     
     virtual std::shared_ptr<Operator> constructGSzSquaredLike(
         std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,

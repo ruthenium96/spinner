@@ -3,6 +3,7 @@
 #include <memory>
 #include <stdexcept>
 #include "src/model/operators/terms/LocalSSquaredOneCenterTerm.h"
+#include "src/model/operators/terms/TotalMSquaredTerm.h"
 #include "src/model/operators/terms/ito/T00TwoCenterTerm.h"
 #include "src/model/operators/terms/ito/T20OneCenterTerm.h"
 #include "src/model/operators/terms/ito/T20TwoCenterTerm.h"
@@ -34,6 +35,14 @@ std::shared_ptr<Operator> ITOOperatorConstructor::constructSSquared() const {
 	s_squared_operator_->emplace_back(std::make_unique<const ito::TotalSSquaredTerm>(converter_));
     return s_squared_operator_;
 }
+
+std::shared_ptr<Operator> ITOOperatorConstructor::constructMSquared() const {
+    auto m_squared_operator_ = std::make_shared<Operator>();
+
+    m_squared_operator_->emplace_back(std::make_unique<TotalMSquaredTerm>(converter_));
+
+    return m_squared_operator_;
+};
 
 // TODO: due to the structure of the tests and the absence of the field (hence degeneracy of states 
 //  of a level), GSzSquared may be constructed incorrectly, up to adding the wrong constant, 
