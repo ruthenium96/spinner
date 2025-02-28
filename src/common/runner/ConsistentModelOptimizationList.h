@@ -37,6 +37,9 @@ class ConsistentModelOptimizationList {
 
     bool isImplicitSSquarePossible() const;
     bool isImplicitMSquarePossible() const;
+    bool isExplicitMSquarePossible() const;
+    bool isGSquaredT00Possible() const;
+    bool isGSzSquaredPossible() const;
 
   private:
     std::unique_ptr<model::Model> model_;

@@ -74,16 +74,20 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     if (isImplicitSSquarePossible() || isImplicitMSquarePossible()) {
         return;
     }
-    if (getModel().is_g_sz_squared_initialized()
-        && (!getModel().getSymbolicWorker().isAllGFactorsEqual()
-            || getModel().getSymbolicWorker().isZFSInitialized())) {
+    if (isExplicitMSquarePossible()) {
+        operators_for_explicit_construction_[common::M_total_squared] = 
+            model_->getOperator(common::M_total_squared).value();
+        return;
+    }
+    if (isGSquaredT00Possible()) {
+        operators_for_explicit_construction_[common::g_squared_T00] = 
+            model_->getOperator(common::g_squared_T00).value();
+        return;
+    }
+    if (isGSzSquaredPossible()) {
         operators_for_explicit_construction_[common::gSz_total_squared] =
             model_->getOperator(common::gSz_total_squared).value();
-        // TODO: when there is no Sz <-> -Sz symmetry, also \sum g_aS_{az} required
-    } else {
-        // TODO: some tests want to calculate S^2 values. Can we fix it?
-        operators_for_explicit_construction_[common::S_total_squared] =
-            model_->getOperator(common::S_total_squared).value();
+        return;
     }
 }
 
@@ -144,6 +148,20 @@ bool ConsistentModelOptimizationList::isImplicitMSquarePossible() const {
     && getOptimizationList().isTzSorted();
 }
 
+bool ConsistentModelOptimizationList::isExplicitMSquarePossible() const {
+    return getModel().gFactorsAreAllNoneOrAreTheSame();
+}
+
+bool ConsistentModelOptimizationList::isGSquaredT00Possible() const {
+    return !getModel().gFactorsAreNone() 
+    && !getModel().getSymbolicWorker().isZFSInitialized()
+    && getOptimizationList().isNonMinimalProjectionsEliminated();
+}
+
+bool ConsistentModelOptimizationList::isGSzSquaredPossible() const {
+    return !getModel().gFactorsAreNone();
+}
+
 }  // namespace runner
 
 namespace {
@@ -162,21 +180,9 @@ void checkModelOptimizationListConsistence(
         if (modelInput.getSymbolicWorker().isZFSInitialized()) {
             throw std::invalid_argument("S2-transformation cannot be applied to ZFS-Hamiltonian");
         }
-        // TODO: check if we actually can use S2-transformation even if g-factors are not equal
-        // S2-transformation can be applied only if all g-factors are equal:
-        if (modelInput.getSymbolicWorker().isGFactorInitialized()
-            && !modelInput.getSymbolicWorker().isAllGFactorsEqual()) {
-            throw std::invalid_argument(
-                "S2-transformation cannot be applied to system with different g-factors");
-        }
     }
     if (optimizationList.isLexBasis() && optimizationList.isTSquaredSorted() && !optimizationList.isSSquaredTransformed()) {
         throw std::invalid_argument("In the case of lex basis, we cannot TSquared Sort without SSquared Transformer");
-    }
-    if (optimizationList.isNonMinimalProjectionsEliminated() && 
-        modelInput.getSymbolicWorker().isGFactorInitialized() &&
-        !modelInput.getSymbolicWorker().isAllGFactorsEqual()) {
-        throw std::invalid_argument("Cannot use Non-minimal Projections Eliminator for model with different g-factors");
     }
 }
 
