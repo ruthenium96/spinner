@@ -29,7 +29,7 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
         eigenvectors_[number_of_block] = mb_unitary_transformation_matrix;
 
         const auto& energy_subspectrum =
-            eigendecompositor_->getSpectrum(common::Energy)->get().blocks.at(number_of_block);
+            eigendecompositor_->getSpectrum(common::Energy).value().get().blocks.at(number_of_block);
 
         auto raw_spectrum = energy_subspectrum.raw_data->multiply_by(1);
         current_energy_spectrum_.blocks[number_of_block] =
@@ -45,7 +45,7 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
         double current_value_of_symbol = currentValueGetter_();
         double multiplier = current_value_of_symbol / initial_value_of_symbol_;
         const auto& energy_subspectrum =
-            eigendecompositor_->getSpectrum(common::Energy)->get().blocks.at(number_of_block);
+            eigendecompositor_->getSpectrum(common::Energy).value().get().blocks.at(number_of_block);
         auto raw_subspectrum_energy = energy_subspectrum.raw_data->multiply_by(multiplier);
         current_energy_spectrum_.blocks[number_of_block] =
             Subspectrum(std::move(raw_subspectrum_energy), energy_subspectrum.properties);

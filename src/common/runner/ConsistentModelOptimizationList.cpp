@@ -1,6 +1,18 @@
 #include "ConsistentModelOptimizationList.h"
 
+#include <functional>
+#include <memory>
+#include <stdexcept>
 #include <utility>
+
+#include "src/common/Quantity.h"
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
+#include "src/common/index_converter/s_squared/IndexConverter.h"
+#include "src/common/physical_optimization/OptimizationList.h"
+#include "src/model/operators/AbstractOperatorConstructor.h"
+#include "src/model/operators/ITOOperatorConstructor.h"
+#include "src/model/operators/LexOperatorConstructor.h"
+#include "src/spin_algebra/GroupAdapter.h"
 
 namespace {
 void checkMultiplicitiesGroupConsistence(
@@ -16,14 +28,14 @@ void checkAllSymbolNamesGroupConsistence(
     const model::symbols::SymbolicWorker& symbols,
     const group::Group& group);
 void checkModelOptimizationListConsistence(
-    const model::Model& model,
+    const model::ModelInput& modelInput,
     const common::physical_optimization::OptimizationList& optimizationList);
 }  // namespace
 
 namespace runner {
 
 const model::Model& ConsistentModelOptimizationList::getModel() const {
-    return model_;
+    return *model_;
 }
 
 const common::physical_optimization::OptimizationList&
@@ -34,39 +46,63 @@ ConsistentModelOptimizationList::getOptimizationList() const {
 ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     model::ModelInput modelInput,
     common::physical_optimization::OptimizationList optimizationList) :
-    model_(model::Model(std::move(modelInput))),
     optimizationList_(std::move(optimizationList)) {
     // this function throw an exception if ModelInput and OptimizationList are inconsistent
-    checkModelOptimizationListConsistence(model_, optimizationList_);
+    checkModelOptimizationListConsistence(modelInput, optimizationList_);
+    lex_index_converter_ = std::make_shared<index_converter::lexicographic::IndexConverter>(modelInput.getMults());
+
+    std::unique_ptr<model::operators::AbstractOperatorConstructor> operator_constructor;
+    if (getOptimizationList().isITOBasis()) {
+        const auto number_of_mults = getIndexConverter()->get_mults().size();
+        auto group_adapter =
+            spin_algebra::GroupAdapter(optimizationList_.getGroupsToApply(), number_of_mults);
+
+        s_squared_index_converter_ = std::make_unique<index_converter::s_squared::IndexConverter>(
+            modelInput.getMults(), 
+            group_adapter.getOrderOfSummations());
+
+        operator_constructor = std::make_unique<model::operators::ITOOperatorConstructor>(s_squared_index_converter_);
+    } else {
+        operator_constructor = std::make_unique<model::operators::LexOperatorConstructor>(lex_index_converter_);
+    }
+
+    model_ = std::make_unique<model::Model>(std::move(modelInput), std::move(operator_constructor));
 
     operators_for_explicit_construction_[common::Energy] =
-        model_.getOperator(common::Energy).value();
-    if (getOptimizationList().isSSquaredTransformed()) {
+        model_->getOperator(common::Energy).value();
+
+    if (isImplicitSSquarePossible() || isImplicitMSquarePossible()) {
         return;
     }
-    if (getModel().is_g_sz_squared_initialized()
-        && (!getModel().getSymbolicWorker().isAllGFactorsEqual()
-            || getModel().getSymbolicWorker().isZFSInitialized())) {
+    if (isExplicitMSquarePossible()) {
+        operators_for_explicit_construction_[common::M_total_squared] = 
+            model_->getOperator(common::M_total_squared).value();
+        return;
+    }
+    if (isGSquaredT00Possible()) {
+        operators_for_explicit_construction_[common::g_squared_T00] = 
+            model_->getOperator(common::g_squared_T00).value();
+        return;
+    }
+    if (isGSzSquaredPossible()) {
         operators_for_explicit_construction_[common::gSz_total_squared] =
-            model_.getOperator(common::gSz_total_squared).value();
-        // TODO: when there is no Sz <-> -Sz symmetry, also \sum g_aS_{az} required
-    } else {
-        // TODO: some tests want to calculate S^2 values. Can we fix it?
-        operators_for_explicit_construction_[common::S_total_squared] =
-            model_.getOperator(common::S_total_squared).value();
+            model_->getOperator(common::gSz_total_squared).value();
+        return;
     }
 }
 
 void ConsistentModelOptimizationList::InitializeDerivatives() {
-    for (const auto& [pair, shared_ptr] : model_.getOperatorDerivatives()) {
-        derivatives_for_explicit_construction_[pair] = shared_ptr;
+    if (derivatives_for_explicit_construction_.empty()) {
+        for (const auto& [pair, shared_ptr] : model_->getOperatorDerivatives()) {
+            derivatives_for_explicit_construction_[pair] = shared_ptr;
+        }
     }
 }
 
 void ConsistentModelOptimizationList::setNewValueToChangeableSymbol(
     const model::symbols::SymbolName& symbol_name,
     double new_value) {
-    model_.getNumericalWorker().setNewValueToChangeableSymbol(symbol_name, new_value);
+    model_->setNewValueToChangeableSymbol(symbol_name, new_value);
 }
 
 const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
@@ -80,31 +116,73 @@ const std::map<
 ConsistentModelOptimizationList::getDerivativeOperatorsForExplicitConstruction() const {
     return derivatives_for_explicit_construction_;
 }
+
+std::shared_ptr<const index_converter::lexicographic::IndexConverter>
+ConsistentModelOptimizationList::getLexIndexConverter() const {
+    return lex_index_converter_;
+}
+
+std::shared_ptr<const index_converter::s_squared::IndexConverter> 
+ConsistentModelOptimizationList::getSquareIndexConveter() const {
+    return s_squared_index_converter_;
+}
+
+std::shared_ptr<const index_converter::AbstractIndexConverter>
+ConsistentModelOptimizationList::getIndexConverter() const {
+    if (getSquareIndexConveter() != nullptr) {
+        return getSquareIndexConveter();
+    } else {
+        return getLexIndexConverter();
+    }
+}
+
+bool ConsistentModelOptimizationList::isImplicitSSquarePossible() const {
+    return getModel().gFactorsAreAllNoneOrAreTheSame()
+    && !getModel().getSymbolicWorker().isZFSInitialized()
+    && getOptimizationList().isNonMinimalProjectionsEliminated();
+}
+
+bool ConsistentModelOptimizationList::isImplicitMSquarePossible() const {
+    return getModel().gFactorsAreAllNoneOrAreTheSame()
+    && !getOptimizationList().isNonMinimalProjectionsEliminated()
+    && getOptimizationList().isTzSorted();
+}
+
+bool ConsistentModelOptimizationList::isExplicitMSquarePossible() const {
+    return getModel().gFactorsAreAllNoneOrAreTheSame();
+}
+
+bool ConsistentModelOptimizationList::isGSquaredT00Possible() const {
+    return !getModel().gFactorsAreNone() 
+    && !getModel().getSymbolicWorker().isZFSInitialized()
+    && getOptimizationList().isNonMinimalProjectionsEliminated();
+}
+
+bool ConsistentModelOptimizationList::isGSzSquaredPossible() const {
+    return !getModel().gFactorsAreNone();
+}
+
 }  // namespace runner
 
 namespace {
 void checkModelOptimizationListConsistence(
-    const model::Model& model,
+    const model::ModelInput& modelInput,
     const common::physical_optimization::OptimizationList& optimizationList) {
     // Symmetrizer can be applied for all types of Hamiltonian terms...
     for (const auto& group : optimizationList.getGroupsToApply()) {
         // ...if spins invariant to group elements:
-        checkMultiplicitiesGroupConsistence(model.getIndexConverter().get_mults(), group);
+        checkMultiplicitiesGroupConsistence(modelInput.getMults(), group);
         // ...if Hamiltonian terms invariant to group elements:
-        checkAllSymbolNamesGroupConsistence(model.getSymbolicWorker(), group);
+        checkAllSymbolNamesGroupConsistence(modelInput.getSymbolicWorker(), group);
     }
     if (optimizationList.isSSquaredTransformed()) {
         // S2-transformation can be applied only for HDvV-Hamiltionian:
-        if (model.is_zero_field_splitting_initialized()) {
+        if (modelInput.getSymbolicWorker().isZFSInitialized()) {
             throw std::invalid_argument("S2-transformation cannot be applied to ZFS-Hamiltonian");
         }
-        // TODO: check if we actually can use S2-transformation even if g-factors are not equal
-        // S2-transformation can be applied only if all g-factors are equal:
-        if (model.getSymbolicWorker().isGFactorInitialized()
-            && !model.getSymbolicWorker().isAllGFactorsEqual()) {
-            throw std::invalid_argument(
-                "S2-transformation cannot be applied to system with different g-factors");
-        }
+    }
+    if (optimizationList.isLexBasis() && optimizationList.isTSquaredSorted() && !optimizationList.isSSquaredTransformed()) {
+        throw std::invalid_argument("In the case of lex basis, we cannot TSquared Sort without SSquared Transformer");
     }
 }
 

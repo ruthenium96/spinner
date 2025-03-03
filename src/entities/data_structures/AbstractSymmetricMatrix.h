@@ -4,8 +4,6 @@
 #include <cstdint>
 #include <memory>
 
-#include "AbstractDenseVector.h"
-
 namespace quantum::linear_algebra {
 class AbstractSymmetricMatrix {
   public:

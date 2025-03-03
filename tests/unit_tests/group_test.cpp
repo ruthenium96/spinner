@@ -1,4 +1,5 @@
 #include "src/group/Group.h"
+#include <algorithm>
 
 #include "gtest/gtest.h"
 

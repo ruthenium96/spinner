@@ -4,6 +4,10 @@
 
 namespace common::physical_optimization {
 
+OptimizationList::OptimizationList(BasisType basis_type) {
+    basis_type_ = basis_type;
+}
+
 OptimizationList& OptimizationList::TzSort() {
     if (isSSquaredTransformed_) {
         throw std::invalid_argument("Cannot TzSort *AFTER* S2-transformation");
@@ -12,20 +16,45 @@ OptimizationList& OptimizationList::TzSort() {
     return *this;
 }
 
+OptimizationList& OptimizationList::TSquaredSort() {
+    isTSquaredSorted_ = true;
+    return *this;
+}
+
 OptimizationList& OptimizationList::EliminatePositiveProjections() {
+    if (isNonMinimalProjectionsEliminated_) {
+        throw std::invalid_argument("Cannot simultaneously eliminate both non-minimal and positive projections");
+    }
     if (!isTzSorted_) {
         throw std::invalid_argument("Cannot eliminate positive projections without tz-sort");
     }
-    // TODO: can we eliminate positive projections after S2-Transformation?
-    //  if we can, does it have any sense?
     isPositiveProjectionsEliminated_ = true;
     return *this;
 }
 
+OptimizationList& OptimizationList::EliminateNonMininalProjections() {
+    if (isPositiveProjectionsEliminated_) {
+        throw std::invalid_argument("Cannot simultaneously eliminate both positive and non-minimal projections");
+    }
+    if (!isTzSorted_ || !isTSquaredSorted_) {
+        throw std::invalid_argument("Cannot eliminate non-minimal projections without tz-sort or t2-sort");
+    }
+    isNonMinimalProjectionsEliminated_ = true;
+    return *this;
+}
+
 OptimizationList& OptimizationList::SSquaredTransform() {
+    if (basis_type_ == ITO) {
+        throw std::invalid_argument("Cannot use S2-transformation with ITO-basis");
+    }
     if (!isTzSorted_) {
-        throw std::invalid_argument("Cannot perform S2-transformation without without tz-sort");
-        // actually, can, but it is inefficient
+        throw std::invalid_argument("Cannot perform S2-transformation without tz-sort");
+    }
+    if (!isTSquaredSorted_) {
+        throw std::invalid_argument("Cannot perform S2-transformation without t2-sort");
+    }
+    if (!isNonMinimalProjectionsEliminated_) {
+        throw std::invalid_argument("Cannot perform S2-transformation without elimination of non-minimal projections");
     }
     for (const auto& group : groupsToApply_) {
         if (!group.properties.is_abelian) {
@@ -54,17 +83,12 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
             throw std::invalid_argument("Groups do not commute!");
         }
     }
-    if (isSSquaredTransformed_) {
-        throw std::invalid_argument("Cannot symmetrize *AFTER* S2-transformation");
+    if (basis_type_ == ITO && !new_group.properties.is_abelian) {
+        throw std::invalid_argument("Currently cannot perform use ITO-basis with non-Abelian symmetries");
     }
-    //    // TODO: symmetrizer does not work correct after non-Abelian simplifier. Fix it.
-    //    if (space_history_.isNonAbelianSimplified && !new_group.properties.is_abelian) {
-    //        throw std::invalid_argument(
-    //            "Symmetrization after using of non-Abelian simplifier causes bugs.");
-    //    }
-    //    if (!new_group.properties.is_abelian) {
-    //        ++space_history_.number_of_non_simplified_abelian_groups;
-    //    }
+    if (isSSquaredTransformed_ && !new_group.properties.is_abelian) {
+        throw std::invalid_argument("Currently cannot perform S2-transformation with non-Abelian symmetries");
+    }
     groupsToApply_.emplace_back(std::move(new_group));
 
     return *this;
@@ -77,12 +101,28 @@ OptimizationList& OptimizationList::Symmetrize(
     return Symmetrize(new_group);
 }
 
+bool OptimizationList::isLexBasis() const {
+    return basis_type_ == LEX;
+}
+
+bool OptimizationList::isITOBasis() const {
+    return basis_type_ == ITO;
+}
+
 bool OptimizationList::isTzSorted() const {
     return isTzSorted_;
 }
 
+bool OptimizationList::isTSquaredSorted() const {
+    return isTSquaredSorted_;
+}
+
 bool OptimizationList::isPositiveProjectionsEliminated() const {
     return isPositiveProjectionsEliminated_;
+}
+
+bool OptimizationList::isNonMinimalProjectionsEliminated() const {
+    return isNonMinimalProjectionsEliminated_;
 }
 
 bool OptimizationList::isSSquaredTransformed() const {

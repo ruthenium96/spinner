@@ -2,12 +2,7 @@
 
 #include <set>
 
-std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix) {
-    os << submatrix.properties;
-    submatrix.raw_data->print(os);
-    os << std::endl;
-    return os;
-}
+#include "src/common/Logger.h"
 
 Submatrix::Submatrix(
     std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
@@ -18,9 +13,9 @@ Submatrix::Submatrix(
 Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
-    const lexicographic::IndexConverter& converter,
+    std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
     const quantum::linear_algebra::FactoriesList& factories) {
-    auto totalSpaceSize = converter.get_total_space_size();
+    auto totalSpaceSize = converter->get_total_space_size();
     auto matrix_in_lexicografical_basis = factories.createSparseSymmetricMatrix(totalSpaceSize);
 
     std::set<unsigned int> lexicografical_vectors_to_built;
@@ -35,28 +30,8 @@ Submatrix::Submatrix(
         }
     }
 
-    for (auto index_of_lexicographic_vector_k : lexicografical_vectors_to_built) {
-        // BUILDING k-th ROW OF INITIAL_MATRIX
-        for (auto& term : new_operator.getZeroCenterTerms()) {
-            term->construct(matrix_in_lexicografical_basis, index_of_lexicographic_vector_k);
-        }
-        for (int center_a = 0; center_a < converter.get_mults().size(); ++center_a) {
-            for (auto& term : new_operator.getOneCenterTerms()) {
-                term->construct(
-                    matrix_in_lexicografical_basis,
-                    index_of_lexicographic_vector_k,
-                    center_a);
-            }
-            for (int center_b = center_a + 1; center_b < converter.get_mults().size(); ++center_b) {
-                for (auto& term : new_operator.getTwoCenterTerms()) {
-                    term->construct(
-                        matrix_in_lexicografical_basis,
-                        index_of_lexicographic_vector_k,
-                        center_a,
-                        center_b);
-                }
-            }
-        }
+    for (auto& term : new_operator.getTerms()) {
+        term->construct(*matrix_in_lexicografical_basis, lexicografical_vectors_to_built);
     }
 
     properties = subspace.properties;

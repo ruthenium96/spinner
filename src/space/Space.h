@@ -6,7 +6,6 @@
 #include <map>
 
 #include "Subspace.h"
-#include "src/common/lexicographic/IndexConverter.h"
 #include "src/entities/data_structures/FactoriesList.h"
 
 namespace space {
@@ -26,7 +25,5 @@ class Space {
     std::vector<Subspace> blocks_;
 };
 }  // namespace space
-
-std::ostream& operator<<(std::ostream& os, const space::Space& space);
 
 #endif  // SPINNER_SPACE_H

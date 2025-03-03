@@ -12,7 +12,7 @@ else ()
     )
     FetchContent_MakeAvailable(googletest)
     include_directories(${CMAKE_SOURCE_DIR}/libs/googletest/googletest/include)
-    message(" ***  GTest was downloaded")
+    message(" *** GTest was downloaded")
 endif ()
 
 add_library(tests_tools
@@ -24,27 +24,33 @@ add_executable(spinner_time_test
 
 add_executable(spinner_test
         main.cpp
+        unit_tests/clebsh_gordon_calculator_tests.cpp
         integration_tests/spectrum_final_equivalence_tests.cpp
         integration_tests/simple_analytical_dependencies_tests.cpp
         unit_tests/group_test.cpp
         unit_tests/consistentModelOptimizationList_tests.cpp
         unit_tests/symmetrizer_tests.cpp
         unit_tests/non_abelian_simplifier_tests.cpp
+        unit_tests/index_converters_tests.cpp
         unit_tests/interactions_test.cpp
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
+        unit_tests/parser_tests.cpp
         non_hamiltonian_operators_tests.cpp
         unit_tests/magnetic_susceptibility_tests.cpp
-        integration_tests/spectrum_builder_tests.cpp)
+        integration_tests/spectrum_builder_tests.cpp
+        integration_tests/parser_tests.cpp)
 
 find_package(Armadillo 10.6)
 find_package(Eigen3 3.3)
 
 if (ARMADILLO_FOUND)
-    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaDoubleIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaFloatIndividual_tests.cpp)
 endif ()
 if (Eigen3_FOUND)
-    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenDoubleIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenFloatIndividual_tests.cpp)
 endif ()
 
 if (Eigen3_FOUND)
@@ -93,7 +99,8 @@ endif ()
 target_link_libraries(tests_tools gtest gtest_main)
 
 target_link_libraries(spinner_test gtest gtest_main tests_tools
-        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra eigendecompositor)
+        group space model spectrum common matrix magnetic_susceptibility nonlinear_solver spin_algebra eigendecompositor
+        input)
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver eigendecompositor)

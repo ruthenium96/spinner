@@ -10,7 +10,7 @@
 TEST(performanceTest, simple2ComponentSchema) {
     std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 4, 4, 4, 4, 4, 4};
 
-    lexicographic::IndexConverter converter(mults);
+    index_converter::lexicographic::IndexConverter converter(mults);
 
     auto sparseSemiunitaryfactories = constructAllSparseSemiunitaryMatrixFactories();
     std::vector<quantum::linear_algebra::FactoriesList> allFactoriesLists;

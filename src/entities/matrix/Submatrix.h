@@ -7,6 +7,8 @@
 #include "src/model/operators/Operator.h"
 #include "src/space/Subspace.h"
 
+#include "src/common/index_converter/AbstractIndexConverter.h"
+
 struct Submatrix {
     BlockProperties properties;
     std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data;
@@ -20,9 +22,8 @@ struct Submatrix {
     Submatrix(
         const space::Subspace& subspace,
         const model::operators::Operator& new_operator,
-        const lexicographic::IndexConverter& converter,
+        std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         const quantum::linear_algebra::FactoriesList& factories);
-    friend std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 };
 
 #endif  //SPINNER_SUBMATRIX_H

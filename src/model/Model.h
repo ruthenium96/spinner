@@ -1,25 +1,32 @@
 #ifndef SPINNER_MODEL_H
 #define SPINNER_MODEL_H
 
+#include <memory>
 #include "ModelInput.h"
 #include "symbols/NumericalWorker.h"
+
+#include "src/model/operators/AbstractOperatorConstructor.h"
 
 namespace model {
 
 class Model {
   public:
-    explicit Model(ModelInput modelInput);
+    explicit Model(
+        ModelInput modelInput, 
+        std::unique_ptr<operators::AbstractOperatorConstructor>&& operator_constructor);
 
     // TODO: remove it?
     const symbols::SymbolicWorker& getSymbolicWorker() const;
     const symbols::NumericalWorker& getNumericalWorker() const;
-    symbols::NumericalWorker& getNumericalWorker();
 
-    bool is_s_squared_initialized() const;
-    bool is_g_sz_squared_initialized() const;
+    void
+    setNewValueToChangeableSymbol(const model::symbols::SymbolName& symbol_name, double new_value);
+
     bool is_g_sz_squared_derivatives_initialized() const;
-    bool is_isotropic_exchange_derivatives_initialized() const;
-    bool is_zero_field_splitting_initialized() const;
+
+    bool gFactorsAreNone() const;
+    bool gFactorsAreTheSame() const;
+    bool gFactorsAreAllNoneOrAreTheSame() const;
 
     std::optional<std::shared_ptr<const operators::Operator>>
         getOperator(common::QuantityEnum) const;
@@ -27,18 +34,16 @@ class Model {
     getOperatorDerivative(common::QuantityEnum, const symbols::SymbolName&) const;
 
     // These methods are not 'const' because they return non-const pointers.
-    // TODO: fix it using C++20 std::views?
     const std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>>& getOperators();
     const std::map<
         std::pair<common::QuantityEnum, symbols::SymbolName>,
         std::shared_ptr<operators::Operator>>&
     getOperatorDerivatives();
 
-    const lexicographic::IndexConverter& getIndexConverter() const;
-
   private:
     symbols::NumericalWorker numericalWorker_;
-    const lexicographic::IndexConverter converter_;
+    std::unique_ptr<operators::AbstractOperatorConstructor> operator_constructor_;
+
     struct OperatorsHistory {
         bool isotropic_exchange_in_hamiltonian = false;
         bool s_squared = false;
@@ -47,16 +52,11 @@ class Model {
         bool g_sz_squared_derivatives = false;
         bool zfs_in_hamiltonian = false;
         bool zfs_derivative = false;
+        bool isotropic_exchange_in_ito_hamiltonian = false;
     };
     OperatorsHistory operators_history_;
 
-    void InitializeIsotropicExchange();
-    void InitializeIsotropicExchangeDerivatives();
-    void InitializeZeroFieldSplitting();
-    void InitializeZeroFieldSplittingDerivative();
-    void InitializeSSquared();
-    void InitializeGSzSquared();
-    void InitializeGSzSquaredDerivatives();
+    symbols::NumericalWorker& getNumericalWorker();
 
     std::map<common::QuantityEnum, std::shared_ptr<operators::Operator>> operators_map_;
     std::map<

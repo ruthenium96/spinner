@@ -13,13 +13,11 @@ struct Matrix {
     Matrix(
         const space::Space& space,
         const model::operators::Operator& new_operator,
-        const lexicographic::IndexConverter& converter,
+        std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         const quantum::linear_algebra::FactoriesList& factories);
 
     std::vector<Submatrix> blocks;
     explicit Matrix(std::vector<Submatrix>&& m);
 };
-
-std::ostream& operator<<(std::ostream& os, const Matrix& matrix);
 
 #endif  //SPINNER_MATRIX_H

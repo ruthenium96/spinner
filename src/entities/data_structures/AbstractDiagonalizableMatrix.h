@@ -16,6 +16,7 @@ class AbstractDiagonalizableMatrix: public AbstractSymmetricMatrix {
     virtual EigenCouple diagonalizeValuesVectors() const = 0;
     virtual std::unique_ptr<AbstractDenseVector> diagonalizeValues() const = 0;
     virtual std::unique_ptr<AbstractDiagonalizableMatrix> multiply_by(double multiplier) const = 0;
+    ~AbstractDiagonalizableMatrix() override = default;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_ABSTRACTDIAGONALIZABLESYMMETRICMATRIX_H

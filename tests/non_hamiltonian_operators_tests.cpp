@@ -5,8 +5,12 @@
 #include "src/common/runner/Runner.h"
 #include "src/spin_algebra/GroupAdapter.h"
 #include "src/spin_algebra/MultiplicityDirectSum.h"
-#include "src/spin_algebra/OrderOfSummation.h"
-#include "src/spin_algebra/SSquaredState.h"
+#include "src/common/index_converter/s_squared/OrderOfSummation.h"
+#include "src/spin_algebra/SSquaredConverter.h"
+#include "src/spin_algebra/SSquaredLevelAndRepresentations.h"
+
+#include <functional>
+#include <numeric>
 
 spin_algebra::MultiplicityDirectSum
 spin_addition(const std::vector<spin_algebra::MultiplicityDirectSum>& mults) {
@@ -66,7 +70,7 @@ TEST(spin_addition, 44) {
 }
 
 void allMultiplicitiesWereSummedExactlyOnce(
-    const spin_algebra::OrderOfSummation& order_of_summation,
+    const index_converter::s_squared::OrderOfSummation& order_of_summation,
     size_t number_of_all_mults) {
     std::vector<bool> multiplicity_was_summed(number_of_all_mults - 1, false);
     for (const auto& instruction : order_of_summation) {
@@ -84,7 +88,7 @@ void allMultiplicitiesWereSummedExactlyOnce(
 }
 
 void allMultiplicitiesAreReachableLeftToRight(
-    const spin_algebra::OrderOfSummation& order_of_summation,
+    const index_converter::s_squared::OrderOfSummation& order_of_summation,
     size_t number_of_initial_mults,
     size_t number_of_all_mults) {
     std::vector<bool> multiplicity_are_reachable(number_of_all_mults, false);
@@ -164,7 +168,7 @@ TEST(addAllMultiplicitiesAndSort, 2222) {
 
     std::vector<std::pair<
         std::vector<group::Group>,
-        std::map<spin_algebra::SSquaredState::Properties, size_t>>>
+        std::map<spin_algebra::SSquaredLevelAndRepresentations::Properties, size_t>>>
         input_and_correct_answers;
 
     input_and_correct_answers.push_back({{}, {{{5, {}}, 1}, {{3, {}}, 3}, {{1, {}}, 2}}});
@@ -185,17 +189,17 @@ TEST(addAllMultiplicitiesAndSort, 2222) {
 
     for (const auto& [groups, correct_answer] : input_and_correct_answers) {
         auto group_adapter = spin_algebra::GroupAdapter(groups, number_of_initial_mults);
-        auto sorted_sum = spin_algebra::SSquaredState::addAllMultiplicitiesAndSort(
+        auto converter = spin_algebra::SSquaredConverter(
             mults,
             group_adapter.getOrderOfSummations(),
             group_adapter.getRepresentationMultiplier());
 
         for (const auto& [properties, number] : correct_answer) {
-            EXPECT_EQ(number, sorted_sum.at(properties).size())
+            EXPECT_EQ(number, converter.block_with_property(properties).value().get().size())
                 << "The number of states with multiplicity = " << properties.multiplicity
                 << " and representation " << representationName(properties.representations)
                 << " should be equal to " << number << ", but actually is equal to "
-                << sorted_sum.at(properties).size();
+                << converter.block_with_property(properties).value().get().size();
         }
     }
 }
@@ -210,7 +214,7 @@ TEST(
         model::ModelInput model(mults);
 
         runner::Runner runner(model);
-        lexicographic::IndexConverter converter(mults);
+        index_converter::lexicographic::IndexConverter converter(mults);
 
         Matrix s_squared_matrix = Matrix(
             runner.getSpace(),

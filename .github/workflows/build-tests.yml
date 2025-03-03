@@ -72,3 +72,5 @@ jobs:
           cd ${{github.workspace}}/build
           cmake ..
           cmake --build .
+
+# todo: add test for system YAML-C++

@@ -6,10 +6,10 @@
 namespace space::optimization {
 
 Symmetrizer::Symmetrizer(
-    lexicographic::IndexConverter converter,
+    std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator,
     group::Group group,
     quantum::linear_algebra::FactoriesList factories) :
-    converter_(std::move(converter)),
+    permutator_(std::move(permutator)),
     group_(std::move(group)),
     factories_(std::move(factories)) {}
 
@@ -92,27 +92,27 @@ Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32
     for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
         projections.emplace_back(std::move(factories_.createSparseSemiunitaryMatrix(
             group_.properties.number_of_projectors_of_representation[repr],
-            converter_.get_total_space_size())));
+            permutator_->get_total_space_size())));
     }
 
     auto iterator = subspace.decomposition->GetNewIterator(index_of_vector);
     while (iterator->hasNext()) {
         auto item = iterator->getNext();
-        std::vector<uint8_t> nzs = converter_.convert_lex_index_to_all_sz_projections(item.index);
-        std::vector<std::vector<uint8_t>> permutated_vectors = group_.permutate(nzs);
+        auto permutated_indexes_and_signs = 
+            permutator_->convert_index_to_permutated_indexes(item.index);
 
         for (uint8_t g = 0; g < group_.properties.group_size; ++g) {
-            uint32_t permutated_lex =
-                converter_.convert_sz_projections_to_lex_index(permutated_vectors[g]);
+            uint32_t permutated_index = permutated_indexes_and_signs[g].index;
             for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
                 for (uint8_t projector = 0;
                      projector < group_.properties.number_of_projectors_of_representation[repr];
                      ++projector) {
+                    double value = group_.properties.coefficients_of_projectors[repr][projector][g]
+                        * item.value * permutated_indexes_and_signs[g].sign;
                     projections[repr]->add_to_position(
-                        group_.properties.coefficients_of_projectors[repr][projector][g]
-                            * item.value,
+                        value,
                         projector,
-                        permutated_lex);
+                        permutated_index);
                 }
             }
         }

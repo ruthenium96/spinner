@@ -2,6 +2,7 @@
 #define SPINNER_ONESYMBOLINHAMILTONIANEIGENDECOMPOSITOR_H
 
 #include "AbstractEigendecompositor.h"
+#include <functional>
 
 namespace eigendecompositor {
 

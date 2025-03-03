@@ -15,13 +15,13 @@ GroupAdapter::GroupAdapter(const std::vector<group::Group>& groups, size_t numbe
 
     representationsMultiplier_ = RepresentationsMultiplier(all_groups_cayley_tables);
 
-    order_of_summations_ = spin_algebra::OrderOfSummation::constructFromOrbits(
+    order_of_summations_ = index_converter::s_squared::OrderOfSummation::constructFromOrbits(
         all_groups_orbits_of_mults,
         number_of_mults,
         number_of_summation);
 }
 
-std::shared_ptr<const OrderOfSummation> GroupAdapter::getOrderOfSummations() const {
+std::shared_ptr<const index_converter::s_squared::OrderOfSummation> GroupAdapter::getOrderOfSummations() const {
     return order_of_summations_;
 }
 

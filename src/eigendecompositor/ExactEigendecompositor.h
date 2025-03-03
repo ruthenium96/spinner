@@ -5,11 +5,12 @@
 #include <optional>
 
 #include "AbstractEigendecompositor.h"
+
 namespace eigendecompositor {
 class ExactEigendecompositor: public AbstractEigendecompositor {
   public:
     ExactEigendecompositor(
-        lexicographic::IndexConverter converter,
+        std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories_list);
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
     BuildSubspectra(
@@ -33,7 +34,7 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     void finalize() override;
 
   private:
-    lexicographic::IndexConverter converter_;
+    std::shared_ptr<const index_converter::AbstractIndexConverter> converter_;
     quantum::linear_algebra::FactoriesList factories_list_;
     common::Quantity energy_;
     std::shared_ptr<const model::operators::Operator> energy_operator_;
