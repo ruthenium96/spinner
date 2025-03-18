@@ -112,7 +112,7 @@ void Runner::BuildMuSquaredWorker() {
     auto magnetic_susceptibility_worker =
         magnetic_susceptibility::worker::WorkerConstructor::construct(
             consistentModelOptimizationList_,
-            getEigendecompositor(),
+            *getEigendecompositor(),
             getDataStructuresFactories());
 
     magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(

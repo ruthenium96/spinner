@@ -13,7 +13,7 @@ class WorkerConstructor {
   public:
     static std::unique_ptr<AbstractWorker> construct(
         const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-        const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>& eigendecompositor,
+        const eigendecompositor::AllQuantitiesGetter& allQuantitiesGetter,
         const quantum::linear_algebra::FactoriesList& factories);
 };
 

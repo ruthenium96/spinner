@@ -11,7 +11,7 @@ namespace magnetic_susceptibility::worker {
 
 std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-    const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>& eigendecompositor,
+    const eigendecompositor::AllQuantitiesGetter& allQuantitiesGetter,
     const quantum::linear_algebra::FactoriesList& factories) {
 
     common::Logger::detailed_msg("magnetic_susceptibility::Worker information:");
@@ -19,7 +19,7 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
     auto energy_vector = factories.createVector();
     auto degeneracy_vector = factories.createVector();
 
-    for (const auto& subspectrum : eigendecompositor->getSpectrum(common::Energy).value().get().blocks) {
+    for (const auto& subspectrum : allQuantitiesGetter.getSpectrum(common::Energy).value().get().blocks) {
         energy_vector->concatenate_with(subspectrum.raw_data);
         degeneracy_vector->add_identical_values(
             subspectrum.raw_data->size(),
@@ -39,15 +39,15 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         double g_factor = consistentModelOptimizationList.getModel().getNumericalWorker().getGFactorParameters()->at(0);
         auto quantity_vector = factories.createVector();
 
-        if (eigendecompositor->getSpectrum(common::S_total_squared).has_value()) {
+        if (allQuantitiesGetter.getSpectrum(common::S_total_squared).has_value()) {
             for (const auto& subspectrum :
-                eigendecompositor->getSpectrum(common::S_total_squared).value().get().blocks) {
+                allQuantitiesGetter.getSpectrum(common::S_total_squared).value().get().blocks) {
                     quantity_vector->concatenate_with(subspectrum.raw_data);
             }   
             common::Logger::detailed("UniqueGOnlySSquaredWorker will be used with S_total_squared.");
-        } else if (eigendecompositor->getSpectrum(common::M_total_squared).has_value()) {
+        } else if (allQuantitiesGetter.getSpectrum(common::M_total_squared).has_value()) {
             for (const auto& subspectrum :
-                eigendecompositor->getSpectrum(common::M_total_squared).value().get().blocks) {
+                allQuantitiesGetter.getSpectrum(common::M_total_squared).value().get().blocks) {
                     quantity_vector->concatenate_with(subspectrum.raw_data);
             }
             // TODO: create in-place multiply_by function?
@@ -67,15 +67,15 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         || consistentModelOptimizationList.isGSzSquaredPossible()) {
         auto quantity_vector = factories.createVector();
 
-        if (eigendecompositor->getSpectrum(common::g_squared_T00).has_value()) {
+        if (allQuantitiesGetter.getSpectrum(common::g_squared_T00).has_value()) {
             for (const auto& subspectrum :
-                eigendecompositor->getSpectrum(common::g_squared_T00).value().get().blocks) {
+                allQuantitiesGetter.getSpectrum(common::g_squared_T00).value().get().blocks) {
                     quantity_vector->concatenate_with(subspectrum.raw_data);
             }   
             common::Logger::detailed("GSzSquaredWorker will be used with g_squared_T00.");
-        } else if (eigendecompositor->getSpectrum(common::gSz_total_squared).has_value()) {
+        } else if (allQuantitiesGetter.getSpectrum(common::gSz_total_squared).has_value()) {
             for (const auto& subspectrum :
-                eigendecompositor->getSpectrum(common::gSz_total_squared).value().get().blocks) {
+                allQuantitiesGetter.getSpectrum(common::gSz_total_squared).value().get().blocks) {
                     quantity_vector->concatenate_with(subspectrum.raw_data);
             }
             common::Logger::detailed("GSzSquaredWorker will be used with gSz_total_squared.");
