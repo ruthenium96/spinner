@@ -5,7 +5,7 @@
 
 #include "AbstractWorker.h"
 #include "src/common/runner/ConsistentModelOptimizationList.h"
-#include "src/eigendecompositor/AbstractEigendecompositor.h"
+#include "src/eigendecompositor/AllQuantitiesGetter.h"
 
 namespace magnetic_susceptibility::worker {
 
