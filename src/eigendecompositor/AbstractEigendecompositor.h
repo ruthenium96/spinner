@@ -2,21 +2,13 @@
 #define SPINNER_ABSTRACTEIGENDECOMPOSITOR_H
 
 #include <optional>
-
-#include "src/model/Model.h"
+#include "src/common/Quantity.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace eigendecompositor {
-class AbstractEigendecompositor {
-  public:
-    void BuildSpectra(
-        const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
-            operators,
-        const std::map<
-            std::pair<common::QuantityEnum, model::symbols::SymbolName>,
-            std::shared_ptr<const model::operators::Operator>>& derivatives_operators,
-        const space::Space& space);
-    bool BuildSpectraWasCalled() const;
 
+class AllQuantitiesGetter {
+  public:
     // What means Spectrum's optional?
     // The getter *may* return std::nullopt if corresponding Operator has been passed into initialize.
     // What means Matrix's optional?
@@ -29,6 +21,18 @@ class AbstractEigendecompositor {
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
     virtual std::optional<std::reference_wrapper<const Matrix>>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
+};
+
+class AbstractEigendecompositor : public AllQuantitiesGetter {
+  public:
+    void BuildSpectra(
+        const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
+            operators,
+        const std::map<
+            std::pair<common::QuantityEnum, model::symbols::SymbolName>,
+            std::shared_ptr<const model::operators::Operator>>& derivatives_operators,
+        const space::Space& space);
+    bool BuildSpectraWasCalled() const;
 
     virtual ~AbstractEigendecompositor() = default;
 
