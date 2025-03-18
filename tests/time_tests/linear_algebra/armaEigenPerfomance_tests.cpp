@@ -1,4 +1,3 @@
-#include <chrono>
 #include <random>
 
 #include "gtest/gtest.h"
@@ -21,34 +20,60 @@ TEST(DenseFactoriesPerfomance, eigendecomposition_dense) {
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto armaMatrix = std::move(matrices[0]);
-        auto eigenMatrix = std::move(matrices[1]);
+        auto armaDoubleMatrix = std::move(matrices[0]);
+        auto armaSingleMatrix = std::move(matrices[1]);
+        auto eigenDoubleMatrix = std::move(matrices[2]);
+        auto eigenSingleMatrix = std::move(matrices[3]);
         // only-values-eigendecomposition:
-        std::function<void(void)> armaOnlyValuesDecomposition = [&]() {
-            armaMatrix->diagonalizeValues();
+        std::function<void(void)> armaDoubleOnlyValuesDecomposition = [&]() {
+            armaDoubleMatrix->diagonalizeValues();
         };
-        std::function<void(void)> eigenOnlyValuesDecomposition = [&]() {
-            eigenMatrix->diagonalizeValues();
+        std::function<void(void)> armaSingleOnlyValuesDecomposition = [&]() {
+            armaSingleMatrix->diagonalizeValues();
+        };
+        std::function<void(void)> eigenDoubleOnlyValuesDecomposition = [&]() {
+            eigenDoubleMatrix->diagonalizeValues();
+        };
+        std::function<void(void)> eigenSingleOnlyValuesDecomposition = [&]() {
+            eigenSingleMatrix->diagonalizeValues();
         };
         // eigendecomposition-with-eigenvectors
-        std::function<void(void)> armaBothDecomposition = [&]() {
-            armaMatrix->diagonalizeValuesVectors();
+        std::function<void(void)> armaDoubleBothDecomposition = [&]() {
+            armaDoubleMatrix->diagonalizeValuesVectors();
         };
-        std::function<void(void)> eigenBothDecomposition = [&]() {
-            eigenMatrix->diagonalizeValuesVectors();
+        std::function<void(void)> armaSingleBothDecomposition = [&]() {
+            armaSingleMatrix->diagonalizeValuesVectors();
+        };
+        std::function<void(void)> eigenDoubleBothDecomposition = [&]() {
+            eigenDoubleMatrix->diagonalizeValuesVectors();
+        };
+        std::function<void(void)> eigenSingleBothDecomposition = [&]() {
+            eigenSingleMatrix->diagonalizeValuesVectors();
         };
 
-        std::cout << "Armadillo:" << std::endl;
+        std::cout << "Armadillo double precision:" << std::endl;
         std::cout << "Only eigenvalues:                  ";
-        PerformanceTest(armaOnlyValuesDecomposition, cycles);
+        PerformanceTest(armaDoubleOnlyValuesDecomposition, cycles);
         std::cout << "Both eigenvalues and eigenvectors: ";
-        PerformanceTest(armaBothDecomposition, cycles);
+        PerformanceTest(armaDoubleBothDecomposition, cycles);
 
-        std::cout << "Eigen:" << std::endl;
+        std::cout << "Armadillo single precision:" << std::endl;
         std::cout << "Only eigenvalues:                  ";
-        PerformanceTest(eigenOnlyValuesDecomposition, cycles);
+        PerformanceTest(armaSingleOnlyValuesDecomposition, cycles);
         std::cout << "Both eigenvalues and eigenvectors: ";
-        PerformanceTest(eigenBothDecomposition, cycles);
+        PerformanceTest(armaSingleBothDecomposition, cycles);
+
+        std::cout << "Eigen double precision:" << std::endl;
+        std::cout << "Only eigenvalues:                  ";
+        PerformanceTest(eigenDoubleOnlyValuesDecomposition, cycles);
+        std::cout << "Both eigenvalues and eigenvectors: ";
+        PerformanceTest(eigenDoubleBothDecomposition, cycles);
+
+        std::cout << "Eigen single precision:" << std::endl;
+        std::cout << "Only eigenvalues:                  ";
+        PerformanceTest(eigenSingleOnlyValuesDecomposition, cycles);
+        std::cout << "Both eigenvalues and eigenvectors: ";
+        PerformanceTest(eigenSingleBothDecomposition, cycles);
         std::cout << std::endl;
     }
 }
@@ -67,34 +92,60 @@ TEST(DenseFactoriesPerfomance, eigendecomposition_sparse) {
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto armaMatrix = std::move(matrices[0]);
-        auto eigenMatrix = std::move(matrices[1]);
+        auto armaDoubleMatrix = std::move(matrices[0]);
+        auto armaSingleMatrix = std::move(matrices[1]);
+        auto eigenDoubleMatrix = std::move(matrices[2]);
+        auto eigenSingleMatrix = std::move(matrices[3]);
         // only-values-eigendecomposition:
-        std::function<void(void)> armaOnlyValuesDecomposition = [&]() {
-            armaMatrix->diagonalizeValues();
+        std::function<void(void)> armaDoubleOnlyValuesDecomposition = [&]() {
+            armaDoubleMatrix->diagonalizeValues();
         };
-        std::function<void(void)> eigenOnlyValuesDecomposition = [&]() {
-            eigenMatrix->diagonalizeValues();
+        std::function<void(void)> armaSingleOnlyValuesDecomposition = [&]() {
+            armaSingleMatrix->diagonalizeValues();
+        };
+        std::function<void(void)> eigenDoubleOnlyValuesDecomposition = [&]() {
+            eigenDoubleMatrix->diagonalizeValues();
+        };
+        std::function<void(void)> eigenSingleOnlyValuesDecomposition = [&]() {
+            eigenSingleMatrix->diagonalizeValues();
         };
         // eigendecomposition-with-eigenvectors
-        std::function<void(void)> armaBothDecomposition = [&]() {
-            armaMatrix->diagonalizeValuesVectors();
+        std::function<void(void)> armaDoubleBothDecomposition = [&]() {
+            armaDoubleMatrix->diagonalizeValuesVectors();
         };
-        std::function<void(void)> eigenBothDecomposition = [&]() {
-            eigenMatrix->diagonalizeValuesVectors();
+        std::function<void(void)> armaSingleBothDecomposition = [&]() {
+            armaSingleMatrix->diagonalizeValuesVectors();
+        };
+        std::function<void(void)> eigenDoubleBothDecomposition = [&]() {
+            eigenDoubleMatrix->diagonalizeValuesVectors();
+        };
+        std::function<void(void)> eigenSingleBothDecomposition = [&]() {
+            eigenSingleMatrix->diagonalizeValuesVectors();
         };
 
-        std::cout << "Armadillo:" << std::endl;
+        std::cout << "Armadillo double precision:" << std::endl;
         std::cout << "Only eigenvalues:                  ";
-        PerformanceTest(armaOnlyValuesDecomposition, cycles);
+        PerformanceTest(armaDoubleOnlyValuesDecomposition, cycles);
         std::cout << "Both eigenvalues and eigenvectors: ";
-        PerformanceTest(armaBothDecomposition, cycles);
+        PerformanceTest(armaDoubleBothDecomposition, cycles);
 
-        std::cout << "Eigen:" << std::endl;
+        std::cout << "Armadillo single precision:" << std::endl;
         std::cout << "Only eigenvalues:                  ";
-        PerformanceTest(eigenOnlyValuesDecomposition, cycles);
+        PerformanceTest(armaSingleOnlyValuesDecomposition, cycles);
         std::cout << "Both eigenvalues and eigenvectors: ";
-        PerformanceTest(eigenBothDecomposition, cycles);
+        PerformanceTest(armaSingleBothDecomposition, cycles);
+
+        std::cout << "Eigen double precision:" << std::endl;
+        std::cout << "Only eigenvalues:                  ";
+        PerformanceTest(eigenDoubleOnlyValuesDecomposition, cycles);
+        std::cout << "Both eigenvalues and eigenvectors: ";
+        PerformanceTest(eigenDoubleBothDecomposition, cycles);
+
+        std::cout << "Eigen single precision:" << std::endl;
+        std::cout << "Only eigenvalues:                  ";
+        PerformanceTest(eigenSingleOnlyValuesDecomposition, cycles);
+        std::cout << "Both eigenvalues and eigenvectors: ";
+        PerformanceTest(eigenSingleBothDecomposition, cycles);
         std::cout << std::endl;
     }
 }
@@ -120,17 +171,29 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_dense) {
             rng);
 
         // unitary transformation
-        std::function<void(void)> armaUnitaryTransformation = [&]() {
+        std::function<void(void)> armaDoubleUnitaryTransformation = [&]() {
             denseUnitaryMatrices[0]->unitaryTransform(denseDiagonalizableMatrices[0]);
         };
-        std::function<void(void)> eigenUnitaryTransformation = [&]() {
+        std::function<void(void)> armaSingleUnitaryTransformation = [&]() {
             denseUnitaryMatrices[1]->unitaryTransform(denseDiagonalizableMatrices[1]);
         };
-        std::cout << "Armadillo:" << std::endl;
-        PerformanceTest(armaUnitaryTransformation, cycles);
+        std::function<void(void)> eigenDoubleUnitaryTransformation = [&]() {
+            denseUnitaryMatrices[2]->unitaryTransform(denseDiagonalizableMatrices[2]);
+        };
+        std::function<void(void)> eigenSingleUnitaryTransformation = [&]() {
+            denseUnitaryMatrices[3]->unitaryTransform(denseDiagonalizableMatrices[3]);
+        };
+        std::cout << "Armadillo double precision:" << std::endl;
+        PerformanceTest(armaDoubleUnitaryTransformation, cycles);
 
-        std::cout << "Eigen:" << std::endl;
-        PerformanceTest(eigenUnitaryTransformation, cycles);
+        std::cout << "Armadillo single precision:" << std::endl;
+        PerformanceTest(armaSingleUnitaryTransformation, cycles);
+
+        std::cout << "Eigen double precision:" << std::endl;
+        PerformanceTest(eigenDoubleUnitaryTransformation, cycles);
+
+        std::cout << "Eigen single precision:" << std::endl;
+        PerformanceTest(eigenSingleUnitaryTransformation, cycles);
         std::cout << std::endl;
     }
 }
@@ -156,19 +219,33 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_d
             rng);
 
         // unitary transformation
-        std::function<void(void)> armaUnitaryTransformation = [&]() {
+        std::function<void(void)> armaDoubleUnitaryTransformation = [&]() {
             denseUnitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(
                 denseDiagonalizableMatrices[0]);
         };
-        std::function<void(void)> eigenUnitaryTransformation = [&]() {
+        std::function<void(void)> armaSingleUnitaryTransformation = [&]() {
             denseUnitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(
                 denseDiagonalizableMatrices[1]);
         };
-        std::cout << "Armadillo:" << std::endl;
-        PerformanceTest(armaUnitaryTransformation, cycles);
+        std::function<void(void)> eigenDoubleUnitaryTransformation = [&]() {
+            denseUnitaryMatrices[2]->unitaryTransformAndReturnMainDiagonal(
+                denseDiagonalizableMatrices[2]);
+        };
+        std::function<void(void)> eigenSingleUnitaryTransformation = [&]() {
+            denseUnitaryMatrices[3]->unitaryTransformAndReturnMainDiagonal(
+                denseDiagonalizableMatrices[3]);
+        };
+        std::cout << "Armadillo double precision:" << std::endl;
+        PerformanceTest(armaDoubleUnitaryTransformation, cycles);
 
-        std::cout << "Eigen:" << std::endl;
-        PerformanceTest(eigenUnitaryTransformation, cycles);
+        std::cout << "Armadillo single precision:" << std::endl;
+        PerformanceTest(armaSingleUnitaryTransformation, cycles);
+
+        std::cout << "Eigen double precision:" << std::endl;
+        PerformanceTest(eigenDoubleUnitaryTransformation, cycles);
+
+        std::cout << "Eigen single precision:" << std::endl;
+        PerformanceTest(eigenSingleUnitaryTransformation, cycles);
         std::cout << std::endl;
     }
 }
@@ -194,19 +271,33 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_s
             rng);
 
         // unitary transformation
-        std::function<void(void)> armaUnitaryTransformation = [&]() {
+        std::function<void(void)> armaDoubleUnitaryTransformation = [&]() {
             denseUnitaryMatrix[0]->unitaryTransformAndReturnMainDiagonal(
                 sparseDiagonalizableMatrices[0]);
         };
-        std::function<void(void)> eigenUnitaryTransformation = [&]() {
+        std::function<void(void)> armaSingleUnitaryTransformation = [&]() {
             denseUnitaryMatrix[1]->unitaryTransformAndReturnMainDiagonal(
                 sparseDiagonalizableMatrices[1]);
         };
-        std::cout << "Armadillo:" << std::endl;
-        PerformanceTest(armaUnitaryTransformation, cycles);
+        std::function<void(void)> eigenDoubleUnitaryTransformation = [&]() {
+            denseUnitaryMatrix[2]->unitaryTransformAndReturnMainDiagonal(
+                sparseDiagonalizableMatrices[2]);
+        };
+        std::function<void(void)> eigenSingleUnitaryTransformation = [&]() {
+            denseUnitaryMatrix[3]->unitaryTransformAndReturnMainDiagonal(
+                sparseDiagonalizableMatrices[3]);
+        };
+        std::cout << "Armadillo double precision:" << std::endl;
+        PerformanceTest(armaDoubleUnitaryTransformation, cycles);
 
-        std::cout << "Eigen:" << std::endl;
-        PerformanceTest(eigenUnitaryTransformation, cycles);
+        std::cout << "Armadillo single precision:" << std::endl;
+        PerformanceTest(armaSingleUnitaryTransformation, cycles);
+
+        std::cout << "Eigen double precision:" << std::endl;
+        PerformanceTest(eigenDoubleUnitaryTransformation, cycles);
+
+        std::cout << "Eigen single precision:" << std::endl;
+        PerformanceTest(eigenSingleUnitaryTransformation, cycles);
         std::cout << std::endl;
     }
 }
