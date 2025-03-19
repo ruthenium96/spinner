@@ -79,7 +79,7 @@ class Runner {
     const model::Model& getModel() const;
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
 
-    const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>& getEigendecompositor();
+    const eigendecompositor::AllQuantitiesGetter& getAllQuantitiesGetter();
 
     double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,

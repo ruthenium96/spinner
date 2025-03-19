@@ -73,12 +73,12 @@ void Runner::BuildSpectra() {
 
 std::optional<std::reference_wrapper<const Matrix>>
 Runner::getMatrix(common::QuantityEnum quantity_enum) {
-    return getEigendecompositor()->getMatrix(quantity_enum);
+    return getAllQuantitiesGetter().getMatrix(quantity_enum);
 }
 
 std::optional<std::reference_wrapper<const Spectrum>> 
 Runner::getSpectrum(common::QuantityEnum quantity_enum) {
-    return getEigendecompositor()->getSpectrum(quantity_enum);
+    return getAllQuantitiesGetter().getSpectrum(quantity_enum);
 }
 
 std::optional<std::shared_ptr<const model::operators::Operator>>
@@ -99,20 +99,20 @@ std::optional<std::shared_ptr<const model::operators::Operator>> Runner::getOper
 const Spectrum& Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    return getEigendecompositor()->getSpectrumDerivative(quantity_enum, symbol).value().get();
+    return getAllQuantitiesGetter().getSpectrumDerivative(quantity_enum, symbol).value().get();
 }
 
 std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    return getEigendecompositor()->getMatrixDerivative(quantity_enum, symbol);
+    return getAllQuantitiesGetter().getMatrixDerivative(quantity_enum, symbol);
 }
 
 void Runner::BuildMuSquaredWorker() {
     auto magnetic_susceptibility_worker =
         magnetic_susceptibility::worker::WorkerConstructor::construct(
             consistentModelOptimizationList_,
-            *getEigendecompositor(),
+            getAllQuantitiesGetter(),
             getDataStructuresFactories());
 
     magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
@@ -334,12 +334,11 @@ quantum::linear_algebra::FactoriesList Runner::getDataStructuresFactories() cons
     return dataStructuresFactories_;
 }
 
-const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>&
-Runner::getEigendecompositor() {
+const eigendecompositor::AllQuantitiesGetter& Runner::getAllQuantitiesGetter() {
     if (!eigendecompositor_->BuildSpectraWasCalled()) {
         BuildSpectra();
     }
 
-    return eigendecompositor_;
+    return *eigendecompositor_;
 }
 }  // namespace runner
