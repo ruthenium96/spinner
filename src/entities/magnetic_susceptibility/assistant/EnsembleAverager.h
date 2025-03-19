@@ -17,12 +17,8 @@ class EnsembleAverager {
         double temperature) const;
 
   private:
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> energy_;
+    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> energy_;
     const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> degeneracy_;
-    mutable std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>
-        divided_and_wise_exped_energy;
-    mutable double partition_function = NAN;
-    mutable double last_temperature = NAN;
 };
 }  // namespace magnetic_susceptibility
 
