@@ -1,7 +1,7 @@
 #ifndef SPINNER_ABSTRACTDIAGONALIZABLESYMMETRICMATRIX_H
 #define SPINNER_ABSTRACTDIAGONALIZABLESYMMETRICMATRIX_H
 
-#include "AbstractDenseSemiunitaryMatrix.h"
+#include "AbstractDenseVector.h"
 #include "AbstractSymmetricMatrix.h"
 
 namespace quantum::linear_algebra {

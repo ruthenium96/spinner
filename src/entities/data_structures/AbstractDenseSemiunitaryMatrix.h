@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "AbstractDenseVector.h"
-#include "AbstractDiagonalizableMatrix.h"
 
 namespace quantum::linear_algebra {
 class AbstractDiagonalizableMatrix;
