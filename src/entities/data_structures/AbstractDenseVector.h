@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 namespace quantum::linear_algebra {
 class AbstractDenseVector {
