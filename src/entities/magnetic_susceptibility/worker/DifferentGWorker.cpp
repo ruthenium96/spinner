@@ -30,11 +30,11 @@ std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
         // if energy does not depend on g factors:
         // d(mu_squared)/dg = d<A>/dg = <dA/dg>
         const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&
-            g_sz_squared_derivative = 
-                flattenedSpectra_->getFlattenDerivativeSpectrum(common::gSz_total_squared, symbol_name).value();
+        quantity_derivative = 
+            flattenedSpectra_->getFlattenDerivativeSpectrum(quantity_enum_for_averaging_, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double value =
-                quantity_factor_ * ensemble_averager_.ensemble_average(g_sz_squared_derivative, temperatures[i]);
+                quantity_factor_ * ensemble_averager_.ensemble_average(quantity_derivative, temperatures[i]);
             derivatives[i] = {temperatures[i], value};
         }
     } else {
