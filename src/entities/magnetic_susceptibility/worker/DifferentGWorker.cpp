@@ -1,5 +1,6 @@
 #include "DifferentGWorker.h"
 #include "src/common/Quantity.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
 DifferentGWorker::DifferentGWorker(
@@ -20,8 +21,7 @@ double DifferentGWorker::calculateTheoreticalMuSquared(double temperature) const
 
 std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-        values_derivatives_map) const {
+    model::symbols::SymbolName symbol_name) const {
     const auto& quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value().get();
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
@@ -30,7 +30,8 @@ std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
         // if energy does not depend on g factors:
         // d(mu_squared)/dg = d<A>/dg = <dA/dg>
         const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&
-            g_sz_squared_derivative = values_derivatives_map[common::gSz_total_squared];
+            g_sz_squared_derivative = 
+                flattenedSpectra_->getFlattenDerivativeSpectrum(common::gSz_total_squared, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double value =
                 quantity_factor_ * ensemble_averager_.ensemble_average(g_sz_squared_derivative, temperatures[i]);
@@ -39,7 +40,7 @@ std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
     } else {
         // d(mu_squared)/da = d(<A>)/da = (<A>*<dE/da>-<A*dE/da>)/T
         const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_derivative =
-            values_derivatives_map[common::Energy];
+            flattenedSpectra_->getFlattenDerivativeSpectrum(common::Energy, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double first_term = ensemble_averager_.ensemble_average(quantity, temperatures[i])
                 * ensemble_averager_.ensemble_average(energy_derivative, temperatures[i]);

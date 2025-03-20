@@ -3,6 +3,7 @@
 
 #include "BasicWorker.h"
 #include "src/common/Quantity.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -19,8 +20,7 @@ class UniqueGWorker: public BasicWorker {
     double calculateTheoreticalMuSquared(double temperature) const override;
     std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-                values_derivatives_map) const override;
+        model::symbols::SymbolName symbol_name) const override;
 
   private:
     double g_unique_;

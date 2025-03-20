@@ -1,6 +1,7 @@
 #include "CurieWeissWorker.h"
 
 #include <utility>
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -32,8 +33,7 @@ void CurieWeissWorker::setExperimentalValuesWorker(
 
 std::vector<ValueAtTemperature> CurieWeissWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-        values_derivatives_map) const {
+    model::symbols::SymbolName symbol_name) const {
     if (symbol_type == model::symbols::Theta) {
         std::vector<double> temperatures = getExperimentalValuesWorker()->getTemperatures();
         std::vector<ValueAtTemperature> theoretical_mu_squared_values(temperatures.size());
@@ -44,7 +44,7 @@ std::vector<ValueAtTemperature> CurieWeissWorker::calculateDerivative(
         }
         return theoretical_mu_squared_values;
     } else {
-        return worker_->calculateDerivative(symbol_type, std::move(values_derivatives_map));
+        return worker_->calculateDerivative(symbol_type, symbol_name);
     }
 }
 

@@ -2,6 +2,7 @@
 #define SPINNER_GSZSQUAREDWORKER_H
 
 #include "BasicWorker.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -17,9 +18,7 @@ class DifferentGWorker: public BasicWorker {
     double calculateTheoreticalMuSquared(double temperature) const override;
     std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-                values_derivatives_map) const override;
+        model::symbols::SymbolName symbol_name) const override;          
 
   private:
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;

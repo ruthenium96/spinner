@@ -1,4 +1,5 @@
 #include "MagneticSusceptibilityController.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility {
 
@@ -53,10 +54,9 @@ double MagneticSusceptibilityController::calculateTheoreticalMuSquared(double te
 
 double MagneticSusceptibilityController::calculateTotalDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-        values_derivatives_map) const {
+    model::symbols::SymbolName symbol_name) const {
     std::vector<ValueAtTemperature> theoretical_derivative =
-        worker_->calculateDerivative(symbol_type, std::move(values_derivatives_map));
+        worker_->calculateDerivative(symbol_type, symbol_name);
     return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
 }
 

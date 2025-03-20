@@ -1,4 +1,5 @@
 #include "UniqueGWorker.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -21,8 +22,7 @@ double UniqueGWorker::calculateTheoreticalMuSquared(double temperature) const {
 
 std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-        values_derivatives_map) const {
+    model::symbols::SymbolName symbol_name) const {
     const auto& quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value().get();
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
@@ -36,7 +36,7 @@ std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
     } else {
         // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/da = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
         const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_derivative =
-            values_derivatives_map[common::Energy];
+            flattenedSpectra_->getFlattenDerivativeSpectrum(common::Energy, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double first_term = ensemble_averager_.ensemble_average(quantity, temperatures[i])
                 * ensemble_averager_.ensemble_average(energy_derivative, temperatures[i]);

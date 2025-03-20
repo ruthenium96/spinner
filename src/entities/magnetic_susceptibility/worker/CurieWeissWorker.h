@@ -4,6 +4,7 @@
 #include <optional>
 
 #include "src/entities/magnetic_susceptibility/worker/AbstractWorker.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -21,9 +22,7 @@ class CurieWeissWorker: public AbstractWorker {
         const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) override;
     std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-                values_derivatives_map) const override;
+        model::symbols::SymbolName symbol_name) const override;         
 
   protected:
     std::unique_ptr<AbstractWorker> worker_;

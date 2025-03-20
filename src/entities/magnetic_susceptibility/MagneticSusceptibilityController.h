@@ -1,8 +1,8 @@
 #ifndef SPINNER_MAGNETICSUSCEPTIBILITYCONTROLLER_H
 #define SPINNER_MAGNETICSUSCEPTIBILITYCONTROLLER_H
 
-#include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
+#include "src/model/symbols/SymbolName.h"
 #include "src/model/symbols/SymbolicWorker.h"
 #include "worker/AbstractWorker.h"
 
@@ -22,9 +22,8 @@ class MagneticSusceptibilityController {
     // Calculates dR^2/dsymbol.
     double calculateTotalDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-                values_derivatives_map) const;
+        model::symbols::SymbolName symbol_name) const;
+            
 
   private:
     // dot product with some checks:
