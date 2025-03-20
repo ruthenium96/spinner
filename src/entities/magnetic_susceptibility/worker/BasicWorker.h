@@ -10,9 +10,7 @@
 namespace magnetic_susceptibility::worker {
 class BasicWorker: public AbstractWorker {
   public:
-    BasicWorker(
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy);
+    BasicWorker(std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra);
     std::shared_ptr<ExperimentalValuesWorker> getExperimentalValuesWorker() override;
     std::shared_ptr<const ExperimentalValuesWorker> getExperimentalValuesWorker() const override;
     void setExperimentalValuesWorker(

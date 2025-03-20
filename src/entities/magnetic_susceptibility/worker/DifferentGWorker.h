@@ -10,9 +10,9 @@ namespace magnetic_susceptibility::worker {
 class DifferentGWorker: public BasicWorker {
   public:
     DifferentGWorker(
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy,
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& quantity);
+      std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
+      common::QuantityEnum quantity_enum_for_averaging, 
+      double quantity_factor);
 
     double calculateTheoreticalMuSquared(double temperature) const override;
     std::vector<ValueAtTemperature> calculateDerivative(
@@ -22,7 +22,9 @@ class DifferentGWorker: public BasicWorker {
                 values_derivatives_map) const override;
 
   private:
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> quantity_;
+    std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;
+    common::QuantityEnum quantity_enum_for_averaging_;
+    double quantity_factor_;
 };
 }  // namespace magnetic_susceptibility::worker
 #endif  //SPINNER_GSZSQUAREDWORKER_H
