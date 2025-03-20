@@ -13,7 +13,7 @@ class UniqueGWorker: public BasicWorker {
   public:
     UniqueGWorker(
         std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
-        double g_unique, 
+        std::function<double()> g_unique_getter, 
         common::QuantityEnum quantity_enum_for_averaging, 
         double quantity_factor);
 
@@ -23,7 +23,7 @@ class UniqueGWorker: public BasicWorker {
         model::symbols::SymbolName symbol_name) const override;
 
   private:
-    double g_unique_;
+    std::function<double()> g_unique_getter_;
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;
     double quantity_factor_;
     common::QuantityEnum quantity_enum_for_averaging_;

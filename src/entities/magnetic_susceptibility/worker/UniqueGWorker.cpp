@@ -5,19 +5,19 @@ namespace magnetic_susceptibility::worker {
 
 UniqueGWorker::UniqueGWorker(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
-    double g_unique,
+    std::function<double()> g_unique_getter,
     common::QuantityEnum quantity_enum_for_averaging, 
     double quantity_factor) :
     BasicWorker(flattenedSpectra),
     flattenedSpectra_(flattenedSpectra),
-    g_unique_(g_unique),
+    g_unique_getter_(g_unique_getter),
     quantity_enum_for_averaging_(quantity_enum_for_averaging),
     quantity_factor_(quantity_factor) {}
 
 double UniqueGWorker::calculateTheoreticalMuSquared(double temperature) const {
     const auto& quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value().get();
     double quantity_averaged = ensemble_averager_.ensemble_average(quantity, temperature);
-    return g_unique_ * g_unique_ * quantity_averaged * quantity_factor_;
+    return g_unique_getter_() * g_unique_getter_() * quantity_averaged * quantity_factor_;
 }
 
 std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
@@ -30,7 +30,7 @@ std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
         // d(mu_squared)/dg = d(g^2*<S^2>)/dg = d(g^2)/dg*<S^2> + g^2*d(<S^2>)/dg = 2g*<S^2>
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double quantity_averaged = ensemble_averager_.ensemble_average(quantity, temperatures[i]);
-            double value = 2 * g_unique_ * quantity_averaged * quantity_factor_;
+            double value = 2 * g_unique_getter_() * quantity_averaged * quantity_factor_;
             derivatives[i] = {temperatures[i], value};
         }
     } else {
@@ -43,7 +43,7 @@ std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
             double second_term = ensemble_averager_.ensemble_average(
                 quantity->element_wise_multiplication(energy_derivative),
                 temperatures[i]);
-            double value = g_unique_ * g_unique_ * quantity_factor_ * 
+            double value = g_unique_getter_() * g_unique_getter_() * quantity_factor_ * 
                 (first_term - second_term) / temperatures[i];
             derivatives[i] = {temperatures[i], value};
         }

@@ -115,14 +115,16 @@ std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(
 }
 
 void Runner::BuildMuSquaredWorker() {
-    auto magnetic_susceptibility_worker =
-        magnetic_susceptibility::worker::WorkerConstructor::construct(
-            consistentModelOptimizationList_,
-            getFlattenedSpectra(),
-            getDataStructuresFactories());
+    if (!magnetic_susceptibility_controller_.has_value()) {
+        auto magnetic_susceptibility_worker =
+            magnetic_susceptibility::worker::WorkerConstructor::construct(
+                consistentModelOptimizationList_,
+                getFlattenedSpectra(),
+                getDataStructuresFactories());
 
-    magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
-        std::move(magnetic_susceptibility_worker));
+        magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
+            std::move(magnetic_susceptibility_worker));
+    }
 
     if (experimental_values_worker_.has_value()) {
         magnetic_susceptibility_controller_.value().initializeExperimentalValues(
@@ -161,8 +163,6 @@ void Runner::initializeExperimentalValues(
 }
 
 std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {
-    // TODO: it is awful. Fix it somehow, this code should be moved from Runner.
-
     initializeDerivatives();
 
     std::map<model::symbols::SymbolName, double> answer;
@@ -287,7 +287,7 @@ const eigendecompositor::AllQuantitiesGetter& Runner::getAllQuantitiesGetter() {
     return *eigendecompositor_;
 }
 
-const std::shared_ptr<eigendecompositor::FlattenedSpectra> Runner::getFlattenedSpectra() {
+const std::shared_ptr<eigendecompositor::FlattenedSpectra>& Runner::getFlattenedSpectra() {
     if (!eigendecompositor_->BuildSpectraWasCalled()) {
         BuildSpectra();
     }

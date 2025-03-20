@@ -82,7 +82,7 @@ class Runner {
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
 
     const eigendecompositor::AllQuantitiesGetter& getAllQuantitiesGetter();
-    const std::shared_ptr<eigendecompositor::FlattenedSpectra> getFlattenedSpectra();
+    const std::shared_ptr<eigendecompositor::FlattenedSpectra>& getFlattenedSpectra();
 
     double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,

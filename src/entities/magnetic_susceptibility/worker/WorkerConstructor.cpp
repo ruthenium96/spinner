@@ -25,7 +25,9 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         || consistentModelOptimizationList.isExplicitMSquarePossible()) {
         // and there is no field
         // TODO: avoid using of .at(). Change isAllGFactorsEqual signature?
-        double g_factor = consistentModelOptimizationList.getModel().getNumericalWorker().getGFactorParameters()->at(0);
+        std::function<double()> g_factor_getter = [&consistentModelOptimizationList](){
+            return consistentModelOptimizationList.getModel().getNumericalWorker().getGFactorParameters()->at(0);
+        };
         common::QuantityEnum quantity_enum_for_averaging;
         double quantity_factor;
         if (flattenedSpectra->getFlattenSpectrum(common::S_total_squared).has_value()) {
@@ -43,7 +45,7 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         magnetic_susceptibility_worker =
             std::make_unique<magnetic_susceptibility::worker::UniqueGWorker>(
                 flattenedSpectra,
-                g_factor, 
+                g_factor_getter, 
                 quantity_enum_for_averaging, 
                 quantity_factor);
     } else if (consistentModelOptimizationList.isGSquaredT00Possible() 
