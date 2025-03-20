@@ -167,42 +167,13 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
 
     std::map<model::symbols::SymbolName, double> answer;
 
-    for (const auto& changeable_symbol :
-         getSymbolicWorker().getChangeableNames(model::symbols::J)) {
+    for (const auto& changeable_symbol : getSymbolicWorker().getChangeableNames()) {
+        auto symbol_type = getSymbolicWorker().getSymbolProperty(changeable_symbol).type_enum.value();
         double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::J,
+            symbol_type,
             changeable_symbol);
         answer[changeable_symbol] = value;
         common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
-    }
-
-    for (const auto& changeable_symbol :
-         getSymbolicWorker().getChangeableNames(model::symbols::D)) {
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::D,
-            changeable_symbol);
-        answer[changeable_symbol] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
-    }
-
-    for (const auto& changeable_symbol :
-         getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::g_factor,
-            changeable_symbol);
-        answer[changeable_symbol] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
-    }
-
-    // Theta calculation:
-    if (!getSymbolicWorker().getChangeableNames(model::symbols::Theta).empty()) {
-        model::symbols::SymbolName Theta_name =
-            getSymbolicWorker().getChangeableNames(model::symbols::Theta)[0];
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::Theta,
-            Theta_name);
-        answer[Theta_name] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", Theta_name.get_name(), value);
     }
     common::Logger::separate(2, common::debug);
 
