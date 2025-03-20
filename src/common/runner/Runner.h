@@ -10,6 +10,7 @@
 #include "ConsistentModelOptimizationList.h"
 #include "src/common/Quantity.h"
 #include "src/eigendecompositor/AbstractEigendecompositor.h"
+#include "src/eigendecompositor/FlattenedSpectra.h"
 #include "src/entities/data_structures/FactoriesList.h"
 #include "src/entities/magnetic_susceptibility/MagneticSusceptibilityController.h"
 #include "src/entities/matrix/Matrix.h"
@@ -68,6 +69,7 @@ class Runner {
     const space::Space space_;
     quantum::linear_algebra::FactoriesList dataStructuresFactories_;
     std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor_;
+    std::shared_ptr<eigendecompositor::FlattenedSpectra> flattenedSpectra_;
 
     // SPECTRUM OPERATIONS
     void BuildSpectra();
@@ -80,6 +82,7 @@ class Runner {
     const common::physical_optimization::OptimizationList& getOptimizationList() const;
 
     const eigendecompositor::AllQuantitiesGetter& getAllQuantitiesGetter();
+    const std::shared_ptr<eigendecompositor::FlattenedSpectra> getFlattenedSpectra();
 
     double stepOfRegression(
         const std::vector<model::symbols::SymbolName>&,

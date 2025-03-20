@@ -46,7 +46,9 @@ Runner::Runner(
     eigendecompositor_(eigendecompositor::EigendecompositorConstructor::construct(
         consistentModelOptimizationList_,
         dataStructuresFactories_
-        )) {}
+        )) {
+    flattenedSpectra_ = std::make_shared<eigendecompositor::FlattenedSpectra>();
+}
 
 const space::Space& runner::Runner::getSpace() const {
     return space_;
@@ -57,6 +59,7 @@ void Runner::BuildSpectra() {
         consistentModelOptimizationList_.getOperatorsForExplicitConstruction(),
         consistentModelOptimizationList_.getDerivativeOperatorsForExplicitConstruction(),
         getSpace());
+    flattenedSpectra_->updateValues(*eigendecompositor_, getDataStructuresFactories());
     for (const auto& quantity_enum : magic_enum::enum_values<common::QuantityEnum>()) {
         auto maybe_matrix = getMatrix(quantity_enum);
         if (maybe_matrix.has_value()) {
@@ -340,5 +343,13 @@ const eigendecompositor::AllQuantitiesGetter& Runner::getAllQuantitiesGetter() {
     }
 
     return *eigendecompositor_;
+}
+
+const std::shared_ptr<eigendecompositor::FlattenedSpectra> Runner::getFlattenedSpectra() {
+    if (!eigendecompositor_->BuildSpectraWasCalled()) {
+        BuildSpectra();
+    }
+
+    return flattenedSpectra_;
 }
 }  // namespace runner
