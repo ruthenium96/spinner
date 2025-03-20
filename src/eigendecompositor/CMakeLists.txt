@@ -3,6 +3,7 @@ add_library(eigendecompositor
         ImplicitQuantityEigendecompositor.cpp ImplicitQuantityEigendecompositor.h
         OneSymbolInHamiltonianEigendecompositor.cpp OneSymbolInHamiltonianEigendecompositor.h
         AbstractEigendecompositor.cpp
+        FlattenedSpectra.cpp FlattenedSpectra.h
         ExplicitQuantitiesEigendecompositor.cpp ExplicitQuantitiesEigendecompositor.h
         EigendecompositorConstructor.cpp EigendecompositorConstructor.h)
 
