@@ -24,8 +24,8 @@ std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace) {
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Spectrum& spectrum) {
-    for (const Subspectrum& subspectrum : spectrum.blocks) {
+std::ostream& operator<<(std::ostream& os, const SpectrumRef& spectrum_ref) {
+    for (const Subspectrum& subspectrum : spectrum_ref.blocks) {
         os << subspectrum;
     }
     os << "------" << std::endl;

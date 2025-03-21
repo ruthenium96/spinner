@@ -19,11 +19,11 @@ class ImplicitQuantityEigendecompositor: public AbstractEigendecompositor {
         size_t number_of_block,
         const space::Subspace& subspace) override;
 
-    std::optional<std::reference_wrapper<const Spectrum>>
+    std::optional<SpectrumRef>
     getSpectrum(common::QuantityEnum anEnum) const override;
     std::optional<std::reference_wrapper<const Matrix>>
     getMatrix(common::QuantityEnum anEnum) const override;
-    std::optional<std::reference_wrapper<const Spectrum>> getSpectrumDerivative(
+    std::optional<SpectrumRef> getSpectrumDerivative(
         common::QuantityEnum anEnum,
         const model::symbols::SymbolName& name) const override;
     std::optional<std::reference_wrapper<const Matrix>> getMatrixDerivative(

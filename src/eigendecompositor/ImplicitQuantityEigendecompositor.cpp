@@ -41,7 +41,7 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
         // todo: we use energy_subspectrum only because of size_of_subspace
         //  can we implement calculation of size_of_subspace in Subspace class?
         const auto& energy_subspectrum =
-            eigendecompositor_->getSpectrum(common::Energy).value().get().blocks.at(number_of_block);
+            eigendecompositor_->getSpectrum(common::Energy).value().blocks.at(number_of_block).get();
 
         double value = calculate_value(subspace.properties);
 
@@ -56,10 +56,10 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
     return mb_unitary_transformation_matrix;
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
+std::optional<SpectrumRef>
 ImplicitQuantityEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == quantity_implicit_enum_) {
-        return quantity_implicit_spectrum_;
+        return SpectrumRef(quantity_implicit_spectrum_);
     }
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
@@ -72,7 +72,7 @@ ImplicitQuantityEigendecompositor::getMatrix(common::QuantityEnum quantity_enum)
     return eigendecompositor_->getMatrix(quantity_enum);
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
+std::optional<SpectrumRef>
 ImplicitQuantityEigendecompositor::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {

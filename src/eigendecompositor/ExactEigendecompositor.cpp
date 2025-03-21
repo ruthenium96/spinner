@@ -1,6 +1,8 @@
 #include "ExactEigendecompositor.h"
 
+#include <functional>
 #include <utility>
+#include <vector>
 
 namespace eigendecompositor {
 
@@ -61,15 +63,15 @@ ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     return std::nullopt;
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
+std::optional<SpectrumRef>
 ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::Energy) {
-        return energy_.spectrum_;
+        return SpectrumRef(energy_.spectrum_);
     }
     return std::nullopt;
 }
 
-std::optional<std::reference_wrapper<const Spectrum>> ExactEigendecompositor::getSpectrumDerivative(
+std::optional<SpectrumRef> ExactEigendecompositor::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
     return std::nullopt;

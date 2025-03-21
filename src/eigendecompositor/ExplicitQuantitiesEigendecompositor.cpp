@@ -12,10 +12,10 @@ ExplicitQuantitiesEigendecompositor::ExplicitQuantitiesEigendecompositor(
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
-std::optional<std::reference_wrapper<const Spectrum>>
+std::optional<SpectrumRef>
 ExplicitQuantitiesEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     if (quantities_map_.contains(quantity_enum)) {
-        return quantities_map_.at(quantity_enum).spectrum_;
+        return SpectrumRef(quantities_map_.at(quantity_enum).spectrum_);
     }
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
@@ -28,12 +28,12 @@ ExplicitQuantitiesEigendecompositor::getMatrix(common::QuantityEnum quantity_enu
     return eigendecompositor_->getMatrix(quantity_enum);
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
+std::optional<SpectrumRef>
 ExplicitQuantitiesEigendecompositor::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
     if (derivatives_map_.contains({quantity_enum, symbol_name})) {
-        return derivatives_map_.at({quantity_enum, symbol_name}).spectrum_;
+        return SpectrumRef(derivatives_map_.at({quantity_enum, symbol_name}).spectrum_);
     }
     return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
 }

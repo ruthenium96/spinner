@@ -20,9 +20,9 @@
 
 std::ostream& operator<<(std::ostream& os, const space::Space& space);
 std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace);
-std::ostream& operator<<(std::ostream& os, const Spectrum& spectrum);
+std::ostream& operator<<(std::ostream& os, const SpectrumRef& spectrum_ref);
+template <> struct fmt::formatter<SpectrumRef> : fmt::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum);
-template <> struct fmt::formatter<Spectrum> : fmt::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix);
 template <> struct fmt::formatter<Matrix> : fmt::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);

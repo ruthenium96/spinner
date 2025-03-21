@@ -29,7 +29,9 @@ std::vector<QuantumValues> construct_final_vector(runner::Runner& runner) {
         }
     }
 
-    for (const auto& subspectrum : runner.getSpectrum(common::Energy).value().get().blocks) {
+    SpectrumRef energy_spectrum_ref = runner.getSpectrum(common::Energy).value();
+    for (const auto& subspectrum_ref : energy_spectrum_ref.blocks) {
+        const auto& subspectrum = subspectrum_ref.get();
         degeneracy_vector->add_identical_values(
             subspectrum.raw_data->size(),
             subspectrum.properties.degeneracy);
@@ -38,7 +40,9 @@ std::vector<QuantumValues> construct_final_vector(runner::Runner& runner) {
     for (int j = 0; j < values_vectors.size(); ++j) {
         const auto& quantity_enum_ = magic_enum::enum_value<common::QuantityEnum>(j);
         if (values_vectors[j].has_value()) {
-            for (const auto& subspectrum : runner.getSpectrum(quantity_enum_).value().get().blocks) {
+            SpectrumRef quantity_spectrum_ref = runner.getSpectrum(quantity_enum_).value();
+            for (const auto& subspectrum_ref : quantity_spectrum_ref.blocks) {
+                const auto& subspectrum = subspectrum_ref.get();
                 values_vectors[j].value().get()->concatenate_with(subspectrum.raw_data);
             }
         }

@@ -16,11 +16,11 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     BuildSubspectra(
         size_t number_of_block, const space::Subspace& subspace) override;
 
-    std::optional<std::reference_wrapper<const Spectrum>>
+    std::optional<SpectrumRef>
         getSpectrum(common::QuantityEnum) const override;
     std::optional<std::reference_wrapper<const Matrix>>
         getMatrix(common::QuantityEnum) const override;
-    std::optional<std::reference_wrapper<const Spectrum>>
+    std::optional<SpectrumRef>
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
     std::optional<std::reference_wrapper<const Matrix>>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;

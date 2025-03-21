@@ -11,11 +11,11 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
         std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories_list);
-    std::optional<std::reference_wrapper<const Spectrum>>
+    std::optional<SpectrumRef>
     getSpectrum(common::QuantityEnum quantity_enum) const override;
     std::optional<std::reference_wrapper<const Matrix>>
     getMatrix(common::QuantityEnum quantity_enum) const override;
-    std::optional<std::reference_wrapper<const Spectrum>> getSpectrumDerivative(
+    std::optional<SpectrumRef> getSpectrumDerivative(
         common::QuantityEnum quantity_enum,
         const model::symbols::SymbolName& symbol_name) const override;
     std::optional<std::reference_wrapper<const Matrix>> getMatrixDerivative(

@@ -18,17 +18,19 @@ size_t size_of_matrix_with_degeneracy(const Matrix& matrix) {
     return accumulator;
 }
 
-size_t size_of_spectrum_without_degeneracy(const Spectrum& spectrum) {
+size_t size_of_spectrum_without_degeneracy(const SpectrumRef& spectrum_ref) {
     size_t accumulator = 0;
-    for (const auto& subspectrum : spectrum.blocks) {
+    for (const auto& subspectrum_ref : spectrum_ref.blocks) {
+        const auto& subspectrum = subspectrum_ref.get();
         accumulator += subspectrum.raw_data->size();
     }
     return accumulator;
 }
 
-size_t size_of_spectrum_with_degeneracy(const Spectrum& spectrum) {
+size_t size_of_spectrum_with_degeneracy(const SpectrumRef& spectrum_ref) {
     size_t accumulator = 0;
-    for (const auto& subspectrum : spectrum.blocks) {
+    for (const auto& subspectrum_ref : spectrum_ref.blocks) {
+        const auto& subspectrum = subspectrum_ref.get();
         accumulator += subspectrum.raw_data->size() * subspectrum.properties.degeneracy;
     }
     return accumulator;
@@ -60,10 +62,10 @@ void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
         if (runner.getSpectrum(quantity_enum_).has_value()) {
             EXPECT_EQ(
                 runner.getIndexConverter()->get_total_space_size(),
-                size_of_spectrum_with_degeneracy(runner.getSpectrum(quantity_enum_).value().get()));
+                size_of_spectrum_with_degeneracy(runner.getSpectrum(quantity_enum_).value()));
             EXPECT_EQ(
                 runner.getIndexConverter()->get_total_space_size(),
-                size_of_spectrum_without_degeneracy(runner.getSpectrum(quantity_enum_).value().get()));        
+                size_of_spectrum_without_degeneracy(runner.getSpectrum(quantity_enum_).value()));        
         }
     }
 }
