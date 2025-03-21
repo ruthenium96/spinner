@@ -6,7 +6,7 @@
 
 namespace eigendecompositor {
 
-// This class implicitly calculate S^2 values using block_properties data (total_mult).
+// This class implicitly calculate S^2 or M^2 values using block_properties data (total_mult or n_proj).
 class ImplicitQuantityEigendecompositor: public AbstractEigendecompositor {
   public:
     ImplicitQuantityEigendecompositor(
@@ -21,12 +21,12 @@ class ImplicitQuantityEigendecompositor: public AbstractEigendecompositor {
 
     std::optional<SpectrumRef>
     getSpectrum(common::QuantityEnum anEnum) const override;
-    std::optional<std::reference_wrapper<const Matrix>>
+    std::optional<MatrixRef>
     getMatrix(common::QuantityEnum anEnum) const override;
     std::optional<SpectrumRef> getSpectrumDerivative(
         common::QuantityEnum anEnum,
         const model::symbols::SymbolName& name) const override;
-    std::optional<std::reference_wrapper<const Matrix>> getMatrixDerivative(
+    std::optional<MatrixRef> getMatrixDerivative(
         common::QuantityEnum anEnum,
         const model::symbols::SymbolName& name) const override;
     void initialize(

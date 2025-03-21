@@ -13,12 +13,12 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
         quantum::linear_algebra::FactoriesList factories_list);
     std::optional<SpectrumRef>
     getSpectrum(common::QuantityEnum quantity_enum) const override;
-    std::optional<std::reference_wrapper<const Matrix>>
+    std::optional<MatrixRef>
     getMatrix(common::QuantityEnum quantity_enum) const override;
     std::optional<SpectrumRef> getSpectrumDerivative(
         common::QuantityEnum quantity_enum,
         const model::symbols::SymbolName& symbol_name) const override;
-    std::optional<std::reference_wrapper<const Matrix>> getMatrixDerivative(
+    std::optional<MatrixRef> getMatrixDerivative(
         common::QuantityEnum quantity_enum,
         const model::symbols::SymbolName& symbol_name) const override;
 

@@ -61,7 +61,7 @@ OneSymbolInHamiltonianEigendecompositor::getSpectrum(common::QuantityEnum quanti
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<MatrixRef>
 OneSymbolInHamiltonianEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::Energy) {
         return std::nullopt;
@@ -79,7 +79,7 @@ OneSymbolInHamiltonianEigendecompositor::getSpectrumDerivative(
     return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<MatrixRef>
 OneSymbolInHamiltonianEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {

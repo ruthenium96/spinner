@@ -2,8 +2,6 @@
 
 #include <set>
 
-#include "src/common/Logger.h"
-
 Submatrix::Submatrix(
     std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
     BlockProperties properties_) :

@@ -14,11 +14,11 @@ class AllQuantitiesGetter {
       // The getter returns some value if underlying wrapper actually store Matrix.
       virtual std::optional<SpectrumRef>
           getSpectrum(common::QuantityEnum) const = 0;
-      virtual std::optional<std::reference_wrapper<const Matrix>>
+      virtual std::optional<MatrixRef>
           getMatrix(common::QuantityEnum) const = 0;
       virtual std::optional<SpectrumRef>
       getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
-      virtual std::optional<std::reference_wrapper<const Matrix>>
+      virtual std::optional<MatrixRef>
       getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
 };
 }

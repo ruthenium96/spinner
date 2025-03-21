@@ -2,17 +2,19 @@
 #include "magic_enum.hpp"
 #include "src/common/runner/Runner.h"
 
-size_t size_of_matrix_without_degeneracy(const Matrix& matrix) {
+size_t size_of_matrix_without_degeneracy(const MatrixRef& matrix) {
     size_t accumulator = 0;
-    for (const auto& submatrix : matrix.blocks) {
+    for (const auto& submatrix_ref : matrix.blocks) {
+        const auto& submatrix = submatrix_ref.get();
         accumulator += submatrix.raw_data->size();
     }
     return accumulator;
 }
 
-size_t size_of_matrix_with_degeneracy(const Matrix& matrix) {
+size_t size_of_matrix_with_degeneracy(const MatrixRef& matrix) {
     size_t accumulator = 0;
-    for (const auto& submatrix : matrix.blocks) {
+    for (const auto& submatrix_ref : matrix.blocks) {
+        const auto& submatrix = submatrix_ref.get();
         accumulator += submatrix.raw_data->size() * submatrix.properties.degeneracy;
     }
     return accumulator;

@@ -20,10 +20,10 @@ ExplicitQuantitiesEigendecompositor::getSpectrum(common::QuantityEnum quantity_e
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<MatrixRef>
 ExplicitQuantitiesEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantities_map_.contains(quantity_enum)) {
-        return quantities_map_.at(quantity_enum).matrix_;
+        return MatrixRef(quantities_map_.at(quantity_enum).matrix_);
     }
     return eigendecompositor_->getMatrix(quantity_enum);
 }
@@ -38,12 +38,12 @@ ExplicitQuantitiesEigendecompositor::getSpectrumDerivative(
     return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<MatrixRef>
 ExplicitQuantitiesEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
     if (derivatives_map_.contains({quantity_enum, symbol_name})) {
-        return derivatives_map_.at({quantity_enum, symbol_name}).matrix_;
+        return MatrixRef(derivatives_map_.at({quantity_enum, symbol_name}).matrix_);
     }
     return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
 }

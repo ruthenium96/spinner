@@ -18,11 +18,11 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
 
     std::optional<SpectrumRef>
         getSpectrum(common::QuantityEnum) const override;
-    std::optional<std::reference_wrapper<const Matrix>>
+    std::optional<MatrixRef>
         getMatrix(common::QuantityEnum) const override;
     std::optional<SpectrumRef>
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
-    std::optional<std::reference_wrapper<const Matrix>>
+    std::optional<MatrixRef>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
     void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&

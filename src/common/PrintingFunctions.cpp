@@ -39,7 +39,7 @@ std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum) {
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
+std::ostream& operator<<(std::ostream& os, const MatrixRef& matrix) {
     for (const Submatrix& submatrix : matrix.blocks) {
         os << submatrix;
     }

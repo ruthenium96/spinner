@@ -13,3 +13,9 @@ Matrix::Matrix(
         blocks.emplace_back(subspace, new_operator, converter, factories);
     }
 }
+
+MatrixRef::MatrixRef(const Matrix& spectrum) {
+    for (int i = 0; i < spectrum.blocks.size(); ++i) {
+        blocks.push_back(spectrum.blocks[i]);
+    }
+}

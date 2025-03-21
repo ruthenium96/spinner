@@ -55,10 +55,10 @@ void ExactEigendecompositor::initialize(
 
 void ExactEigendecompositor::finalize() {}
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<MatrixRef>
 ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == common::Energy) {
-        return energy_.matrix_;
+        return MatrixRef(energy_.matrix_);
     }
     return std::nullopt;
 }
@@ -77,7 +77,7 @@ std::optional<SpectrumRef> ExactEigendecompositor::getSpectrumDerivative(
     return std::nullopt;
 }
 
-std::optional<std::reference_wrapper<const Matrix>> ExactEigendecompositor::getMatrixDerivative(
+std::optional<MatrixRef> ExactEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) const {
     return std::nullopt;

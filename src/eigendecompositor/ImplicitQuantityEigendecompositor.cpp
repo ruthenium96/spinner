@@ -64,7 +64,7 @@ ImplicitQuantityEigendecompositor::getSpectrum(common::QuantityEnum quantity_enu
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<MatrixRef>
 ImplicitQuantityEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return std::nullopt;
@@ -82,7 +82,7 @@ ImplicitQuantityEigendecompositor::getSpectrumDerivative(
     return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<MatrixRef>
 ImplicitQuantityEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
