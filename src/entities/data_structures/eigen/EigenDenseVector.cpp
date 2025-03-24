@@ -89,7 +89,7 @@ Eigen::Vector<T, -1>& EigenDenseVector<T>::modifyDenseVector() {
 }
 
 template <typename T>
-const Eigen::Vector<T, -1>& EigenDenseVector<T>::getDenseVector() {
+const Eigen::Vector<T, -1>& EigenDenseVector<T>::getDenseVector() const {
     return vector_;
 }
 

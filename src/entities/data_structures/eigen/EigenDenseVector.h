@@ -23,7 +23,7 @@ class EigenDenseVector: public AbstractDenseVector {
     void print(std::ostream& os) const override;
 
     Eigen::Vector<T, -1>& modifyDenseVector();
-    const Eigen::Vector<T, -1>& getDenseVector();
+    const Eigen::Vector<T, -1>& getDenseVector() const;
 
   private:
     Eigen::Vector<T, -1> vector_;

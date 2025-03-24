@@ -26,7 +26,7 @@ class ArmaDenseVector: public AbstractDenseVector {
     void print(std::ostream& os) const override;
 
     arma::Col<T>& modifyDenseVector();
-    const arma::Col<T>& getDenseVector();
+    const arma::Col<T>& getDenseVector() const;
 
   private:
     // c-like pointers are necessary to avoid double-free error

@@ -93,7 +93,7 @@ arma::Col<T>& ArmaDenseVector<T>::modifyDenseVector() {
 }
 
 template <typename T>
-const arma::Col<T>& ArmaDenseVector<T>::getDenseVector() {
+const arma::Col<T>& ArmaDenseVector<T>::getDenseVector() const {
     return vector_;
 }
 
