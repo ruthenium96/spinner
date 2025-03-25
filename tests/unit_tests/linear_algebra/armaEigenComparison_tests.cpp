@@ -74,8 +74,6 @@ TEST(linearAlgebraFactories, eigendecomposition) {
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto& armaMatrix = matrices[0];
-        auto& eigenMatrix = matrices[2];
         // only-values-eigendecomposition:
         {
             // decomposition
