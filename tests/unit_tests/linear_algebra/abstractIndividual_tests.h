@@ -54,9 +54,31 @@ TYPED_TEST_P(
     }
 }
 
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    krylovDiagonalizeValuesAndDiagonalizeValues) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-100, +100);
+    
+    for (size_t size = 8; size <= 16; size*=2) {
+        auto matrix = generateSparseDiagonalizableMatrix(size, this->factory_, dist, rng);
+        auto seed_vector = generateOrthDenseVector(size, this->factory_);
+
+        auto krylov_eigenvalues = std::move(matrix->krylovDiagonalizeValues(seed_vector, size).eigenvalues);
+        auto exact_eigenvalues = matrix->diagonalizeValues();
+        ASSERT_EQ(krylov_eigenvalues->size(), exact_eigenvalues->size());
+        for (size_t i = 0; i < krylov_eigenvalues->size(); ++i) {
+            double range = std::abs(krylov_eigenvalues->at(i) * 1e-1);
+            EXPECT_NEAR(krylov_eigenvalues->at(i), exact_eigenvalues->at(i), range);
+        }
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
     NonNullptrObjects,
-    unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence);
+    unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence,
+    krylovDiagonalizeValuesAndDiagonalizeValues);
 
 #endif  //SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H

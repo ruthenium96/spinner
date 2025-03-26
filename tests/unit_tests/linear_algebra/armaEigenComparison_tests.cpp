@@ -136,6 +136,54 @@ TEST(linearAlgebraFactories, eigendecomposition) {
     }
 }
 
+TEST(linearAlgebraFactories, krylov_eigendecomposition) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-1000, +1000);
+
+    for (size_t size = 8; size <= 16; size*=2) {
+        // construct identical dense diagonalizable matrix:
+        auto matrices = generateSparseDiagonalizableMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
+        auto orth_vectors = generateOrthDenseVectors(
+            size, 
+            constructAllDenseTransformAndDiagonalizeFactories());
+        // only-values-eigendecomposition:
+        {
+            // decomposition
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsEnergy;
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsSquaredBackProjection;
+            for (int i = 0; i < matrices.size(); ++i) {
+                const auto& matrix = matrices[i];
+                const auto& orth_vector = orth_vectors[i];
+                auto pair = matrix->krylovDiagonalizeValues(orth_vector, size);
+                denseVectorsEnergy.emplace_back(std::move(pair.eigenvalues));
+                denseVectorsSquaredBackProjection.emplace_back(std::move(pair.squared_back_projection));
+            }
+            // check equality:
+            for (size_t i = 0; i < denseVectorsEnergy.size(); ++i) {
+                const auto& denseVectorEnergy_i = denseVectorsEnergy[i];
+                const auto& denseVectorSquaredBackProjection_i = denseVectorsSquaredBackProjection[i];
+                for (size_t j = 0; j < denseVectorsEnergy.size(); ++j) {
+                    if (i == j) {
+                        continue;
+                    }
+                    const auto& denseVectorEnergy_j = denseVectorsEnergy[j];
+                    const auto& denseVectorSquaredBackProjection_j = denseVectorsSquaredBackProjection[j];
+                    for (size_t k = 0; k < size; ++k) {
+                        double epsilonEnergy = std::abs(denseVectorEnergy_i->at(k) * 5e-3);
+                        EXPECT_NEAR(denseVectorEnergy_i->at(k), denseVectorEnergy_j->at(k), epsilonEnergy);
+                        EXPECT_NEAR(denseVectorSquaredBackProjection_i->at(k), denseVectorSquaredBackProjection_j->at(k), 1e-3);
+                    }
+                }
+            }
+        }
+    }
+}
+
 // Check if different linear algebra packages make the same unitary transformation
 TEST(linearAlgebraFactories, unitary_transformation) {
     std::random_device dev;
