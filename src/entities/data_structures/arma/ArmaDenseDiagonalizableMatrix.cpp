@@ -27,6 +27,18 @@ std::unique_ptr<AbstractDenseVector> ArmaDenseDiagonalizableMatrix<T>::diagonali
 }
 
 template <typename T>
+KrylovCouple ArmaDenseDiagonalizableMatrix<T>::krylovDiagonalizeValues(
+    const std::unique_ptr<AbstractDenseVector>& seed_vector,
+    size_t krylov_subspace_size) const {
+    ArmaLogic<T> logic;
+
+    return logic.krylovDiagonalizeValues(
+        *this, 
+        *seed_vector, 
+        krylov_subspace_size);
+}
+
+template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix>
 ArmaDenseDiagonalizableMatrix<T>::multiply_by(double multiplier) const {
     auto answer = std::make_unique<ArmaDenseDiagonalizableMatrix>();

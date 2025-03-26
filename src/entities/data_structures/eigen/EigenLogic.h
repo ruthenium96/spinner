@@ -17,6 +17,11 @@ class EigenLogic {
 
     EigenCouple diagonalizeValuesVectors(const AbstractDiagonalizableMatrix& symmetricMatrix) const;
 
+    KrylovCouple krylovDiagonalizeValues(
+      const AbstractDiagonalizableMatrix& diagonalizableMatrix,
+      const AbstractDenseVector& seed_vector,
+      size_t krylov_subspace_size) const;
+
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;

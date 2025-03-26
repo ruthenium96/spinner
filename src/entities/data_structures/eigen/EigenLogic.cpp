@@ -1,9 +1,83 @@
 #include "EigenLogic.h"
+#include <stdexcept>
 
 #include "EigenDenseDiagonalizableMatrix.h"
 #include "EigenDenseSemiunitaryMatrix.h"
 #include "EigenDenseVector.h"
 #include "EigenSparseDiagonalizableMatrix.h"
+
+namespace {
+
+template <typename T>
+std::pair<Eigen::Vector<T, -1>, Eigen::Vector<T, -1>> krylovDiagonalizeValuesSparse(
+    const Eigen::SparseMatrix<T>& matrix,
+    const Eigen::Vector<T, -1>& seed_vector,
+    size_t krylov_subspace_size) {
+    Eigen::Matrix<T, -1, -1> krylov_matrix(krylov_subspace_size, krylov_subspace_size);
+    krylov_matrix.fill(0);
+    
+    if (krylov_subspace_size > matrix.cols()) {
+        throw std::invalid_argument("krylov_subspace_size bigger than size of matrix!");
+    }
+
+    // use objects instead of pointers and use swap?
+    auto current_vector = std::make_unique<Eigen::Vector<T, -1>>(seed_vector);
+    double vec_norm = current_vector->norm();
+    if (vec_norm < std::numeric_limits<double>::epsilon()) {
+        throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
+    }
+    *current_vector /= vec_norm;
+
+    auto previous_vector = std::make_unique<Eigen::Vector<T, -1>>(current_vector->size());
+    previous_vector->fill(0);
+    auto next_vector = std::make_unique<Eigen::Vector<T, -1>>(current_vector->size());
+    next_vector->fill(0);
+
+    double diag_element, non_diag_element;
+
+    for (size_t k = 0; k < krylov_subspace_size; ++k) {
+        *next_vector = (matrix) * (*current_vector);
+        diag_element = current_vector->dot(*next_vector);
+        if (k > 0) {
+            non_diag_element = previous_vector->dot(*next_vector);
+        }
+
+        krylov_matrix(k, k) = diag_element;
+        if (k > 0) {
+            krylov_matrix(k-1, k) = non_diag_element;
+            krylov_matrix(k, k-1) = non_diag_element;
+        }
+
+        *next_vector -= *current_vector * diag_element;
+        if (k > 0) {
+            *next_vector -= *previous_vector * non_diag_element;
+        }
+
+        double vec_norm = next_vector->norm();
+        if (vec_norm < std::numeric_limits<double>::epsilon()) {
+            throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
+        }
+        *next_vector /= vec_norm;
+
+        // use objects instead of pointers and use arma::swap?
+        std::swap(previous_vector, current_vector);
+        std::swap(current_vector, next_vector);
+    }
+
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix<T, -1, -1>> es;
+    es.compute(
+        krylov_matrix,
+        Eigen::ComputeEigenvectors);
+    auto eigenvalues = std::move(es.eigenvalues());
+    auto eigenvectors = std::move(es.eigenvectors());
+        
+    // TODO: col(0) or row(0)?
+    auto squared_back_projection = eigenvectors.row(0).array().square();
+
+    return {std::move(eigenvalues), std::move(squared_back_projection)};
+}   
+
+} // namespace
 
 namespace quantum::linear_algebra {
 
@@ -56,6 +130,42 @@ std::unique_ptr<AbstractDenseVector> EigenLogic<T>::unitaryTransformAndReturnMai
     }
 
     throw std::bad_cast();
+}
+
+template <typename T>
+KrylovCouple EigenLogic<T>::krylovDiagonalizeValues(
+    const AbstractDiagonalizableMatrix& diagonalizableMatrix,
+    const AbstractDenseVector& seed_vector,
+    size_t krylov_subspace_size) const {
+    
+    auto eigenvalues_ = std::make_unique<EigenDenseVector<T>>();
+    auto squared_back_projection_ = std::make_unique<EigenDenseVector<T>>();
+    
+    if (auto maybeDenseVector =
+        dynamic_cast<const EigenDenseVector<T>*>(&seed_vector)) {
+        if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            throw std::invalid_argument("It is inefficient to use EigenDenseDiagonalizableMatrix in Krylov procedure");
+            // TODO!
+        } else if (auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            auto pair = krylovDiagonalizeValuesSparse(
+                maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix(),
+                maybeDenseVector->getDenseVector(),
+                krylov_subspace_size);
+            eigenvalues_->modifyDenseVector() = std::move(pair.first);
+            squared_back_projection_->modifyDenseVector() = std::move(pair.second);
+        } else {
+            throw std::bad_cast();
+        }
+    } else {
+        throw std::bad_cast();
+    }
+
+    KrylovCouple answer;
+    answer.eigenvalues = std::move(eigenvalues_);
+    answer.squared_back_projection = std::move(squared_back_projection_);
+    return answer;
 }
 
 template <typename T>
