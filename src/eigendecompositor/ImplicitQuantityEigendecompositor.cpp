@@ -38,14 +38,9 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
         subspace);
 
     if (!first_iteration_has_been_done_) {
-        // todo: we use energy_subspectrum only because of size_of_subspace
-        //  can we implement calculation of size_of_subspace in Subspace class?
-        const auto& energy_subspectrum =
-            eigendecompositor_->getSpectrum(common::Energy).value().blocks.at(number_of_block).get();
-
         double value = calculate_value(subspace.properties);
 
-        size_t size_of_subspace = energy_subspectrum.raw_data->size();
+        size_t size_of_subspace = subspace.size();
 
         auto raw_data = factories_list_.createVector();
         raw_data->add_identical_values(size_of_subspace, value);
