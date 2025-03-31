@@ -59,6 +59,19 @@ std::unique_ptr<AbstractDenseVector> ArmaDenseTransformAndDiagonalizeFactory::cr
     }
 }
 
+std::unique_ptr<AbstractDenseVector> 
+    ArmaDenseTransformAndDiagonalizeFactory::createRandomUnitVector(uint32_t size) {
+    if (getPrecision() == Precision::SINGLE) {
+        auto vector = std::make_unique<ArmaDenseVector<float>>();
+        vector->makeRandomUnitVector(size);
+        return vector;
+    } else {
+        auto vector = std::make_unique<ArmaDenseVector<double>>();
+        vector->makeRandomUnitVector(size);
+        return vector;
+    }
+}
+
 std::unique_ptr<AbstractSparseSemiunitaryMatrix>
 ArmaSparseTransformFactory::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
     auto matrix = std::make_unique<ArmaSparseSemiunitaryMatrix>();

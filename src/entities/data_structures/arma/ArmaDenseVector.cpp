@@ -1,10 +1,21 @@
 #include "ArmaDenseVector.h"
+#include <stdexcept>
 
 namespace quantum::linear_algebra {
 
 template <typename T>
 void ArmaDenseVector<T>::resize(uint32_t new_size) {
     vector_.resize(new_size);
+}
+
+template <typename T>
+void ArmaDenseVector<T>::makeRandomUnitVector(uint32_t size) {
+    if (!vector_.empty()) {
+        throw std::invalid_argument("Trying to make random unit vector from non-empty vector.");
+    }
+    vector_.randn(size);
+    double vec_norm = arma::vecnorm(vector_);
+    vector_ /= vec_norm;
 }
 
 template <typename T>

@@ -16,6 +16,7 @@ class ArmaDenseVector: public AbstractDenseVector {
     void add_identical_values(size_t number, double value) override;
     void subtract_minimum() override;
     void wise_exp() override;
+    void makeRandomUnitVector(uint32_t size);
 
     std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const override;
     double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const override;

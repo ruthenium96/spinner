@@ -13,6 +13,7 @@ class EigenDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAnd
     createSparseDiagonalizableMatrix(uint32_t size) override;
     std::unique_ptr<AbstractDenseSemiunitaryMatrix>
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) override;
+    std::unique_ptr<AbstractDenseVector> createRandomUnitVector(uint32_t size) override;
     std::unique_ptr<AbstractDenseVector> createVector() override;
 };
 

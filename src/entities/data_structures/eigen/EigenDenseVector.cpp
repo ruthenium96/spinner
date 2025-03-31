@@ -1,10 +1,30 @@
 #include "EigenDenseVector.h"
+#include <stdexcept>
+#include <random>
 
 namespace quantum::linear_algebra {
 
 template <typename T>
 void EigenDenseVector<T>::resize(uint32_t new_size) {
     vector_.resize(new_size);
+}
+
+template <typename T>
+void EigenDenseVector<T>::makeRandomUnitVector(uint32_t size) {
+    if (vector_.size() != 0) {
+        throw std::invalid_argument("Trying to make random unit vector from non-empty vector.");
+    }
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+    std::normal_distribution d{0.0, 1.0};
+
+    vector_.resize(size);
+    for (uint32_t i = 0; i < size; ++i) {
+        vector_(i) = d(gen);
+    }
+
+    double vec_norm = vector_.norm();
+    vector_ /= vec_norm;
 }
 
 template <typename T>

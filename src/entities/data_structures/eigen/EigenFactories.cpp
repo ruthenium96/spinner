@@ -48,6 +48,19 @@ EigenDenseTransformAndDiagonalizeFactory::createDenseSemiunitaryMatrix(
     }
 }
 
+std::unique_ptr<AbstractDenseVector> 
+    EigenDenseTransformAndDiagonalizeFactory::createRandomUnitVector(uint32_t size) {
+    if (getPrecision() == Precision::SINGLE) {
+        auto vector = std::make_unique<EigenDenseVector<float>>();
+        vector->makeRandomUnitVector(size);
+        return vector;
+    } else {
+        auto vector = std::make_unique<EigenDenseVector<double>>();
+        vector->makeRandomUnitVector(size);
+        return vector;
+    }
+}
+
 std::unique_ptr<AbstractDenseVector> EigenDenseTransformAndDiagonalizeFactory::createVector() {
     if (getPrecision() == Precision::SINGLE) {
         auto vector = std::make_unique<EigenDenseVector<float>>();

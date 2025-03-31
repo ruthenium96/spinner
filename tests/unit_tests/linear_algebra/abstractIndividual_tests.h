@@ -75,10 +75,46 @@ TYPED_TEST_P(
     }
 }
 
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    randomUnitVectorsAreUnit) {
+    
+    for (size_t size = 1; size <= 2048; size*=2) {
+        auto vector = this->factory_->createRandomUnitVector(size);
+
+        ASSERT_EQ(vector->size(), size);
+        double norm = 0.0;
+        for (size_t i = 0; i < size; ++i) {
+            double value = vector->at(i);
+            norm += value * value; 
+        }
+        EXPECT_NEAR(norm, 1.0, 1e-6);
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    randomUnitVectorsAreUnbiased) {
+    for (size_t size = 1024; size <= 65536; size*=2) {
+        auto vector = this->factory_->createRandomUnitVector(size);
+
+        ASSERT_EQ(vector->size(), size);
+        double sum = 0.0;
+        for (size_t i = 0; i < size; ++i) {
+            double value = vector->at(i);
+            sum += value; 
+        }
+        sum /= size;
+        EXPECT_NEAR(sum, 0.0, 5e-3);
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
     NonNullptrObjects,
     unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence,
-    krylovDiagonalizeValuesAndDiagonalizeValues);
+    krylovDiagonalizeValuesAndDiagonalizeValues,
+    randomUnitVectorsAreUnit,
+    randomUnitVectorsAreUnbiased);
 
 #endif  //SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H

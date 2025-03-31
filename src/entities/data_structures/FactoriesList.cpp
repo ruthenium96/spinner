@@ -17,6 +17,10 @@ FactoriesList::createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const 
     return denseFactory_->createDenseSemiunitaryMatrix(cols, rows);
 }
 
+std::unique_ptr<AbstractDenseVector> FactoriesList::createRandomUnitVector(uint32_t size) const {
+    return denseFactory_->createRandomUnitVector(size);
+}
+
 std::unique_ptr<AbstractDenseVector> FactoriesList::createVector() const {
     return denseFactory_->createVector();
 }
