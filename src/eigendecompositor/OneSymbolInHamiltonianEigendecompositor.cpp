@@ -29,7 +29,7 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
         eigenvectors_[number_of_block] = mb_unitary_transformation_matrix;
 
         const auto& energy_subspectrum =
-            eigendecompositor_->getSpectrum(common::Energy).value().blocks.at(number_of_block).get();
+            eigendecompositor_->getSubspectrum(common::Energy, number_of_block).value().get();
 
         auto raw_spectrum = energy_subspectrum.raw_data->multiply_by(1);
         current_energy_spectrum_.blocks[number_of_block] =
@@ -45,7 +45,7 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
         double current_value_of_symbol = currentValueGetter_();
         double multiplier = current_value_of_symbol / initial_value_of_symbol_;
         const auto& energy_subspectrum =
-            eigendecompositor_->getSpectrum(common::Energy).value().blocks.at(number_of_block).get();
+            eigendecompositor_->getSubspectrum(common::Energy, number_of_block).value().get();
         auto raw_subspectrum_energy = energy_subspectrum.raw_data->multiply_by(multiplier);
         current_energy_spectrum_.blocks[number_of_block] =
             Subspectrum(std::move(raw_subspectrum_energy), energy_subspectrum.properties);
@@ -59,6 +59,14 @@ OneSymbolInHamiltonianEigendecompositor::getSpectrum(common::QuantityEnum quanti
         return SpectrumRef(current_energy_spectrum_);
     }
     return eigendecompositor_->getSpectrum(quantity_enum);
+}
+
+std::optional<std::reference_wrapper<const Subspectrum>>
+OneSymbolInHamiltonianEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
+    if (quantity_enum == common::Energy) {
+        return current_energy_spectrum_.blocks[number_of_block];
+    }
+    return eigendecompositor_->getSubspectrum(quantity_enum, number_of_block);
 }
 
 std::optional<MatrixRef>

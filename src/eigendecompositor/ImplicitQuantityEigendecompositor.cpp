@@ -59,6 +59,14 @@ ImplicitQuantityEigendecompositor::getSpectrum(common::QuantityEnum quantity_enu
     return eigendecompositor_->getSpectrum(quantity_enum);
 }
 
+std::optional<std::reference_wrapper<const Subspectrum>>
+ImplicitQuantityEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
+    if (quantity_enum == quantity_implicit_enum_) {
+        return quantity_implicit_spectrum_.blocks[number_of_block];
+    }
+    return eigendecompositor_->getSubspectrum(quantity_enum, number_of_block);
+}
+
 std::optional<MatrixRef>
 ImplicitQuantityEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     if (quantity_enum == quantity_implicit_enum_) {

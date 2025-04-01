@@ -14,6 +14,8 @@ class AllQuantitiesGetter {
       // The getter returns some value if underlying wrapper actually store Matrix.
       virtual std::optional<SpectrumRef>
           getSpectrum(common::QuantityEnum) const = 0;
+      virtual std::optional<std::reference_wrapper<const Subspectrum>>
+          getSubspectrum(common::QuantityEnum, size_t number_of_block) const = 0;
       virtual std::optional<MatrixRef>
           getMatrix(common::QuantityEnum) const = 0;
       virtual std::optional<SpectrumRef>
