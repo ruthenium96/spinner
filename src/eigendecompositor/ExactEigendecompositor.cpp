@@ -19,7 +19,8 @@ ExactEigendecompositor::BuildSubspectra(
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
         mb_unitary_transformation_matrix;
 
-    auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_);
+    // return_sparse_if_possible is false, because eigendecomposition of dense matrix is faster
+    auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_, false);
 
     if (!do_we_need_eigenvectors_) {
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:

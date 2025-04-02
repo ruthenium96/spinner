@@ -27,7 +27,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
                 std::make_unique<model::operators::ConstantTerm>(constant_ptr));
 
             // Build Matrix
-            Matrix matrix = Matrix(space_, operator_, converter, factories_);
+            Matrix matrix = Matrix(space_, operator_, converter, factories_, true);
 
             // Check results:
             for (const auto& matrix_block : matrix.blocks) {
@@ -65,7 +65,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
             std::make_unique<model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js));
 
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter, factories_);
+        Matrix matrix = Matrix(space_, operator_, converter, factories_, true);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {
@@ -115,7 +115,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
             quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
 
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter, factories_);
+        Matrix matrix = Matrix(space_, operator_, converter, factories_, true);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {

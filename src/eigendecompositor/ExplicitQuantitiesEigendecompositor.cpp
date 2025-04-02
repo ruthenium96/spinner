@@ -64,8 +64,9 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
         eigendecompositor_->BuildSubspectra(number_of_block, subspace);
 
     for (const auto& [quantity_enum, operator_to_calculate] : quantities_operators_map_) {
+        // return_sparse_if_possible is true, because unitary transformation of sparse matrix is faster
         auto non_hamiltonian_submatrix =
-            Submatrix(subspace, *operator_to_calculate, converter_, factories_list_);
+            Submatrix(subspace, *operator_to_calculate, converter_, factories_list_, true);
         auto& quantity = quantities_map_[quantity_enum];
         quantity.spectrum_.blocks[number_of_block] = non_energy_subspectrum(
             non_hamiltonian_submatrix,
@@ -74,8 +75,9 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
     }
 
     for (auto& [pair, derivative_operator] : derivatives_operators_map_) {
+        // return_sparse_if_possible is true, because unitary transformation of sparse matrix is faster
         auto derivative_submatrix =
-            Submatrix(subspace, *derivative_operator, converter_, factories_list_);
+            Submatrix(subspace, *derivative_operator, converter_, factories_list_, true);
         auto& derivative = derivatives_map_[pair];
         derivative.spectrum_.blocks[number_of_block] =
             non_energy_subspectrum(derivative_submatrix, mb_unitary_transformation_matrix.value());

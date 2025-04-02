@@ -23,7 +23,8 @@ struct Submatrix {
         const space::Subspace& subspace,
         const model::operators::Operator& new_operator,
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-        const quantum::linear_algebra::FactoriesList& factories);
+        const quantum::linear_algebra::FactoriesList& factories,
+        bool return_sparse_if_possible);
 };
 
 #endif  //SPINNER_SUBMATRIX_H
