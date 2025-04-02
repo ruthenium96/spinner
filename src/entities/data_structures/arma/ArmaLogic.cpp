@@ -8,9 +8,9 @@
 
 namespace {
 
-template <typename T>
+template <typename T, typename M>
 std::pair<arma::Col<T>, arma::Col<T>> krylovDiagonalizeValuesSparse(
-    const arma::SpMat<T>& matrix,
+    const M& matrix,
     const arma::Col<T>& seed_vector,
     size_t krylov_subspace_size) {
     arma::Mat<T> krylov_matrix(krylov_subspace_size, krylov_subspace_size);
@@ -154,8 +154,13 @@ KrylovCouple ArmaLogic<T>::krylovDiagonalizeValues(
         dynamic_cast<const ArmaDenseVector<T>*>(&seed_vector)) {
         if (auto maybeDenseSymmetricMatrix =
             dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
-            throw std::invalid_argument("It is inefficient to use ArmaDenseDiagonalizableMatrix in Krylov procedure");
-            // TODO!
+            // It is slow, avoid this branch.
+            auto pair = krylovDiagonalizeValuesSparse(
+                maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
+                maybeDenseVector->getDenseVector(),
+                krylov_subspace_size);
+            eigenvalues_->modifyDenseVector() = std::move(pair.first);
+            squared_back_projection_->modifyDenseVector() = std::move(pair.second);    
         } else if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
 
