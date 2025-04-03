@@ -31,7 +31,9 @@ ExactEigendecompositor::BuildSubspectra(
         mb_unitary_transformation_matrix = std::move(pair.second);
         energy_.spectrum_.blocks[number_of_block] = std::move(pair.first);
     }
+#ifndef NDEBUG
     energy_.matrix_.blocks[number_of_block] = std::move(hamiltonian_submatrix);
+#endif
 
     return mb_unitary_transformation_matrix;
 }
@@ -58,9 +60,11 @@ void ExactEigendecompositor::finalize() {}
 
 std::optional<MatrixRef>
 ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+#ifndef NDEBUG
     if (quantity_enum == common::Energy) {
         return MatrixRef(energy_.matrix_);
     }
+#endif
     return std::nullopt;
 }
 

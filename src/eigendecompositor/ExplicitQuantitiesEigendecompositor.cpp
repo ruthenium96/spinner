@@ -30,9 +30,11 @@ ExplicitQuantitiesEigendecompositor::getSubspectrum(common::QuantityEnum quantit
 
 std::optional<MatrixRef>
 ExplicitQuantitiesEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+#ifndef NDEBUG
     if (quantities_map_.contains(quantity_enum)) {
         return MatrixRef(quantities_map_.at(quantity_enum).matrix_);
     }
+#endif
     return eigendecompositor_->getMatrix(quantity_enum);
 }
 
@@ -50,9 +52,11 @@ std::optional<MatrixRef>
 ExplicitQuantitiesEigendecompositor::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol_name) const {
+#ifndef NDEBUG
     if (derivatives_map_.contains({quantity_enum, symbol_name})) {
         return MatrixRef(derivatives_map_.at({quantity_enum, symbol_name}).matrix_);
     }
+#endif
     return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
 }
 
@@ -71,7 +75,9 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
         quantity.spectrum_.blocks[number_of_block] = non_energy_subspectrum(
             non_hamiltonian_submatrix,
             mb_unitary_transformation_matrix.value());
+#ifndef NDEBUG
         quantity.matrix_.blocks[number_of_block] = std::move(non_hamiltonian_submatrix);
+#endif
     }
 
     for (auto& [pair, derivative_operator] : derivatives_operators_map_) {
@@ -81,7 +87,9 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
         auto& derivative = derivatives_map_[pair];
         derivative.spectrum_.blocks[number_of_block] =
             non_energy_subspectrum(derivative_submatrix, mb_unitary_transformation_matrix.value());
+#ifndef NDEBUG
         derivative.matrix_.blocks[number_of_block] = std::move(derivative_submatrix);
+#endif
     }
 
     return mb_unitary_transformation_matrix;
