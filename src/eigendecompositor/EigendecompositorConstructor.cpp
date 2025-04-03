@@ -17,10 +17,22 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
 
     common::Logger::detailed_msg("Eigendecompositor information:");
     common::Logger::detailed("ExactEigendecompositor will be used");
-    std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor =
-        std::make_unique<eigendecompositor::ExactEigendecompositor>(
+    std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor;
+
+    if (consistentModelOptimizationList.getOptimizationList().isFTLMApproximated()) {
+        auto FTLM_settings = consistentModelOptimizationList.getOptimizationList().getFTLMSettings();
+        common::Logger::detailed("FTLMEigendecompositor will be used");
+        eigendecompositor =
+            std::make_unique<eigendecompositor::FTLMEigendecompositor>(
+                indexConverter,
+                factories,
+                FTLM_settings.krylov_subspace_size,
+                FTLM_settings.exact_decomposition_threshold);
+    } else {
+        eigendecompositor = std::make_unique<eigendecompositor::ExactEigendecompositor>(
             indexConverter,
             factories);
+    }
 
     const auto& symbolic_worker =
         consistentModelOptimizationList.getModel().getSymbolicWorker();

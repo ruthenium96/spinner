@@ -1,5 +1,6 @@
 add_library(eigendecompositor
         ExactEigendecompositor.cpp
+        FTLMEigendecompositor.cpp FTLMEigendecompositor.h
         ImplicitQuantityEigendecompositor.cpp ImplicitQuantityEigendecompositor.h
         OneSymbolInHamiltonianEigendecompositor.cpp OneSymbolInHamiltonianEigendecompositor.h
         AbstractEigendecompositor.cpp
