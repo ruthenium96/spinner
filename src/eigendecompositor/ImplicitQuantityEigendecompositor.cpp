@@ -40,10 +40,10 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
     if (!first_iteration_has_been_done_) {
         double value = calculate_value(subspace.properties);
 
-        size_t size_of_subspace = subspace.size();
+        size_t size_of_subspectrum = getSubspectrum(common::Energy, number_of_block).value().get().raw_data->size();
 
         auto raw_data = factories_list_.createVector();
-        raw_data->add_identical_values(size_of_subspace, value);
+        raw_data->add_identical_values(size_of_subspectrum, value);
         quantity_implicit_spectrum_.blocks[number_of_block] =
             Subspectrum(std::move(raw_data), subspace.properties);
     }
