@@ -8,7 +8,8 @@ namespace common {
 enum QuantityEnum {
     Energy,
     S_total_squared, M_total_squared,
-    g_squared_T00, gSz_total_squared };
+    g_squared_T00, gSz_total_squared,
+    squared_back_projection };
 
 struct Quantity {
     Matrix matrix_;
