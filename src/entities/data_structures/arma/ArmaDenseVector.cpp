@@ -13,7 +13,15 @@ void ArmaDenseVector<T>::makeRandomUnitVector(uint32_t size) {
     if (!vector_.empty()) {
         throw std::invalid_argument("Trying to make random unit vector from non-empty vector.");
     }
-    vector_.randn(size);
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+    std::normal_distribution d{0.0, 1.0};
+
+    vector_.resize(size);
+    for (uint32_t i = 0; i < size; ++i) {
+        vector_(i) = d(gen);
+    }
+
     double vec_norm = arma::vecnorm(vector_);
     vector_ /= vec_norm;
 }
