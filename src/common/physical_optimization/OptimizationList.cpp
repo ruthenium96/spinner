@@ -1,6 +1,7 @@
 #include "OptimizationList.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 namespace common::physical_optimization {
 
@@ -63,6 +64,18 @@ OptimizationList& OptimizationList::SSquaredTransform() {
         }
     }
     isSSquaredTransformed_ = true;
+    return *this;
+}
+
+OptimizationList& OptimizationList::FTLMApproximate(FTLMSettings ftlmSettings) {
+    if (isSSquaredTransformed()) {
+        std::invalid_argument("Cannot use FTLM with SSquaredTransformation yet");
+    }
+    if (!isPositiveProjectionsEliminated()) {
+        std::invalid_argument("Positive projections elimination required for FTLM");
+    }
+    isFTLMApproximated_ = true;
+    ftlmSettings_ = ftlmSettings;
     return *this;
 }
 
@@ -129,8 +142,16 @@ bool OptimizationList::isSSquaredTransformed() const {
     return isSSquaredTransformed_;
 }
 
+bool OptimizationList::isFTLMApproximated() const {
+    return isFTLMApproximated_;
+}
+
 const std::vector<group::Group>& OptimizationList::getGroupsToApply() const {
     return groupsToApply_;
+}
+
+const OptimizationList::FTLMSettings& OptimizationList::getFTLMSettings() const {
+    return ftlmSettings_.value();
 }
 
 }  // namespace common::physical_optimization

@@ -1,4 +1,5 @@
 #include "OptimizationsParser.h"
+#include <cstddef>
 #include "Tools.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 
@@ -45,6 +46,8 @@ void OptimizationsParser::customParser(YAML::Node custom_node) {
         optimizations_list_->SSquaredTransform();
     }
 
+    ftlmParser(extractValue<YAML::Node>(custom_node, "ftlm"));
+
     throw_if_node_is_not_empty(custom_node);
 }
 
@@ -70,4 +73,21 @@ void OptimizationsParser::groupParser(YAML::Node group_node) {
     auto group = group::Group(group_name, generators_vector);
     optimizations_list_->Symmetrize(group);
 }
+
+void OptimizationsParser::ftlmParser(YAML::Node ftlm_node) {
+    if (!ftlm_node.IsDefined()) {
+        return;
+    }
+    auto krylov_subspace_size = extractValue<size_t>(ftlm_node, "krylov_subspace_size");
+    auto exact_decomposition_threshold = extractValue<size_t>(ftlm_node, "exact_decomposition_threshold");
+
+    throw_if_node_is_not_empty(ftlm_node);
+
+    common::physical_optimization::OptimizationList::FTLMSettings settings;
+    settings.exact_decomposition_threshold = exact_decomposition_threshold;
+    settings.krylov_subspace_size = krylov_subspace_size;
+
+    optimizations_list_->FTLMApproximate(settings);
+}
+
 }  // namespace input
