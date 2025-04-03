@@ -7,3 +7,7 @@ SpectrumRef::SpectrumRef(const Spectrum& spectrum) {
         blocks.push_back(spectrum.blocks[i]);
     }
 }
+
+SpectrumRef::SpectrumRef(std::vector<std::reference_wrapper<const Subspectrum>>&& blocks_) {
+    blocks = std::move(blocks_);
+}

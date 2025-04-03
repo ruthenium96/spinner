@@ -17,6 +17,7 @@ struct SpectrumRef {
     std::vector<std::reference_wrapper<const Subspectrum>> blocks;
 
     explicit SpectrumRef(const Spectrum& spectrum);
+    explicit SpectrumRef(std::vector<std::reference_wrapper<const Subspectrum>>&& blocks_);
 };
 
 #endif  //SPINNER_SPECTRUM_H
