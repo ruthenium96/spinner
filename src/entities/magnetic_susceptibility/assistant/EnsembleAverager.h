@@ -18,6 +18,12 @@ class EnsembleAverager {
 
   private:
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;
+    double ensemble_average_ftlm(
+      const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& value,
+      double temperature) const;
+    double ensemble_average_common(
+      const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& value,
+      double temperature) const;
 };
 }  // namespace magnetic_susceptibility
 
