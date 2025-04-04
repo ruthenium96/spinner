@@ -20,6 +20,8 @@ class ArmaDenseVector: public AbstractDenseVector {
 
     std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const override;
     double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
+    double triple_dot(const std::unique_ptr<AbstractDenseVector>& second, 
+      const std::unique_ptr<AbstractDenseVector>& third) const override;
     std::unique_ptr<AbstractDenseVector>
     element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
     uint32_t size() const override;

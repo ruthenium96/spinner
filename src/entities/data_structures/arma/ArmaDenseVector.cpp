@@ -72,6 +72,16 @@ double ArmaDenseVector<T>::dot(const std::unique_ptr<AbstractDenseVector>& rhs) 
 }
 
 template <typename T>
+double ArmaDenseVector<T>::triple_dot(
+    const std::unique_ptr<AbstractDenseVector>& second, 
+    const std::unique_ptr<AbstractDenseVector>& third) const {
+    auto second_ = downcast_ptr(second);
+    auto third_ = downcast_ptr(third);
+
+    return arma::dot(vector_, second_->vector_ % third_->vector_);
+}
+
+template <typename T>
 std::unique_ptr<AbstractDenseVector> ArmaDenseVector<T>::element_wise_multiplication(
     const std::unique_ptr<AbstractDenseVector>& rhs) const {
     auto rhs_ = downcast_ptr(rhs);

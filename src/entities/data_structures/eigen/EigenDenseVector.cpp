@@ -76,6 +76,15 @@ double EigenDenseVector<T>::dot(const std::unique_ptr<AbstractDenseVector>& rhs)
 }
 
 template <typename T>
+double EigenDenseVector<T>::triple_dot(const std::unique_ptr<AbstractDenseVector>& second, 
+    const std::unique_ptr<AbstractDenseVector>& third) const {
+    auto second_ = downcast_ptr(second);
+    auto third_ = downcast_ptr(third);
+
+    return vector_.dot(second_->vector_.cwiseProduct(third_->vector_));
+}
+
+template <typename T>
 std::unique_ptr<AbstractDenseVector> EigenDenseVector<T>::element_wise_multiplication(
     const std::unique_ptr<AbstractDenseVector>& rhs) const {
     auto rhs_ = downcast_ptr(rhs);
