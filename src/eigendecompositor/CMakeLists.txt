@@ -2,6 +2,7 @@ add_library(eigendecompositor
         ExactEigendecompositor.cpp
         FTLMEigendecompositor.cpp FTLMEigendecompositor.h
         ImplicitQuantityEigendecompositor.cpp ImplicitQuantityEigendecompositor.h
+        FTLMImplicitQuantityEigendecompositor.cpp FTLMImplicitQuantityEigendecompositor.h
         OneSymbolInHamiltonianEigendecompositor.cpp OneSymbolInHamiltonianEigendecompositor.h
         AbstractEigendecompositor.cpp
         FlattenedSpectra.cpp FlattenedSpectra.h
