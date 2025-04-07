@@ -54,7 +54,7 @@ concatenateSpace(const space::Space& space) {
 bool orthogonality_of_basis(const space::Space& space) {
     auto unitary_matrix = concatenateSpace(space);
     bool answer = true;
-#pragma omp parallel for shared(space, unitary_matrix, answer) default(none)
+#pragma omp parallel for shared(space, unitary_matrix, answer) default(none) collapse(2)
     for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix->size_cols();
          ++index_of_vector_i) {
         for (size_t index_of_vector_j = index_of_vector_i + 1;
@@ -71,7 +71,6 @@ bool orthogonality_of_basis(const space::Space& space) {
             // TODO: epsilon
             if (std::abs(accumulator) > 1e-9) {
                 answer = false;
-                break;
             }
         }
     }
