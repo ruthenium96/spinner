@@ -16,7 +16,8 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
         auto maybe_spectrum = allQuantitiesGetter.getSpectrum(quantity_enum);
         if (maybe_spectrum.has_value()) {
             flattenedSpectra_[quantity_enum] = factories.createVector();
-            for (const auto& subspectrum_ref : maybe_spectrum.value().blocks) {
+            const auto& spectrum = std::get<SpectrumRef>(maybe_spectrum.value());
+            for (const auto& subspectrum_ref : spectrum.blocks) {
                 const auto& subspectrum = subspectrum_ref.get();
                 flattenedSpectra_[quantity_enum]->concatenate_with(subspectrum.raw_data);
                 if (quantity_enum == common::Energy) {

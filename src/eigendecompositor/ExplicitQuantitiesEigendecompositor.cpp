@@ -12,15 +12,7 @@ ExplicitQuantitiesEigendecompositor::ExplicitQuantitiesEigendecompositor(
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
-std::optional<SpectrumRef>
-ExplicitQuantitiesEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantities_map_.contains(quantity_enum)) {
-        return SpectrumRef(quantities_map_.at(quantity_enum).spectrum_);
-    }
-    return eigendecompositor_->getSpectrum(quantity_enum);
-}
-
-std::optional<std::reference_wrapper<const Subspectrum>>
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 ExplicitQuantitiesEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantities_map_.contains(quantity_enum)) {
         return quantities_map_.at(quantity_enum).spectrum_.blocks[number_of_block];

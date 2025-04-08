@@ -80,31 +80,14 @@ FTLMEigendecompositor::BuildSubspectra(
     return mb_unitary_transformation_matrix;
 }
 
-std::optional<SpectrumRef> FTLMEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::Energy) {
-        std::vector<std::reference_wrapper<const Subspectrum>> answer;
-
-        assert(ExactEigendecompositor::getSpectrum(common::Energy)->blocks.size() == energy_.spectrum_.blocks.size());
-        for (int i = 0; i < energy_.spectrum_.blocks.size(); ++i) {
-            answer.push_back(getSubspectrum(common::Energy, i).value());
-        }
-
-        return SpectrumRef(std::move(answer));
-    }
-    if (quantity_enum == common::squared_back_projection) {
-        return SpectrumRef(squared_back_projection_.spectrum_);
-    }
-    return std::nullopt;
-}
-
-std::optional<std::reference_wrapper<const Subspectrum>>
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
         auto exact_subspectrumref = ExactEigendecompositor::getSubspectrum(common::Energy, number_of_block).value();
 
         const auto& ftlm_subspectrumref = energy_.spectrum_.blocks[number_of_block];
 
-        if (exact_subspectrumref.get().raw_data != nullptr) {
+        if (std::get<std::reference_wrapper<const Subspectrum>>(exact_subspectrumref).get().raw_data != nullptr) {
             if (ftlm_subspectrumref.raw_data != nullptr) {
                 throw std::logic_error("Both exact and FTLM constructed Energy block #" + std::to_string(number_of_block));
             }

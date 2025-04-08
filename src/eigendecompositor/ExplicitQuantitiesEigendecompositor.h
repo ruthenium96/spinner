@@ -11,9 +11,7 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
         std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories_list);
-    std::optional<SpectrumRef>
-    getSpectrum(common::QuantityEnum quantity_enum) const override;
-    std::optional<std::reference_wrapper<const Subspectrum>>
+    std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
     getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<MatrixRef>
     getMatrix(common::QuantityEnum quantity_enum) const override;

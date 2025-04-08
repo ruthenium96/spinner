@@ -68,15 +68,7 @@ ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     return std::nullopt;
 }
 
-std::optional<SpectrumRef>
-ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == common::Energy) {
-        return SpectrumRef(energy_.spectrum_);
-    }
-    return std::nullopt;
-}
-
-std::optional<std::reference_wrapper<const Subspectrum>>
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 ExactEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
         return energy_.spectrum_.blocks[number_of_block];

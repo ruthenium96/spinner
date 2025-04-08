@@ -25,8 +25,8 @@ FTLMImplicitQuantityEigendecompositor::BuildSubspectra(
         number_of_block,
         subspace);
 
-    const auto& quantity_implicit_enum_subspectrum = ImplicitQuantityEigendecompositor::getSubspectrum(quantity_implicit_enum_, number_of_block).value().get();
-    const auto& squared_back_projection_subspectrum = getSubspectrum(common::squared_back_projection, number_of_block).value().get();
+    const auto& quantity_implicit_enum_subspectrum = std::get<std::reference_wrapper<const Subspectrum>>(ImplicitQuantityEigendecompositor::getSubspectrum(quantity_implicit_enum_, number_of_block).value()).get();
+    const auto& squared_back_projection_subspectrum = std::get<std::reference_wrapper<const Subspectrum>>(getSubspectrum(common::squared_back_projection, number_of_block).value()).get();
 
     auto raw_data = quantity_implicit_enum_subspectrum.raw_data->element_wise_multiplication(squared_back_projection_subspectrum.raw_data);
     auto properties = subspace.properties;
@@ -38,15 +38,7 @@ FTLMImplicitQuantityEigendecompositor::BuildSubspectra(
     return mb_unitary_transformation_matrix;
 }
 
-std::optional<SpectrumRef>
-FTLMImplicitQuantityEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == quantity_implicit_enum_) {
-        return SpectrumRef(quantity_implicit_spectrum_multiplied_by_squared_back_projection_);
-    }
-    return ImplicitQuantityEigendecompositor::getSpectrum(quantity_enum);
-}
-
-std::optional<std::reference_wrapper<const Subspectrum>>
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 FTLMImplicitQuantityEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return quantity_implicit_spectrum_multiplied_by_squared_back_projection_.blocks[number_of_block];

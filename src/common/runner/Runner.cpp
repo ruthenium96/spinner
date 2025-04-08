@@ -84,7 +84,11 @@ Runner::getMatrix(common::QuantityEnum quantity_enum) {
 
 std::optional<SpectrumRef> 
 Runner::getSpectrum(common::QuantityEnum quantity_enum) {
-    return getAllQuantitiesGetter().getSpectrum(quantity_enum);
+    const auto& maybe_spectrum = getAllQuantitiesGetter().getSpectrum(quantity_enum);
+    if (!maybe_spectrum.has_value()) {
+        return std::nullopt;
+    }
+    return std::get<SpectrumRef>(maybe_spectrum.value());
 }
 
 std::optional<std::shared_ptr<const model::operators::Operator>>

@@ -16,9 +16,7 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
         size_t number_of_block,
         const space::Subspace& subspace) override;
 
-    std::optional<SpectrumRef>
-    getSpectrum(common::QuantityEnum quantity_enum) const override;
-    std::optional<std::reference_wrapper<const Subspectrum>>
+    std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
     getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<MatrixRef>
     getMatrix(common::QuantityEnum quantity_enum) const override;

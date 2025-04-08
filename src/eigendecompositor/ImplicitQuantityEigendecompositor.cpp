@@ -40,7 +40,7 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
     if (!first_iteration_has_been_done_) {
         double value = calculate_value(subspace.properties);
 
-        size_t size_of_subspectrum = getSubspectrum(common::Energy, number_of_block).value().get().raw_data->size();
+        size_t size_of_subspectrum = getSubspectrumSize(common::Energy, number_of_block);
 
         auto raw_data = factories_list_.createVector();
         raw_data->add_identical_values(size_of_subspectrum, value);
@@ -51,15 +51,7 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
     return mb_unitary_transformation_matrix;
 }
 
-std::optional<SpectrumRef>
-ImplicitQuantityEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantity_enum == quantity_implicit_enum_) {
-        return SpectrumRef(quantity_implicit_spectrum_);
-    }
-    return eigendecompositor_->getSpectrum(quantity_enum);
-}
-
-std::optional<std::reference_wrapper<const Subspectrum>>
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 ImplicitQuantityEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return quantity_implicit_spectrum_.blocks[number_of_block];
