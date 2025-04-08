@@ -30,6 +30,7 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
     virtual void finalize() = 0;
   private:
     bool buildSpectraWasCalled = false;
+    uint32_t number_of_subspaces_;
 };
 
 }  // namespace eigendecompositor

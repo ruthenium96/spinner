@@ -17,10 +17,11 @@ void AbstractEigendecompositor::BuildSpectra(
     {
         auto operators_to_calculate = operators;
         auto derivatives_operators_to_calculate = derivatives_operators;
+        number_of_subspaces_ = space.getBlocks().size();
         initialize(
             operators_to_calculate,
             derivatives_operators_to_calculate,
-            space.getBlocks().size());
+            number_of_subspaces_);
         assert(operators_to_calculate.size() == 0);
         assert(derivatives_operators_to_calculate.size() == 0);
     }
