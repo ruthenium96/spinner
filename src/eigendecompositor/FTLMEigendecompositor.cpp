@@ -33,7 +33,7 @@ FTLMEigendecompositor::BuildSubspectra(
 
     uint32_t size_of_subspace = subspace.size();
     if (size_of_subspace <= exact_decomposition_threshold_) {
-        if (squared_back_projection_spectrum_[number_of_block].raw_data == nullptr) {
+        if (!first_iteration_has_been_done_) {
             auto vector = factories_list_.createVector();
             vector->add_identical_values(size_of_subspace, 1.0);
 
@@ -46,8 +46,10 @@ FTLMEigendecompositor::BuildSubspectra(
         return ExactEigendecompositor::BuildSubspectra(number_of_block, subspace);
     }
 
-    if (seed_vectors_.at(number_of_block) == nullptr) {
-        seed_vectors_[number_of_block] = std::move(factories_list_.createRandomUnitVector(size_of_subspace));
+    if (!first_iteration_has_been_done_) {
+        for (int seed = 0; seed < number_of_seeds_; ++seed) {
+            seed_vectors_[number_of_block].emplace_back(factories_list_.createRandomUnitVector(size_of_subspace));
+        }
     }
 
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
@@ -58,27 +60,30 @@ FTLMEigendecompositor::BuildSubspectra(
 
     if (!do_we_need_eigenvectors_) {
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
-        auto krylov_couple = 
-            hamiltonian_submatrix.raw_data->krylovDiagonalizeValues(seed_vectors_[number_of_block], krylov_subspace_size_);
+        for (int seed = 0; seed < number_of_seeds_; ++seed) {
+            auto krylov_couple = 
+                hamiltonian_submatrix.raw_data->krylovDiagonalizeValues(
+                    seed_vectors_[number_of_block][seed], 
+                    krylov_subspace_size_);
         
-        Subspectrum energy_subspectrum, squared_back_projection_subspectrum;
-        energy_subspectrum.raw_data = std::move(krylov_couple.eigenvalues);
-        energy_subspectrum.properties = hamiltonian_submatrix.properties;
-        energy_subspectrum.properties.degeneracy *= (double)size_of_subspace;
-
-        squared_back_projection_subspectrum.raw_data = std::move(krylov_couple.squared_back_projection);
-        squared_back_projection_subspectrum.properties = hamiltonian_submatrix.properties;
-        squared_back_projection_subspectrum.properties.degeneracy *= (double)size_of_subspace;
-
-        energy_.spectrum_.blocks[number_of_block] = std::move(energy_subspectrum);
-        squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrum);
+            Subspectrum energy_subspectrum, squared_back_projection_subspectrum;
+            energy_subspectrum.raw_data = std::move(krylov_couple.eigenvalues);
+            energy_subspectrum.properties = hamiltonian_submatrix.properties;
+            energy_subspectrum.properties.degeneracy *= (double)size_of_subspace;
+    
+            squared_back_projection_subspectrum.raw_data = std::move(krylov_couple.squared_back_projection);
+            squared_back_projection_subspectrum.properties = hamiltonian_submatrix.properties;
+            squared_back_projection_subspectrum.properties.degeneracy *= (double)size_of_subspace;
+    
+            energy_spectra_[number_of_block][seed] = std::move(energy_subspectrum);
+            squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrum);
+        }
     } else {
         throw std::invalid_argument("NOT IMPLEMENTED YET!");
     }
 #ifndef NDEBUG
-    energy_.matrix_.blocks[number_of_block] = std::move(hamiltonian_submatrix);
+    energy_matrix_.blocks[number_of_block] = std::move(hamiltonian_submatrix);
 #endif
-
     return mb_unitary_transformation_matrix;
 }
 
@@ -87,7 +92,7 @@ FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t
     if (quantity_enum == common::Energy) {
         auto exact_subspectrumref = ExactEigendecompositor::getSubspectrum(common::Energy, number_of_block).value();
 
-        const auto& ftlm_subspectrumref = energy_.spectrum_.blocks[number_of_block];
+        const auto& ftlm_subspectrumref = energy_spectra_[number_of_block][0];
 
         if (std::get<std::reference_wrapper<const Subspectrum>>(exact_subspectrumref).get().raw_data != nullptr) {
             if (ftlm_subspectrumref.raw_data != nullptr) {
@@ -153,15 +158,19 @@ void FTLMEigendecompositor::initialize(
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
     uint32_t number_of_subspaces) {
-    energy_.matrix_.blocks.clear();
-    energy_.spectrum_.blocks.clear();
-    squared_back_projection_spectrum_.clear();
-    energy_.matrix_.blocks.resize(number_of_subspaces);
-    energy_.spectrum_.blocks.resize(number_of_subspaces);
-    squared_back_projection_spectrum_.resize(number_of_subspaces);
+    energy_spectra_.clear();
+    energy_spectra_.resize(number_of_subspaces);
+    for (int i = 0; i < number_of_subspaces; ++i) {
+        energy_spectra_[i].clear();
+        energy_spectra_[i].resize(number_of_seeds_);
+    }
 
-    if (seed_vectors_.empty()) {
+    energy_matrix_.clear();
+    energy_matrix_.resize(number_of_subspaces);
+
+    if (!first_iteration_has_been_done_) {
         seed_vectors_.resize(number_of_subspaces);
+        squared_back_projection_spectrum_.resize(number_of_subspaces);
     }
 
     energy_operator_ = operators_to_calculate.at(common::Energy);
@@ -175,6 +184,7 @@ void FTLMEigendecompositor::initialize(
 
 void FTLMEigendecompositor::finalize() {
     ExactEigendecompositor::finalize();
+    first_iteration_has_been_done_ = true;
 }
 
 }
