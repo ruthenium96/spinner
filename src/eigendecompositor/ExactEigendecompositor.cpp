@@ -58,21 +58,21 @@ void ExactEigendecompositor::initialize(
 
 void ExactEigendecompositor::finalize() {}
 
-std::optional<MatrixRef>
-ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
-#ifndef NDEBUG
-    if (quantity_enum == common::Energy) {
-        return MatrixRef(energy_.matrix_);
-    }
-#endif
-    return std::nullopt;
-}
-
 std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 ExactEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
         return energy_.spectrum_.blocks[number_of_block];
     }
+    return std::nullopt;
+}
+
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExactEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
+#ifndef NDEBUG
+    if (quantity_enum == common::Energy) {
+        return energy_.matrix_.blocks[number_of_block];
+    }
+#endif
     return std::nullopt;
 }
 

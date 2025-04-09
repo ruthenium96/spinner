@@ -46,6 +46,14 @@ FTLMImplicitQuantityEigendecompositor::getSubspectrum(common::QuantityEnum quant
     return ImplicitQuantityEigendecompositor::getSubspectrum(quantity_enum, number_of_block);
 }
 
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+FTLMImplicitQuantityEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
+    if (quantity_enum == quantity_implicit_enum_) {
+        return std::nullopt;
+    }
+    return ImplicitQuantityEigendecompositor::getSubmatrix(quantity_enum, number_of_block);
+}
+
 void FTLMImplicitQuantityEigendecompositor::initialize(
     std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
         operators_to_calculate,

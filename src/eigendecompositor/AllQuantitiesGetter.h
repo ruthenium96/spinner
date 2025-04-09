@@ -21,8 +21,10 @@ class AllQuantitiesGetter {
           getSpectrum(common::QuantityEnum) const = 0;
       virtual std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
           getSubspectrum(common::QuantityEnum, size_t number_of_block) const = 0;
-      virtual std::optional<MatrixRef>
+      virtual std::optional<OneOrMany<MatrixRef>>
           getMatrix(common::QuantityEnum) const = 0;
+      virtual std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+          getSubmatrix(common::QuantityEnum, size_t number_of_block) const = 0;
       virtual std::optional<SpectrumRef>
       getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
       virtual std::optional<MatrixRef>

@@ -107,31 +107,30 @@ FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t
     return std::nullopt;
 }
 
-std::optional<MatrixRef>
-FTLMEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+FTLMEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
 #ifndef NDEBUG
     if (quantity_enum == common::Energy) {
-        MatrixRef exact_matrixref = ExactEigendecompositor::getMatrix(common::Energy).value();
+        auto exact_submatrixref = ExactEigendecompositor::getSubmatrix(common::Energy, number_of_block).value();
 
-        MatrixRef ftlm_matrixref = MatrixRef(energy_.matrix_);
+        const auto& ftlm_submatrixref = energy_matrix_[number_of_block];
 
-        assert(underlying_matrixref.blocks.size() == ftlm_matrixref.blocks.size());
-        for (int i = 0; i < ftlm_matrixref.blocks.size(); ++i) {
-            if (exact_matrixref.blocks[i].get().raw_data != nullptr) {
-                if (ftlm_matrixref.blocks[i].get().raw_data != nullptr) {
-                    throw std::logic_error("Both exact and FTLM constructed Energy block");
-                }
-                ftlm_matrixref.blocks[i] = exact_matrixref.blocks[i];
-            } else {
-                if (ftlm_matrixref.blocks[i].get().raw_data == nullptr) {
-                    throw std::logic_error("Neither exact or FTLM constructed Energy block");
-                }
-                // ftlm_matrixref.blocks[i] = ftlm_matrixref.blocks[i];
+        if (std::get<std::reference_wrapper<const Submatrix>>(exact_submatrixref).get().raw_data != nullptr) {
+            if (ftlm_submatrixref.raw_data != nullptr) {
+                throw std::logic_error("Both exact and FTLM constructed Energy block #" + std::to_string(number_of_block));
             }
+            return exact_submatrixref;
+        } else {
+            if (ftlm_submatrixref.raw_data == nullptr) {
+                throw std::logic_error("Neither exact or FTLM constructed Energy block #" + std::to_string(number_of_block));
+            }
+            return ftlm_submatrixref;
         }
-        return ftlm_matrixref;
     }
 #endif
+    if (quantity_enum == common::squared_back_projection) {
+        return std::nullopt;
+    }
     return std::nullopt;
 }
 

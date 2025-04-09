@@ -79,7 +79,11 @@ void Runner::BuildSpectra() {
 
 std::optional<MatrixRef>
 Runner::getMatrix(common::QuantityEnum quantity_enum) {
-    return getAllQuantitiesGetter().getMatrix(quantity_enum);
+    const auto& maybe_matrix = getAllQuantitiesGetter().getMatrix(quantity_enum);
+    if (!maybe_matrix.has_value()) {
+        return std::nullopt;
+    }
+    return std::get<MatrixRef>(maybe_matrix.value());
 }
 
 std::optional<SpectrumRef> 

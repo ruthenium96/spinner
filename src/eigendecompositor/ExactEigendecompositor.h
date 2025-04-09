@@ -18,8 +18,8 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
 
     std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
         getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
-    std::optional<MatrixRef>
-        getMatrix(common::QuantityEnum) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+        getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<SpectrumRef>
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
     std::optional<MatrixRef>

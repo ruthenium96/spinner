@@ -20,14 +20,14 @@ ExplicitQuantitiesEigendecompositor::getSubspectrum(common::QuantityEnum quantit
     return eigendecompositor_->getSubspectrum(quantity_enum, number_of_block);
 }
 
-std::optional<MatrixRef>
-ExplicitQuantitiesEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExplicitQuantitiesEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
 #ifndef NDEBUG
     if (quantities_map_.contains(quantity_enum)) {
-        return MatrixRef(quantities_map_.at(quantity_enum).matrix_);
+        return quantities_map_.at(quantity_enum).matrix_.blocks[number_of_block];
     }
 #endif
-    return eigendecompositor_->getMatrix(quantity_enum);
+    return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }
 
 std::optional<SpectrumRef>

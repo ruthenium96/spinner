@@ -61,12 +61,12 @@ OneSymbolInHamiltonianEigendecompositor::getSubspectrum(common::QuantityEnum qua
     return eigendecompositor_->getSubspectrum(quantity_enum, number_of_block);
 }
 
-std::optional<MatrixRef>
-OneSymbolInHamiltonianEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+OneSymbolInHamiltonianEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
         return std::nullopt;
     }
-    return eigendecompositor_->getMatrix(quantity_enum);
+    return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }
 
 std::optional<SpectrumRef>

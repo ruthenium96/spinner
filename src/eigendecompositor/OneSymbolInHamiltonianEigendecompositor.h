@@ -18,8 +18,8 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
 
     std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
     getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
-    std::optional<MatrixRef>
-    getMatrix(common::QuantityEnum quantity_enum) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+    getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<SpectrumRef> getSpectrumDerivative(
         common::QuantityEnum quantity_enum,
         const model::symbols::SymbolName& symbol_name) const override;

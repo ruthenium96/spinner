@@ -24,7 +24,8 @@ struct Matrix {
 struct MatrixRef {
     std::vector<std::reference_wrapper<const Submatrix>> blocks;
 
-    explicit MatrixRef(const Matrix& spectrum);
+    explicit MatrixRef(const Matrix& matrix);
+    explicit MatrixRef(std::vector<std::reference_wrapper<const Submatrix>>&& blocks_);
 };
 
 #endif  //SPINNER_MATRIX_H

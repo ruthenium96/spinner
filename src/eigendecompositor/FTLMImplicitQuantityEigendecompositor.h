@@ -20,6 +20,8 @@ class FTLMImplicitQuantityEigendecompositor : public ImplicitQuantityEigendecomp
 
     std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
         getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+        getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
     void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_to_calculate,

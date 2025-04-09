@@ -15,8 +15,12 @@ Matrix::Matrix(
     }
 }
 
-MatrixRef::MatrixRef(const Matrix& spectrum) {
-    for (int i = 0; i < spectrum.blocks.size(); ++i) {
-        blocks.push_back(spectrum.blocks[i]);
+MatrixRef::MatrixRef(const Matrix& matrix) {
+    for (int i = 0; i < matrix.blocks.size(); ++i) {
+        blocks.push_back(matrix.blocks[i]);
     }
+}
+
+MatrixRef::MatrixRef(std::vector<std::reference_wrapper<const Submatrix>>&& blocks_) {
+    blocks = std::move(blocks_);
 }

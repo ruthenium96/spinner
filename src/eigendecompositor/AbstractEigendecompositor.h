@@ -17,6 +17,7 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
     bool BuildSpectraWasCalled() const;
 
     std::optional<OneOrMany<SpectrumRef>> getSpectrum(common::QuantityEnum) const override;
+    std::optional<OneOrMany<MatrixRef>> getMatrix(common::QuantityEnum) const override;
     size_t getSubspectrumSize(common::QuantityEnum, size_t number_of_block) const;
 
     virtual ~AbstractEigendecompositor() = default;

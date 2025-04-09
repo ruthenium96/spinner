@@ -6,6 +6,72 @@
 #include "src/common/Logger.h"
 #include "src/common/Quantity.h"
 
+namespace {
+template <typename T, typename U>
+std::optional<OneOrMany<U>> getEntity(common::QuantityEnum quantity_enum, size_t number_of_subspaces, std::function<std::optional<OneOrMany<std::reference_wrapper<const T>>>(common::QuantityEnum, size_t)> getter) {
+    std::vector<std::optional<OneOrMany<std::reference_wrapper<const T>>>> mb_data;
+    for (int i = 0; i < number_of_subspaces; ++i) {
+        mb_data.push_back(getter(quantity_enum, i));
+    }
+
+    if (std::none_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
+        return std::nullopt;
+    }
+    if (!std::all_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
+        throw std::logic_error("Some Subspectra were not defined, while some were defined!");
+    }
+
+    std::vector<OneOrMany<std::reference_wrapper<const T>>> data;
+    for (const auto& mb_el : mb_data) {
+        data.push_back(mb_el.value());
+    }
+
+    if (std::all_of(
+        data.cbegin(), 
+        data.cend(), 
+        [](const auto& a){
+                return std::holds_alternative<std::reference_wrapper<const T>>(a);
+            }
+        )       
+    ) {
+        std::vector<std::reference_wrapper<const T>> answer;
+        for (const auto& el: data) {
+            answer.push_back(std::get<std::reference_wrapper<const T>>(el));
+        }
+        return U(std::move(answer));
+    } else {
+        // TODO: check that number_of_many is the same for all Many.
+        auto it = std::find_if(
+            data.cbegin(),
+            data.cend(),
+            [](const auto& a){
+                return std::holds_alternative<std::vector<std::reference_wrapper<const T>>>(a);
+            }
+        );
+        size_t number_of_many = std::get<std::vector<std::reference_wrapper<const T>>>(*it).size();
+        std::vector<std::vector<std::reference_wrapper<const T>>> vector_of_answers(number_of_many);
+        for (const auto& el: data) {
+            if (std::holds_alternative<std::reference_wrapper<const T>>(el)) {
+                auto reference = std::get<std::reference_wrapper<const T>>(el);
+                for (int j = 0; j < number_of_many; ++j) {
+                    vector_of_answers[j].push_back(reference);
+                }
+            } else {
+                auto vector_of_references = std::get<std::vector<std::reference_wrapper<const T>>>(el);
+                for (int j = 0; j < number_of_many; ++j) {
+                    vector_of_answers[j].push_back(vector_of_references[j]);
+                }
+            }
+        }
+        std::vector<U> answer;
+        for (int i = 0; i < vector_of_answers.size(); ++i) {
+            answer.emplace_back(std::move(vector_of_answers[i]));
+        }
+        return answer;
+    }
+}
+} // namespace
+
 namespace eigendecompositor {
 
 void AbstractEigendecompositor::BuildSpectra(
@@ -50,66 +116,22 @@ bool AbstractEigendecompositor::BuildSpectraWasCalled() const {
 }
 
 std::optional<OneOrMany<SpectrumRef>> AbstractEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    std::vector<std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>> mb_data;
-    for (int i = 0; i < number_of_subspaces_; ++i) {
-        mb_data.push_back(getSubspectrum(quantity_enum, i));
-    }
+    return getEntity<Subspectrum, SpectrumRef>(
+        quantity_enum, 
+        number_of_subspaces_,
+        [this](common::QuantityEnum quantity_enum, size_t number_of_block){
+            return getSubspectrum(quantity_enum, number_of_block);
+        });
+}
 
-    if (std::none_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
-        return std::nullopt;
-    }
-    if (!std::all_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
-        throw std::logic_error("Some Subspectra were not defined, while some were defined!");
-    }
-
-    std::vector<OneOrMany<std::reference_wrapper<const Subspectrum>>> data;
-    for (const auto& mb_el : mb_data) {
-        data.push_back(mb_el.value());
-    }
-
-    if (std::all_of(
-        data.cbegin(), 
-        data.cend(), 
-        [](const auto& a){
-                return std::holds_alternative<std::reference_wrapper<const Subspectrum>>(a);
-            }
-        )       
-    ) {
-        std::vector<std::reference_wrapper<const Subspectrum>> answer;
-        for (const auto& el: data) {
-            answer.push_back(std::get<std::reference_wrapper<const Subspectrum>>(el));
+std::optional<OneOrMany<MatrixRef>> AbstractEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+    return getEntity<Submatrix, MatrixRef>(
+        quantity_enum, 
+        number_of_subspaces_, 
+        [this](common::QuantityEnum quantity_enum, size_t number_of_block){
+            return getSubmatrix(quantity_enum, number_of_block);
         }
-        return SpectrumRef(std::move(answer));
-    } else {
-        // TODO: check that number_of_many is the same for all Many.
-        auto it = std::find_if(
-            data.cbegin(),
-            data.cend(),
-            [](const auto& a){
-                return std::holds_alternative<std::vector<std::reference_wrapper<const Subspectrum>>>(a);
-            }
-        );
-        size_t number_of_many = std::get<std::vector<std::reference_wrapper<const Subspectrum>>>(*it).size();
-        std::vector<std::vector<std::reference_wrapper<const Subspectrum>>> vector_of_answers(number_of_many);
-        for (const auto& el: data) {
-            if (std::holds_alternative<std::reference_wrapper<const Subspectrum>>(el)) {
-                auto reference = std::get<std::reference_wrapper<const Subspectrum>>(el);
-                for (int j = 0; j < number_of_many; ++j) {
-                    vector_of_answers[j].push_back(reference);
-                }
-            } else {
-                auto vector_of_references = std::get<std::vector<std::reference_wrapper<const Subspectrum>>>(el);
-                for (int j = 0; j < number_of_many; ++j) {
-                    vector_of_answers[j].push_back(vector_of_references[j]);
-                }
-            }
-        }
-        std::vector<SpectrumRef> answer;
-        for (int i = 0; i < vector_of_answers.size(); ++i) {
-            answer.emplace_back(std::move(vector_of_answers[i]));
-        }
-        return answer;
-    }
+    );
 }
 
 size_t AbstractEigendecompositor::getSubspectrumSize(common::QuantityEnum quantity_enum, size_t number_of_block) const {
