@@ -5,6 +5,7 @@
 #include "src/common/Quantity.h"
 #include "src/eigendecompositor/ExactEigendecompositor.h"
 #include "src/entities/data_structures/AbstractDenseVector.h"
+#include "src/entities/spectrum/Spectrum.h"
 
 namespace eigendecompositor {
 
@@ -50,7 +51,7 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
     common::Quantity energy_;
     std::shared_ptr<const model::operators::Operator> energy_operator_;
     bool do_we_need_eigenvectors_;
-    common::Quantity squared_back_projection_;
+    Spectrum squared_back_projection_spectrum_;
 };
 
 } // namespace eigendecompositor
