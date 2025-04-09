@@ -14,7 +14,8 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories_list,
         size_t krylov_subspace_size,
-        size_t exact_decomposition_threshold
+        size_t exact_decomposition_threshold,
+        size_t number_of_seeds
     );
 
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
@@ -44,6 +45,7 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
     std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> seed_vectors_;
     size_t krylov_subspace_size_;
     size_t exact_decomposition_threshold_;
+    size_t number_of_seeds_;
 
     common::Quantity energy_;
     std::shared_ptr<const model::operators::Operator> energy_operator_;

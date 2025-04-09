@@ -17,12 +17,14 @@ FTLMEigendecompositor::FTLMEigendecompositor(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
     quantum::linear_algebra::FactoriesList factories_list,
     size_t krylov_subspace_size,
-    size_t exact_decomposition_threshold) :
+    size_t exact_decomposition_threshold,
+    size_t number_of_seeds) :
     ExactEigendecompositor(converter, factories_list),
     converter_(converter),
     factories_list_(std::move(factories_list)),
     krylov_subspace_size_(krylov_subspace_size),
-    exact_decomposition_threshold_(exact_decomposition_threshold) {}
+    exact_decomposition_threshold_(exact_decomposition_threshold),
+    number_of_seeds_(number_of_seeds) {}
     
 std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
 FTLMEigendecompositor::BuildSubspectra(

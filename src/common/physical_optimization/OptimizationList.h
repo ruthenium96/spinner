@@ -12,7 +12,8 @@ class OptimizationList {
     enum BasisType {LEX, ITO};
     struct FTLMSettings {
       size_t krylov_subspace_size;
-      size_t exact_decomposition_threshold;  
+      size_t exact_decomposition_threshold;
+      size_t number_of_seeds;
     };
 
     explicit OptimizationList(BasisType basis_type = BasisType::LEX);

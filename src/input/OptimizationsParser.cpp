@@ -80,12 +80,14 @@ void OptimizationsParser::ftlmParser(YAML::Node ftlm_node) {
     }
     auto krylov_subspace_size = extractValue<size_t>(ftlm_node, "krylov_subspace_size");
     auto exact_decomposition_threshold = extractValue<size_t>(ftlm_node, "exact_decomposition_threshold");
+    auto number_of_seeds = extractValue<size_t>(ftlm_node, "number_of_seeds");
 
     throw_if_node_is_not_empty(ftlm_node);
 
     common::physical_optimization::OptimizationList::FTLMSettings settings;
     settings.exact_decomposition_threshold = exact_decomposition_threshold;
     settings.krylov_subspace_size = krylov_subspace_size;
+    settings.number_of_seeds = number_of_seeds;
 
     optimizations_list_->FTLMApproximate(settings);
 }

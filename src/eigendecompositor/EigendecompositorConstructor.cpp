@@ -29,7 +29,8 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
                 indexConverter,
                 factories,
                 FTLM_settings.krylov_subspace_size,
-                FTLM_settings.exact_decomposition_threshold);
+                FTLM_settings.exact_decomposition_threshold,
+                FTLM_settings.number_of_seeds);
     } else {
         eigendecompositor = std::make_unique<eigendecompositor::ExactEigendecompositor>(
             indexConverter,
