@@ -33,7 +33,7 @@ FTLMEigendecompositor::BuildSubspectra(
 
     uint32_t size_of_subspace = subspace.size();
     if (size_of_subspace <= exact_decomposition_threshold_) {
-        if (squared_back_projection_spectrum_.blocks[number_of_block].raw_data == nullptr) {
+        if (squared_back_projection_spectrum_[number_of_block].raw_data == nullptr) {
             auto vector = factories_list_.createVector();
             vector->add_identical_values(size_of_subspace, 1.0);
 
@@ -41,7 +41,7 @@ FTLMEigendecompositor::BuildSubspectra(
             squared_back_projection_subspectrum.properties = subspace.properties;
             squared_back_projection_subspectrum.raw_data = std::move(vector);
 
-            squared_back_projection_spectrum_.blocks[number_of_block] = std::move(squared_back_projection_subspectrum);
+            squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrum);
         }
         return ExactEigendecompositor::BuildSubspectra(number_of_block, subspace);
     }
@@ -71,7 +71,7 @@ FTLMEigendecompositor::BuildSubspectra(
         squared_back_projection_subspectrum.properties.degeneracy *= (double)size_of_subspace;
 
         energy_.spectrum_.blocks[number_of_block] = std::move(energy_subspectrum);
-        squared_back_projection_spectrum_.blocks[number_of_block] = std::move(squared_back_projection_subspectrum);
+        squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrum);
     } else {
         throw std::invalid_argument("NOT IMPLEMENTED YET!");
     }
@@ -102,7 +102,7 @@ FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t
         }
     }
     if (quantity_enum == common::squared_back_projection) {
-        return squared_back_projection_spectrum_.blocks[number_of_block];
+        return squared_back_projection_spectrum_[number_of_block];
     }
     return std::nullopt;
 }
@@ -156,10 +156,10 @@ void FTLMEigendecompositor::initialize(
     uint32_t number_of_subspaces) {
     energy_.matrix_.blocks.clear();
     energy_.spectrum_.blocks.clear();
-    squared_back_projection_spectrum_.blocks.clear();
+    squared_back_projection_spectrum_.clear();
     energy_.matrix_.blocks.resize(number_of_subspaces);
     energy_.spectrum_.blocks.resize(number_of_subspaces);
-    squared_back_projection_spectrum_.blocks.resize(number_of_subspaces);
+    squared_back_projection_spectrum_.resize(number_of_subspaces);
 
     if (seed_vectors_.empty()) {
         seed_vectors_.resize(number_of_subspaces);

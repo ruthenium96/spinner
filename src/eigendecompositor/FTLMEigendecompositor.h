@@ -51,7 +51,7 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
     common::Quantity energy_;
     std::shared_ptr<const model::operators::Operator> energy_operator_;
     bool do_we_need_eigenvectors_;
-    Spectrum squared_back_projection_spectrum_;
+    std::vector<Subspectrum> squared_back_projection_spectrum_;
 };
 
 } // namespace eigendecompositor
