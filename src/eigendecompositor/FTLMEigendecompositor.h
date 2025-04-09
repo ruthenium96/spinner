@@ -5,7 +5,6 @@
 #include "src/common/Quantity.h"
 #include "src/eigendecompositor/ExactEigendecompositor.h"
 #include "src/entities/data_structures/AbstractDenseVector.h"
-#include "src/entities/spectrum/Spectrum.h"
 
 namespace eigendecompositor {
 
@@ -27,10 +26,7 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
         getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
         getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
-    std::optional<SpectrumRef>
-        getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
-    std::optional<MatrixRef>
-        getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
+
     void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_to_calculate,

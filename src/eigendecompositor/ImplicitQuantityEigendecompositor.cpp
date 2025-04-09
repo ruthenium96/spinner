@@ -67,24 +67,20 @@ ImplicitQuantityEigendecompositor::getSubmatrix(common::QuantityEnum quantity_en
     return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }
 
-std::optional<SpectrumRef>
-ImplicitQuantityEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ImplicitQuantityEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return std::nullopt;
     }
-    return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubspectrumDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-std::optional<MatrixRef>
-ImplicitQuantityEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ImplicitQuantityEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return std::nullopt;
     }
-    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
 void ImplicitQuantityEigendecompositor::initialize(

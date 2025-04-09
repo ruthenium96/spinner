@@ -113,13 +113,21 @@ std::optional<std::shared_ptr<const model::operators::Operator>> Runner::getOper
 std::optional<SpectrumRef> Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    return getAllQuantitiesGetter().getSpectrumDerivative(quantity_enum, symbol);
+    const auto& maybe_spectrum = getAllQuantitiesGetter().getSpectrumDerivative(quantity_enum, symbol);
+    if (!maybe_spectrum.has_value()) {
+        return std::nullopt;
+    }
+    return std::get<SpectrumRef>(maybe_spectrum.value());
 }
 
 std::optional<MatrixRef> Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    return getAllQuantitiesGetter().getMatrixDerivative(quantity_enum, symbol);
+    const auto& maybe_matrix = getAllQuantitiesGetter().getMatrixDerivative(quantity_enum, symbol);
+    if (!maybe_matrix.has_value()) {
+        return std::nullopt;
+    }
+    return std::get<MatrixRef>(maybe_matrix.value());
 }
 
 void Runner::BuildMuSquaredWorker() {

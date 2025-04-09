@@ -15,12 +15,10 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
     getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
     getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
-    std::optional<SpectrumRef> getSpectrumDerivative(
-        common::QuantityEnum quantity_enum,
-        const model::symbols::SymbolName& symbol_name) const override;
-    std::optional<MatrixRef> getMatrixDerivative(
-        common::QuantityEnum quantity_enum,
-        const model::symbols::SymbolName& symbol_name) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+    getSubspectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+    getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
 
   protected:
     void initialize(

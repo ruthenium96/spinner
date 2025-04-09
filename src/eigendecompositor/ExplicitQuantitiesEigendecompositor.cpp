@@ -30,26 +30,22 @@ ExplicitQuantitiesEigendecompositor::getSubmatrix(common::QuantityEnum quantity_
     return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }
 
-std::optional<SpectrumRef>
-ExplicitQuantitiesEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ExplicitQuantitiesEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (derivatives_map_.contains({quantity_enum, symbol_name})) {
-        return SpectrumRef(derivatives_map_.at({quantity_enum, symbol_name}).spectrum_);
+        return derivatives_map_.at({quantity_enum, symbol_name}).spectrum_.blocks[number_of_block];
     }
-    return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubspectrumDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-std::optional<MatrixRef>
-ExplicitQuantitiesEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExplicitQuantitiesEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
 #ifndef NDEBUG
     if (derivatives_map_.contains({quantity_enum, symbol_name})) {
-        return MatrixRef(derivatives_map_.at({quantity_enum, symbol_name}).matrix_);
+        return derivatives_map_.at({quantity_enum, symbol_name}).matrix_.blocks[number_of_block];
     }
 #endif
-    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
 std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>

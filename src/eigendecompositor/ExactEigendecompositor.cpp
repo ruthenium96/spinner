@@ -76,15 +76,13 @@ ExactEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t 
     return std::nullopt;
 }
 
-std::optional<SpectrumRef> ExactEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ExactEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol, size_t number_of_block) const {
     return std::nullopt;
 }
 
-std::optional<MatrixRef> ExactEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExactEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol, size_t number_of_block) const {
     return std::nullopt;
 }
 

@@ -8,10 +8,12 @@
 
 namespace {
 template <typename T, typename U>
-std::optional<OneOrMany<U>> getEntity(common::QuantityEnum quantity_enum, size_t number_of_subspaces, std::function<std::optional<OneOrMany<std::reference_wrapper<const T>>>(common::QuantityEnum, size_t)> getter) {
+std::optional<OneOrMany<U>> getEntity(
+    size_t number_of_subspaces, 
+    std::function<std::optional<OneOrMany<std::reference_wrapper<const T>>>(size_t)> getter) {
     std::vector<std::optional<OneOrMany<std::reference_wrapper<const T>>>> mb_data;
     for (int i = 0; i < number_of_subspaces; ++i) {
-        mb_data.push_back(getter(quantity_enum, i));
+        mb_data.push_back(getter(i));
     }
 
     if (std::none_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
@@ -117,19 +119,37 @@ bool AbstractEigendecompositor::BuildSpectraWasCalled() const {
 
 std::optional<OneOrMany<SpectrumRef>> AbstractEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
     return getEntity<Subspectrum, SpectrumRef>(
-        quantity_enum, 
         number_of_subspaces_,
-        [this](common::QuantityEnum quantity_enum, size_t number_of_block){
+        [this, quantity_enum](size_t number_of_block){
             return getSubspectrum(quantity_enum, number_of_block);
         });
 }
 
 std::optional<OneOrMany<MatrixRef>> AbstractEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
     return getEntity<Submatrix, MatrixRef>(
-        quantity_enum, 
         number_of_subspaces_, 
-        [this](common::QuantityEnum quantity_enum, size_t number_of_block){
+        [this, quantity_enum](size_t number_of_block){
             return getSubmatrix(quantity_enum, number_of_block);
+        }
+    );
+}
+
+std::optional<OneOrMany<SpectrumRef>>
+AbstractEigendecompositor::getSpectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name) const {
+    return getEntity<Subspectrum, SpectrumRef>(
+        number_of_subspaces_, 
+        [this, quantity_enum, symbol_name](size_t number_of_block){
+            return getSubspectrumDerivative(quantity_enum, symbol_name, number_of_block);
+        }
+    );
+}
+
+std::optional<OneOrMany<MatrixRef>>
+AbstractEigendecompositor::getMatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name) const {
+    return getEntity<Submatrix, MatrixRef>(
+        number_of_subspaces_, 
+        [this, quantity_enum, symbol_name](size_t number_of_block){
+            return getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
         }
     );
 }

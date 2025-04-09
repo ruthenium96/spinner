@@ -139,18 +139,6 @@ FTLMEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t n
     return std::nullopt;
 }
 
-std::optional<SpectrumRef> FTLMEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
-    return std::nullopt;
-}
-
-std::optional<MatrixRef> FTLMEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
-    return std::nullopt;
-}
-
 void FTLMEigendecompositor::initialize(
     std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
         operators_to_calculate,

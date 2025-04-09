@@ -39,8 +39,9 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
         for (const auto& symbol_name : symbol_names) {
             auto maybe_spectrum = allQuantitiesGetter.getSpectrumDerivative(quantity_enum, symbol_name);
             if (maybe_spectrum.has_value()) {
+                const auto& spectrum = std::get<SpectrumRef>(maybe_spectrum.value());
                 flattenedDerivativeSpectra_[{quantity_enum, symbol_name}] = factories.createVector();
-                for (const auto& subspectrum_ref : maybe_spectrum.value().blocks) {
+                for (const auto& subspectrum_ref : spectrum.blocks) {
                     const auto& subspectrum = subspectrum_ref.get();
                     flattenedDerivativeSpectra_[{quantity_enum, symbol_name}]->concatenate_with(subspectrum.raw_data);
                 }

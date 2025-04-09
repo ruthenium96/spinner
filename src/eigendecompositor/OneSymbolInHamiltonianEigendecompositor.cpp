@@ -69,24 +69,20 @@ OneSymbolInHamiltonianEigendecompositor::getSubmatrix(common::QuantityEnum quant
     return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }
 
-std::optional<SpectrumRef>
-OneSymbolInHamiltonianEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+OneSymbolInHamiltonianEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (quantity_enum == common::Energy && current_energy_derivative_spectrum_.has_value()) {
-        return SpectrumRef(current_energy_derivative_spectrum_.value());
+        return current_energy_derivative_spectrum_.value()[number_of_block];
     }
-    return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubspectrumDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-std::optional<MatrixRef>
-OneSymbolInHamiltonianEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+OneSymbolInHamiltonianEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
         return std::nullopt;
     }
-    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
 void OneSymbolInHamiltonianEigendecompositor::initialize(
