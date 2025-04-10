@@ -19,24 +19,23 @@ std::pair<arma::Col<T>, arma::Col<T>> krylovDiagonalizeValuesSparse(
         throw std::invalid_argument("krylov_subspace_size bigger than size of matrix!");
     }
 
-    // use objects instead of pointers and use arma::swap?
-    auto current_vector = std::make_unique<arma::Col<T>>(seed_vector);
-    double vec_norm = arma::vecnorm(*current_vector);
+    auto current_vector = arma::Col<T>(seed_vector);
+    double vec_norm = arma::vecnorm(current_vector);
     if (vec_norm < std::numeric_limits<double>::epsilon()) {
         throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
     }
-    *current_vector /= vec_norm;
+    current_vector /= vec_norm;
 
-    auto previous_vector = std::make_unique<arma::Col<T>>(current_vector->size(), arma::fill::zeros);
-    auto next_vector = std::make_unique<arma::Col<T>>(current_vector->size(), arma::fill::zeros);
+    auto previous_vector = arma::Col<T>(current_vector.size(), arma::fill::zeros);
+    auto next_vector = arma::Col<T>(current_vector.size(), arma::fill::zeros);
 
     double diag_element, non_diag_element;
 
     for (size_t k = 0; k < krylov_subspace_size; ++k) {
-        *next_vector = (matrix) * (*current_vector);
-        diag_element = arma::dot(*current_vector, *next_vector);
+        next_vector = matrix * current_vector;
+        diag_element = arma::dot(current_vector, next_vector);
         if (k > 0) {
-            non_diag_element = arma::dot(*previous_vector, *next_vector);
+            non_diag_element = arma::dot(previous_vector, next_vector);
         }
 
         krylov_matrix.at(k, k) = diag_element;
@@ -45,20 +44,19 @@ std::pair<arma::Col<T>, arma::Col<T>> krylovDiagonalizeValuesSparse(
             krylov_matrix.at(k, k-1) = non_diag_element;
         }
 
-        *next_vector -= *current_vector * diag_element;
+        next_vector -= current_vector * diag_element;
         if (k > 0) {
-            *next_vector -= *previous_vector * non_diag_element;
+            next_vector -= previous_vector * non_diag_element;
         }
 
-        double vec_norm = arma::vecnorm(*next_vector);
+        double vec_norm = arma::vecnorm(next_vector);
         if (vec_norm < std::numeric_limits<double>::epsilon()) {
             throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
         }
-        *next_vector /= vec_norm;
+        next_vector /= vec_norm;
 
-        // use objects instead of pointers and use arma::swap?
-        std::swap(previous_vector, current_vector);
-        std::swap(current_vector, next_vector);
+        arma::swap(previous_vector, current_vector);
+        arma::swap(current_vector, next_vector);
     }
 
     arma::Col<T> eigenvalues;
