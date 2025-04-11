@@ -2,13 +2,10 @@
 #define SPINNER_ALLQUANTITIESGETTER_H
 
 #include <optional>
-#include <variant>
+
+#include "src/common/OneOrMany.h"
 #include "src/common/Quantity.h"
 #include "src/model/symbols/SymbolName.h"
-
-template <typename T>
-using OneOrMany = std::variant<T, std::vector<T>>;
-
 
 namespace eigendecompositor {
 class AllQuantitiesGetter {
