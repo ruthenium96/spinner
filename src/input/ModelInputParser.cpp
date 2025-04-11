@@ -6,18 +6,18 @@
 
 template<typename T, typename U, typename W>
 std::vector<W> zip_and_map(const std::vector<T>& ts,
-                   const std::variant<U, std::vector<U>>& us,
+                   const OneOrMany<U>& us,
                    std::function<W(const T&, const U&)> f) {
     std::vector<W> answer;
-    if (std::holds_alternative<U>(us)) {
+    if (holdsOne(us)) {
         answer.reserve(ts.size());
         for (const auto& t : ts) {
-            auto w = f(t, std::get<U>(us));
+            auto w = f(t, getOneRef(us));
             answer.emplace_back(std::move(w));
         }
         return answer;
     } else {
-        auto& us_v = std::get<std::vector<U>>(us);
+        const auto& us_v = getManyRef(us);
         if (ts.empty() || us_v.empty()) {
             throw std::invalid_argument("Cannot zip empty vectors");
         }
@@ -95,7 +95,7 @@ void ModelInputParser::parameterParser(YAML::Node parameter_node) {
         model::symbols::SymbolTypeEnum
         >(parameter_node, "type");
 
-    std::variant<double, std::vector<double>> symbol_values =
+    OneOrMany<double> symbol_values =
         valuesParser(extractValue<YAML::Node>(parameter_node, "value"));
 
     std::function<model::ModelInput(const model::ModelInput&, const double&)> function =
@@ -112,10 +112,10 @@ void ModelInputParser::parameterParser(YAML::Node parameter_node) {
         answer = zip_and_map(model_input_, symbol_values, function);
     }
     if (mode_.value() == Scan) {
-        answer = cartesian_and_map(model_input_, std::get<std::vector<double>>(symbol_values), function);
+        answer = cartesian_and_map(model_input_, getManyRef(symbol_values), function);
     }
     if (mode_.value() == Single) {
-        answer.emplace_back(function(model_input_[0], std::get<double>(symbol_values)));
+        answer.emplace_back(function(model_input_[0], getOneRef(symbol_values)));
     }
 
     model_input_ = std::move(answer);
@@ -130,39 +130,36 @@ void ModelInputParser::parameterParser(YAML::Node parameter_node) {
     throw_if_node_is_not_empty(parameter_node);
 }
 
-std::variant<double, std::vector<double>> ModelInputParser::valuesParser(YAML::Node values_node) {
-    std::variant<double, std::vector<double>> answer;
-
+OneOrMany<double> ModelInputParser::valuesParser(YAML::Node values_node) {
     if (mode_.value() == Single) {
-        answer = values_node.as<double>();
+        if (values_node.IsScalar()) {
+            return values_node.as<double>();
+        } else {
+            throw std::invalid_argument("Incorrect format of model_input::parameters::value");
+        }
     } else if (mode_.value() == Scan) {
-        answer.emplace<std::vector<double>>();
-        auto& vector = std::get<std::vector<double>>(answer);
-
         if (values_node.IsSequence()) {
-            vector = range_as(values_node);
+            return range_as(values_node);
         } else if (values_node.IsScalar()) {
-            vector.emplace_back(values_node.as<double>());
+            return {values_node.as<double>()};
         } else {
             throw std::invalid_argument("Incorrect format of model_input::parameters::value");
         }
     } else if (mode_.value() == Trajectory) {
         if (values_node.IsSequence()) {
-            answer.emplace<std::vector<double>>();
-            auto& vector = std::get<std::vector<double>>(answer);
-            vector = range_as(values_node);
+            std::vector<double> vector = range_as(values_node);
             if (trajectory_size_.has_value() && trajectory_size_.value() != vector.size()) {
                 throw std::invalid_argument("Different sizes of trajectory sequences");
             } else {
                 trajectory_size_ = vector.size();
             }
+            return vector;
         } else if (values_node.IsScalar()) {
-            answer = values_node.as<double>();
+            return values_node.as<double>();
         } else {
             throw std::invalid_argument("Incorrect format of model_input::parameters::value");
         }
     }
-    return answer;
 }
 
 model::ModelInput ModelInputParser::returnModifiedModelInput(
