@@ -1,5 +1,6 @@
 #include "OneSymbolInHamiltonianEigendecompositor.h"
 
+#include <functional>
 #include <utility>
 
 namespace eigendecompositor {
@@ -28,27 +29,31 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
 
         eigenvectors_[number_of_block] = mb_unitary_transformation_matrix;
 
-        const auto& energy_subspectrum =
-            std::get<std::reference_wrapper<const Subspectrum>>(eigendecompositor_->getSubspectrum(common::Energy, number_of_block).value()).get();
+        const auto energy_subspectrum = eigendecompositor_->getSubspectrum(common::Energy, number_of_block).value();
 
-        auto raw_spectrum = energy_subspectrum.raw_data->multiply_by(1);
-        current_energy_spectrum_.blocks[number_of_block] =
-            Subspectrum(std::move(raw_spectrum), energy_subspectrum.properties);
+        current_energy_spectrum_[number_of_block] = transform_one_or_many(
+            std::function([number_of_block](std::reference_wrapper<const Subspectrum> energy_subspectrum) {
+                auto raw_spectrum = energy_subspectrum.get().raw_data->multiply_by(1);
+                return Subspectrum(std::move(raw_spectrum), energy_subspectrum.get().properties);    
+        }), energy_subspectrum);
 
         if (current_energy_derivative_spectrum_.has_value()) {
-            auto raw_subspectrum_derivative =
-                energy_subspectrum.raw_data->multiply_by(1 / initial_value_of_symbol_);
-            current_energy_derivative_spectrum_.value().blocks[number_of_block] =
-                Subspectrum(std::move(raw_subspectrum_derivative), energy_subspectrum.properties);
+            current_energy_derivative_spectrum_.value()[number_of_block] = transform_one_or_many(
+                std::function([number_of_block, this](std::reference_wrapper<const Subspectrum> energy_subspectrum) {
+                    auto raw_subspectrum_derivative =
+                        energy_subspectrum.get().raw_data->multiply_by(1 / initial_value_of_symbol_);
+                    return Subspectrum(std::move(raw_subspectrum_derivative), energy_subspectrum.get().properties);
+            }), energy_subspectrum);
         }
     } else {
         double current_value_of_symbol = currentValueGetter_();
         double multiplier = current_value_of_symbol / initial_value_of_symbol_;
-        const auto& energy_subspectrum = std::get<std::reference_wrapper<const Subspectrum>>(eigendecompositor_->getSubspectrum(common::Energy, number_of_block).value()).get();
-
-        auto raw_subspectrum_energy = energy_subspectrum.raw_data->multiply_by(multiplier);
-        current_energy_spectrum_.blocks[number_of_block] =
-            Subspectrum(std::move(raw_subspectrum_energy), energy_subspectrum.properties);
+        const auto energy_subspectrum = eigendecompositor_->getSubspectrum(common::Energy, number_of_block).value();
+        current_energy_spectrum_[number_of_block] = transform_one_or_many(
+            std::function([number_of_block, multiplier](std::reference_wrapper<const Subspectrum> energy_subspectrum) {
+                auto raw_subspectrum = energy_subspectrum.get().raw_data->multiply_by(multiplier);
+                return Subspectrum(std::move(raw_subspectrum), energy_subspectrum.get().properties);
+        }), energy_subspectrum);
     }
     return eigenvectors_.at(number_of_block);
 }
@@ -56,7 +61,7 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
 std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 OneSymbolInHamiltonianEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
-        return current_energy_spectrum_.blocks[number_of_block];
+        return copyRef<Subspectrum, std::reference_wrapper<const Subspectrum>>(current_energy_spectrum_[number_of_block]);
     }
     return eigendecompositor_->getSubspectrum(quantity_enum, number_of_block);
 }
@@ -72,7 +77,7 @@ OneSymbolInHamiltonianEigendecompositor::getSubmatrix(common::QuantityEnum quant
 std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 OneSymbolInHamiltonianEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (quantity_enum == common::Energy && current_energy_derivative_spectrum_.has_value()) {
-        return current_energy_derivative_spectrum_.value()[number_of_block];
+        return copyRef<Subspectrum, std::reference_wrapper<const Subspectrum>>(current_energy_derivative_spectrum_.value()[number_of_block]);
     }
     return eigendecompositor_->getSubspectrumDerivative(quantity_enum, symbol_name, number_of_block);
 }
@@ -92,8 +97,8 @@ void OneSymbolInHamiltonianEigendecompositor::initialize(
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
     uint32_t number_of_subspaces) {
-    current_energy_spectrum_.blocks.clear();
-    current_energy_spectrum_.blocks.resize(number_of_subspaces);
+    current_energy_spectrum_.clear();
+    current_energy_spectrum_.resize(number_of_subspaces);
 
     size_t number_of_all_derivatives = derivatives_operators_to_calculate.size();
     // delete energy derivative operator, because we are about to calculate corresponding spectrum
@@ -114,8 +119,8 @@ void OneSymbolInHamiltonianEigendecompositor::initialize(
             operators_to_calculate,
             derivatives_operators_to_calculate,
             number_of_subspaces);
-        current_energy_derivative_spectrum_ = Spectrum();
-        current_energy_derivative_spectrum_->blocks.resize(number_of_subspaces);
+        current_energy_derivative_spectrum_ = std::vector<OneOrMany<Subspectrum>>();
+        current_energy_derivative_spectrum_->resize(number_of_subspaces);
 
         eigenvectors_.resize(number_of_subspaces);
     } else {

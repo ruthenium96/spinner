@@ -36,8 +36,8 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
 
   private:
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor_;
-    Spectrum current_energy_spectrum_;
-    std::optional<Spectrum> current_energy_derivative_spectrum_;
+    std::vector<OneOrMany<Subspectrum>> current_energy_spectrum_;
+    std::optional<std::vector<OneOrMany<Subspectrum>>> current_energy_derivative_spectrum_;
     std::vector<
         std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
         eigenvectors_;

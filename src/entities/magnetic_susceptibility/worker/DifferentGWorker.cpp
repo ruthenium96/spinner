@@ -13,7 +13,7 @@ DifferentGWorker::DifferentGWorker(
     quantity_factor_(quantity_factor) {}
 
 double DifferentGWorker::calculateTheoreticalMuSquared(double temperature) const {
-    const auto& quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value().get();
+    auto quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value();
     double quantity_averaged =
         quantity_factor_ * ensemble_averager_.ensemble_average(quantity, temperature);
     return quantity_averaged;
@@ -22,15 +22,14 @@ double DifferentGWorker::calculateTheoreticalMuSquared(double temperature) const
 std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
     model::symbols::SymbolName symbol_name) const {
-    const auto& quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value().get();
+    auto quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value();
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
     // let A = (\sum_i g_i S_{iz})^2
     if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
         // if energy does not depend on g factors:
         // d(mu_squared)/dg = d<A>/dg = <dA/dg>
-        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&
-        quantity_derivative = 
+        auto quantity_derivative = 
             flattenedSpectra_->getFlattenDerivativeSpectrum(quantity_enum_for_averaging_, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double value =
@@ -39,14 +38,20 @@ std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
         }
     } else {
         // d(mu_squared)/da = d(<A>)/da = (<A>*<dE/da>-<A*dE/da>)/T
-        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_derivative =
+        auto energy_derivative =
             flattenedSpectra_->getFlattenDerivativeSpectrum(common::Energy, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             double first_term = ensemble_averager_.ensemble_average(quantity, temperatures[i])
                 * ensemble_averager_.ensemble_average(energy_derivative, temperatures[i]);
-            double second_term = ensemble_averager_.ensemble_average(
-                quantity->element_wise_multiplication(energy_derivative),
-                temperatures[i]);
+            auto second_term_value = transform_one_or_many(
+                std::function([](std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> a, 
+                    std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> b){
+                    return a.get()->element_wise_multiplication(b.get());
+                }), 
+                quantity,
+                energy_derivative);
+            auto second_term_value_ref = copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(second_term_value);
+            double second_term = ensemble_averager_.ensemble_average(second_term_value_ref, temperatures[i]);
             double value = quantity_factor_ * (first_term - second_term) / temperatures[i];
             derivatives[i] = {temperatures[i], value};
         }

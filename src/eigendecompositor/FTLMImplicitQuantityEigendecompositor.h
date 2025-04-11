@@ -2,6 +2,7 @@
 #define SPINNER_FTLMIMPLICITQUANTITYEIGENDECOMPOSITOR_H
 
 #include "ImplicitQuantityEigendecompositor.h"
+#include "src/entities/spectrum/Subspectrum.h"
 
 namespace eigendecompositor {
 
@@ -33,7 +34,7 @@ class FTLMImplicitQuantityEigendecompositor : public ImplicitQuantityEigendecomp
     void finalize() override;
 
   private:
-    Spectrum quantity_implicit_spectrum_multiplied_by_squared_back_projection_;
+    std::vector<OneOrMany<Subspectrum>> quantity_implicit_spectrum_multiplied_by_squared_back_projection_;
     common::QuantityEnum quantity_implicit_enum_;
 };
 

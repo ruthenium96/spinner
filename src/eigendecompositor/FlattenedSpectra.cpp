@@ -1,10 +1,13 @@
 #include "FlattenedSpectra.h"
 
+#include <functional>
 #include <memory>
 #include <optional>
 
 #include "magic_enum.hpp"
 #include "src/common/Quantity.h"
+#include "src/eigendecompositor/AllQuantitiesGetter.h"
+#include "src/entities/spectrum/Spectrum.h"
 
 namespace eigendecompositor {
 
@@ -15,20 +18,37 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
     for (const auto& quantity_enum : magic_enum::enum_values<common::QuantityEnum>()) {
         auto maybe_spectrum = allQuantitiesGetter.getSpectrum(quantity_enum);
         if (maybe_spectrum.has_value()) {
-            flattenedSpectra_[quantity_enum] = factories.createVector();
-            const auto& spectrum = std::get<SpectrumRef>(maybe_spectrum.value());
-            for (const auto& subspectrum_ref : spectrum.blocks) {
-                const auto& subspectrum = subspectrum_ref.get();
-                flattenedSpectra_[quantity_enum]->concatenate_with(subspectrum.raw_data);
-                if (quantity_enum == common::Energy) {
+            auto spectrum = maybe_spectrum.value();
+            flattenedSpectra_[quantity_enum] = transform_one_or_many(
+                std::function([factories](SpectrumRef spectrum){
+                    auto vector = factories.createVector();
+                    for (const auto& subspectrum_ref : spectrum.blocks) {
+                        const auto& subspectrum = subspectrum_ref.get();
+                        vector->concatenate_with(subspectrum.raw_data);
+                    }
+                    return std::move(vector);
+                }), 
+                spectrum);
+            if (quantity_enum == common::Energy) {
+                std::optional<SpectrumRef> spectrum_ref;
+                if (holdsOne(spectrum)) {
+                    spectrum_ref = getOneRef(spectrum);
+                } else {
+                    spectrum_ref = getManyRef(spectrum)[0];
+                }
+                for (const auto& subspectrum_ref : spectrum_ref.value().blocks) {
                     degeneracyValues_->add_identical_values(
-                        subspectrum.raw_data->size(),
-                        subspectrum.properties.degeneracy);
+                        subspectrum_ref.get().raw_data->size(),
+                        subspectrum_ref.get().properties.degeneracy);
                 }
             }
         }
     }
-    flattenedSpectra_[common::Energy]->subtract_minimum();
+    apply_to_one_or_many(
+        std::function([](const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_spectrum){
+            energy_spectrum.get()->subtract_minimum();
+        }), 
+        flattenedSpectra_[common::Energy]);
 }
 
 void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuantitiesGetter,
@@ -39,31 +59,41 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
         for (const auto& symbol_name : symbol_names) {
             auto maybe_spectrum = allQuantitiesGetter.getSpectrumDerivative(quantity_enum, symbol_name);
             if (maybe_spectrum.has_value()) {
-                const auto& spectrum = std::get<SpectrumRef>(maybe_spectrum.value());
-                flattenedDerivativeSpectra_[{quantity_enum, symbol_name}] = factories.createVector();
-                for (const auto& subspectrum_ref : spectrum.blocks) {
-                    const auto& subspectrum = subspectrum_ref.get();
-                    flattenedDerivativeSpectra_[{quantity_enum, symbol_name}]->concatenate_with(subspectrum.raw_data);
-                }
-            }    
+                const auto& spectrum = maybe_spectrum.value();
+                flattenedDerivativeSpectra_[{quantity_enum, symbol_name}] = transform_one_or_many(
+                    std::function([factories](SpectrumRef spectrum){
+                        auto vector = factories.createVector();
+                        for (const auto& subspectrum_ref : spectrum.blocks) {
+                            const auto& subspectrum = subspectrum_ref.get();
+                            vector->concatenate_with(subspectrum.raw_data);
+                        }
+                        return std::move(vector);
+                    }), 
+                    spectrum
+                );
+            }
         }
     }   
 }
 
-std::optional<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> 
-    FlattenedSpectra::getFlattenSpectrum(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
+FlattenedSpectra::getFlattenSpectrum(common::QuantityEnum quantity_enum) const {
     if (flattenedSpectra_.contains(quantity_enum)) {
-        return flattenedSpectra_.at(quantity_enum);
+        const auto& spectrum = flattenedSpectra_.at(quantity_enum);
+        return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
+            std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(spectrum);
     } else {
         return std::nullopt;
     }
 }
 
-std::optional<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> 
-    FlattenedSpectra::getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enum, 
+std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
+FlattenedSpectra::getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enum, 
         const model::symbols::SymbolName& symbol_name) const {
     if (flattenedDerivativeSpectra_.contains({quantity_enum, symbol_name})) {
-        return flattenedDerivativeSpectra_.at({quantity_enum, symbol_name});
+        const auto& spectrum = flattenedDerivativeSpectra_.at({quantity_enum, symbol_name});
+        return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
+            std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(spectrum);
     } else {
         return std::nullopt;
     }

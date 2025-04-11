@@ -2,13 +2,14 @@
 
 #include <cassert>
 #include <cstdint>
+#include <functional>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
 #include "src/common/Quantity.h"
 #include "src/eigendecompositor/ExactEigendecompositor.h"
 #include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
-#include "src/entities/spectrum/Spectrum.h"
 #include "src/entities/spectrum/Subspectrum.h"
 
 namespace eigendecompositor {
@@ -59,6 +60,8 @@ FTLMEigendecompositor::BuildSubspectra(
     auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_, true);
 
     if (!do_we_need_eigenvectors_) {
+        std::vector<Subspectrum> squared_back_projection_subspectrums;
+        squared_back_projection_subspectrums.resize(number_of_seeds_);
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
         for (int seed = 0; seed < number_of_seeds_; ++seed) {
             auto krylov_couple = 
@@ -76,8 +79,9 @@ FTLMEigendecompositor::BuildSubspectra(
             squared_back_projection_subspectrum.properties.degeneracy *= (double)size_of_subspace;
     
             energy_spectra_[number_of_block][seed] = std::move(energy_subspectrum);
-            squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrum);
+            squared_back_projection_subspectrums[seed] = std::move(squared_back_projection_subspectrum);
         }
+        squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrums);
     } else {
         throw std::invalid_argument("NOT IMPLEMENTED YET!");
     }
@@ -92,22 +96,26 @@ FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t
     if (quantity_enum == common::Energy) {
         auto exact_subspectrumref = ExactEigendecompositor::getSubspectrum(common::Energy, number_of_block).value();
 
-        const auto& ftlm_subspectrumref = energy_spectra_[number_of_block][0];
+        const auto& ftlm_subspectrumref = energy_spectra_[number_of_block];
 
-        if (std::get<std::reference_wrapper<const Subspectrum>>(exact_subspectrumref).get().raw_data != nullptr) {
-            if (ftlm_subspectrumref.raw_data != nullptr) {
+        if (getOneRef(exact_subspectrumref).get().raw_data != nullptr) {
+            if (ftlm_subspectrumref[0].raw_data != nullptr) {
                 throw std::logic_error("Both exact and FTLM constructed Energy block #" + std::to_string(number_of_block));
             }
             return exact_subspectrumref;
         } else {
-            if (ftlm_subspectrumref.raw_data == nullptr) {
+            if (ftlm_subspectrumref[0].raw_data == nullptr) {
                 throw std::logic_error("Neither exact or FTLM constructed Energy block #" + std::to_string(number_of_block));
             }
-            return ftlm_subspectrumref;
+            std::vector<std::reference_wrapper<const Subspectrum>> answer;
+            for (const auto& el : ftlm_subspectrumref) {
+                answer.push_back(std::reference_wrapper(el));
+            }
+            return answer;
         }
     }
     if (quantity_enum == common::squared_back_projection) {
-        return squared_back_projection_spectrum_[number_of_block];
+        return copyRef<Subspectrum, std::reference_wrapper<const Subspectrum>>(squared_back_projection_spectrum_[number_of_block]);
     }
     return std::nullopt;
 }
@@ -120,7 +128,7 @@ FTLMEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t n
 
         const auto& ftlm_submatrixref = energy_matrix_[number_of_block];
 
-        if (std::get<std::reference_wrapper<const Submatrix>>(exact_submatrixref).get().raw_data != nullptr) {
+        if (getOneRef(exact_submatrixref).get().raw_data != nullptr) {
             if (ftlm_submatrixref.raw_data != nullptr) {
                 throw std::logic_error("Both exact and FTLM constructed Energy block #" + std::to_string(number_of_block));
             }

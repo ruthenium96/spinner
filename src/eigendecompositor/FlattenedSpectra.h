@@ -20,18 +20,18 @@ class FlattenedSpectra {
         const std::vector<model::symbols::SymbolName>& symbol_names,
         const quantum::linear_algebra::FactoriesList& factories);
   
-    std::optional<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> 
+    std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
         getFlattenSpectrum(common::QuantityEnum quantity_enum) const;
-    std::optional<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> 
+    std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
         getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enum, 
           const model::symbols::SymbolName& symbol_name) const;
     const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& getDegeneracyValues() const;
 
   private:
     std::map<common::QuantityEnum, 
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flattenedSpectra_;
+        OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> flattenedSpectra_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, 
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flattenedDerivativeSpectra_;
+        OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> flattenedDerivativeSpectra_;
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> degeneracyValues_;
 };
 } // namespace eigendecompositor
