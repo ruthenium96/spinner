@@ -23,7 +23,7 @@ const std::vector<Multiplicity>& MultiplicityDirectSum::getMultiplicities() cons
 MultiplicityDirectSum MultiplicityDirectSum::operator+(const MultiplicityDirectSum& bs) const {
     MultiplicityDirectSum answer;
     answer.multiplicities_.reserve(this->multiplicities_.size() + bs.multiplicities_.size());
-    copy(
+    std::copy(
         this->multiplicities_.begin(),
         this->multiplicities_.end(),
         back_inserter(answer.multiplicities_));
@@ -51,7 +51,7 @@ MultiplicityDirectSum MultiplicityDirectSum::operator*(const MultiplicityDirectS
 
 MultiplicityDirectSum& MultiplicityDirectSum::operator+=(const MultiplicityDirectSum& bs) {
     this->multiplicities_.reserve(this->multiplicities_.size() + bs.multiplicities_.size());
-    copy(
+    std::copy(
         bs.multiplicities_.begin(),
         bs.multiplicities_.end(),
         back_inserter(this->multiplicities_));
