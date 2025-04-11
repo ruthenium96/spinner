@@ -5,8 +5,8 @@
 
 #include <ostream>
 
+#include "OneOrMany.h"
 #include "Quantity.h"
-#include "src/eigendecompositor/AbstractEigendecompositor.h"
 #include "src/entities/BlockProperties.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/entities/matrix/Matrix.h"
@@ -28,6 +28,20 @@ template <> struct fmt::formatter<MatrixRef> : fmt::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const OneOrMany<T>& one_or_many) {
+    if (holdsOne(one_or_many)) {
+        os << getOneRef(one_or_many) << std::endl;
+    } else {
+        const auto& vec = getManyRef(one_or_many);
+        for (const auto& el : vec) {
+            os << el << std::endl;
+        }
+    }
+    return os;
+}
+template <typename T> struct fmt::formatter<OneOrMany<T>> : fmt::ostream_formatter {};
 
 // todo: move it to class in different file
 namespace common {
