@@ -2,14 +2,13 @@
 #define SPINNER_RUNNER_H
 
 #include <cmath>
-#include <cstdint>
 #include <memory>
 #include <optional>
-#include <utility>
 
 #include "ConsistentModelOptimizationList.h"
 #include "src/common/Quantity.h"
 #include "src/eigendecompositor/AbstractEigendecompositor.h"
+#include "src/eigendecompositor/AllQuantitiesGetter.h"
 #include "src/eigendecompositor/FlattenedSpectra.h"
 #include "src/entities/data_structures/FactoriesList.h"
 #include "src/entities/magnetic_susceptibility/MagneticSusceptibilityController.h"
@@ -50,13 +49,13 @@ class Runner {
     std::optional<std::shared_ptr<const model::operators::Operator>>
         getOperator(common::QuantityEnum) const;
     const space::Space& getSpace() const;
-    std::optional<SpectrumRef> getSpectrum(common::QuantityEnum);
-    std::optional<MatrixRef> getMatrix(common::QuantityEnum);
+    std::optional<OneOrMany<SpectrumRef>> getSpectrum(common::QuantityEnum);
+    std::optional<OneOrMany<MatrixRef>> getMatrix(common::QuantityEnum);
     std::optional<std::shared_ptr<const model::operators::Operator>>
     getOperatorDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const;
-    std::optional<SpectrumRef>
+    std::optional<OneOrMany<SpectrumRef>>
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&);
-    std::optional<MatrixRef>
+    std::optional<OneOrMany<MatrixRef>>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&);
     const magnetic_susceptibility::MagneticSusceptibilityController&
     getMagneticSusceptibilityController();

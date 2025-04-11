@@ -41,33 +41,36 @@ size_t size_of_spectrum_with_degeneracy(const SpectrumRef& spectrum_ref) {
 void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner::Runner& runner) {
     auto mb_energy_matrix = runner.getMatrix(common::Energy);
     if (mb_energy_matrix.has_value()) {
+        auto energy_matrix = getOneRef(mb_energy_matrix.value());
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_with_degeneracy(mb_energy_matrix.value()));
+            size_of_matrix_with_degeneracy(energy_matrix));
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_without_degeneracy(mb_energy_matrix.value()));
+            size_of_matrix_without_degeneracy(energy_matrix));
     }
     auto mb_s_squared_matrix = runner.getMatrix(common::S_total_squared);
     if (mb_s_squared_matrix.has_value()) {
+        auto s_squared_matrix = getOneRef(mb_s_squared_matrix.value());
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_with_degeneracy(mb_s_squared_matrix.value()));
+            size_of_matrix_with_degeneracy(s_squared_matrix));
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_without_degeneracy(mb_s_squared_matrix.value()));
+            size_of_matrix_without_degeneracy(s_squared_matrix));
     }
 }
 
 void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
     for (const auto& quantity_enum_ : magic_enum::enum_values<common::QuantityEnum>()) {
         if (runner.getSpectrum(quantity_enum_).has_value()) {
+            auto quantity = getOneRef(runner.getSpectrum(quantity_enum_).value());
             EXPECT_EQ(
                 runner.getIndexConverter()->get_total_space_size(),
-                size_of_spectrum_with_degeneracy(runner.getSpectrum(quantity_enum_).value()));
+                size_of_spectrum_with_degeneracy(quantity));
             EXPECT_EQ(
                 runner.getIndexConverter()->get_total_space_size(),
-                size_of_spectrum_without_degeneracy(runner.getSpectrum(quantity_enum_).value()));        
+                size_of_spectrum_without_degeneracy(quantity));        
         }
     }
 }

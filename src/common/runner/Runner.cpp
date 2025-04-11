@@ -6,6 +6,7 @@
 #include "src/common/Logger.h"
 #include "src/common/PrintingFunctions.h"
 #include "src/common/Quantity.h"
+#include "src/eigendecompositor/AllQuantitiesGetter.h"
 #include "src/eigendecompositor/EigendecompositorConstructor.h"
 #include "src/entities/magnetic_susceptibility/worker/WorkerConstructor.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
@@ -77,22 +78,14 @@ void Runner::BuildSpectra() {
     }
 }
 
-std::optional<MatrixRef>
+std::optional<OneOrMany<MatrixRef>>
 Runner::getMatrix(common::QuantityEnum quantity_enum) {
-    const auto& maybe_matrix = getAllQuantitiesGetter().getMatrix(quantity_enum);
-    if (!maybe_matrix.has_value()) {
-        return std::nullopt;
-    }
-    return std::get<MatrixRef>(maybe_matrix.value());
+    return getAllQuantitiesGetter().getMatrix(quantity_enum);
 }
 
-std::optional<SpectrumRef> 
+std::optional<OneOrMany<SpectrumRef>>
 Runner::getSpectrum(common::QuantityEnum quantity_enum) {
-    const auto& maybe_spectrum = getAllQuantitiesGetter().getSpectrum(quantity_enum);
-    if (!maybe_spectrum.has_value()) {
-        return std::nullopt;
-    }
-    return std::get<SpectrumRef>(maybe_spectrum.value());
+    return getAllQuantitiesGetter().getSpectrum(quantity_enum);
 }
 
 std::optional<std::shared_ptr<const model::operators::Operator>>
@@ -110,24 +103,16 @@ std::optional<std::shared_ptr<const model::operators::Operator>> Runner::getOper
     return getModel().getOperatorDerivative(quantity_enum, symbol);
 }
 
-std::optional<SpectrumRef> Runner::getSpectrumDerivative(
+std::optional<OneOrMany<SpectrumRef>> Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    const auto& maybe_spectrum = getAllQuantitiesGetter().getSpectrumDerivative(quantity_enum, symbol);
-    if (!maybe_spectrum.has_value()) {
-        return std::nullopt;
-    }
-    return std::get<SpectrumRef>(maybe_spectrum.value());
+    return getAllQuantitiesGetter().getSpectrumDerivative(quantity_enum, symbol);
 }
 
-std::optional<MatrixRef> Runner::getMatrixDerivative(
+std::optional<OneOrMany<MatrixRef>> Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    const auto& maybe_matrix = getAllQuantitiesGetter().getMatrixDerivative(quantity_enum, symbol);
-    if (!maybe_matrix.has_value()) {
-        return std::nullopt;
-    }
-    return std::get<MatrixRef>(maybe_matrix.value());
+    return getAllQuantitiesGetter().getMatrixDerivative(quantity_enum, symbol);
 }
 
 void Runner::BuildMuSquaredWorker() {

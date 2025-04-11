@@ -31,14 +31,12 @@ std::optional<OneOrMany<U>> getEntity(
     if (std::all_of(
         data.cbegin(), 
         data.cend(), 
-        [](const auto& a){
-                return std::holds_alternative<std::reference_wrapper<const T>>(a);
-            }
+        holdsOne<std::reference_wrapper<const T>>
         )       
     ) {
         std::vector<std::reference_wrapper<const T>> answer;
         for (const auto& el: data) {
-            answer.push_back(std::get<std::reference_wrapper<const T>>(el));
+            answer.push_back(getOneRef(el));
         }
         return U(std::move(answer));
     } else {
@@ -46,20 +44,18 @@ std::optional<OneOrMany<U>> getEntity(
         auto it = std::find_if(
             data.cbegin(),
             data.cend(),
-            [](const auto& a){
-                return std::holds_alternative<std::vector<std::reference_wrapper<const T>>>(a);
-            }
+            holdsMany<std::reference_wrapper<const T>>
         );
-        size_t number_of_many = std::get<std::vector<std::reference_wrapper<const T>>>(*it).size();
+        size_t number_of_many = getManyRef(*it).size();
         std::vector<std::vector<std::reference_wrapper<const T>>> vector_of_answers(number_of_many);
         for (const auto& el: data) {
-            if (std::holds_alternative<std::reference_wrapper<const T>>(el)) {
-                auto reference = std::get<std::reference_wrapper<const T>>(el);
+            if (holdsOne(el)) {
+                auto reference = getOneRef(el);
                 for (int j = 0; j < number_of_many; ++j) {
                     vector_of_answers[j].push_back(reference);
                 }
             } else {
-                auto vector_of_references = std::get<std::vector<std::reference_wrapper<const T>>>(el);
+                auto vector_of_references = getManyRef(el);
                 for (int j = 0; j < number_of_many; ++j) {
                     vector_of_answers[j].push_back(vector_of_references[j]);
                 }
@@ -156,10 +152,10 @@ AbstractEigendecompositor::getMatrixDerivative(common::QuantityEnum quantity_enu
 
 size_t AbstractEigendecompositor::getSubspectrumSize(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     auto data = getSubspectrum(quantity_enum, number_of_block).value();
-    if (std::holds_alternative<std::reference_wrapper<const Subspectrum>>(data)) {
-        return std::get<std::reference_wrapper<const Subspectrum>>(data).get().raw_data->size();
+    if (holdsOne(data)) {
+        return getOneRef(data).get().raw_data->size();
     } else {
-        return std::get<std::vector<std::reference_wrapper<const Subspectrum>>>(data)[0].get().raw_data->size();
+        return getManyRef(data)[0].get().raw_data->size();
     }
 }
 
