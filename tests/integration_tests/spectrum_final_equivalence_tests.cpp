@@ -483,6 +483,80 @@ INSTANTIATE_TEST_SUITE_P(
         OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
         OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
         OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
-        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections() //,
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections()
+    )
+);
+
+void initialize_six_centers_exchange_prism(model::ModelInput& model, double first, double second) {
+    auto Jfirst = model.addSymbol("J1", first);
+    model.assignSymbolToIsotropicExchange(Jfirst, 0, 1)
+        .assignSymbolToIsotropicExchange(Jfirst, 1, 2)
+        .assignSymbolToIsotropicExchange(Jfirst, 2, 0)
+        .assignSymbolToIsotropicExchange(Jfirst, 3, 4)
+        .assignSymbolToIsotropicExchange(Jfirst, 4, 5)
+        .assignSymbolToIsotropicExchange(Jfirst, 5, 3);
+    auto Jsecond = model.addSymbol("J2", second);
+    model.assignSymbolToIsotropicExchange(Jsecond, 0, 3)
+        .assignSymbolToIsotropicExchange(Jsecond, 1, 4)
+        .assignSymbolToIsotropicExchange(Jsecond, 2, 5);
+}
+
+class triangle_prism : public SpectrumFinalEquivalenceTest {};
+
+#define group_prism_tr group::Group(group::Group::S3, {{2, 0, 1, 5, 3, 4}, {0, 2, 1, 3, 5, 4}})
+#define group_prism_di group::Group(group::Group::S2, {{3, 4, 5, 0, 1, 2}})
+
+TEST_P(triangle_prism, NoGFactors) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2, 2, 2}, 
+        {3, 3, 3, 3, 3, 3}};
+    std::vector<std::pair<double, double>> js = {{10, -20}, {17.17, 15}, {33, -33}};
+
+    for (const auto& mults : multss) {
+        for (auto jss : js) {
+            auto Jfirst = jss.first;
+            auto Jsecond = jss.second;
+            model::ModelInput model(mults);
+            initialize_six_centers_exchange_prism(model, Jfirst, Jsecond);
+
+            runner::Runner runner_simple(model);
+
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);                
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    triangle_prism,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_prism_tr),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_prism_tr).Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_prism_tr),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_prism_tr).Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_prism_tr),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_prism_tr).Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_prism_di).SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort().Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections().Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections().Symmetrize(group_prism_di),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_prism_di)
     )
 );
