@@ -86,7 +86,7 @@ FTLMEigendecompositor::BuildSubspectra(
         throw std::invalid_argument("NOT IMPLEMENTED YET!");
     }
 #ifndef NDEBUG
-    energy_matrix_.blocks[number_of_block] = std::move(hamiltonian_submatrix);
+    energy_matrix_[number_of_block] = std::move(hamiltonian_submatrix);
 #endif
     return mb_unitary_transformation_matrix;
 }
