@@ -47,31 +47,32 @@ Space Symmetrizer::apply(Space&& space) const {
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
             if (count_how_many_orbit_was_visited(subspace_parent.decomposition, l, visited)
-                < dimension_of_parent) {
-                std::vector<
-                    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
-                    projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
-                increment_visited(projected_basi[0], 0, visited);
-                for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
-                    for (size_t k = 0;
-                         k < group_.properties.number_of_projectors_of_representation[repr];
-                         ++k) {
-                        if (projected_basi[repr]->vempty(k)) {
-                            // check if the DecompositionMap is empty:
-                            continue;
-                        }
-                        size_t j = group_.properties.number_of_representations * i + repr;
-                        if (is_orthogonal_to_others(
-                                projected_basi[repr],
-                                k,
-                                added[repr],
-                                vector_result[j])) {
-                            move_vector_and_remember_it(
-                                projected_basi[repr],
-                                k,
-                                added[repr],
-                                vector_result[j]);
-                        }
+                >= dimension_of_parent) {
+                continue;
+            }
+            std::vector<
+                std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
+                projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
+            increment_visited(projected_basi[0], 0, visited);
+            for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
+                for (size_t k = 0;
+                        k < group_.properties.number_of_projectors_of_representation[repr];
+                        ++k) {
+                    if (projected_basi[repr]->vempty(k)) {
+                        // check if the DecompositionMap is empty:
+                        continue;
+                    }
+                    size_t j = group_.properties.number_of_representations * i + repr;
+                    if (is_orthogonal_to_others(
+                            projected_basi[repr],
+                            k,
+                            added[repr],
+                            vector_result[j])) {
+                        move_vector_and_remember_it(
+                            projected_basi[repr],
+                            k,
+                            added[repr],
+                            vector_result[j]);
                     }
                 }
             }
