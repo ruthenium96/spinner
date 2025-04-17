@@ -193,7 +193,7 @@ void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& o
 }
 
 void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverter& index_converter) {
-    common::Logger::debug("Indexes to states mapping. Initial multiplicities: [{}] were skipped.", 
+    common::Logger::trace("Indexes to states mapping. Initial multiplicities: [{}] were skipped.", 
         fmt::join(index_converter.get_mults(), " "));
     for (auto index = 0; index < index_converter.get_total_space_size(); ++index) {
         auto state = index_converter.convert_index_to_state(index);
@@ -204,10 +204,23 @@ void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverte
             level_string += std::to_string(state.first.getMultiplicity(i));
         }
 
-        common::Logger::debug("{} -> |{};{}>",
+        common::Logger::trace("{} -> |{};{}>",
         index,
         level_string,
         state.second);
+    }
+    common::Logger::separate(0, common::debug);
+}
+
+void lexIndexConverterPrint(const index_converter::lexicographic::IndexConverter& index_converter) {
+    common::Logger::trace("Indexes to states mapping.", 
+        fmt::join(index_converter.get_mults(), " "));
+    for (auto index = 0; index < index_converter.get_total_space_size(); ++index) {
+        auto state = index_converter.convert_lex_index_to_all_sz_projections(index);
+
+        common::Logger::trace("{} -> |{}>",
+        index,
+        state);
     }
     common::Logger::separate(0, common::debug);
 }
