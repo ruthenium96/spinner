@@ -1,7 +1,61 @@
 #include "Symmetrizer.h"
 
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
+#ifndef NDEBUG
+#include <stdexcept>
+#include <string>
+#endif
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
+
+namespace {
+#ifndef NDEBUG
+std::vector<double> squares_of_coefficients(
+    size_t totalSpaceSize, 
+    const std::vector<space::Subspace>& subspace) {
+    std::vector<double> squares_of_coefficients(totalSpaceSize, 0);
+    for (const auto& subspace : subspace) {
+        for (size_t col = 0; col < subspace.decomposition->size_cols(); ++col) {
+            double norm = 0.0;
+            auto iterator = subspace.decomposition->GetNewIterator(col);
+            while (iterator->hasNext()) {
+                auto pair = iterator->getNext();
+                norm += pair.value * pair.value;
+            }
+            iterator = subspace.decomposition->GetNewIterator(col);
+            while (iterator->hasNext()) {
+                auto pair = iterator->getNext();
+                squares_of_coefficients[pair.index] += pair.value * pair.value / norm;
+            }
+        }
+    }
+    return squares_of_coefficients;
+}
+
+void compare_two_vectors_of_squared_coefficients(
+    const std::vector<double>& before,
+    const std::vector<double>& after) {
+    std::vector<std::pair<uint32_t, double>> non_zero_differences;
+    for (int i = 0; i < after.size(); ++i) {
+        double value_diff = after[i] - before[i];
+        if (std::abs(value_diff) > 1e-9) {
+            non_zero_differences.push_back({i, value_diff});
+        }
+    }
+    if (!non_zero_differences.empty()) {
+        std::string error_message = "Symmetrizer: transformation is not unitary, indexes of problem and value_diff:\n";
+        for (const auto& pair : non_zero_differences) {
+            error_message += std::to_string(pair.first) + " : " + std::to_string(pair.second) + "\n";
+        }
+        throw std::logic_error(error_message);
+    }
+}
+#endif
+
+} // namespace
 
 namespace space::optimization {
 
@@ -16,6 +70,9 @@ Symmetrizer::Symmetrizer(
 Space Symmetrizer::apply(Space&& space) const {
     assert(!space.getBlocks().empty());
     auto totalSpaceSize = space.getBlocks()[0].decomposition->size_rows();
+#ifndef NDEBUG
+    std::vector<double> squares_of_coefficients_before = squares_of_coefficients(totalSpaceSize, space.getBlocks());
+#endif
     std::vector<Subspace> vector_result;
     vector_result.reserve(space.getBlocks().size() * group_.properties.number_of_representations);
     for (size_t i = 0; i < space.getBlocks().size() * group_.properties.number_of_representations;
@@ -35,10 +92,8 @@ Space Symmetrizer::apply(Space&& space) const {
                 block_properties;
         }
 
-        // It is an auxiliary hash table. It helps to calculate each orbit only "dimensionality" times (see below).
-        std::unordered_map<uint32_t, uint8_t> visited;
-        // It is also an auxiliary hash table. It helps to do not check orthogonality over and over.
-        std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> added(
+        // Auxiliary hash tables. They help to do not check orthogonality over and over.
+        std::vector<std::unordered_map<uint32_t, std::vector<size_t>>> indexes_to_vectors_maps(
             group_.properties.number_of_representations);
 
         for (uint32_t l = 0; l < subspace_parent.decomposition->size_cols(); ++l) {
@@ -46,41 +101,37 @@ Space Symmetrizer::apply(Space&& space) const {
             // when we work with basi, we actually do all work for the orbit of basi,
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
-            if (count_how_many_orbit_was_visited(subspace_parent.decomposition, l, visited)
-                >= dimension_of_parent) {
-                continue;
-            }
             std::vector<
                 std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
                 projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
-            increment_visited(projected_basi[0], 0, visited);
             for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
+                size_t j = group_.properties.number_of_representations * i + repr;
+                gram_schmidt_orthogonalize(
+                    projected_basi[repr], 
+                    indexes_to_vectors_maps[repr], 
+                    vector_result[j]);
                 for (size_t k = 0;
-                        k < group_.properties.number_of_projectors_of_representation[repr];
-                        ++k) {
+                    k < group_.properties.number_of_projectors_of_representation[repr];
+                    ++k) {
                     if (projected_basi[repr]->vempty(k)) {
                         // check if the DecompositionMap is empty:
                         continue;
                     }
-                    size_t j = group_.properties.number_of_representations * i + repr;
-                    if (is_orthogonal_to_others(
-                            projected_basi[repr],
-                            k,
-                            added[repr],
-                            vector_result[j])) {
-                        move_vector_and_remember_it(
-                            projected_basi[repr],
-                            k,
-                            added[repr],
-                            vector_result[j]);
-                    }
+                    move_vector_and_remember_it(
+                        projected_basi[repr],
+                        k,
+                        indexes_to_vectors_maps[repr],
+                        vector_result[j]);
                 }
             }
         }
-
         subspace_parent.decomposition->clear();
     }
 
+#ifndef NDEBUG
+    std::vector<double> squares_of_coefficients_after = squares_of_coefficients(totalSpaceSize, vector_result);
+    compare_two_vectors_of_squared_coefficients(squares_of_coefficients_before, squares_of_coefficients_after);
+#endif
     return Space(std::move(vector_result));
 }
 
@@ -119,79 +170,99 @@ Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32
         }
     }
 
-    // this function deletes all pairs (key, value) with value = 0.0 from projections
     for (auto& v : projections) {
+        gram_schmidt_selforthogonalize(v);
+        // this function deletes all pairs (key, value) with value = 0.0 from projections
         v->eraseExplicitZeros();
     }
     return projections;
 }
 
-void Symmetrizer::increment_visited(
-    const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition,
-    uint32_t index_of_vector,
-    std::unordered_map<uint32_t, uint8_t>& hs) {
-    auto iterator = decomposition->GetNewIterator(index_of_vector);
-    while (iterator->hasNext()) {
-        auto item = iterator->getNext();
-        if (hs.find(item.index) == hs.end()) {
-            hs[item.index] = 1;
-        } else {
-            ++hs[item.index];
-        }
-    }
-}
-
-uint8_t Symmetrizer::count_how_many_orbit_was_visited(
-    const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition,
-    uint32_t index_of_vector,
-    std::unordered_map<uint32_t, uint8_t>& hs) {
-    uint8_t maximum = 0;
-    auto iterator = decomposition->GetNewIterator(index_of_vector);
-    while (iterator->hasNext()) {
-        auto item = iterator->getNext();
-        if (hs.find(item.index) != hs.end()) {
-            maximum = std::max(maximum, hs[item.index]);
-        }
-    }
-    return maximum;
-}
-
-bool Symmetrizer::is_orthogonal_to_others(
-    const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
-        decomposition_from,
-    uint32_t index_of_vector,
-    std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+void Symmetrizer::gram_schmidt_orthogonalize(
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
+    const std::unordered_map<uint32_t, std::vector<size_t>>& indexes_to_vectors_map,
     const Subspace& subspace_to) {
-    // TODO: should we check this only once per orbit?
-    std::unordered_set<size_t> us;
-    // we want to check orthogonality only with vectors, including the same lex-vectors:
-    auto outer_iterator = decomposition_from->GetNewIterator(index_of_vector);
-    while (outer_iterator->hasNext()) {
-        auto item = outer_iterator->getNext();
-        uint32_t index = item.index;
-        double value = item.value;
-        for (const auto& lex : hs[index]) {
-            // we do not want to check vector twice (or more):
-            if (us.count(lex) > 0) {
+    std::unordered_set<uint32_t> indexes_in_decomposition;
+    for (size_t col_i = 0; col_i < decomposition_from->size_cols(); ++col_i) {
+        auto outer_iterator = decomposition_from->GetNewIterator(col_i);
+        while (outer_iterator->hasNext()) {
+            auto item = outer_iterator->getNext();
+            indexes_in_decomposition.emplace(item.index);
+        }
+    }
+    std::unordered_set<uint32_t> visited_vectors;
+    for (const auto& index : indexes_in_decomposition) {
+        if (!indexes_to_vectors_map.contains(index)) {
+            continue;
+        }
+        for (const auto& col_j : indexes_to_vectors_map.at(index)) {
+            if (visited_vectors.contains(col_j)) {
                 continue;
             }
-            double accumulator = 0;
-            auto inner_iterator = decomposition_from->GetNewIterator(index_of_vector);
-            while (inner_iterator->hasNext()) {
-                auto inner_item = inner_iterator->getNext();
-                uint32_t inner_index = inner_item.index;
-                double inner_value = inner_item.value;
-                if (!subspace_to.decomposition->is_zero(lex, inner_index)) {
-                    accumulator += inner_value * subspace_to.decomposition->at(lex, inner_index);
+            auto first_iterator = subspace_to.decomposition->GetNewIterator(col_j);
+            double norm = 0.0;
+            while (first_iterator->hasNext()) {
+                auto pair = first_iterator->getNext();
+                norm += pair.value * pair.value;
+            }
+            for (size_t col_i = 0; col_i < decomposition_from->size_cols(); ++col_i) {
+                auto second_iterator = decomposition_from->GetNewIterator(col_i);
+                double dot_product = 0.0;
+                while (second_iterator->hasNext()) {
+                    auto pair = second_iterator->getNext();
+                    auto index = pair.index;
+                    auto value = pair.value;
+                    if (!subspace_to.decomposition->is_zero(col_j, index)) {
+                        dot_product += value * subspace_to.decomposition->at(col_j, index);
+                    }
+                }
+                if (std::abs(dot_product) > 1e-9) {
+                    auto third_iterator = subspace_to.decomposition->GetNewIterator(col_j);
+                    while (third_iterator->hasNext()) {
+                        auto pair = third_iterator->getNext();
+                        double value = pair.value * dot_product / norm;
+                        decomposition_from->add_to_position(-value, col_i, pair.index);
+                    }
                 }
             }
-            if (accumulator != 0) {
-                return false;
-            }
-            us.insert(lex);
+            visited_vectors.emplace(col_j);   
         }
     }
-    return true;
+    decomposition_from->eraseExplicitZeros();
+}
+
+void Symmetrizer::gram_schmidt_selforthogonalize(
+    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
+        decomposition_from) {
+    for (size_t col_j = 0; col_j < decomposition_from->size_cols(); ++col_j) {
+        auto first_iterator = decomposition_from->GetNewIterator(col_j);
+        double norm = 0.0;
+        while (first_iterator->hasNext()) {
+            auto pair = first_iterator->getNext();
+            norm += pair.value * pair.value;
+        }
+        for (size_t col_i = col_j + 1; col_i < decomposition_from->size_cols(); ++col_i) {
+            auto second_iterator = decomposition_from->GetNewIterator(col_i);
+            double dot_product = 0.0;
+            while (second_iterator->hasNext()) {
+                auto pair = second_iterator->getNext();
+                auto index = pair.index;
+                auto value = pair.value;
+                if (!decomposition_from->is_zero(col_j, index)) {
+                    dot_product += value * decomposition_from->at(col_j, index);
+                }
+            }
+            if (std::abs(dot_product) > 1e-9) {
+                auto third_iterator = decomposition_from->GetNewIterator(col_j);
+                while (third_iterator->hasNext()) {
+                    auto pair = third_iterator->getNext();
+                    double value = pair.value * dot_product / norm;
+                    decomposition_from->add_to_position(-value, col_i, pair.index);
+                }
+            }
+        }
+    }
+    decomposition_from->eraseExplicitZeros();
 }
 
 void Symmetrizer::move_vector_and_remember_it(
