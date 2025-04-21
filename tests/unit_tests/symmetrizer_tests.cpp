@@ -214,6 +214,63 @@ TEST(symmetrizer, 333) {
     }
 }
 
+TEST(symmetrizer, 222222) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    // S3
+    {
+        common::physical_optimization::OptimizationList optimizationList;
+        optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList},
+            factories);
+
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+    }
+    // S3 * S2, S2 * S3, their commutativity
+    {
+        // S3 * S2
+        common::physical_optimization::OptimizationList optimizationList_first;
+        optimizationList_first
+            .Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
+            .Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
+        space::Space space_first = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList_first},
+            quantum::linear_algebra::FactoriesList());
+
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space_first));
+        EXPECT_TRUE(orthogonality_of_basis(space_first)) << "Vectors are not orthogonal";
+
+        // S2 * S3
+        common::physical_optimization::OptimizationList optimizationList_second;
+        optimizationList_second.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}})
+            .Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        space::Space space_second = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList_second},
+            factories);
+
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space_second));
+        EXPECT_TRUE(orthogonality_of_basis(space_second)) << "Vectors are not orthogonal";
+
+        // check equivalence of S2*S3 and S3*S2:
+        for (const auto& subspace_first : space_first.getBlocks()) {
+            for (const auto& subspace_second : space_second.getBlocks()) {
+                if (subspace_first.properties.representation[0]
+                        == subspace_second.properties.representation[1]
+                    && subspace_first.properties.representation[1]
+                        == subspace_second.properties.representation[0]) {
+                    EXPECT_TRUE(isEqualUpToVectorOrder(
+                        subspace_first.decomposition,
+                        subspace_second.decomposition));
+                }
+            }
+        }
+    }
+}
+
 TEST(symmetrizer, 333333) {
     std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
     model::ModelInput model(mults);
