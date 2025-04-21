@@ -7,7 +7,7 @@ const auto factories = quantum::linear_algebra::FactoriesList();
 size_t number_of_vectors(const space::Space& space) {
     size_t acc = 0;
     for (const auto& subspace : space.getBlocks()) {
-        acc += subspace.size();
+        acc += subspace.size() * subspace.properties.degeneracy;
     }
     return acc;
 }

@@ -2,29 +2,11 @@
 #include "magic_enum.hpp"
 #include "src/common/runner/Runner.h"
 
-size_t size_of_matrix_without_degeneracy(const MatrixRef& matrix) {
-    size_t accumulator = 0;
-    for (const auto& submatrix_ref : matrix.blocks) {
-        const auto& submatrix = submatrix_ref.get();
-        accumulator += submatrix.raw_data->size();
-    }
-    return accumulator;
-}
-
 size_t size_of_matrix_with_degeneracy(const MatrixRef& matrix) {
     size_t accumulator = 0;
     for (const auto& submatrix_ref : matrix.blocks) {
         const auto& submatrix = submatrix_ref.get();
         accumulator += submatrix.raw_data->size() * submatrix.properties.degeneracy;
-    }
-    return accumulator;
-}
-
-size_t size_of_spectrum_without_degeneracy(const SpectrumRef& spectrum_ref) {
-    size_t accumulator = 0;
-    for (const auto& subspectrum_ref : spectrum_ref.blocks) {
-        const auto& subspectrum = subspectrum_ref.get();
-        accumulator += subspectrum.raw_data->size();
     }
     return accumulator;
 }
@@ -45,9 +27,6 @@ void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner::Runner& runner) {
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
             size_of_matrix_with_degeneracy(energy_matrix));
-        EXPECT_EQ(
-            runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_without_degeneracy(energy_matrix));
     }
     auto mb_s_squared_matrix = runner.getMatrix(common::S_total_squared);
     if (mb_s_squared_matrix.has_value()) {
@@ -55,9 +34,6 @@ void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner::Runner& runner) {
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
             size_of_matrix_with_degeneracy(s_squared_matrix));
-        EXPECT_EQ(
-            runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_without_degeneracy(s_squared_matrix));
     }
 }
 
@@ -68,9 +44,6 @@ void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
             EXPECT_EQ(
                 runner.getIndexConverter()->get_total_space_size(),
                 size_of_spectrum_with_degeneracy(quantity));
-            EXPECT_EQ(
-                runner.getIndexConverter()->get_total_space_size(),
-                size_of_spectrum_without_degeneracy(quantity));        
         }
     }
 }
