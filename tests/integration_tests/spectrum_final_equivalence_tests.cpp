@@ -572,3 +572,80 @@ INSTANTIATE_TEST_SUITE_P(
         OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections().Symmetrize(group_prism_di)
     )
 );
+
+void initialize_nine_centers_torus(model::ModelInput& model, double first) {
+    auto J = model.addSymbol("J", first);
+    model.assignSymbolToIsotropicExchange(J, 0, 1)
+        .assignSymbolToIsotropicExchange(J, 1, 2)
+        .assignSymbolToIsotropicExchange(J, 3, 4)
+        .assignSymbolToIsotropicExchange(J, 4, 5)
+        .assignSymbolToIsotropicExchange(J, 6, 7)
+        .assignSymbolToIsotropicExchange(J, 7, 8)
+        .assignSymbolToIsotropicExchange(J, 0, 3)
+        .assignSymbolToIsotropicExchange(J, 3, 6)
+        .assignSymbolToIsotropicExchange(J, 1, 4)
+        .assignSymbolToIsotropicExchange(J, 4, 7)
+        .assignSymbolToIsotropicExchange(J, 2, 5)
+        .assignSymbolToIsotropicExchange(J, 5, 8)
+        .assignSymbolToIsotropicExchange(J, 2, 0)
+        .assignSymbolToIsotropicExchange(J, 5, 3)
+        .assignSymbolToIsotropicExchange(J, 8, 6)
+        .assignSymbolToIsotropicExchange(J, 6, 0)
+        .assignSymbolToIsotropicExchange(J, 7, 1)
+        .assignSymbolToIsotropicExchange(J, 8, 2);
+}
+
+class torus : public SpectrumFinalEquivalenceTest {};
+
+#define group_torus_hor group::Group(group::Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}})
+#define group_torus_ver group::Group(group::Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+
+TEST_P(torus, NoGFactors) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2, 2, 2, 2, 2, 2}};
+    std::vector<double> js = {10, 17.17, 33};
+
+    for (const auto& mults : multss) {
+        for (auto j : js) {
+            model::ModelInput model(mults);
+            initialize_nine_centers_torus(model, j);
+
+            runner::Runner runner_simple(model);
+
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    torus,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_torus_hor),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_torus_ver),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_torus_hor).Symmetrize(group_torus_ver),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_torus_ver).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_torus_hor).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_torus_hor),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_torus_ver),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_torus_hor).Symmetrize(group_torus_ver),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_torus_hor).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_torus_ver).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_torus_hor),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_torus_ver),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_torus_hor).Symmetrize(group_torus_ver),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_torus_hor).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_torus_ver).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections()
+    )
+);
