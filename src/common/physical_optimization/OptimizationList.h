@@ -26,7 +26,7 @@ class OptimizationList {
     OptimizationList& Symmetrize(group::Group new_group);
     OptimizationList&
     Symmetrize(group::Group::GroupTypeEnum group_name, std::vector<group::Permutation> generators);
-    // TODO: OptimizationList& NonAbelianSimplify();
+    OptimizationList& NonAbelianSimplify();
     OptimizationList& FTLMApproximate(FTLMSettings ftlmSettings);
 
     bool isLexBasis() const;
@@ -38,6 +38,7 @@ class OptimizationList {
     bool isSSquaredTransformed() const;
     bool isFTLMApproximated() const;
     const std::vector<group::Group>& getGroupsToApply() const;
+    bool isNonAbelianSimplified() const;
     const FTLMSettings& getFTLMSettings() const;
 
   private:
@@ -47,8 +48,8 @@ class OptimizationList {
     bool isNonMinimalProjectionsEliminated_ = false;
     bool isSSquaredTransformed_ = false;
     std::vector<group::Group> groupsToApply_;
+    bool isNonAbelianSimplified_ = false;
     BasisType basis_type_;
-    // TODO: something about NonAbelianSimplifier
 
     bool isFTLMApproximated_ = false;
     std::optional<FTLMSettings> ftlmSettings_;

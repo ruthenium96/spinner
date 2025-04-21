@@ -106,6 +106,14 @@ Space OptimizedSpaceConstructor::construct(
         space = symmetrizer.apply(std::move(space));
         common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
         common::Logger::detailed_msg("Symmetrization is finished.");
+        if (!group.properties.is_abelian && optimizationList.isNonAbelianSimplified()) {
+            common::Logger::separate(2, common::verbose);
+            common::Logger::detailed_msg("Non-Abelian Simplification has started.");
+            NonAbelianSimplifier non_abelian_simplifier(factories);
+            space = non_abelian_simplifier.apply(std::move(space));
+            common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+            common::Logger::detailed_msg("Non-Abelian Simplification is finished.");    
+        }
         if (i + 1 == optimizationList.getGroupsToApply().size()) {
             common::Logger::separate(1, common::detailed);
         } else {

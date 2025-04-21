@@ -96,6 +96,9 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
             throw std::invalid_argument("Groups do not commute!");
         }
     }
+    if (isNonAbelianSimplified()) {
+        throw std::invalid_argument("Cannot symmetrize after non-Abelian simplification");
+    }
     if (basis_type_ == ITO && !new_group.properties.is_abelian) {
         throw std::invalid_argument("Currently cannot perform use ITO-basis with non-Abelian symmetries");
     }
@@ -112,6 +115,29 @@ OptimizationList& OptimizationList::Symmetrize(
     std::vector<group::Permutation> generators) {
     group::Group new_group(group_name, std::move(generators));
     return Symmetrize(new_group);
+}
+
+OptimizationList& OptimizationList::NonAbelianSimplify() {
+    if (getGroupsToApply().empty()) {
+        throw std::invalid_argument("Cannot non-Abelian simplify without symmetrizing");
+    }
+    size_t number_of_nonabelian_groups = 0;
+    for (const auto& group : getGroupsToApply()) {
+        if (!group.properties.is_abelian) {
+            ++number_of_nonabelian_groups;
+        }
+    }
+    if (number_of_nonabelian_groups == 0) {
+        throw std::invalid_argument("Only Abelian groups. Cannot non-Abelian simplify them");
+    }
+    if (number_of_nonabelian_groups > 1) {
+        throw std::invalid_argument("More than one non-Abelian group. Cannot non-Abelian simplify them yet");
+    }
+    if (getGroupsToApply()[0].properties.is_abelian) {
+        throw std::invalid_argument("Non-Abelian group need to be the first group to apply for non-Abelian simplification");
+    }
+    isNonAbelianSimplified_ = true;
+    return *this;
 }
 
 bool OptimizationList::isLexBasis() const {
@@ -148,6 +174,10 @@ bool OptimizationList::isFTLMApproximated() const {
 
 const std::vector<group::Group>& OptimizationList::getGroupsToApply() const {
     return groupsToApply_;
+}
+
+bool OptimizationList::isNonAbelianSimplified() const {
+    return isNonAbelianSimplified_;
 }
 
 const OptimizationList::FTLMSettings& OptimizationList::getFTLMSettings() const {

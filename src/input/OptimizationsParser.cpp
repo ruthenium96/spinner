@@ -42,6 +42,9 @@ void OptimizationsParser::customParser(YAML::Node custom_node) {
     if (extractValue<YAML::Node>(custom_node, "nonminimal_tz_eliminator").IsDefined()) {
         optimizations_list_->EliminateNonMininalProjections();
     }
+    if (extractValue<YAML::Node>(custom_node, "non_abelian_simplifier").IsDefined()) {
+        optimizations_list_->NonAbelianSimplify();
+    }
     if (extractValue<YAML::Node>(custom_node, "s2_transformer").IsDefined()) {
         optimizations_list_->SSquaredTransform();
     }
