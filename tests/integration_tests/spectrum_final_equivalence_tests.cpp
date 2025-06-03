@@ -106,7 +106,9 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
                         if (magic_enum::enum_value<common::QuantityEnum>(k) != common::S_total_squared) {
                             quantum_values_sum_second[k].value() *= 3;
                         }
-                        EXPECT_NEAR(quantum_values_sum_first[j].value(), quantum_values_sum_second[k].value(), 1e-3);
+                        EXPECT_NEAR(quantum_values_sum_first[j].value(), quantum_values_sum_second[k].value(), 1e-3)
+                        << "Names of values, j: " << magic_enum::enum_entries<common::QuantityEnum>()[j].second
+                        << ", k: " << magic_enum::enum_entries<common::QuantityEnum>()[k].second;
                         quantum_values_sum_first[j] = 0;
                         quantum_values_sum_second[k] = 0;
                     }
