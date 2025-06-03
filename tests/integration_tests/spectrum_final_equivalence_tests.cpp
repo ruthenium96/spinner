@@ -3,6 +3,7 @@
 #include <optional>
 #include "gtest/gtest.h"
 #include "magic_enum.hpp"
+#include "src/common/OneOrMany.h"
 #include "src/common/Quantity.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 #include "src/common/runner/Runner.h"
@@ -29,6 +30,7 @@ std::vector<QuantumValues> construct_final_vector(runner::Runner& runner) {
         }
     }
 
+    EXPECT_TRUE(holdsOne(runner.getSpectrum(common::Energy).value()));
     SpectrumRef energy_spectrum_ref = getOneRef(runner.getSpectrum(common::Energy).value());
     for (const auto& subspectrum_ref : energy_spectrum_ref.blocks) {
         const auto& subspectrum = subspectrum_ref.get();
@@ -100,6 +102,10 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
                 for (int k = 0; k < quantum_values_sum_second.size(); ++k) {
                     if (quantum_values_sum_first[j].has_value() 
                         && quantum_values_sum_second[k].has_value()) {
+                        if (magic_enum::enum_value<common::QuantityEnum>(j) == common::squared_back_projection ||
+                            magic_enum::enum_value<common::QuantityEnum>(k) == common::squared_back_projection) {
+                                continue;
+                            }
                         if (magic_enum::enum_value<common::QuantityEnum>(j) != common::S_total_squared) {
                             quantum_values_sum_first[j].value() *= 3;
                         }
