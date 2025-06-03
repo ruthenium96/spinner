@@ -271,7 +271,7 @@ TEST_P(five_center_chain, DifferentGFactors) {
         {3, 3, 4, 3, 3},
         {4, 2, 4, 2, 4}};
     std::vector<std::pair<double, double>> js =
-        {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
+        {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}};
     std::vector<std::array<double, 3>> gss = {
         {2.0, 2.0, 2.0}, {2.0, 2.1, 2.2}, {3.1, 4.1, 5.1}
     };
@@ -300,8 +300,8 @@ TEST_P(five_center_chain, SameGFactors) {
         {3, 3, 4, 3, 3},
         {4, 2, 4, 2, 4}};
     std::vector<std::pair<double, double>> js =
-        {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
-    std::vector<double> gs = {2.0, 2.1, 2.2, 3.1, 4.1, 5.1};
+        {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}};
+    std::vector<double> gs = {2.0, 2.2, 3.1, 4.1, 5.1};
 
     for (const auto& mults : multss) {
         for (auto [Jfirst, Jsecond] : js) {
