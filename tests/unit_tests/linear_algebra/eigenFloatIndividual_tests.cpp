@@ -4,7 +4,10 @@
 template<>
 std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>
 createConcreteFactory<std::pair<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory, float>>() {
-    return std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
+    auto factory =
+        std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
+    factory->setPrecision(quantum::linear_algebra::SINGLE);
+    return factory;
 }
 
 typedef testing::Types<std::pair<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory, float>> EigenFloat;
