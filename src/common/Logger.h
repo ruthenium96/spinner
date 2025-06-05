@@ -2,6 +2,7 @@
 #define SPINNER_LOGGER_H
 
 #include "PrintingFunctions.h"
+#include <spdlog/fmt/ranges.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
 
