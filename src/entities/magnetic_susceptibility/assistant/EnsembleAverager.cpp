@@ -1,6 +1,7 @@
 #include "EnsembleAverager.h"
 #include <numeric>
 
+#include "src/common/OneOrMany.h"
 #include "src/common/Quantity.h"
 
 namespace {
@@ -20,7 +21,7 @@ EnsembleAverager::EnsembleAverager(
 double EnsembleAverager::ensemble_average(
     OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> value,
     double temperature) const {
-    if (flattenedSpectra_->getFlattenSpectrum(common::squared_back_projection).has_value()) {
+    if (holdsMany(flattenedSpectra_->getFlattenSpectrum(common::Energy).value())) {
         return ensemble_average_ftlm(value, temperature);
     } else {
         return ensemble_average_common(value, temperature);
