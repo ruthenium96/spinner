@@ -36,6 +36,7 @@ add_executable(spinner_test
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
         unit_tests/parser_tests.cpp
+        unit_tests/ftlm_tests.cpp
         non_hamiltonian_operators_tests.cpp
         unit_tests/magnetic_susceptibility_tests.cpp
         integration_tests/spectrum_builder_tests.cpp

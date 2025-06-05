@@ -69,10 +69,16 @@ OptimizationList& OptimizationList::SSquaredTransform() {
 
 OptimizationList& OptimizationList::FTLMApproximate(FTLMSettings ftlmSettings) {
     if (isSSquaredTransformed()) {
-        std::invalid_argument("Cannot use FTLM with SSquaredTransformation yet");
+        throw std::invalid_argument("Cannot use FTLM with SSquaredTransformation yet");
     }
     if (!isPositiveProjectionsEliminated()) {
-        std::invalid_argument("Positive projections elimination required for FTLM");
+        throw std::invalid_argument("Positive projections elimination required for FTLM due accuracy issues");
+    }
+    if (ftlmSettings.krylov_subspace_size > ftlmSettings.exact_decomposition_threshold) {
+        throw std::invalid_argument("Size of Krylov subspace bigger than threshold of exact decomposition");
+    }
+    if (ftlmSettings.number_of_seeds == 0) {
+        throw std::invalid_argument("Number of seeds in FTLM equals to zero");
     }
     isFTLMApproximated_ = true;
     ftlmSettings_ = ftlmSettings;
