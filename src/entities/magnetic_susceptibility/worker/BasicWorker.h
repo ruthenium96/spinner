@@ -1,9 +1,11 @@
 #ifndef SPINNER_BASICWORKER_H
 #define SPINNER_BASICWORKER_H
 
+#include <memory>
 #include <optional>
 
-#include "src/entities/magnetic_susceptibility/assistant/EnsembleAverager.h"
+#include "src/eigendecompositor/FlattenedSpectra.h"
+#include "src/entities/magnetic_susceptibility/assistant/AbstractEnsembleAverager.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/AbstractWorker.h"
 
@@ -17,7 +19,7 @@ class BasicWorker: public AbstractWorker {
         const std::shared_ptr<ExperimentalValuesWorker>& experimental_values_worker) override;
 
   protected:
-    const EnsembleAverager ensemble_averager_;
+    std::shared_ptr<AbstractEnsembleAverager> ensemble_averager_;
     std::optional<std::shared_ptr<ExperimentalValuesWorker>> experimental_values_worker_;
 };
 }  // namespace magnetic_susceptibility
