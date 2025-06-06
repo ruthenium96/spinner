@@ -12,13 +12,22 @@ CommonEnsembleAverager::CommonEnsembleAverager(
 double CommonEnsembleAverager::ensemble_average(
     OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> value,
     double temperature) const {
+    auto [value_numerator, partition_function] = 
+        ensemble_average_numerator_denominator(getOneRef(value).get(), temperature);
+    return value_numerator / partition_function;
+}
+
+std::pair<double, double> CommonEnsembleAverager::ensemble_average_numerator_denominator(
+    std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> value,
+    double temperature) const {
     const auto& energy_vector = getOneRef(flattenedSpectra_->getFlattenSpectrum(common::Energy).value()).get();
     const auto& degeneracy_vector = flattenedSpectra_->getDegeneracyValues();
-    const auto& value_vector = getOneRef(value).get();
+    const auto& value_vector = value.get();
     auto divided_and_wise_exped_energy = energy_vector->multiply_by(-1.0 / temperature);
     divided_and_wise_exped_energy->wise_exp();
     double partition_function = divided_and_wise_exped_energy->dot(degeneracy_vector);
     double value_numerator = value_vector->triple_dot(degeneracy_vector, divided_and_wise_exped_energy);
-    return value_numerator / partition_function;
+    return {value_numerator, partition_function};
 }
+
 }  // namespace magnetic_susceptibility

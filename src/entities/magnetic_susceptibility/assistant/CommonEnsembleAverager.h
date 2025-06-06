@@ -15,6 +15,8 @@ class CommonEnsembleAverager : public AbstractEnsembleAverager {
     double ensemble_average(
         OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> value,
         double temperature) const override;
+    std::pair<double, double> ensemble_average_numerator_denominator(std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> value,
+        double temperature) const;
   private:
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;
   
