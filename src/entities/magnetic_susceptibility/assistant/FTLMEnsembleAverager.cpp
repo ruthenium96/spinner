@@ -23,10 +23,17 @@ FTLMEnsembleAverager::FTLMEnsembleAverager(
 double FTLMEnsembleAverager::ensemble_average(
     OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> values,
     double temperature) const {
-        auto energy_vectors = getManyRef(flattenedSpectra_->getFlattenSpectrum(common::Energy).value());
+    auto fraction = ensemble_average_numerator_denominator(getManyRef(values), temperature);
+    return average_over_seeds(fraction.first) / average_over_seeds(fraction.second);
+}
+
+std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemble_average_numerator_denominator(
+    const std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>& values,
+    double temperature) const {
+    auto energy_vectors = getManyRef(flattenedSpectra_->getFlattenSpectrum(common::Energy).value());
     const auto& degeneracy_vector = flattenedSpectra_->getDegeneracyValues();
     auto squared_back_projection_vectors = getManyRef(flattenedSpectra_->getFlattenSpectrum(common::squared_back_projection).value());
-    auto value_vectors = getManyRef(values);
+    const auto& value_vectors = values;
 
     std::vector<double> partition_functions(energy_vectors.size());
     std::vector<double> value_numerators(energy_vectors.size());
@@ -46,6 +53,7 @@ double FTLMEnsembleAverager::ensemble_average(
     double averaged_partition_function = average_over_seeds(partition_functions);
     double averaged_value_numenator = average_over_seeds(value_numerators);
 
-    return averaged_value_numenator / averaged_partition_function;
+    return {std::move(value_numerators), std::move(partition_functions)};
 }
+
 }  // namespace magnetic_susceptibility
