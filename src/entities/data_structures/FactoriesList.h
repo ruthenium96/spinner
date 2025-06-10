@@ -1,6 +1,8 @@
 #ifndef SPINNER_FACTORIESLIST_H
 #define SPINNER_FACTORIESLIST_H
 
+#include <cstdint>
+#include <vector>
 #include "AbstractFactories.h"
 
 // TODO: refactor the whole project and pass FactoriesList only to some controlling class.
@@ -22,7 +24,7 @@ class FactoriesList {
     createSparseDiagonalizableMatrix(uint32_t size) const;
     std::unique_ptr<AbstractDenseSemiunitaryMatrix>
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
-    std::unique_ptr<AbstractDenseVector> createRandomUnitVector(uint32_t size) const;
+    std::vector<std::unique_ptr<AbstractDenseVector>> createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) const;
     std::unique_ptr<AbstractDenseVector> createVector() const;
     std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;

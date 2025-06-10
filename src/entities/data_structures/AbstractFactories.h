@@ -1,6 +1,7 @@
 #ifndef SPINNER_ABSTRACTFACTORIES_H
 #define SPINNER_ABSTRACTFACTORIES_H
 
+#include <vector>
 #include "AbstractDenseSemiunitaryMatrix.h"
 #include "AbstractDenseVector.h"
 #include "AbstractDiagonalizableMatrix.h"
@@ -20,7 +21,7 @@ class AbstractDenseTransformAndDiagonalizeFactory {
     createSparseDiagonalizableMatrix(uint32_t size) = 0;
     virtual std::unique_ptr<AbstractDenseSemiunitaryMatrix>
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
-    virtual std::unique_ptr<AbstractDenseVector> createRandomUnitVector(uint32_t size) = 0;
+    virtual std::vector<std::unique_ptr<AbstractDenseVector>> createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) = 0;
     virtual std::unique_ptr<AbstractDenseVector> createVector() = 0;
 
     ~AbstractDenseTransformAndDiagonalizeFactory() = default;

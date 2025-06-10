@@ -1,4 +1,5 @@
 #include "FactoriesList.h"
+#include <vector>
 
 namespace quantum::linear_algebra {
 
@@ -17,8 +18,9 @@ FactoriesList::createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const 
     return denseFactory_->createDenseSemiunitaryMatrix(cols, rows);
 }
 
-std::unique_ptr<AbstractDenseVector> FactoriesList::createRandomUnitVector(uint32_t size) const {
-    return denseFactory_->createRandomUnitVector(size);
+std::vector<std::unique_ptr<AbstractDenseVector>> 
+FactoriesList::createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) const {
+    return denseFactory_->createRandomUnitVectors(size_of_vector, number_of_vectors);
 }
 
 std::unique_ptr<AbstractDenseVector> FactoriesList::createVector() const {

@@ -48,9 +48,7 @@ FTLMEigendecompositor::BuildSubspectra(
     }
 
     if (!first_iteration_has_been_done_) {
-        for (int seed = 0; seed < number_of_seeds_; ++seed) {
-            seed_vectors_[number_of_block].emplace_back(factories_list_.createRandomUnitVector(size_of_subspace));
-        }
+        seed_vectors_[number_of_block] = factories_list_.createRandomUnitVectors(size_of_subspace, number_of_seeds_);
     }
 
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>

@@ -1,7 +1,10 @@
 #ifndef SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H
 #define SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H
 
+#include <cstdint>
+#include <memory>
 #include "gtest/gtest.h"
+#include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/data_structures/AbstractFactories.h"
 #include "tests/tools/GenerateSameMatrix.h"
 
@@ -80,7 +83,7 @@ TYPED_TEST_P(
     randomUnitVectorsAreUnit) {
     
     for (size_t size = 1; size <= 2048; size*=2) {
-        auto vector = this->factory_->createRandomUnitVector(size);
+        auto vector = std::move(this->factory_->createRandomUnitVectors(size, 1)[0]);
 
         ASSERT_EQ(vector->size(), size);
         double norm = 0.0;
@@ -96,7 +99,7 @@ TYPED_TEST_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
     randomUnitVectorsAreUnbiased) {
     for (size_t size = 1024; size <= 65536; size*=2) {
-        auto vector = this->factory_->createRandomUnitVector(size);
+        auto vector = std::move(this->factory_->createRandomUnitVectors(size, 1)[0]);
 
         ASSERT_EQ(vector->size(), size);
         double sum = 0.0;
