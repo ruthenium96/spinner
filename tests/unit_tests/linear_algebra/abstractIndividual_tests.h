@@ -112,12 +112,47 @@ TYPED_TEST_P(
     }
 }
 
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    correctNumberOfRandomUnitVectors) {
+    for (size_t size = 2048; size <= 65536; size*=2) {
+        for (size_t number_of_vectors = 1; number_of_vectors <= 1000; number_of_vectors*=10) {
+            auto random_vectors = this->factory_->createRandomUnitVectors(size, number_of_vectors);
+            EXPECT_EQ(random_vectors.size(), number_of_vectors);
+        }
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    randomUnitVectorsAreIndependent) {
+    const uint32_t number_of_vectors = 500;
+    for (size_t size = 2048; size <= 65536; size*=2) {
+        auto random_vectors = this->factory_->createRandomUnitVectors(size, number_of_vectors);
+        auto gramian = this->factory_->createDenseDiagonalizableMatrix(number_of_vectors);
+        for (int i = 0; i < number_of_vectors; ++i) {
+            for (int j = i; j < number_of_vectors; ++j) {
+                double scalar_product = random_vectors[i]->dot(random_vectors[j]);
+                gramian->add_to_position(scalar_product, i, j);
+            }
+        }
+        auto eigenvalues_of_gramian = gramian->diagonalizeValues();
+        ASSERT_EQ(eigenvalues_of_gramian->size(), number_of_vectors);
+        for (int i = 0; i < number_of_vectors; ++i) {
+            EXPECT_GE(std::abs(eigenvalues_of_gramian->at(i)), 1e-5) 
+            << "Eigenvalue of Gramian is close to zero: " << eigenvalues_of_gramian->at(i);
+        }
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
     NonNullptrObjects,
     unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence,
     krylovDiagonalizeValuesAndDiagonalizeValues,
     randomUnitVectorsAreUnit,
-    randomUnitVectorsAreUnbiased);
+    randomUnitVectorsAreUnbiased,
+    correctNumberOfRandomUnitVectors,
+    randomUnitVectorsAreIndependent);
 
 #endif  //SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H
