@@ -5,6 +5,7 @@
 
 #include "src/common/OneOrMany.h"
 #include "src/common/Quantity.h"
+#include "src/common/UncertainValue.h"
 
 namespace {
 
@@ -20,11 +21,15 @@ FTLMEnsembleAverager::FTLMEnsembleAverager(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra) :
     flattenedSpectra_(flattenedSpectra) {}
 
-double FTLMEnsembleAverager::ensemble_average(
+common::UncertainValue FTLMEnsembleAverager::ensemble_average(
     OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> values,
     double temperature) const {
     auto fraction = ensemble_average_numerator_denominator(getManyRef(values), temperature);
-    return average_over_seeds(fraction.first) / average_over_seeds(fraction.second);
+    size_t number_of_seeds = fraction.second.size();
+    double averaged_partition_function = average_over_seeds(fraction.second);
+    double value = average_over_seeds(fraction.first) / averaged_partition_function;
+    double uncertainty = value / std::sqrt(averaged_partition_function * number_of_seeds);
+    return common::UncertainValue(value, uncertainty, common::UncertaintySources::FTLM);
 }
 
 std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemble_average_numerator_denominator(
@@ -49,9 +54,6 @@ std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemb
         partition_functions.push_back(partition_function);
         value_numerators.push_back(value_numerator);
     }
-
-    double averaged_partition_function = average_over_seeds(partition_functions);
-    double averaged_value_numenator = average_over_seeds(value_numerators);
 
     return {std::move(value_numerators), std::move(partition_functions)};
 }

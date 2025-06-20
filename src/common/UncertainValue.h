@@ -20,7 +20,7 @@ class UncertainValue {
     std::array<double, NUMBER_OF_SOURCES> correlation_coeffs_ = {1.0, 0.0};
   public:
     UncertainValue();
-    UncertainValue(double mean);
+    explicit UncertainValue(double mean);
     UncertainValue(double mean, double stdev, UncertaintySources source);
     UncertainValue(double mean, std::array<double, NUMBER_OF_SOURCES> stdevs);
 
@@ -38,10 +38,14 @@ class UncertainValue {
 
     UncertainValue operator*(const UncertainValue& rhs) const;
     UncertainValue& operator*=(const UncertainValue& rhs);
+    UncertainValue operator*(double rhs) const;
+    UncertainValue& operator*=(double rhs);
     friend UncertainValue operator*(double lhs, const UncertainValue& rhs);
 
     UncertainValue operator/(const UncertainValue& rhs) const;
     UncertainValue& operator/=(const UncertainValue& rhs);
+    UncertainValue operator/(double rhs) const;
+    UncertainValue& operator/=(double rhs);
 
     static UncertainValue sqrt(const UncertainValue& value);
     static UncertainValue inv(const UncertainValue& value);

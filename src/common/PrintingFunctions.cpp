@@ -1,6 +1,7 @@
 #include "PrintingFunctions.h"
 
 #include "src/common/Logger.h"
+#include "src/common/UncertainValue.h"
 
 #include <magic_enum.hpp>
 #include <string>
@@ -120,13 +121,13 @@ void preRegressionPrint(
 void postRegressionPrint(
     const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
-    double rss) {
+    UncertainValue rss) {
     common::Logger::basic_msg("Regression is finished. Final values:");
     for (size_t i = 0; i < changeable_names.size(); ++i) {
         common::Logger::basic("{}: {}", changeable_names[i].get_name(), changeable_values[i]);
     }
     common::Logger::separate(2, common::basic);
-    common::Logger::basic("Loss function = {}", rss);
+    common::Logger::basic("Loss function = {} +/- {}", rss.mean(), rss.stdev_total());
     common::Logger::separate(0, common::basic);
 }
 
@@ -140,8 +141,8 @@ void stepOfRegressionStartPrint(
     common::Logger::separate(2, common::verbose);
 }
 
-void stepOfRegressionFinishPrint(double loss) {
-    common::Logger::verbose("Loss function = {}", loss);
+void stepOfRegressionFinishPrint(UncertainValue loss) {
+    common::Logger::verbose("Loss function = {} +/- {}", loss.mean(), loss.stdev_total());
     common::Logger::separate(1, common::verbose);
 }
 
@@ -152,9 +153,10 @@ void initialExperimentalValuesPrint(
                               magic_enum::enum_name(experimental_values_type));
     for (size_t i = 0; i < experimental_values.size(); ++i) {
         common::Logger::debug(
-            "{:.8e}    {:.8e}",
+            "{:.8e}    {:.8e} +/- {:.8e}",
             experimental_values.at(i).temperature,
-            experimental_values.at(i).value);
+            experimental_values.at(i).value.mean(),
+            experimental_values.at(i).value.stdev_total());
     }
     common::Logger::separate(0, common::debug);
 }
@@ -162,12 +164,13 @@ void initialExperimentalValuesPrint(
 void experimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_mu_squared,
     const std::vector<double>& weights) {
-    common::Logger::verbose_msg("Experimental values, corrected by ratio and in mu-squared, and weights:");
+    common::Logger::verbose_msg("Experimental values, corrected by ratio and in mu-squared, uncertainties and weights:");
     for (size_t i = 0; i < experimental_mu_squared.size(); ++i) {
         common::Logger::verbose(
-            "{:.8e}    {:.8e}    {:.8e}",
+            "{:.8e}    {:.8e} +/- {:.8e}    {:.8e}",
             experimental_mu_squared.at(i).temperature,
-            experimental_mu_squared.at(i).value,
+            experimental_mu_squared.at(i).value.mean(),
+            experimental_mu_squared.at(i).value.stdev_total(),
             weights.at(i));
     }
     common::Logger::separate(0, common::verbose);
@@ -176,9 +179,12 @@ void experimentalValuesPrint(
 // todo: also print magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type
 void theoreticalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& theor_values) {
-    common::Logger::basic_msg("\nValue, Temperature");
+    common::Logger::basic_msg("\nTemperature, Value, Uncertainty");
     for (auto [temperature, value] : theor_values) {
-        common::Logger::basic("{:.8e}    {:.8e}", temperature, value);
+        common::Logger::basic("{:.8e}    {:.8e} +/- {:.8e}", 
+            temperature, 
+            value.mean(), 
+            value.stdev_total());
     }
     common::Logger::separate(0, common::basic);
 }

@@ -2,6 +2,7 @@
 
 #include "src/common/OneOrMany.h"
 #include "src/common/Quantity.h"
+#include "src/common/UncertainValue.h"
 
 namespace magnetic_susceptibility {
 
@@ -9,12 +10,12 @@ CommonEnsembleAverager::CommonEnsembleAverager(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra) :
     flattenedSpectra_(flattenedSpectra) {}
 
-double CommonEnsembleAverager::ensemble_average(
+common::UncertainValue CommonEnsembleAverager::ensemble_average(
     OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> value,
     double temperature) const {
     auto [value_numerator, partition_function] = 
         ensemble_average_numerator_denominator(getOneRef(value).get(), temperature);
-    return value_numerator / partition_function;
+    return common::UncertainValue(value_numerator / partition_function);
 }
 
 std::pair<double, double> CommonEnsembleAverager::ensemble_average_numerator_denominator(

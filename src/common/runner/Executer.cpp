@@ -13,7 +13,7 @@ void Executer::execute(input::Parser parser) {
         if (parser.getTemperaturesForSimulation().has_value()) {
             std::vector<magnetic_susceptibility::ValueAtTemperature> theor_values;
             for (auto temp : parser.getTemperaturesForSimulation().value()) {
-                double value = runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(temp);
+                auto value = runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(temp);
                 theor_values.push_back({temp, value});
             }
 

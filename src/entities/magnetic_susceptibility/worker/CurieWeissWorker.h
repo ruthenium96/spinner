@@ -14,7 +14,7 @@ class CurieWeissWorker: public AbstractWorker {
     CurieWeissWorker(
         std::unique_ptr<AbstractWorker>&& muSquaredWorker,
         std::shared_ptr<const double> Theta);
-    double calculateTheoreticalMuSquared(double temperature) const override;
+    common::UncertainValue calculateTheoreticalMuSquared(double temperature) const override;
 
     std::shared_ptr<ExperimentalValuesWorker> getExperimentalValuesWorker() override;
     std::shared_ptr<const ExperimentalValuesWorker> getExperimentalValuesWorker() const override;

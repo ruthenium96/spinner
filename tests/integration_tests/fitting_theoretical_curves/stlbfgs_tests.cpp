@@ -69,7 +69,7 @@ TEST(
 
             runner.minimizeResidualError(std::make_shared<nonlinear_solver::stlbfgsAdapter>());
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbolicWorker().getValueOfName(J);
             double g_one_fitted = runner.getSymbolicWorker().getValueOfName(g_one);
@@ -78,7 +78,7 @@ TEST(
             double g_one_range = std::abs((g_one_fitted) / 1000);
             double g_two_range = std::abs((g_two_fitted) / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_one_fitted, g_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_exact, g_two_range);

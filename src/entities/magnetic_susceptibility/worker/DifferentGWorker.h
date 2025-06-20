@@ -15,7 +15,8 @@ class DifferentGWorker: public BasicWorker {
       common::QuantityEnum quantity_enum_for_averaging, 
       double quantity_factor);
 
-    double calculateTheoreticalMuSquared(double temperature) const override;
+    common::UncertainValue calculateTheoreticalMuSquared(double temperature) const override;
+    
     std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
         model::symbols::SymbolName symbol_name) const override;          

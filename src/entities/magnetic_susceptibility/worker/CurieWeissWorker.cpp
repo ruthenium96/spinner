@@ -1,6 +1,7 @@
 #include "CurieWeissWorker.h"
 
 #include <utility>
+#include "src/common/UncertainValue.h"
 #include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
@@ -11,8 +12,8 @@ CurieWeissWorker::CurieWeissWorker(
     worker_(std::move(worker)),
     Theta_(std::move(Theta)) {}
 
-double CurieWeissWorker::calculateTheoreticalMuSquared(double temperature) const {
-    double theoreticalMuSquared = worker_->calculateTheoreticalMuSquared(temperature);
+common::UncertainValue CurieWeissWorker::calculateTheoreticalMuSquared(double temperature) const {
+    auto theoreticalMuSquared = worker_->calculateTheoreticalMuSquared(temperature);
     theoreticalMuSquared = temperature * theoreticalMuSquared / (temperature - *Theta_);
     return theoreticalMuSquared;
 }
@@ -38,7 +39,7 @@ std::vector<ValueAtTemperature> CurieWeissWorker::calculateDerivative(
         std::vector<double> temperatures = getExperimentalValuesWorker()->getTemperatures();
         std::vector<ValueAtTemperature> theoretical_mu_squared_values(temperatures.size());
         for (size_t i = 0; i < temperatures.size(); ++i) {
-            double value = temperatures[i] * worker_->calculateTheoreticalMuSquared(temperatures[i])
+            auto value = temperatures[i] * worker_->calculateTheoreticalMuSquared(temperatures[i])
                 / ((temperatures[i] - *Theta_) * (temperatures[i] - *Theta_));
             theoretical_mu_squared_values[i] = {temperatures[i], value};
         }

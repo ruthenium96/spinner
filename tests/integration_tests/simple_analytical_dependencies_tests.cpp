@@ -36,12 +36,12 @@ TEST(simple_analytical_dependencies, nothing) {
             double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
             for (size_t temperature = 1; temperature < 301; ++temperature) {
-                double calculated_value =
+                auto calculated_value =
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
                         temperature);
                 double exact_value = (g_exact * g_exact * sum_of_s_squared_);
                 // TODO: epsilon
-                EXPECT_NEAR(calculated_value, exact_value, 1e-9);
+                EXPECT_NEAR(calculated_value.mean(), exact_value, 1e-9);
             }
         }
     }
@@ -79,13 +79,13 @@ TEST(simple_analytical_dependencies, Theta) {
                 double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
                 for (size_t temperature = 1; temperature < 301; ++temperature) {
-                    double calculated_value =
+                    auto calculated_value =
                         runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
                             temperature);
                     double exact_value = (g_exact * g_exact * sum_of_s_squared_) * temperature
                         / (temperature - Theta_exact);
                     // TODO: epsilon
-                    EXPECT_NEAR(calculated_value, exact_value, 1e-9);
+                    EXPECT_NEAR(calculated_value.mean(), exact_value, 1e-9);
                 }
             }
         }
@@ -124,12 +124,12 @@ TEST(simple_analytical_dependencies, 22_J_analytical) {
             };
 
             for (size_t temperature = 1; temperature < 301; ++temperature) {
-                double calculated_value =
+                auto calculated_value =
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
                         temperature);
                 double exact_value = 3 * g_exact * g_exact * s_squared_function(temperature);
                 // TODO: epsilon
-                EXPECT_NEAR(calculated_value, exact_value, 1e-9);
+                EXPECT_NEAR(calculated_value.mean(), exact_value, 1e-9);
             }
         }
     }

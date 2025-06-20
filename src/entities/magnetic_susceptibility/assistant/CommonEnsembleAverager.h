@@ -12,7 +12,7 @@ namespace magnetic_susceptibility {
 class CommonEnsembleAverager : public AbstractEnsembleAverager {
   public:
     CommonEnsembleAverager(std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra);
-    double ensemble_average(
+    common::UncertainValue ensemble_average(
         OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> value,
         double temperature) const override;
     std::pair<double, double> ensemble_average_numerator_denominator(std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> value,

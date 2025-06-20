@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Tools.h"
+#include "src/common/UncertainValue.h"
 #include "src/nonlinear_solver/optimNM/optimNMAdapter.h"
 #include "src/nonlinear_solver/stlbfgs/stlbfgsAdapter.h"
 
@@ -16,7 +17,7 @@ template<>
 magnetic_susceptibility::ValueAtTemperature YAML::Node::as() const {
     auto temp_and_value = as<std::array<double, 2>>();
 
-    return {temp_and_value[0], temp_and_value[1]};
+    return {temp_and_value[0], common::UncertainValue(temp_and_value[1])};
 }
 
 template<>
@@ -120,11 +121,12 @@ void JobParser::read_data_from_file(
     std::vector<magnetic_susceptibility::ValueAtTemperature>& exp_data,
     const std::string& exp_filename) {
     std::ifstream exp_filestream (exp_filename);
+    // TODO: also read uncertainties of experimental values
     while (exp_filestream) {
         double temp;
         double value;
         exp_filestream >> temp >> value;
-        magnetic_susceptibility::ValueAtTemperature temp_and_value = {temp, value};
+        magnetic_susceptibility::ValueAtTemperature temp_and_value = {temp, common::UncertainValue(value)};
         exp_data.emplace_back(temp_and_value);
     }
 }

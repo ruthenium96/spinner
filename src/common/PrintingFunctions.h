@@ -7,6 +7,7 @@
 
 #include "OneOrMany.h"
 #include "Quantity.h"
+#include "UncertainValue.h"
 #include "src/entities/BlockProperties.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/entities/matrix/Matrix.h"
@@ -55,10 +56,10 @@ void preRegressionPrint(
 void postRegressionPrint(
     const std::vector<model::symbols::SymbolName>& changeable_names,
     const std::vector<double>& changeable_values,
-    double rss);
+    UncertainValue rss);
 void stepOfRegressionStartPrint(const std::vector<model::symbols::SymbolName>& changeable_names,
                                const std::vector<double>& changeable_values);
-void stepOfRegressionFinishPrint(double loss);
+void stepOfRegressionFinishPrint(UncertainValue loss);
 void initialExperimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_values,
     magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type);

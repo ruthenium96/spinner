@@ -49,7 +49,7 @@ double UncertainValue::stdev_total() const {
 
 UncertainValue UncertainValue::operator-() const {
     UncertainValue answer = *this;
-    answer *= -1.0;
+    answer *= UncertainValue(-1.0);
     return answer;
 }
 
@@ -112,9 +112,18 @@ UncertainValue& UncertainValue::operator*=(const UncertainValue& rhs) {
     return *this;
 }
 
+UncertainValue UncertainValue::operator*(double rhs) const {
+    return *this * UncertainValue(rhs);
+}
+
+UncertainValue& UncertainValue::operator*=(double rhs) {
+    *this *= UncertainValue(rhs);
+    return *this;
+}
+
 UncertainValue operator*(double lhs, const UncertainValue& rhs) {
     UncertainValue answer = rhs;
-    answer *= lhs;
+    answer *= UncertainValue(lhs);
     return answer;
 }
 
@@ -126,6 +135,15 @@ UncertainValue UncertainValue::operator/(const UncertainValue& rhs) const {
 
 UncertainValue& UncertainValue::operator/=(const UncertainValue& rhs) {
     *this *= inv(rhs);
+    return *this;
+}
+
+UncertainValue UncertainValue::operator/(double rhs) const {
+    return *this / UncertainValue(rhs);
+}
+
+UncertainValue& UncertainValue::operator/=(double rhs) {
+    *this /= UncertainValue(rhs);
     return *this;
 }
 

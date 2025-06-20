@@ -80,14 +80,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, Theta) {
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double Theta_fitted = runner.getSymbolicWorker().getValueOfName(Theta);
             double g_fitted = runner.getSymbolicWorker().getValueOfName(g);
             double Theta_range = std::abs(Theta_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(Theta_fitted, Theta_exact, Theta_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -154,14 +154,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbolicWorker().getValueOfName(J);
             double g_fitted = runner.getSymbolicWorker().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -225,14 +225,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbolicWorker().getValueOfName(J);
             double g_fitted = runner.getSymbolicWorker().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -295,14 +295,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbolicWorker().getValueOfName(J);
             double g_fitted = runner.getSymbolicWorker().getValueOfName(g);
             double J_range = std::abs(J_fitted / 1000);
             double g_range = std::abs(g_fitted / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_fitted, g_exact, g_range);
         }
@@ -365,14 +365,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double g_one_fitted = runner.getSymbolicWorker().getValueOfName(g_one);
             double g_two_fitted = runner.getSymbolicWorker().getValueOfName(g_two);
             double g_one_range = std::abs((g_one_fitted) / 1000);
             double g_two_range = std::abs((g_two_fitted) / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(g_one_fitted, g_one_exact, g_one_range);
             EXPECT_NEAR(g_two_fitted, g_two_exact, g_two_range);
         }
@@ -443,14 +443,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_22222
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbolicWorker().getValueOfName(J);
             double g_two_fitted = runner.getSymbolicWorker().getValueOfName(g_two);
             double J_range = std::abs((J_fitted) / 1000);
             double g_two_range = std::abs((g_two_fitted) / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_two_fitted, g_two_exact, g_two_range);
         }
@@ -517,14 +517,14 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_3333_
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbolicWorker().getValueOfName(J);
             double D_fitted = runner.getSymbolicWorker().getValueOfName(D);
             double J_range = std::abs((J_fitted) / 1000);
             double D_range = std::abs((D_fitted) / 100);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(D_fitted, D_exact, D_range);
         }
@@ -603,7 +603,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
 
             runner.minimizeResidualError(this->solver_);
 
-            double residual_error =
+            auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();
             double J_fitted = runner.getSymbolicWorker().getValueOfName(J);
             double g_one_fitted = runner.getSymbolicWorker().getValueOfName(g_one);
@@ -619,7 +619,7 @@ TYPED_TEST_P(fitting_magnetic_susceptibility_simple, fit_theoretical_curve_2222_
             double g_max_range = std::abs((g_max_fitted) / 1000);
             double g_min_range = std::abs((g_min_fitted) / 1000);
 
-            EXPECT_NEAR(residual_error, 0, RESIDUAL_ERROR_EPSILON);
+            EXPECT_NEAR(residual_error.mean(), 0, RESIDUAL_ERROR_EPSILON);
             EXPECT_NEAR(J_fitted, J_exact, J_range);
             EXPECT_NEAR(g_max_fitted, g_max_exact, g_max_range);
             EXPECT_NEAR(g_min_fitted, g_min_exact, g_min_range);

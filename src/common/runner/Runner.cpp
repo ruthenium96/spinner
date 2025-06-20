@@ -6,6 +6,7 @@
 #include "src/common/Logger.h"
 #include "src/common/PrintingFunctions.h"
 #include "src/common/Quantity.h"
+#include "src/common/UncertainValue.h"
 #include "src/eigendecompositor/AllQuantitiesGetter.h"
 #include "src/eigendecompositor/EigendecompositorConstructor.h"
 #include "src/entities/magnetic_susceptibility/worker/WorkerConstructor.h"
@@ -170,11 +171,14 @@ std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives()
 
     for (const auto& changeable_symbol : getSymbolicWorker().getChangeableNames()) {
         auto symbol_type = getSymbolicWorker().getSymbolProperty(changeable_symbol).type_enum.value();
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
+        auto value = getMagneticSusceptibilityController().calculateTotalDerivative(
             symbol_type,
             changeable_symbol);
-        answer[changeable_symbol] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
+        answer[changeable_symbol] = value.mean();
+        common::Logger::debug("d(Loss function)/d{}: {} +/- {}", 
+            changeable_symbol.get_name(), 
+            value.mean(),
+            value.stdev_total());
     }
     common::Logger::separate(2, common::debug);
 
@@ -236,7 +240,7 @@ double Runner::stepOfRegression(
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
-    double residual_error = getMagneticSusceptibilityController().calculateResidualError();
+    auto residual_error = getMagneticSusceptibilityController().calculateResidualError();
 
     if (isGradientRequired) {
         // Calculate derivatives...
@@ -249,7 +253,7 @@ double Runner::stepOfRegression(
 
     common::stepOfRegressionFinishPrint(residual_error);
 
-    return residual_error;
+    return residual_error.mean();
 }
 
 void Runner::initializeDerivatives() {

@@ -3,10 +3,14 @@
 #include <utility>
 
 #include "gtest/gtest.h"
+#include "src/common/UncertainValue.h"
 #include "src/common/runner/Runner.h"
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_set_values_length_error) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 1}, {2, 2}, {3, 3}};
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
+        {1, common::UncertainValue(1)}, 
+        {2, common::UncertainValue(2)}, 
+        {3, common::UncertainValue(3)}};
 
     magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
         exp_values,
@@ -22,7 +26,10 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_set_values_length
 }
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_get_values_empty) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 1}, {2, 2}, {3, 3}};
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
+        {1, common::UncertainValue(1)}, 
+        {2, common::UncertainValue(2)}, 
+        {3, common::UncertainValue(3)}};
 
     magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
         exp_values,
@@ -33,7 +40,10 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_get_values_empty)
 }
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_residual_error_empty) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 1}, {2, 2}, {3, 3}};
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
+        {1, common::UncertainValue(1)}, 
+        {2, common::UncertainValue(2)}, 
+        {3, common::UncertainValue(3)}};
 
     magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
         exp_values,
@@ -44,7 +54,10 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_residual_error_em
 }
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_derivative_empty) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 1}, {2, 2}, {3, 3}};
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
+        {1, common::UncertainValue(1)}, 
+        {2, common::UncertainValue(2)}, 
+        {3, common::UncertainValue(3)}};
 
     magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
         exp_values,
@@ -66,7 +79,7 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_empty_experimenta
 }
 
 TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, common::UncertainValue(20)}};
     std::vector<spin_algebra::Multiplicity> mults = {2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
@@ -89,7 +102,7 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
 }
 
 TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, 20}};
+    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, common::UncertainValue(20)}};
     std::vector<spin_algebra::Multiplicity> mults = {2, 2};
     model::ModelInput model(mults);
     double J_value = 10;
@@ -112,7 +125,12 @@ TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
 
 TEST(magnetic_susceptibility, sort_experimental_temperatues) {
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values =
-        {{10, 20}, {4, 20}, {5, 20}, {11, 20}, {8, 20}, {9, 20}};
+        {{10, common::UncertainValue(20)}, 
+        {4, common::UncertainValue(20)}, 
+        {5, common::UncertainValue(20)}, 
+        {11, common::UncertainValue(20)}, 
+        {8, common::UncertainValue(20)}, 
+        {9, common::UncertainValue(20)}};
     auto worker = magnetic_susceptibility::ExperimentalValuesWorker(
         exp_values,
         magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
@@ -121,13 +139,13 @@ TEST(magnetic_susceptibility, sort_experimental_temperatues) {
     EXPECT_TRUE(std::is_sorted(temperatures.begin(), temperatures.end()));
 }
 
-TEST(magnetic_susceptibility, equvalence_of_weightong_schemes_on_equidistant_data) {
+TEST(magnetic_susceptibility, equvalence_of_weight_schemes_on_equidistant_data) {
     std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values;
 
     for (size_t i = 1; i < 300; i += 3) {
         magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
             static_cast<double>(i),
-            1.0};
+            common::UncertainValue(1.0)};
         exp_values.push_back(value_at_temperature);
     }
 
@@ -167,7 +185,7 @@ TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
     for (size_t i = 1; i < 300; ++i) {
         magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
             static_cast<double>(i),
-            static_cast<double>(dist(rng))};
+            common::UncertainValue(static_cast<double>(dist(rng)))};
         exp_values.push_back(value_at_temperature);
     }
 
@@ -177,7 +195,7 @@ TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
             worker.setTheoreticalMuSquared(worker.getExperimentalMuSquared());
             auto double_transformed = worker.getTheoreticalValues();
             for (size_t i = 0; i < double_transformed.size(); ++i) {
-                EXPECT_DOUBLE_EQ(double_transformed[i].value, exp_values[i].value);
+                EXPECT_DOUBLE_EQ(double_transformed[i].value.mean(), exp_values[i].value.mean());
             }
         }
     }
@@ -238,7 +256,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
             const auto& [temperature_unique, value_unique] = values_unique[i];
             const auto& [temperature_different, value_different] = values_different[i];
             EXPECT_EQ(temperature_unique, temperature_different);
-            EXPECT_NEAR(value_unique, value_different, 1e-9);
+            EXPECT_NEAR(value_unique.mean(), value_different.mean(), 1e-9);
         }
     }
 }
@@ -312,7 +330,7 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
             const auto& [temperature_unique, value_unique] = values_unique[i];
             const auto& [temperature_different, value_different] = values_different[i];
             EXPECT_EQ(temperature_unique, temperature_different);
-            EXPECT_NEAR(value_unique, value_different, 1e-9);
+            EXPECT_NEAR(value_unique.mean(), value_different.mean(), 1e-9);
         }
     }
 }
@@ -345,7 +363,7 @@ double calculateResidualError(
         magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
         1);
 
-    return runner.getMagneticSusceptibilityController().calculateResidualError();
+    return runner.getMagneticSusceptibilityController().calculateResidualError().mean();
 }
 
 TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
