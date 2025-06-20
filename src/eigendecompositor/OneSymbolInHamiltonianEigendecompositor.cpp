@@ -45,6 +45,14 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
                     return Subspectrum(std::move(raw_subspectrum_derivative), energy_subspectrum.get().properties);
             }), energy_subspectrum);
         }
+#ifndef NDEBUG
+        const auto energy_submatrix = eigendecompositor_->getSubmatrix(common::Energy, number_of_block).value();
+        current_energy_matrix_[number_of_block] = transform_one_or_many(
+            std::function([number_of_block](std::reference_wrapper<const Submatrix> energy_submatrix) {
+                auto raw_matrix = energy_submatrix.get().raw_data->multiply_by(1);
+                return Submatrix(std::move(raw_matrix), energy_submatrix.get().properties);    
+        }), energy_submatrix);
+#endif
     } else {
         double current_value_of_symbol = currentValueGetter_();
         double multiplier = current_value_of_symbol / initial_value_of_symbol_;
@@ -54,6 +62,14 @@ OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
                 auto raw_subspectrum = energy_subspectrum.get().raw_data->multiply_by(multiplier);
                 return Subspectrum(std::move(raw_subspectrum), energy_subspectrum.get().properties);
         }), energy_subspectrum);
+#ifndef NDEBUG
+        const auto energy_submatrix = eigendecompositor_->getSubmatrix(common::Energy, number_of_block).value();
+        current_energy_matrix_[number_of_block] = transform_one_or_many(
+            std::function([number_of_block, multiplier](std::reference_wrapper<const Submatrix> energy_submatrix) {
+                auto raw_submatrix = energy_submatrix.get().raw_data->multiply_by(multiplier);
+                return Submatrix(std::move(raw_submatrix), energy_submatrix.get().properties);
+        }), energy_submatrix);
+#endif
     }
     return eigenvectors_.at(number_of_block);
 }
@@ -69,7 +85,11 @@ OneSymbolInHamiltonianEigendecompositor::getSubspectrum(common::QuantityEnum qua
 std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
 OneSymbolInHamiltonianEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
+#ifndef NDEBUG
+        return copyRef<Submatrix, std::reference_wrapper<const Submatrix>>(current_energy_matrix_[number_of_block]);
+#else
         return std::nullopt;
+#endif
     }
     return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }

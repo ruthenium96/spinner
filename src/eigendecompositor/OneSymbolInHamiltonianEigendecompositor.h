@@ -41,6 +41,9 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
     std::vector<
         std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
         eigenvectors_;
+#ifndef NDEBUG
+    std::vector<OneOrMany<Submatrix>> current_energy_matrix_;
+#endif
     double initial_value_of_symbol_;
     bool first_iteration_has_been_done_ = false;
     std::function<double()> currentValueGetter_;
