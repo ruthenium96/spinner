@@ -7,6 +7,7 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 #include "src/entities/data_structures/AbstractSymmetricMatrix.h"
+#include "src/entities/data_structures/arma/ArmaDenseSemiunitaryMatrix.h"
 
 namespace quantum::linear_algebra {
 template <typename T>
@@ -29,13 +30,10 @@ class ArmaLogic {
 
     std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
-    std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const std::unique_ptr<AbstractDenseSemiunitaryMatrix>& denseSemiunitaryMatrix) const;
+        const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
     std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
+        const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
 };
 }  // namespace quantum::linear_algebra
 

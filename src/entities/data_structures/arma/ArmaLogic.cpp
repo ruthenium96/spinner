@@ -191,32 +191,26 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMain
 template <typename T>
 std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
+    const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
     auto main_diagonal = std::make_unique<ArmaDenseVector<T>>();
-
-    auto maybeDenseSemiunitaryMatrix =
-        dynamic_cast<const ArmaDenseSemiunitaryMatrix<T>*>(&denseSemiunitaryMatrix);
-    if (maybeDenseSemiunitaryMatrix == nullptr) {
-        throw std::bad_cast();
-    }
 
     if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         arma::Mat<T> firstMultiplicationResult =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().t()
             * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix();
         main_diagonal->modifyDenseVector() = arma::diagvec(
-            firstMultiplicationResult * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix());
+            firstMultiplicationResult * denseSemiunitaryMatrix.getDenseSemiunitaryMatrix());
         return std::move(main_diagonal);
     }
 
     if (auto maybeDenseSymmetricMatrix =
             dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         arma::Mat<T> firstMultiplicationResult =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().t()
             * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix();
         main_diagonal->modifyDenseVector() = arma::diagvec(
-            firstMultiplicationResult * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix());
+            firstMultiplicationResult * denseSemiunitaryMatrix.getDenseSemiunitaryMatrix());
         return std::move(main_diagonal);
     }
 
@@ -226,30 +220,25 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMain
 template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix> ArmaLogic<T>::unitaryTransform(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
+    const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
     auto result = std::make_unique<ArmaDenseDiagonalizableMatrix<T>>();
 
-    auto maybeDenseSemiunitaryMatrix =
-        dynamic_cast<const ArmaDenseSemiunitaryMatrix<T>*>(&denseSemiunitaryMatrix);
-    if (maybeDenseSemiunitaryMatrix == nullptr) {
-        throw std::bad_cast();
-    }
 
     if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         result->modifyDenseDiagonalizableMatrix() =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().t()
             * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
+            * denseSemiunitaryMatrix.getDenseSemiunitaryMatrix();
         return std::move(result);
     }
 
     if (auto maybeDenseSymmetricMatrix =
             dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         result->modifyDenseDiagonalizableMatrix() =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
+            denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().t()
             * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
+            * denseSemiunitaryMatrix.getDenseSemiunitaryMatrix();
         return std::move(result);
     }
 
