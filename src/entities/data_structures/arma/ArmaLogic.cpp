@@ -66,12 +66,11 @@ std::pair<arma::Col<T>, arma::Col<T>> krylovDiagonalizeValuesSparse(
         eigenvectors,
         krylov_matrix);
     
-    // TODO: col(0) or row(0)?
-    arma::Col<T> squared_back_projection = arma::square(eigenvectors.row(0)).t();
+    arma::Col<T> back_projection = eigenvectors.row(0).t();
 
-    return {std::move(eigenvalues), std::move(squared_back_projection)};
+    return {std::move(eigenvalues), std::move(back_projection)};
 }
-    
+
 } // namespace
 
 namespace quantum::linear_algebra {
@@ -158,7 +157,7 @@ KrylovCouple ArmaLogic<T>::krylovDiagonalizeValues(
                 maybeDenseVector->getDenseVector(),
                 krylov_subspace_size);
             eigenvalues_->modifyDenseVector() = std::move(pair.first);
-            squared_back_projection_->modifyDenseVector() = std::move(pair.second);    
+            squared_back_projection_->modifyDenseVector() = std::move(arma::square(pair.second));
         } else if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
 
@@ -167,7 +166,7 @@ KrylovCouple ArmaLogic<T>::krylovDiagonalizeValues(
                 maybeDenseVector->getDenseVector(),
                 krylov_subspace_size);
             eigenvalues_->modifyDenseVector() = std::move(pair.first);
-            squared_back_projection_->modifyDenseVector() = std::move(pair.second);
+            squared_back_projection_->modifyDenseVector() = std::move(arma::square(pair.second));
        } else {
            throw std::bad_cast();
        }
