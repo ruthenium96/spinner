@@ -15,13 +15,9 @@ class ArmaLogic {
   public:
     std::unique_ptr<AbstractDenseVector>
     diagonalizeValues(const AbstractDiagonalizableMatrix& diagonalizableMatrix) const;
-    std::unique_ptr<AbstractDenseVector> diagonalizeValues(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const;
 
     EigenCouple
     diagonalizeValuesVectors(const AbstractDiagonalizableMatrix& diagonalizableMatrix) const;
-    EigenCouple diagonalizeValuesVectors(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const;
 
     KrylovCouple krylovDiagonalizeValues(
         const AbstractDiagonalizableMatrix& diagonalizableMatrix,

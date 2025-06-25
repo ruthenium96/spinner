@@ -74,11 +74,6 @@ std::pair<arma::Col<T>, arma::Col<T>> krylovDiagonalizeValuesSparse(
 } // namespace
 
 namespace quantum::linear_algebra {
-template <typename T>
-std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::diagonalizeValues(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const {
-    return diagonalizeValues(*diagonalizableMatrix);
-}
 
 template <typename T>
 std::unique_ptr<AbstractDenseVector>
@@ -100,12 +95,6 @@ ArmaLogic<T>::diagonalizeValues(const AbstractDiagonalizableMatrix& diagonalizab
     }
 
     return eigenvalues_;
-}
-
-template <typename T>
-EigenCouple ArmaLogic<T>::diagonalizeValuesVectors(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix) const {
-    return diagonalizeValuesVectors(*symmetricMatrix);
 }
 
 template <typename T>
