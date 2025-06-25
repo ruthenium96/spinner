@@ -1,6 +1,7 @@
 #ifndef SPINNER_ABSTRACTEIGENDECOMPOSITOR_H
 #define SPINNER_ABSTRACTEIGENDECOMPOSITOR_H
 
+#include "src/common/OneOrMany.h"
 #include "src/eigendecompositor/AllQuantitiesGetter.h"
 
 namespace eigendecompositor {
@@ -33,7 +34,7 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
         uint32_t number_of_subspaces) = 0;
-    virtual std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    virtual std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(size_t number_of_block, const space::Subspace& subspace) = 0;
     virtual void finalize() = 0;
   private:

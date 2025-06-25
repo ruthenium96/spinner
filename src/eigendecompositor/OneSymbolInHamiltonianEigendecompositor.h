@@ -11,7 +11,7 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
     OneSymbolInHamiltonianEigendecompositor(
         std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
         std::function<double()> currentValueGetter);
-    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(
         size_t number_of_block,
         const space::Subspace& subspace) override;
@@ -39,7 +39,7 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
     std::vector<OneOrMany<Subspectrum>> current_energy_spectrum_;
     std::optional<std::vector<OneOrMany<Subspectrum>>> current_energy_derivative_spectrum_;
     std::vector<
-        std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+        std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>>
         eigenvectors_;
 #ifndef NDEBUG
     std::vector<OneOrMany<Submatrix>> current_energy_matrix_;

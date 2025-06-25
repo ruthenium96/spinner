@@ -27,7 +27,7 @@ FTLMEigendecompositor::FTLMEigendecompositor(
     exact_decomposition_threshold_(exact_decomposition_threshold),
     number_of_seeds_(number_of_seeds) {}
     
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 FTLMEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {

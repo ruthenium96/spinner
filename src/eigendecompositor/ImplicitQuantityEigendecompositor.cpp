@@ -28,7 +28,7 @@ ImplicitQuantityEigendecompositor::ImplicitQuantityEigendecompositor(
     quantity_implicit_spectrum_ = Spectrum();
 }
 
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ImplicitQuantityEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {

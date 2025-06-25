@@ -12,7 +12,7 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     ExactEigendecompositor(
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
         quantum::linear_algebra::FactoriesList factories_list);
-    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(
         size_t number_of_block, const space::Subspace& subspace) override;
 

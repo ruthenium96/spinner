@@ -18,7 +18,7 @@ OneSymbolInHamiltonianEigendecompositor::OneSymbolInHamiltonianEigendecompositor
     }
 }
 
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {

@@ -16,7 +16,7 @@ FTLMImplicitQuantityEigendecompositor::FTLMImplicitQuantityEigendecompositor(
         max_ntz_proj),
     quantity_implicit_enum_(quantity_implicit_enum) {}
 
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 FTLMImplicitQuantityEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {

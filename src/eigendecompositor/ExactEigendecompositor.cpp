@@ -12,7 +12,7 @@ ExactEigendecompositor::ExactEigendecompositor(
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ExactEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {

@@ -14,7 +14,7 @@ class FTLMImplicitQuantityEigendecompositor : public ImplicitQuantityEigendecomp
         common::QuantityEnum quantity_implicit_enum,
         uint32_t max_ntz_proj);
     
-    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(
         size_t number_of_block,
         const space::Subspace& subspace) override;
