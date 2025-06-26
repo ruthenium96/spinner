@@ -18,6 +18,7 @@ if (ARMADILLO_FOUND)
             arma/ArmaDenseVector.cpp arma/ArmaDenseVector.h
             arma/ArmaSparseDiagonalizableMatrix.cpp
             arma/ArmaDenseSemiunitaryMatrix.cpp arma/ArmaDenseSemiunitaryMatrix.h
+            arma/ArmaKrylovDenseSemiunitaryMatrix.cpp arma/ArmaKrylovDenseSemiunitaryMatrix.h
             arma/ArmaDenseDiagonalizableMatrix.cpp arma/ArmaDenseDiagonalizableMatrix.h
             arma/ArmaLogic.cpp arma/ArmaLogic.h
             arma/ArmaSparseSemiunitaryMatrix.cpp arma/ArmaSparseSemiunitaryMatrix.h
