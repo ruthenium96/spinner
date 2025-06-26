@@ -221,10 +221,6 @@ KrylovCouple ArmaLogic<T>::krylovDiagonalizeValues(
     const AbstractDiagonalizableMatrix& diagonalizableMatrix,
     const AbstractDenseVector& seed_vector,
     size_t krylov_subspace_size) const {
-    
-    auto eigenvalues_ = std::make_unique<ArmaDenseVector<T>>();
-    auto squared_back_projection_ = std::make_unique<ArmaDenseVector<T>>();
-    
     if (auto maybeDenseVector =
         dynamic_cast<const ArmaDenseVector<T>*>(&seed_vector)) {
         if (auto maybeDenseSymmetricMatrix =
@@ -281,11 +277,7 @@ template <typename T>
 KrylovTriple ArmaLogic<T>::krylovDiagonalizeValuesVectors(
     const AbstractDiagonalizableMatrix& diagonalizableMatrix,
     const AbstractDenseVector& seed_vector,
-    size_t krylov_subspace_size) const {
-    auto eigenvalues_ = std::make_unique<ArmaDenseVector<T>>();
-    auto eigenvectors_ = std::make_unique<ArmaKrylovDenseSemiunitaryMatrix<T>>();
-    auto squared_back_projection_ = std::make_unique<ArmaDenseVector<T>>();
-    
+    size_t krylov_subspace_size) const { 
     if (auto maybeDenseVector =
         dynamic_cast<const ArmaDenseVector<T>*>(&seed_vector)) {
         if (auto maybeDenseSymmetricMatrix =
@@ -312,7 +304,7 @@ KrylovTriple ArmaLogic<T>::krylovDiagonalizeValuesVectors(
 }
 
 template <typename T, typename M>
-std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
+inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
     const M& symmetric_matrix,
     const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) {
     auto main_diagonal = std::make_unique<ArmaDenseVector<T>>();
@@ -329,8 +321,6 @@ template <typename T>
 std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
     const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
-    auto main_diagonal = std::make_unique<ArmaDenseVector<T>>();
-
     if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         return std::move(unitaryTransformAndReturnMainDiagonal_(
@@ -367,8 +357,6 @@ template <typename T>
 std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
     const ArmaKrylovDenseSemiunitaryMatrix<T>& denseKrylovSemiunitaryMatrix) const {
-    auto main_diagonal = std::make_unique<ArmaDenseVector<T>>();
-
     if (auto maybeSparseSymmetricMatrix =
         dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         return unitaryTransformAndReturnMainDiagonal_(
@@ -402,8 +390,6 @@ template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix> ArmaLogic<T>::unitaryTransform(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
     const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
-    auto result = std::make_unique<ArmaDenseDiagonalizableMatrix<T>>();
-
     if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         return std::move(unitaryTransform_(
