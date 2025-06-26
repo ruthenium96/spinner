@@ -71,10 +71,9 @@ std::pair<Eigen::Vector<T, -1>, Eigen::Vector<T, -1>> krylovProcedureDiagonalize
     auto eigenvalues = std::move(es.eigenvalues());
     auto eigenvectors = std::move(es.eigenvectors());
         
-    // TODO: col(0) or row(0)?
-    auto squared_back_projection = eigenvectors.row(0).array().square();
+    auto back_projection = eigenvectors.row(0);
 
-    return {std::move(eigenvalues), std::move(squared_back_projection)};
+    return {std::move(eigenvalues), std::move(back_projection)};
 }   
 
 } // namespace
@@ -141,7 +140,7 @@ inline KrylovCouple krylovDiagonalizeValues_(
         seed_vector.getDenseVector(),
         krylov_subspace_size);
     eigenvalues_->modifyDenseVector() = std::move(pair.first);
-    squared_back_projection_->modifyDenseVector() = std::move(pair.second);
+    squared_back_projection_->modifyDenseVector() = std::move(pair.second.array().square());
 
     KrylovCouple answer;
     answer.eigenvalues = std::move(eigenvalues_);
