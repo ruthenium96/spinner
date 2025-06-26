@@ -181,6 +181,50 @@ TEST(linearAlgebraFactories, krylov_eigendecomposition) {
                 }
             }
         }
+        // eigendecomposition-with-eigenvectors
+        {
+            // decomposition
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsEnergy;
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsSquaredBackProjection;
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>> denseUnitaryMatrices;
+            for (int i = 0; i < matrices.size(); ++i) {
+                const auto& matrix = matrices[i];
+                const auto& orth_vector = orth_vectors[i];
+                auto triple = matrix->krylovDiagonalizeValuesVectors(orth_vector, size);
+                denseVectorsEnergy.emplace_back(std::move(triple.eigenvalues));
+                denseVectorsSquaredBackProjection.emplace_back(std::move(triple.squared_back_projection));
+                denseUnitaryMatrices.emplace_back(std::move(triple.eigenvectors));
+            }
+            // check equality:
+            for (size_t i = 0; i < denseVectorsEnergy.size(); ++i) {
+                const auto& denseVectorEnergy_i = denseVectorsEnergy[i];
+                const auto& denseVectorSquaredBackProjection_i = denseVectorsSquaredBackProjection[i];
+                for (size_t j = 0; j < denseVectorsEnergy.size(); ++j) {
+                    if (i == j) {
+                        continue;
+                    }
+                    const auto& denseVectorEnergy_j = denseVectorsEnergy[j];
+                    const auto& denseVectorSquaredBackProjection_j = denseVectorsSquaredBackProjection[j];
+                    for (size_t k = 0; k < size; ++k) {
+                        double epsilonEnergy = std::abs(denseVectorEnergy_i->at(k) * 5e-3);
+                        EXPECT_NEAR(denseVectorEnergy_i->at(k), denseVectorEnergy_j->at(k), epsilonEnergy);
+                        EXPECT_NEAR(denseVectorSquaredBackProjection_i->at(k), denseVectorSquaredBackProjection_j->at(k), 1e-3);
+                        int sign;
+                        for (size_t l = 0; l < size; ++l) {
+                            if (l == 0) {
+                                sign = sign_f(denseUnitaryMatrices[i]->at(k, l),
+                                denseUnitaryMatrices[j]->at(k, l));
+                            }
+                            // TODO: epsilon
+                            EXPECT_NEAR(
+                                denseUnitaryMatrices[i]->at(k, l),
+                                sign * denseUnitaryMatrices[j]->at(k, l),
+                                5e-4);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

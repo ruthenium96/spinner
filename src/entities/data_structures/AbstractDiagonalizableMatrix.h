@@ -16,12 +16,21 @@ struct KrylovCouple {
     std::unique_ptr<AbstractDenseVector> squared_back_projection;
 };
 
+struct KrylovTriple {
+  std::unique_ptr<AbstractDenseVector> eigenvalues;
+  std::unique_ptr<AbstractDenseSemiunitaryMatrix> eigenvectors;
+  std::unique_ptr<AbstractDenseVector> squared_back_projection;
+};
+
 class AbstractDiagonalizableMatrix: public AbstractSymmetricMatrix {
   public:
     virtual EigenCouple diagonalizeValuesVectors() const = 0;
     virtual std::unique_ptr<AbstractDenseVector> diagonalizeValues() const = 0;
 
     virtual KrylovCouple krylovDiagonalizeValues(
+      const std::unique_ptr<AbstractDenseVector>& seed_vector,
+      size_t krylov_subspace_size) const = 0;
+    virtual KrylovTriple krylovDiagonalizeValuesVectors(
       const std::unique_ptr<AbstractDenseVector>& seed_vector,
       size_t krylov_subspace_size) const = 0;
 

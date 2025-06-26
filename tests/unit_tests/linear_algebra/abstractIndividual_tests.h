@@ -30,7 +30,7 @@ TYPED_TEST_P(AbstractDenseTransformAndDiagonalizeFactoryIndividualTest, NonNullp
 
 TYPED_TEST_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
-    unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence) {
+    unitaryTransformation_and_unitaryTransformationAndReturnMainDiagonalEquivalence) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> dist(-1000, +1000);
@@ -59,7 +59,47 @@ TYPED_TEST_P(
 
 TYPED_TEST_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
-    krylovDiagonalizeValuesAndDiagonalizeValues) {
+    krylovDiagonalizeValues_and_krylovDiagonalizeValuesVectors) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-1000, +1000);
+
+    for (size_t size = 8; size <= 16; size*=2) {
+        auto denseDiagonalizableMatrix =
+            generateDenseDiagonalizableMatrix(size, this->factory_, dist, rng);
+
+        auto seedVector = generateOrthDenseVector(size, this->factory_);
+
+        auto couple = denseDiagonalizableMatrix->krylovDiagonalizeValues(
+            seedVector,
+            size);
+        auto triple = denseDiagonalizableMatrix->krylovDiagonalizeValuesVectors(
+            seedVector,
+            size
+        );
+
+        // check equality:
+        for (size_t i = 0; i < size; ++i) {
+            double epsilon_energies =
+                std::abs(couple.eigenvalues->at(i) * 1e-6);
+            EXPECT_NEAR(
+                couple.eigenvalues->at(i),
+                triple.eigenvalues->at(i),
+                epsilon_energies);
+
+            double epsilon_squared_back_projection =
+                std::abs(couple.squared_back_projection->at(i) * 1e-6);
+            EXPECT_NEAR(
+                couple.squared_back_projection->at(i),
+                triple.squared_back_projection->at(i),
+                epsilon_squared_back_projection);
+        }
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    krylovDiagonalizeValues_and_diagonalizeValues) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> dist(-100, +100);
@@ -148,8 +188,9 @@ TYPED_TEST_P(
 REGISTER_TYPED_TEST_SUITE_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
     NonNullptrObjects,
-    unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence,
-    krylovDiagonalizeValuesAndDiagonalizeValues,
+    unitaryTransformation_and_unitaryTransformationAndReturnMainDiagonalEquivalence,
+    krylovDiagonalizeValues_and_krylovDiagonalizeValuesVectors,
+    krylovDiagonalizeValues_and_diagonalizeValues,
     randomUnitVectorsAreUnit,
     randomUnitVectorsAreUnbiased,
     correctNumberOfRandomUnitVectors,
