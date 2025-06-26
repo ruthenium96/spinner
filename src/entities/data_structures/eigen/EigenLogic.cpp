@@ -8,9 +8,9 @@
 
 namespace {
 
-template <typename T>
-std::pair<Eigen::Vector<T, -1>, Eigen::Vector<T, -1>> krylovDiagonalizeValuesSparse(
-    const Eigen::SparseMatrix<T>& matrix,
+template <typename T, typename M>
+std::pair<Eigen::Vector<T, -1>, Eigen::Vector<T, -1>> krylovProcedureDiagonalizeValues_(
+    const M& matrix,
     const Eigen::Vector<T, -1>& seed_vector,
     size_t krylov_subspace_size) {
     Eigen::Matrix<T, -1, -1> krylov_matrix(krylov_subspace_size, krylov_subspace_size);
@@ -81,86 +81,67 @@ std::pair<Eigen::Vector<T, -1>, Eigen::Vector<T, -1>> krylovDiagonalizeValuesSpa
 
 namespace quantum::linear_algebra {
 
+template <typename T, typename M>
+inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
+    const M& symmetricMatrix,
+    const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) {
+    auto main_diagonal = std::make_unique<EigenDenseVector<T>>();
+
+    Eigen::Matrix<T, -1, -1> firstMultiplicationResult =
+        denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().transpose()
+        * symmetricMatrix;
+    main_diagonal->resize(symmetricMatrix.size());
+#pragma omp parallel for shared( \
+    main_diagonal, \
+    firstMultiplicationResult, \
+    denseSemiunitaryMatrix) default(none)
+    for (size_t i = 0; i < main_diagonal->size(); ++i) {
+        auto value = firstMultiplicationResult.row(i)
+            * denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().col(i);
+        main_diagonal->modifyDenseVector().coeffRef(i) = value;
+    }
+    return std::move(main_diagonal);
+}
+
 template <typename T>
 std::unique_ptr<AbstractDenseVector> EigenLogic<T>::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
-    auto main_diagonal = std::make_unique<EigenDenseVector<T>>();
-
+    const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
     auto maybeDenseSemiunitaryMatrix =
         dynamic_cast<const EigenDenseSemiunitaryMatrix<T>*>(&denseSemiunitaryMatrix);
     if (maybeDenseSemiunitaryMatrix == nullptr) {
         throw std::bad_cast();
     }
-
     if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        Eigen::Matrix<T, -1, -1> firstMultiplicationResult =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix().transpose();
-        main_diagonal->resize(maybeSparseSymmetricMatrix->size());
-#pragma omp parallel for shared( \
-        main_diagonal, \
-            firstMultiplicationResult, \
-            maybeDenseSemiunitaryMatrix) default(shared)
-        for (size_t i = 0; i < main_diagonal->size(); ++i) {
-            auto value = firstMultiplicationResult.row(i)
-                * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
-            main_diagonal->modifyDenseVector().coeffRef(i) = value;
-        }
-        return std::move(main_diagonal);
+        return unitaryTransformAndReturnMainDiagonal_(
+            maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix().transpose(),
+            *maybeDenseSemiunitaryMatrix
+        );
     }
-
     if (auto maybeDenseSymmetricMatrix =
             dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        Eigen::Matrix<T, -1, -1> firstMultiplicationResult =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix();
-        main_diagonal->resize(maybeDenseSymmetricMatrix->size());
-#pragma omp parallel for shared( \
-        main_diagonal, \
-            firstMultiplicationResult, \
-            maybeDenseSemiunitaryMatrix) default(none)
-        for (size_t i = 0; i < main_diagonal->size(); ++i) {
-            auto value = firstMultiplicationResult.row(i)
-                * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().col(i);
-            main_diagonal->modifyDenseVector().coeffRef(i) = value;
-        }
-        return std::move(main_diagonal);
+        return unitaryTransformAndReturnMainDiagonal_(
+            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
+            *maybeDenseSemiunitaryMatrix
+        );
     }
-
     throw std::bad_cast();
 }
 
-template <typename T>
-KrylovCouple EigenLogic<T>::krylovDiagonalizeValues(
-    const AbstractDiagonalizableMatrix& diagonalizableMatrix,
-    const AbstractDenseVector& seed_vector,
-    size_t krylov_subspace_size) const {
-    
+template <typename T, typename M>
+inline KrylovCouple krylovDiagonalizeValues_(
+    const M& diagonalizableMatrix,
+    const EigenDenseVector<T>& seed_vector,
+    size_t krylov_subspace_size) {
     auto eigenvalues_ = std::make_unique<EigenDenseVector<T>>();
     auto squared_back_projection_ = std::make_unique<EigenDenseVector<T>>();
-    
-    if (auto maybeDenseVector =
-        dynamic_cast<const EigenDenseVector<T>*>(&seed_vector)) {
-        if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
-            throw std::invalid_argument("It is inefficient to use EigenDenseDiagonalizableMatrix in Krylov procedure");
-            // TODO!
-        } else if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
-            auto pair = krylovDiagonalizeValuesSparse(
-                maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix(),
-                maybeDenseVector->getDenseVector(),
-                krylov_subspace_size);
-            eigenvalues_->modifyDenseVector() = std::move(pair.first);
-            squared_back_projection_->modifyDenseVector() = std::move(pair.second);
-        } else {
-            throw std::bad_cast();
-        }
-    } else {
-        throw std::bad_cast();
-    }
+    auto pair = krylovProcedureDiagonalizeValues_(
+        diagonalizableMatrix,
+        seed_vector.getDenseVector(),
+        krylov_subspace_size);
+    eigenvalues_->modifyDenseVector() = std::move(pair.first);
+    squared_back_projection_->modifyDenseVector() = std::move(pair.second);
 
     KrylovCouple answer;
     answer.eigenvalues = std::move(eigenvalues_);
@@ -169,9 +150,38 @@ KrylovCouple EigenLogic<T>::krylovDiagonalizeValues(
 }
 
 template <typename T>
+KrylovCouple EigenLogic<T>::krylovDiagonalizeValues(
+    const AbstractDiagonalizableMatrix& diagonalizableMatrix,
+    const AbstractDenseVector& seed_vector,
+    size_t krylov_subspace_size) const {    
+    if (auto maybeDenseVector =
+        dynamic_cast<const EigenDenseVector<T>*>(&seed_vector)) {
+        if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            return krylovDiagonalizeValues_(
+                maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
+        } else if (auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            return krylovDiagonalizeValues_(
+                maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix(),
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
+        } else {
+            throw std::bad_cast();
+        }
+    } else {
+        throw std::bad_cast();
+    }
+}
+
+template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix> EigenLogic<T>::unitaryTransform(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
+    const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
     auto result = std::make_unique<EigenDenseDiagonalizableMatrix<T>>();
 
     auto maybeDenseSemiunitaryMatrix =
