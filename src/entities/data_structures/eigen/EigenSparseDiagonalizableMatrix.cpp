@@ -39,6 +39,18 @@ KrylovCouple EigenSparseDiagonalizableMatrix<T>::krylovDiagonalizeValues(
 }
 
 template <typename T>
+KrylovTriple EigenSparseDiagonalizableMatrix<T>::krylovDiagonalizeValuesVectors(
+    const std::unique_ptr<AbstractDenseVector>& seed_vector,
+    size_t krylov_subspace_size) const {
+    EigenLogic<T> logic;
+
+    return logic.krylovDiagonalizeValuesVectors(
+        *this, 
+        *seed_vector, 
+        krylov_subspace_size);
+}
+
+template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix>
 EigenSparseDiagonalizableMatrix<T>::multiply_by(double multiplier) const {
     auto answer = std::make_unique<EigenSparseDiagonalizableMatrix>();

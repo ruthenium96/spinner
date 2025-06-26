@@ -15,6 +15,10 @@ class EigenSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
     KrylovCouple krylovDiagonalizeValues(
       const std::unique_ptr<AbstractDenseVector>& seed_vector,
       size_t krylov_subspace_size) const override;
+    KrylovTriple krylovDiagonalizeValuesVectors(
+      const std::unique_ptr<AbstractDenseVector>& seed_vector,
+      size_t krylov_subspace_size) const override; 
+  
 
     std::unique_ptr<AbstractDiagonalizableMatrix> multiply_by(double multiplier) const override;
     uint32_t size() const override;

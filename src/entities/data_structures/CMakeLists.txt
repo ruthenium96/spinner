@@ -40,6 +40,7 @@ if (Eigen3_FOUND)
             eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h
             eigen/EigenDenseDiagonalizableMatrix.cpp eigen/EigenDenseDiagonalizableMatrix.h
             eigen/EigenDenseSemiunitaryMatrix.cpp eigen/EigenDenseSemiunitaryMatrix.h
+            eigen/EigenKrylovDenseSemiunitaryMatrix.cpp eigen/EigenKrylovDenseSemiunitaryMatrix.h
             eigen/EigenSparseDiagonalizableMatrix.cpp eigen/EigenSparseDiagonalizableMatrix.h
             eigen/EigenLogic.cpp eigen/EigenLogic.h)
     target_link_libraries(eigen_structures Eigen3::Eigen)
