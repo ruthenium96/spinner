@@ -9,7 +9,7 @@
 namespace {
 
 template <typename T, typename M>
-std::pair<arma::Col<T>, arma::Col<T>> krylovDiagonalizeValuesSparse(
+std::pair<arma::Col<T>, arma::Col<T>> krylovProcedureDiagonalizeValues_(
     const M& matrix,
     const arma::Col<T>& seed_vector,
     size_t krylov_subspace_size) {
@@ -127,6 +127,28 @@ EigenCouple ArmaLogic<T>::diagonalizeValuesVectors(
     return answer;
 }
 
+template <typename T, typename M>
+inline KrylovCouple krylovDiagonalizeValues_(
+    const M& diagonalizableMatrix,
+    const ArmaDenseVector<T>& seed_vector,
+    size_t krylov_subspace_size) {
+    auto eigenvalues_ = std::make_unique<ArmaDenseVector<T>>();
+    auto squared_back_projection_ = std::make_unique<ArmaDenseVector<T>>();
+
+    auto pair = krylovProcedureDiagonalizeValues_(
+        diagonalizableMatrix,
+        seed_vector.getDenseVector(),
+        krylov_subspace_size);
+
+    eigenvalues_->modifyDenseVector() = std::move(pair.first);
+    squared_back_projection_->modifyDenseVector() = std::move(arma::square(pair.second));
+
+    KrylovCouple answer;
+    answer.eigenvalues = std::move(eigenvalues_);
+    answer.squared_back_projection = std::move(squared_back_projection_);
+    return answer;
+}
+
 template <typename T>
 KrylovCouple ArmaLogic<T>::krylovDiagonalizeValues(
     const AbstractDiagonalizableMatrix& diagonalizableMatrix,
@@ -141,29 +163,26 @@ KrylovCouple ArmaLogic<T>::krylovDiagonalizeValues(
         if (auto maybeDenseSymmetricMatrix =
             dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
             // It is slow, avoid this branch.
-            auto pair = krylovDiagonalizeValuesSparse(
+            return krylovDiagonalizeValues_(
                 maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
-                maybeDenseVector->getDenseVector(),
-                krylov_subspace_size);
-            eigenvalues_->modifyDenseVector() = std::move(pair.first);
-            squared_back_projection_->modifyDenseVector() = std::move(arma::square(pair.second));
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
         } else if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
-
-            auto pair = krylovDiagonalizeValuesSparse(
+            return krylovDiagonalizeValues_(
                 maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
-                maybeDenseVector->getDenseVector(),
-                krylov_subspace_size);
-            eigenvalues_->modifyDenseVector() = std::move(pair.first);
-            squared_back_projection_->modifyDenseVector() = std::move(arma::square(pair.second));
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
        } else {
            throw std::bad_cast();
        }
    } else {
        throw std::bad_cast();
    }
+}
 
-    KrylovCouple answer;
     answer.eigenvalues = std::move(eigenvalues_);
     answer.squared_back_projection = std::move(squared_back_projection_);
     return answer;
@@ -210,7 +229,7 @@ std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMain
     throw std::bad_cast();
 }
 template<typename T, typename M>
-std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform_(
+inline std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform_(
     const M& symmetric_matrix,
     const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) {
     auto result = std::make_unique<ArmaDenseDiagonalizableMatrix<T>>();
