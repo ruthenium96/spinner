@@ -51,7 +51,7 @@ FTLMEigendecompositor::BuildSubspectra(
         seed_vectors_[number_of_block] = factories_list_.createRandomUnitVectors(size_of_subspace, number_of_seeds_);
     }
 
-    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    std::optional<std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
         mb_unitary_transformation_matrix;
 
     // return_sparse_if_possible is true, because krylov eigendecomposition of sparse matrix is faster
@@ -81,7 +81,31 @@ FTLMEigendecompositor::BuildSubspectra(
         }
         squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrums);
     } else {
-        throw std::invalid_argument("NOT IMPLEMENTED YET!");
+        mb_unitary_transformation_matrix = 
+            std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>(number_of_seeds_);
+        
+        std::vector<Subspectrum> squared_back_projection_subspectrums;
+        squared_back_projection_subspectrums.resize(number_of_seeds_);
+        for (int seed = 0; seed < number_of_seeds_; ++seed) {
+            auto krylov_triple = 
+                hamiltonian_submatrix.raw_data->krylovDiagonalizeValuesVectors(
+                    seed_vectors_[number_of_block][seed], 
+                    krylov_subspace_size_);
+        
+            Subspectrum energy_subspectrum, squared_back_projection_subspectrum;
+            energy_subspectrum.raw_data = std::move(krylov_triple.eigenvalues);
+            energy_subspectrum.properties = hamiltonian_submatrix.properties;
+            energy_subspectrum.properties.degeneracy *= (double)size_of_subspace;
+    
+            squared_back_projection_subspectrum.raw_data = std::move(krylov_triple.squared_back_projection);
+            squared_back_projection_subspectrum.properties = hamiltonian_submatrix.properties;
+            squared_back_projection_subspectrum.properties.degeneracy *= (double)size_of_subspace;
+    
+            energy_spectra_[number_of_block][seed] = std::move(energy_subspectrum);
+            squared_back_projection_subspectrums[seed] = std::move(squared_back_projection_subspectrum);
+            mb_unitary_transformation_matrix.value()[seed] = std::move(krylov_triple.eigenvectors);
+        }
+        squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrums);
     }
 #ifndef NDEBUG
     energy_matrix_[number_of_block] = std::move(hamiltonian_submatrix);
