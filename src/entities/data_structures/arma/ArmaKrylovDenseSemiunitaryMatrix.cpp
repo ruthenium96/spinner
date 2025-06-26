@@ -22,7 +22,9 @@ double ArmaKrylovDenseSemiunitaryMatrix<T>::at(uint32_t i, uint32_t j) const {
 
 template <typename T>
 void ArmaKrylovDenseSemiunitaryMatrix<T>::print(std::ostream& os) const {
-    os << denseKrylovSemiunitaryMatrix_ << std::endl;
+    os << "DenseKrylovSemiunitaryMatrix:\n" << denseKrylovSemiunitaryMatrix_ << std::endl;
+    os << "BackProjectionVector:\n" << backProjectionVector_ << std::endl;
+    os << "SeedVector:\n" << seed_vector_ << std::endl;
 }
 
 template <typename T>
@@ -57,22 +59,22 @@ arma::Mat<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::modifyKrylovDenseSemiunitaryM
 }
 
 template <typename T>
-const arma::Mat<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::getSeedVector() const {
+const arma::Col<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::getSeedVector() const {
     return seed_vector_;
 }
 
 template <typename T>
-arma::Mat<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::modifySeedVector() {
+arma::Col<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::modifySeedVector() {
     return seed_vector_;
 }
 
 template <typename T>
-const arma::Mat<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::getBackProjectionVector() const {
+const arma::Col<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::getBackProjectionVector() const {
     return backProjectionVector_;
 }
 
 template <typename T>
-arma::Mat<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::modifyBackProjectionVector() {
+arma::Col<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::modifyBackProjectionVector() {
     return backProjectionVector_;
 }
 

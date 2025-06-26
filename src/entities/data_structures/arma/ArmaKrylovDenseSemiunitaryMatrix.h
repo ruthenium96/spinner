@@ -22,10 +22,10 @@ class ArmaKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     void resize(size_t size_rows, size_t size_cols);
     const arma::Mat<T>& getKrylovDenseSemiunitaryMatrix() const;
     arma::Mat<T>& modifyKrylovDenseSemiunitaryMatrix();
-    const arma::Mat<T>& getBackProjectionVector() const;
-    arma::Mat<T>& modifyBackProjectionVector();
-    const arma::Mat<T>& getSeedVector() const;
-    arma::Mat<T>& modifySeedVector();
+    const arma::Col<T>& getBackProjectionVector() const;
+    arma::Col<T>& modifyBackProjectionVector();
+    const arma::Col<T>& getSeedVector() const;
+    arma::Col<T>& modifySeedVector();
 
     void normalize() override;
 
