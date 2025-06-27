@@ -8,26 +8,9 @@
 
 namespace {
 template <typename T, typename U>
-std::optional<OneOrMany<U>> getEntity(
+OneOrMany<U> getEntity(
     size_t number_of_subspaces, 
-    std::function<std::optional<OneOrMany<std::reference_wrapper<const T>>>(size_t)> getter) {
-    std::vector<std::optional<OneOrMany<std::reference_wrapper<const T>>>> mb_data;
-    for (int i = 0; i < number_of_subspaces; ++i) {
-        mb_data.push_back(getter(i));
-    }
-
-    if (std::none_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
-        return std::nullopt;
-    }
-    if (!std::all_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
-        throw std::logic_error("Some Subspectra were not defined, while some were defined!");
-    }
-
-    std::vector<OneOrMany<std::reference_wrapper<const T>>> data;
-    for (const auto& mb_el : mb_data) {
-        data.push_back(mb_el.value());
-    }
-
+    const std::vector<OneOrMany<std::reference_wrapper<const T>>>& data) {
     if (std::all_of(
         data.cbegin(), 
         data.cend(), 
@@ -68,6 +51,30 @@ std::optional<OneOrMany<U>> getEntity(
         return answer;
     }
 }
+
+template <typename T, typename U>
+std::optional<OneOrMany<U>> getEntity(
+    size_t number_of_subspaces, 
+    std::function<std::optional<OneOrMany<std::reference_wrapper<const T>>>(size_t)> getter) {
+    std::vector<std::optional<OneOrMany<std::reference_wrapper<const T>>>> mb_data;
+    for (int i = 0; i < number_of_subspaces; ++i) {
+        mb_data.push_back(getter(i));
+    }
+
+    if (std::none_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
+        return std::nullopt;
+    }
+    if (!std::all_of(mb_data.cbegin(), mb_data.cend(), [](const auto& a){return a.has_value();})) {
+        throw std::logic_error("Some Subspectra were not defined, while some were defined!");
+    }
+
+    std::vector<OneOrMany<std::reference_wrapper<const T>>> data;
+    for (const auto& mb_el : mb_data) {
+        data.push_back(mb_el.value());
+    }
+    return getEntity<T, U>(number_of_subspaces, data);
+}
+
 } // namespace
 
 namespace eigendecompositor {
