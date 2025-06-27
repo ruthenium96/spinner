@@ -29,21 +29,18 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
                     return std::move(vector);
                 }), 
                 spectrum);
-            if (quantity_enum == common::Energy) {
-                std::optional<SpectrumRef> spectrum_ref;
-                if (holdsOne(spectrum)) {
-                    spectrum_ref = getOneRef(spectrum);
-                } else {
-                    spectrum_ref = getManyRef(spectrum)[0];
-                }
-                for (const auto& subspectrum_ref : spectrum_ref.value().blocks) {
-                    degeneracyValues_->add_identical_values(
-                        subspectrum_ref.get().raw_data->size(),
-                        subspectrum_ref.get().properties.degeneracy);
-                }
-            }
         }
     }
+    flattenedWeights_ = transform_one_or_many(
+        std::function([factories](std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> weights_all){
+            auto vector = factories.createVector();
+            for (auto ref_weights_of_block : weights_all) {
+                const auto& weights_of_block = ref_weights_of_block.get();
+                vector->concatenate_with(weights_of_block);
+            }
+            return std::move(vector);
+        }),
+        allQuantitiesGetter.getWeightsOfAllStates());
     apply_to_one_or_many(
         std::function([](const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_spectrum){
             energy_spectrum.get()->subtract_minimum();
@@ -100,9 +97,10 @@ FlattenedSpectra::getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enu
 }
 
 
-const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& 
-    FlattenedSpectra::getDegeneracyValues() const {
-    return degeneracyValues_;
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> 
+    FlattenedSpectra::getWeights() const {
+    return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
+        std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(flattenedWeights_);
 }
 
 

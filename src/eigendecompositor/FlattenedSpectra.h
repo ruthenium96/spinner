@@ -25,7 +25,7 @@ class FlattenedSpectra {
     std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
         getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enum, 
           const model::symbols::SymbolName& symbol_name) const;
-    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& getDegeneracyValues() const;
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> getWeights() const;
 
   private:
     std::map<common::QuantityEnum, 
@@ -33,6 +33,7 @@ class FlattenedSpectra {
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, 
         OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> flattenedDerivativeSpectra_;
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> degeneracyValues_;
+    OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flattenedWeights_;
 };
 } // namespace eigendecompositor
 

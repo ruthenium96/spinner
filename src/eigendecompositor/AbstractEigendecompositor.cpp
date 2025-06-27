@@ -4,6 +4,7 @@
 #include <functional>
 #include <stdexcept>
 #include "src/common/Logger.h"
+#include "src/common/OneOrMany.h"
 #include "src/common/Quantity.h"
 
 namespace {
@@ -164,6 +165,18 @@ size_t AbstractEigendecompositor::getSubspectrumSize(common::QuantityEnum quanti
     } else {
         return getManyRef(data)[0].get().raw_data->size();
     }
+}
+
+OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>
+AbstractEigendecompositor::getWeightsOfAllStates() const {
+    std::vector<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>
+        weights;
+    for (size_t i = 0; i < number_of_subspaces_; ++i) {
+        weights.push_back(getWeightsOfBlockStates(i));
+    }
+    return getEntity<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
+        std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>(
+        number_of_subspaces_, weights);
 }
 
 }  // namespace eigendecompositor
