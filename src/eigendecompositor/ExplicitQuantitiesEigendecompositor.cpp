@@ -24,8 +24,8 @@ ExplicitQuantitiesEigendecompositor::getSubspectrum(common::QuantityEnum quantit
 std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
 ExplicitQuantitiesEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
 #ifndef NDEBUG
-    if (quantities_map_.contains(quantity_enum)) {
-        return quantities_map_.at(quantity_enum).matrix_.blocks[number_of_block];
+    if (quantities_matrix_map_.contains(quantity_enum)) {
+        return quantities_matrix_map_.at(quantity_enum)[number_of_block];
     }
 #endif
     return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
@@ -43,8 +43,8 @@ ExplicitQuantitiesEigendecompositor::getSubspectrumDerivative(common::QuantityEn
 std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
 ExplicitQuantitiesEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
 #ifndef NDEBUG
-    if (derivatives_map_.contains({quantity_enum, symbol_name})) {
-        return derivatives_map_.at({quantity_enum, symbol_name}).matrix_.blocks[number_of_block];
+    if (derivatives_matrix_map_.contains({quantity_enum, symbol_name})) {
+        return derivatives_matrix_map_.at({quantity_enum, symbol_name})[number_of_block];
     }
 #endif
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);

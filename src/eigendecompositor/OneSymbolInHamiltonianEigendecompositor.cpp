@@ -143,6 +143,9 @@ void OneSymbolInHamiltonianEigendecompositor::initialize(
         current_energy_derivative_spectrum_->resize(number_of_subspaces);
 
         eigenvectors_.resize(number_of_subspaces);
+#ifndef NDEBUG
+        current_energy_matrix_.resize(number_of_subspaces);
+#endif
     } else {
         // delete energy operator, because we are going to implicitly calculate energy
         std::erase_if(operators_to_calculate, [](const auto& p) { return p.first == common::Energy; });
