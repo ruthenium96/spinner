@@ -77,7 +77,7 @@ OneOrMany<W> transform_one_or_many(
         for (int i = 0; i < many_first.size(); ++i) {
             const auto& el_first = many_first[i];
             const auto& el_second = many_second[i];
-            answer.emplace_back(f(el_first, el_first));
+            answer.emplace_back(f(el_first, el_second));
         }
         return answer;
     } else {
