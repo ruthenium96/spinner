@@ -50,6 +50,11 @@ ExplicitQuantitiesEigendecompositor::getSubmatrixDerivative(common::QuantityEnum
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+ExplicitQuantitiesEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
+}
+
 std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ExplicitQuantitiesEigendecompositor::BuildSubspectra(
     size_t number_of_block,

@@ -59,6 +59,11 @@ FTLMImplicitQuantityEigendecompositor::getSubmatrix(common::QuantityEnum quantit
     return ImplicitQuantityEigendecompositor::getSubmatrix(quantity_enum, number_of_block);
 }
 
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+FTLMImplicitQuantityEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    return ImplicitQuantityEigendecompositor::getWeightsOfBlockStates(number_of_block);
+}
+
 void FTLMImplicitQuantityEigendecompositor::initialize(
     std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
         operators_to_calculate,

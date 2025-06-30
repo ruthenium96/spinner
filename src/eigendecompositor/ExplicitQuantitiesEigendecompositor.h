@@ -20,6 +20,9 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
     getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
 
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+    getWeightsOfBlockStates(size_t number_of_block) const override;
+
   protected:
     void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&

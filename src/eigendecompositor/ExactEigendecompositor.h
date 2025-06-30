@@ -21,10 +21,13 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
         getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
-    getSubspectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
+        getSubspectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
-    getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
-  
+        getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
+
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+        getWeightsOfBlockStates(size_t number_of_block) const override;
+
     void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_to_calculate,
@@ -40,6 +43,8 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     common::Quantity energy_;
     std::shared_ptr<const model::operators::Operator> energy_operator_;
     bool do_we_need_eigenvectors_;
+    bool first_iteration_has_been_done_ = false;
+    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_;
 
     static Subspectrum energy_subspectrum_eigenvalues_only(const Submatrix& hamiltonian_submatrix);
     static std::

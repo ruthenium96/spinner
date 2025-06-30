@@ -49,6 +49,10 @@ FTLMEigendecompositor::BuildSubspectra(
 
     if (!first_iteration_has_been_done_) {
         seed_vectors_[number_of_block] = factories_list_.createRandomUnitVectors(size_of_subspace, number_of_seeds_);
+        for (int seed = 0; seed < number_of_seeds_; ++seed) {
+            weights_[number_of_block][seed] = factories_list_.createVector();
+            weights_[number_of_block][seed]->add_identical_values(krylov_subspace_size_, subspace.properties.degeneracy * size_of_subspace);        
+        }
     }
 
     std::optional<std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
@@ -127,7 +131,7 @@ FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t
             return exact_subspectrumref;
         } else {
             if (ftlm_subspectrumref[0].raw_data == nullptr) {
-                throw std::logic_error("Neither exact or FTLM constructed Energy block #" + std::to_string(number_of_block));
+                throw std::logic_error("Neither exact nor FTLM constructed Energy block #" + std::to_string(number_of_block));
             }
             std::vector<std::reference_wrapper<const Subspectrum>> answer;
             for (const auto& el : ftlm_subspectrumref) {
@@ -157,7 +161,7 @@ FTLMEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t n
             return exact_submatrixref;
         } else {
             if (ftlm_submatrixref.raw_data == nullptr) {
-                throw std::logic_error("Neither exact or FTLM constructed Energy block #" + std::to_string(number_of_block));
+                throw std::logic_error("Neither exact nor FTLM constructed Energy block #" + std::to_string(number_of_block));
             }
             return ftlm_submatrixref;
         }
@@ -167,6 +171,29 @@ FTLMEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t n
         return std::nullopt;
     }
     return std::nullopt;
+}
+
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+FTLMEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    auto exact_weights = ExactEigendecompositor::getWeightsOfBlockStates(number_of_block);
+
+    const auto& ftlm_weights = weights_[number_of_block];
+
+    if (getOneRef(exact_weights).get() != nullptr) {
+        if (ftlm_weights[0] != nullptr) {
+            throw std::logic_error("Both exact and FTLM constructed Energy block #" + std::to_string(number_of_block));
+        }
+        return exact_weights;
+    } else {
+        if (ftlm_weights[0] == nullptr) {
+            throw std::logic_error("Neither exact nor FTLM constructed Energy block #" + std::to_string(number_of_block));
+        }
+        std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> answer;
+        for (const auto& el : ftlm_weights) {
+            answer.push_back(std::reference_wrapper(el));
+        }
+        return answer;
+    }
 }
 
 void FTLMEigendecompositor::initialize(
@@ -189,6 +216,11 @@ void FTLMEigendecompositor::initialize(
     if (!first_iteration_has_been_done_) {
         seed_vectors_.resize(number_of_subspaces);
         squared_back_projection_spectrum_.resize(number_of_subspaces);
+        weights_.resize(number_of_subspaces);
+        for (int i = 0; i < number_of_subspaces; ++i) {
+            weights_[i].clear();
+            weights_[i].resize(number_of_seeds_);
+        }
     }
 
     energy_operator_ = operators_to_calculate.at(common::Energy);

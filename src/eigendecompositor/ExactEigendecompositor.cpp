@@ -35,6 +35,11 @@ ExactEigendecompositor::BuildSubspectra(
     energy_.matrix_.blocks[number_of_block] = std::move(hamiltonian_submatrix);
 #endif
 
+    if (!first_iteration_has_been_done_) {
+        weights_[number_of_block] = factories_list_.createVector();
+        weights_[number_of_block]->add_identical_values(subspace.size(), subspace.properties.degeneracy);
+    }
+
     return mb_unitary_transformation_matrix;
 }
 
@@ -49,6 +54,9 @@ void ExactEigendecompositor::initialize(
     energy_.spectrum_.blocks.clear();
     energy_.matrix_.blocks.resize(number_of_subspaces);
     energy_.spectrum_.blocks.resize(number_of_subspaces);
+    if (!first_iteration_has_been_done_) {
+        weights_.resize(number_of_subspaces);
+    }
 
     energy_operator_ = operators_to_calculate.at(common::Energy);
     do_we_need_eigenvectors_ =
@@ -56,7 +64,9 @@ void ExactEigendecompositor::initialize(
     std::erase_if(operators_to_calculate, [](const auto& p) { return p.first == common::Energy; });
 }
 
-void ExactEigendecompositor::finalize() {}
+void ExactEigendecompositor::finalize() {
+    first_iteration_has_been_done_ = true;
+}
 
 std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 ExactEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
@@ -84,6 +94,11 @@ ExactEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_e
 std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
 ExactEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol, size_t number_of_block) const {
     return std::nullopt;
+}
+
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+ExactEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    return weights_[number_of_block];
 }
 
 Subspectrum ExactEigendecompositor::energy_subspectrum_eigenvalues_only(

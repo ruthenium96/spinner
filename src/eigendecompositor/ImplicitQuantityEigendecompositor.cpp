@@ -83,6 +83,11 @@ ImplicitQuantityEigendecompositor::getSubmatrixDerivative(common::QuantityEnum q
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+ImplicitQuantityEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
+}
+
 void ImplicitQuantityEigendecompositor::initialize(
     std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
         operators_to_calculate,

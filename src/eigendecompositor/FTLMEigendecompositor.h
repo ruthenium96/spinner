@@ -27,6 +27,9 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
         getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
 
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+        getWeightsOfBlockStates(size_t number_of_block) const override;
+
     void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_to_calculate,
@@ -49,6 +52,7 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
     std::vector<std::vector<Subspectrum>> energy_spectra_;
     std::vector<Submatrix> energy_matrix_;
     std::shared_ptr<const model::operators::Operator> energy_operator_;
+    std::vector<std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> weights_;
     bool do_we_need_eigenvectors_;
     bool first_iteration_has_been_done_ = false;
     std::vector<OneOrMany<Subspectrum>> squared_back_projection_spectrum_;
