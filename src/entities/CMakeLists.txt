@@ -17,6 +17,8 @@ add_library(magnetic_susceptibility
         magnetic_susceptibility/assistant/ExperimentalValuesWorker.h
         magnetic_susceptibility/assistant/FTLMEnsembleAverager.cpp
         magnetic_susceptibility/assistant/FTLMEnsembleAverager.h
+        magnetic_susceptibility/assistant/AbstractEnsembleAverager.cpp
+        magnetic_susceptibility/assistant/AbstractEnsembleAverager.h
         magnetic_susceptibility/worker/UniqueGWorker.cpp
         magnetic_susceptibility/worker/UniqueGWorker.h
         magnetic_susceptibility/worker/CurieWeissWorker.cpp

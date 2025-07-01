@@ -41,15 +41,15 @@ std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemb
     const auto& value_vectors = values;
 
     OneOrMany<std::pair<double, double>> results = transform_one_or_many(
-        std::function([temperature](
+        std::function([this, temperature](
             std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> energy_vector, 
             std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_vector, 
             std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> value_vector){
-            auto divided_and_wise_exped_energy = energy_vector.get()->multiply_by(-1.0 / temperature);
-            divided_and_wise_exped_energy->wise_exp();
-            double partition_function = divided_and_wise_exped_energy->dot(weights_vector.get());
-            double value_numerator = value_vector.get()->triple_dot(weights_vector.get(), divided_and_wise_exped_energy);
-            return std::pair{partition_function, value_numerator};   
+            return calculate_averaged_value_and_partition_function(
+                temperature,
+                energy_vector.get(),
+                weights_vector.get(),
+                value_vector.get());
         }),
         energy_vectors,
         weights_vectors,
@@ -60,8 +60,8 @@ std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemb
    std::vector<double> value_numerators;
 
     for (const auto& pair : getManyRef(results)) {
-        partition_functions.push_back(pair.first);
-        value_numerators.push_back(pair.second);
+        value_numerators.push_back(pair.first);
+        partition_functions.push_back(pair.second);
     }
 
     return {std::move(value_numerators), std::move(partition_functions)};

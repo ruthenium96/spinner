@@ -24,11 +24,11 @@ std::pair<double, double> CommonEnsembleAverager::ensemble_average_numerator_den
     const auto& energy_vector = getOneRef(flattenedSpectra_->getFlattenSpectrum(common::Energy).value()).get();
     const auto& weights_vector = getOneRef(flattenedSpectra_->getWeights());
     const auto& value_vector = value.get();
-    auto divided_and_wise_exped_energy = energy_vector->multiply_by(-1.0 / temperature);
-    divided_and_wise_exped_energy->wise_exp();
-    double partition_function = divided_and_wise_exped_energy->dot(weights_vector);
-    double value_numerator = value_vector->triple_dot(weights_vector, divided_and_wise_exped_energy);
-    return {value_numerator, partition_function};
+    return calculate_averaged_value_and_partition_function(
+        temperature,
+        energy_vector,
+        weights_vector,
+        value_vector);
 }
 
 }  // namespace magnetic_susceptibility
