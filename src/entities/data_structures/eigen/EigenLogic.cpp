@@ -1,4 +1,5 @@
 #include "EigenLogic.h"
+#include <limits>
 #include <stdexcept>
 
 #include "EigenDenseDiagonalizableMatrix.h"
@@ -207,7 +208,9 @@ inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagona
     main_diagonal->modifyDenseVector() = 
         denseKrylovSemiunitaryMatrix.getKrylovDenseSemiunitaryMatrix().transpose()
         * firstMultiplicationResult;
-    main_diagonal->modifyDenseVector().array() *= denseKrylovSemiunitaryMatrix.getBackProjectionVector().array();
+    // instead of <n|A|r><r|n>, here we are using <n|A|r>/<r|n>,
+    // putting |<r|n>|^2 in the weight of state
+    main_diagonal->modifyDenseVector().array() /= denseKrylovSemiunitaryMatrix.getBackProjectionVector().array();
     return std::move(main_diagonal);
 }
 
@@ -298,6 +301,15 @@ inline KrylovTriple krylovDiagonalizeValuesVectors_(
     eigenvectors_->modifyKrylovDenseSemiunitaryMatrix() = std::move(std::get<1>(triple));
     eigenvectors_->modifyBackProjectionVector() = std::move(std::get<2>(triple));
     eigenvectors_->modifySeedVector() = seed_vector.getDenseVector();
+
+    // instead of <n|A|r><r|n>, here we are using <n|A|r>/<r|n>,
+    // putting |<r|n>|^2 in the weight of state
+    // in the case of small <r|n>, we substitute it with infinity 
+    // to avoid numerical instabilities
+    const T EPSILON = 1e-14;
+    eigenvectors_->modifyBackProjectionVector() = 
+        (eigenvectors_->modifyBackProjectionVector().array().abs() < EPSILON)
+        .select(std::numeric_limits<T>::infinity(), eigenvectors_->modifyBackProjectionVector());
 
     KrylovTriple answer;
     answer.eigenvalues = std::move(eigenvalues_);

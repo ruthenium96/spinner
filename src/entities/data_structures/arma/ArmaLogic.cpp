@@ -266,6 +266,14 @@ inline KrylovTriple krylovDiagonalizeValuesVectors_(
     eigenvectors_->modifyBackProjectionVector() = std::move(std::get<2>(triple));
     eigenvectors_->modifySeedVector() = seed_vector.getDenseVector();
 
+    // instead of <n|A|r><r|n>, here we are using <n|A|r>/<r|n>,
+    // putting |<r|n>|^2 in the weight of state
+    // in the case of small <r|n>, we substitute it with infinity 
+    // to avoid numerical instabilities
+    const T EPSILON = 1e-14;
+    eigenvectors_->modifyBackProjectionVector().clean(EPSILON);
+    eigenvectors_->modifyBackProjectionVector().replace(0, arma::datum::inf);
+
     KrylovTriple answer;
     answer.eigenvalues = std::move(eigenvalues_);
     answer.eigenvectors = std::move(eigenvectors_);
@@ -349,7 +357,9 @@ inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagona
     main_diagonal->modifyDenseVector() = 
         denseKrylovSemiunitaryMatrix.getKrylovDenseSemiunitaryMatrix().t()
         * firstMultiplicationResult;
-    main_diagonal->modifyDenseVector() %= denseKrylovSemiunitaryMatrix.getBackProjectionVector();
+    // instead of <n|A|r><r|n>, here we are using <n|A|r>/<r|n>, 
+    // putting |<r|n>|^2 in the weight of state
+    main_diagonal->modifyDenseVector() /= denseKrylovSemiunitaryMatrix.getBackProjectionVector();
     return std::move(main_diagonal);
 }
 
