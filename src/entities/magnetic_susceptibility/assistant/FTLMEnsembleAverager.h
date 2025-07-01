@@ -17,7 +17,7 @@ class FTLMEnsembleAverager : public AbstractEnsembleAverager {
         OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> values,
         double temperature) const override;
     std::pair<std::vector<double>, std::vector<double>> ensemble_average_numerator_denominator(
-        const std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>& values,
+        const OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>& values,
         double temperature) const;  
   private:
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;
