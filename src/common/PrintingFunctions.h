@@ -33,14 +33,10 @@ std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity)
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const OneOrMany<T>& one_or_many) {
-    if (holdsOne(one_or_many)) {
-        os << getOneRef(one_or_many) << std::endl;
-    } else {
-        const auto& vec = getManyRef(one_or_many);
-        for (const auto& el : vec) {
-            os << el << std::endl;
-        }
-    }
+    apply_to_one_or_many(std::function([&os](const T& t){
+        os << t << std::endl;
+    }), 
+    one_or_many);
     return os;
 }
 template <typename T> struct fmt::formatter<OneOrMany<T>> : fmt::ostream_formatter {};
