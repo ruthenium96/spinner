@@ -162,7 +162,7 @@ inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagona
     Eigen::Matrix<T, -1, -1> firstMultiplicationResult =
         denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().transpose()
         * symmetricMatrix;
-    main_diagonal->resize(symmetricMatrix.size());
+    main_diagonal->resize(symmetricMatrix.rows());
 #pragma omp parallel for shared( \
     main_diagonal, \
     firstMultiplicationResult, \
@@ -179,23 +179,18 @@ template <typename T>
 std::unique_ptr<AbstractDenseVector> EigenLogic<T>::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
     const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
-    auto maybeDenseSemiunitaryMatrix =
-        dynamic_cast<const EigenDenseSemiunitaryMatrix<T>*>(&denseSemiunitaryMatrix);
-    if (maybeDenseSemiunitaryMatrix == nullptr) {
-        throw std::bad_cast();
-    }
     if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         return unitaryTransformAndReturnMainDiagonal_(
             maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix().transpose(),
-            *maybeDenseSemiunitaryMatrix
+            denseSemiunitaryMatrix
         );
     }
     if (auto maybeDenseSymmetricMatrix =
             dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
         return unitaryTransformAndReturnMainDiagonal_(
             maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
-            *maybeDenseSemiunitaryMatrix
+            denseSemiunitaryMatrix
         );
     }
     throw std::bad_cast();
