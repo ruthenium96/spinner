@@ -28,7 +28,7 @@ common::UncertainValue FTLMEnsembleAverager::ensemble_average(
     size_t number_of_seeds = fraction.second.size();
     double averaged_partition_function = average_over_seeds(fraction.second);
     double value = average_over_seeds(fraction.first) / averaged_partition_function;
-    double uncertainty = value / std::sqrt(averaged_partition_function * number_of_seeds);
+    double uncertainty = std::abs(value) / std::sqrt(averaged_partition_function * number_of_seeds); 
     return common::UncertainValue(value, uncertainty, common::UncertaintySources::FTLM);
 }
 
