@@ -34,25 +34,11 @@ FTLMEigendecompositor::BuildSubspectra(
 
     uint32_t size_of_subspace = subspace.size();
     if (size_of_subspace <= exact_decomposition_threshold_) {
-        if (!first_iteration_has_been_done_) {
-            auto vector = factories_list_.createVector();
-            vector->add_identical_values(size_of_subspace, 1.0);
-
-            Subspectrum squared_back_projection_subspectrum;
-            squared_back_projection_subspectrum.properties = subspace.properties;
-            squared_back_projection_subspectrum.raw_data = std::move(vector);
-
-            squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrum);
-        }
         return ExactEigendecompositor::BuildSubspectra(number_of_block, subspace);
     }
 
     if (!first_iteration_has_been_done_) {
         seed_vectors_[number_of_block] = factories_list_.createRandomUnitVectors(size_of_subspace, number_of_seeds_);
-        for (int seed = 0; seed < number_of_seeds_; ++seed) {
-            weights_[number_of_block][seed] = factories_list_.createVector();
-            weights_[number_of_block][seed]->add_identical_values(krylov_subspace_size_, subspace.properties.degeneracy * size_of_subspace);        
-        }
     }
 
     std::optional<std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
@@ -62,8 +48,8 @@ FTLMEigendecompositor::BuildSubspectra(
     auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_, true);
 
     if (!do_we_need_eigenvectors_) {
-        std::vector<Subspectrum> squared_back_projection_subspectrums;
-        squared_back_projection_subspectrums.resize(number_of_seeds_);
+        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
+        weights_of_all_seeds_.resize(number_of_seeds_);
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
         for (int seed = 0; seed < number_of_seeds_; ++seed) {
             auto krylov_couple = 
@@ -71,46 +57,44 @@ FTLMEigendecompositor::BuildSubspectra(
                     seed_vectors_[number_of_block][seed], 
                     krylov_subspace_size_);
         
-            Subspectrum energy_subspectrum, squared_back_projection_subspectrum;
+            Subspectrum energy_subspectrum;
             energy_subspectrum.raw_data = std::move(krylov_couple.eigenvalues);
             energy_subspectrum.properties = hamiltonian_submatrix.properties;
             energy_subspectrum.properties.degeneracy *= (double)size_of_subspace;
     
-            squared_back_projection_subspectrum.raw_data = std::move(krylov_couple.squared_back_projection);
-            squared_back_projection_subspectrum.properties = hamiltonian_submatrix.properties;
-            squared_back_projection_subspectrum.properties.degeneracy *= (double)size_of_subspace;
-    
+            double degeneracy = hamiltonian_submatrix.properties.degeneracy * (double)size_of_subspace;
+
             energy_spectra_[number_of_block][seed] = std::move(energy_subspectrum);
-            squared_back_projection_subspectrums[seed] = std::move(squared_back_projection_subspectrum);
+            weights_of_all_seeds_[seed] = std::move(krylov_couple.ftlm_weights_of_states->multiply_by(degeneracy));
+            // todo: in-place multiplication
         }
-        squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrums);
+        weights_[number_of_block] = std::move(weights_of_all_seeds_);
     } else {
         mb_unitary_transformation_matrix = 
             std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>(number_of_seeds_);
-        
-        std::vector<Subspectrum> squared_back_projection_subspectrums;
-        squared_back_projection_subspectrums.resize(number_of_seeds_);
+    
+        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
+        weights_of_all_seeds_.resize(number_of_seeds_);
         for (int seed = 0; seed < number_of_seeds_; ++seed) {
             auto krylov_triple = 
                 hamiltonian_submatrix.raw_data->krylovDiagonalizeValuesVectors(
                     seed_vectors_[number_of_block][seed], 
                     krylov_subspace_size_);
         
-            Subspectrum energy_subspectrum, squared_back_projection_subspectrum;
+            Subspectrum energy_subspectrum;
             energy_subspectrum.raw_data = std::move(krylov_triple.eigenvalues);
             energy_subspectrum.properties = hamiltonian_submatrix.properties;
             energy_subspectrum.properties.degeneracy *= (double)size_of_subspace;
-    
-            squared_back_projection_subspectrum.raw_data = std::move(krylov_triple.squared_back_projection);
-            squared_back_projection_subspectrum.properties = hamiltonian_submatrix.properties;
-            squared_back_projection_subspectrum.properties.degeneracy *= (double)size_of_subspace;
-    
+
             energy_spectra_[number_of_block][seed] = std::move(energy_subspectrum);
-            squared_back_projection_subspectrums[seed] = std::move(squared_back_projection_subspectrum);
             mb_unitary_transformation_matrix.value()[seed] = std::move(krylov_triple.eigenvectors);
+            
+            double degeneracy = hamiltonian_submatrix.properties.degeneracy * (double)size_of_subspace;
+            weights_of_all_seeds_[seed] = std::move(krylov_triple.ftlm_weights_of_states->multiply_by(degeneracy));
+            // todo: in-place multiplication
         }
-        squared_back_projection_spectrum_[number_of_block] = std::move(squared_back_projection_subspectrums);
-    }
+        weights_[number_of_block] = std::move(weights_of_all_seeds_);
+}
 #ifndef NDEBUG
     energy_matrix_[number_of_block] = std::move(hamiltonian_submatrix);
 #endif
@@ -209,7 +193,6 @@ void FTLMEigendecompositor::initialize(
 
     if (!first_iteration_has_been_done_) {
         seed_vectors_.resize(number_of_subspaces);
-        squared_back_projection_spectrum_.resize(number_of_subspaces);
         weights_.resize(number_of_subspaces);
         for (int i = 0; i < number_of_subspaces; ++i) {
             weights_[i].clear();

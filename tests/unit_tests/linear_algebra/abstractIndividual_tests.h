@@ -125,12 +125,12 @@ TYPED_TEST_P(
                 triple.eigenvalues->at(i),
                 epsilon_energies);
 
-            double epsilon_squared_back_projection =
-                std::abs(couple.squared_back_projection->at(i) * 1e-6);
+            double epsilon_ftlm_weights_of_states =
+                std::abs(couple.ftlm_weights_of_states->at(i) * 1e-6);
             EXPECT_NEAR(
-                couple.squared_back_projection->at(i),
-                triple.squared_back_projection->at(i),
-                epsilon_squared_back_projection);
+                couple.ftlm_weights_of_states->at(i),
+                triple.ftlm_weights_of_states->at(i),
+                epsilon_ftlm_weights_of_states);
         }
     }
 }

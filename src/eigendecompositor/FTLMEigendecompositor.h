@@ -55,7 +55,6 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
     std::vector<std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> weights_;
     bool do_we_need_eigenvectors_;
     bool first_iteration_has_been_done_ = false;
-    std::vector<OneOrMany<Subspectrum>> squared_back_projection_spectrum_;
 };
 
 } // namespace eigendecompositor

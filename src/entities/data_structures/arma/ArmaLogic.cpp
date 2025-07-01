@@ -200,7 +200,7 @@ inline KrylovCouple krylovDiagonalizeValues_(
     const ArmaDenseVector<T>& seed_vector,
     size_t krylov_subspace_size) {
     auto eigenvalues_ = std::make_unique<ArmaDenseVector<T>>();
-    auto squared_back_projection_ = std::make_unique<ArmaDenseVector<T>>();
+    auto ftlm_weights_of_states_ = std::make_unique<ArmaDenseVector<T>>();
 
     auto pair = krylovProcedureDiagonalizeValues_(
         diagonalizableMatrix,
@@ -208,11 +208,11 @@ inline KrylovCouple krylovDiagonalizeValues_(
         krylov_subspace_size);
 
     eigenvalues_->modifyDenseVector() = std::move(pair.first);
-    squared_back_projection_->modifyDenseVector() = std::move(arma::square(pair.second));
+    ftlm_weights_of_states_->modifyDenseVector() = std::move(arma::square(pair.second));
 
     KrylovCouple answer;
     answer.eigenvalues = std::move(eigenvalues_);
-    answer.squared_back_projection = std::move(squared_back_projection_);
+    answer.ftlm_weights_of_states = std::move(ftlm_weights_of_states_);
     return answer;
 }
 
@@ -253,7 +253,7 @@ inline KrylovTriple krylovDiagonalizeValuesVectors_(
     size_t krylov_subspace_size) {
     auto eigenvalues_ = std::make_unique<ArmaDenseVector<T>>();
     auto eigenvectors_ = std::make_unique<ArmaKrylovDenseSemiunitaryMatrix<T>>();
-    auto squared_back_projection_ = std::make_unique<ArmaDenseVector<T>>();
+    auto ftlm_weights_of_states_ = std::make_unique<ArmaDenseVector<T>>();
 
     auto triple = krylovProcedureDiagonalizeValuesVectors_(
         diagonalizableMatrix,
@@ -261,7 +261,7 @@ inline KrylovTriple krylovDiagonalizeValuesVectors_(
         krylov_subspace_size);
 
     eigenvalues_->modifyDenseVector() = std::move(std::get<0>(triple));
-    squared_back_projection_->modifyDenseVector() = arma::square(std::get<2>(triple));
+    ftlm_weights_of_states_->modifyDenseVector() = arma::square(std::get<2>(triple));
     eigenvectors_->modifyKrylovDenseSemiunitaryMatrix() = std::move(std::get<1>(triple));
     eigenvectors_->modifyBackProjectionVector() = std::move(std::get<2>(triple));
     eigenvectors_->modifySeedVector() = seed_vector.getDenseVector();
@@ -277,7 +277,7 @@ inline KrylovTriple krylovDiagonalizeValuesVectors_(
     KrylovTriple answer;
     answer.eigenvalues = std::move(eigenvalues_);
     answer.eigenvectors = std::move(eigenvectors_);
-    answer.squared_back_projection = std::move(squared_back_projection_);
+    answer.ftlm_weights_of_states = std::move(ftlm_weights_of_states_);
     return answer;
 }
 

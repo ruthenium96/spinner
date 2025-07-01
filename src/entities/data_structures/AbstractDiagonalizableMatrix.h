@@ -13,13 +13,13 @@ struct EigenCouple {
 
 struct KrylovCouple {
     std::unique_ptr<AbstractDenseVector> eigenvalues;
-    std::unique_ptr<AbstractDenseVector> squared_back_projection;
+    std::unique_ptr<AbstractDenseVector> ftlm_weights_of_states;
 };
 
 struct KrylovTriple {
   std::unique_ptr<AbstractDenseVector> eigenvalues;
   std::unique_ptr<AbstractDenseSemiunitaryMatrix> eigenvectors;
-  std::unique_ptr<AbstractDenseVector> squared_back_projection;
+  std::unique_ptr<AbstractDenseVector> ftlm_weights_of_states;
 };
 
 class AbstractDiagonalizableMatrix: public AbstractSymmetricMatrix {
