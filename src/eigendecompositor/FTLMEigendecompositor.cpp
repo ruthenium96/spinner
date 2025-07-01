@@ -140,9 +140,6 @@ FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t
             return answer;
         }
     }
-    if (quantity_enum == common::squared_back_projection) {
-        return copyRef<Subspectrum, std::reference_wrapper<const Subspectrum>>(squared_back_projection_spectrum_[number_of_block]);
-    }
     return std::nullopt;
 }
 
@@ -167,9 +164,6 @@ FTLMEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t n
         }
     }
 #endif
-    if (quantity_enum == common::squared_back_projection) {
-        return std::nullopt;
-    }
     return std::nullopt;
 }
 
@@ -181,12 +175,12 @@ FTLMEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
 
     if (getOneRef(exact_weights).get() != nullptr) {
         if (ftlm_weights[0] != nullptr) {
-            throw std::logic_error("Both exact and FTLM constructed Energy block #" + std::to_string(number_of_block));
+            throw std::logic_error("Both exact and FTLM constructed weights of block #" + std::to_string(number_of_block));
         }
         return exact_weights;
     } else {
         if (ftlm_weights[0] == nullptr) {
-            throw std::logic_error("Neither exact nor FTLM constructed Energy block #" + std::to_string(number_of_block));
+            throw std::logic_error("Neither exact nor FTLM constructed weights of block #" + std::to_string(number_of_block));
         }
         std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> answer;
         for (const auto& el : ftlm_weights) {

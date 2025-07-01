@@ -102,10 +102,6 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
                 for (int k = 0; k < quantum_values_sum_second.size(); ++k) {
                     if (quantum_values_sum_first[j].has_value() 
                         && quantum_values_sum_second[k].has_value()) {
-                        if (magic_enum::enum_value<common::QuantityEnum>(j) == common::squared_back_projection ||
-                            magic_enum::enum_value<common::QuantityEnum>(k) == common::squared_back_projection) {
-                                continue;
-                            }
                         if (magic_enum::enum_value<common::QuantityEnum>(j) != common::S_total_squared) {
                             quantum_values_sum_first[j].value() *= 3;
                         }
