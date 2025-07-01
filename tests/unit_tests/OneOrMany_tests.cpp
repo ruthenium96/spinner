@@ -8,8 +8,18 @@ T sum(T a, T b) {
 }
 
 template<typename T>
+T sum3(T a, T b, T c) {
+    return a + b + c;
+}
+
+template<typename T>
 T prod(T a, T b) {
     return a * b;
+}
+
+template<typename T>
+T prod3(T a, T b, T c) {
+    return a * b * c;
 }
 
 TEST(OneOrMany_tests, holdsOne) {
@@ -103,4 +113,41 @@ TEST(OneOrMany_tests, OneAndManyTransform) {
     EXPECT_EQ(prod_ab_ref[0], 6.0);
     EXPECT_EQ(prod_ab_ref[1], 10.0);
     EXPECT_EQ(prod_ab_ref[2], 14.0);
+}
+
+TEST(OneOrMany_tests, OneAndOneAndOneTransform) {
+    OneOrMany<double> a = 2.0;
+    OneOrMany<double> b = 3.0;
+    OneOrMany<double> c = 4.0;
+
+    OneOrMany<double> sum_ab = transform_one_or_many(std::function(sum3<double>), a, b, c);
+    OneOrMany<double> prod_ab = transform_one_or_many(std::function(prod3<double>), a, b, c);
+    ASSERT_TRUE(holdsOne(sum_ab));
+    ASSERT_TRUE(holdsOne(prod_ab));
+    EXPECT_EQ(getOneRef(sum_ab), 9.0);
+    EXPECT_EQ(getOneRef(prod_ab), 24.0);
+}
+
+TEST(OneOrMany_tests, ManyAndManyAndOneTransform) {
+    OneOrMany<double> a = std::vector<double>{2.0, 4.0, 6.0};
+    OneOrMany<double> b = std::vector<double>{3.0, 5.0, 7.0};
+    OneOrMany<double> c = -1.0;
+
+    OneOrMany<double> sum_ab = transform_one_or_many(std::function(sum3<double>), a, b, c);
+    OneOrMany<double> prod_ab = transform_one_or_many(std::function(prod3<double>), a, b, c);
+    ASSERT_TRUE(holdsMany(sum_ab));
+    ASSERT_TRUE(holdsMany(prod_ab));
+    const auto& sum_ab_ref = getManyRef(sum_ab);
+    const auto& prod_ab_ref = getManyRef(prod_ab);
+
+    ASSERT_EQ(sum_ab_ref.size(), 3);
+    ASSERT_EQ(prod_ab_ref.size(), 3);
+
+    EXPECT_EQ(sum_ab_ref[0], 4.0);
+    EXPECT_EQ(sum_ab_ref[1], 8.0);
+    EXPECT_EQ(sum_ab_ref[2], 12.0);
+
+    EXPECT_EQ(prod_ab_ref[0], -6.0);
+    EXPECT_EQ(prod_ab_ref[1], -20.0);
+    EXPECT_EQ(prod_ab_ref[2], -42.0);
 }
