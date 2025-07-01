@@ -80,8 +80,26 @@ OneOrMany<W> transform_one_or_many(
             answer.emplace_back(f(el_first, el_second));
         }
         return answer;
-    } else {
-        throw std::invalid_argument("Trying to transform one and many");
+    } else if (holdsMany(one_or_many_first) && holdsOne(one_or_many_second)) {
+        const std::vector<T>& many_first = getManyRef(one_or_many_first);
+        const U& one_second = getOneRef(one_or_many_second);
+
+        std::vector<W> answer;
+        for (int i = 0; i < many_first.size(); ++i) {
+            const T& el_first = many_first[i];
+            answer.emplace_back(f(el_first, one_second));
+        }
+        return answer;
+    } else { // holdsOne(one_or_many_first) && holdsMany(one_or_many_second)
+        const T& one_first = getOneRef(one_or_many_first);
+        const std::vector<U>& many_second = getManyRef(one_or_many_second);
+
+        std::vector<W> answer;
+        for (int i = 0; i < many_second.size(); ++i) {
+            const U& el_second = many_second[i];
+            answer.emplace_back(f(one_first, el_second));
+        }
+        return answer;
     }
 }
 
