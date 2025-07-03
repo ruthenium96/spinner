@@ -1,6 +1,7 @@
 #include "stlbfgsAdapter.h"
 
 #include <stlbfgs.h>
+#include "src/common/Logger.h"
 
 namespace {
 std::function<void(const std::vector<double>&, double&, std::vector<double>&)>
@@ -23,10 +24,18 @@ void stlbfgsAdapter::optimize(
     std::vector<double>& changeable_values) {
     auto adaptedSignatureFunction = adaptSignature(oneStepFunction);
     STLBFGS::Optimizer optimizer {adaptedSignatureFunction};
-    optimizer.verbose = false;
+    if (common::Logger::get_level() <= common::PrintLevel::debug) {
+        optimizer.verbose = true;
+    } else {
+        optimizer.verbose = false;
+    }
     optimizer.ftol = 1e-16;
     optimizer.gtol = 1e-18;
+
+    auto spdlog_buffer = common::SpdlogStreamMsg(common::debug);
+    auto coutbuf = std::cout.rdbuf(&spdlog_buffer);
     // Run calculation from initial guess. STLBFGS updates changeable_values every iteration.
     optimizer.run(changeable_values);
-}
+    std::cout.rdbuf(coutbuf);
+
 }  // namespace nonlinear_solver
