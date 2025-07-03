@@ -12,6 +12,34 @@
 #include "src/entities/magnetic_susceptibility/worker/WorkerConstructor.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
 
+namespace {
+std::vector<common::UncertainValue> construct_final_uncertain_values_of_parameters(
+    const std::vector<double>& changeable_values,
+    const std::optional<std::vector<double>>& mb_main_diagonal_of_inverse_hessian,
+    double final_residual_error,
+    size_t number_of_points) {
+    size_t number_of_parameters = changeable_values.size();
+    std::vector<common::UncertainValue> final_changeable_uncertain_values(number_of_parameters);
+
+    if (mb_main_diagonal_of_inverse_hessian.has_value()) {
+        const auto& inv_hessian = mb_main_diagonal_of_inverse_hessian.value();
+        for (size_t i = 0; i < inv_hessian.size(); ++i) {
+            double sigma_squared = final_residual_error * inv_hessian[i] / 
+                (number_of_points - number_of_parameters);
+            final_changeable_uncertain_values[i] = 
+                common::UncertainValue(changeable_values[i], 
+                    std::sqrt(sigma_squared), 
+                    common::FIT);
+        }
+    } else {
+        for (size_t i = 0; i < number_of_parameters; ++i) {
+            final_changeable_uncertain_values[i] = common::UncertainValue(changeable_values[i]);
+        }
+    }
+    return final_changeable_uncertain_values;
+}
+}
+
 namespace runner {
 
 Runner::Runner(model::ModelInput model) :
@@ -214,10 +242,19 @@ void Runner::minimizeResidualError(
 
     solver->optimize(oneStepFunction, changeable_values);
 
+    auto mb_main_diagonal_of_inverse_hessian = solver->getMainDiagonalOfInverseHessian();
+    auto final_residual_error = getMagneticSusceptibilityController().calculateResidualError();
+
+    auto final_changeable_uncertain_values = construct_final_uncertain_values_of_parameters(
+        changeable_values, 
+        mb_main_diagonal_of_inverse_hessian, 
+        final_residual_error.mean(),
+        getMagneticSusceptibilityController().getTheoreticalValues().size());
+
     common::postRegressionPrint(
         changeable_names,
-        changeable_values,
-        getMagneticSusceptibilityController().calculateResidualError());
+        final_changeable_uncertain_values,
+        final_residual_error);
 }
 
 double Runner::stepOfRegression(

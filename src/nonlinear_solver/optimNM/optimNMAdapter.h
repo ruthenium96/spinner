@@ -14,6 +14,10 @@ class optimNMAdapter: public AbstractNonlinearSolver {
     bool doesGradientsRequired() const override {
         return false;
     };
+    // we do not have approximation of Hessian in the case of Nelder-Mead method:
+    std::optional<std::vector<double>> getMainDiagonalOfInverseHessian() const override {
+        return std::nullopt;
+    }
 };
 
 }  // namespace nonlinear_solver

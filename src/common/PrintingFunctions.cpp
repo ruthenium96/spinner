@@ -120,11 +120,14 @@ void preRegressionPrint(
 
 void postRegressionPrint(
     const std::vector<model::symbols::SymbolName>& changeable_names,
-    const std::vector<double>& changeable_values,
+    const std::vector<UncertainValue>& final_changeable_uncertain_values,
     UncertainValue rss) {
     common::Logger::basic_msg("Regression is finished. Final values:");
     for (size_t i = 0; i < changeable_names.size(); ++i) {
-        common::Logger::basic("{}: {}", changeable_names[i].get_name(), changeable_values[i]);
+        common::Logger::basic("{}: {} +/- {}", 
+            changeable_names[i].get_name(), 
+            final_changeable_uncertain_values[i].mean(),
+            final_changeable_uncertain_values[i].stdev_total());
     }
     common::Logger::separate(2, common::basic);
     common::Logger::basic("Loss function = {} +/- {}", rss.mean(), rss.stdev_total());

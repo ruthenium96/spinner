@@ -51,7 +51,7 @@ void preRegressionPrint(
         std::shared_ptr<const model::operators::Operator>>& derivatives);
 void postRegressionPrint(
     const std::vector<model::symbols::SymbolName>& changeable_names,
-    const std::vector<double>& changeable_values,
+    const std::vector<UncertainValue>& final_changeable_uncertain_values,
     UncertainValue rss);
 void stepOfRegressionStartPrint(const std::vector<model::symbols::SymbolName>& changeable_names,
                                const std::vector<double>& changeable_values);

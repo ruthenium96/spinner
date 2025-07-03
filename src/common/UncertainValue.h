@@ -8,16 +8,18 @@ namespace common {
 
 enum UncertaintySources {
     FTLM,
-    EXPERIMENT
+    EXPERIMENT,
+    FIT // TODO: it is not real source of uncertainty, it is just mix of previous two.
+        // we need to both modify loss function and use Delta Method. 
 };
 
 class UncertainValue {
   private:
     double mean_;
-    static constexpr size_t NUMBER_OF_SOURCES = 2;
+    static constexpr size_t NUMBER_OF_SOURCES = 3;
     std::array<double, NUMBER_OF_SOURCES> stdevs_;
     // while FTLM uncertainties are correlated, EXPERIMENT -- not:
-    std::array<double, NUMBER_OF_SOURCES> correlation_coeffs_ = {1.0, 0.0};
+    std::array<double, NUMBER_OF_SOURCES> correlation_coeffs_ = {1.0, 0.0, 0.0};
   public:
     UncertainValue();
     explicit UncertainValue(double mean);

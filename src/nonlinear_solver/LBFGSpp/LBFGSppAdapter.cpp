@@ -51,4 +51,10 @@ void LBFGSppAdapter::optimize(
 
     changeable_values = convertFromEigenToSTL(changeable_values_eigen);
 }
+
+std::optional<std::vector<double>> LBFGSppAdapter::getMainDiagonalOfInverseHessian() const {
+    // TODO: implement it
+    return std::nullopt;
+}
+
 }  // namespace nonlinear_solver
