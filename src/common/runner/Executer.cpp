@@ -8,6 +8,9 @@ void Executer::execute(input::Parser parser) {
     auto factoriesList = parser.getFactoriesList().value();
 
     for (const auto& model_input : parser.getModelInputs()) {
+        if (parser.getModelInputs().size() > 1) {
+            common::nonSingleModeParametersPrint(model_input);
+        }
         auto runner = runner::Runner(model_input, optimization_list, factoriesList);
 
         if (parser.getTemperaturesForSimulation().has_value()) {

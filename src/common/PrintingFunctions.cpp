@@ -87,6 +87,14 @@ void inputPrint(const std::string& input_string) {
     common::Logger::separate(0, common::verbose);
 }
 
+void nonSingleModeParametersPrint(const model::ModelInput& model_input) {
+    common::Logger::basic_msg("Calculation with model input parameters:");
+    for (const auto& name : model_input.getSymbolicWorker().getChangeableNames()) {
+        common::Logger::basic("{}: {}", name.get_name(), model_input.getSymbolicWorker().getValueOfName(name));
+    }
+    common::Logger::separate(0, common::basic);
+}
+
 void preRegressionPrint(
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>& quantities,
     const std::map<

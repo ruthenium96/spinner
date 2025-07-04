@@ -14,6 +14,7 @@
 #include "src/entities/matrix/Submatrix.h"
 #include "src/entities/spectrum/Spectrum.h"
 #include "src/entities/spectrum/Subspectrum.h"
+#include "src/model/ModelInput.h"
 #include "src/model/symbols/SymbolName.h"
 #include "src/space/Space.h"
 #include "src/space/Subspace.h"
@@ -44,6 +45,7 @@ template <typename T> struct fmt::formatter<OneOrMany<T>> : fmt::ostream_formatt
 // todo: move it to class in different file
 namespace common {
 void inputPrint(const std::string& input_string);
+void nonSingleModeParametersPrint(const model::ModelInput& model_input);
 void preRegressionPrint(
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>& quantities,
     const std::map<
