@@ -449,7 +449,8 @@ void initialize_three_centers_exchange_triangle(model::ModelInput& model, double
 class triangle : public SpectrumFinalEquivalenceTest {};
 
 #define group_triangle group::Group(group::Group::S3, {{2, 0, 1}, {0, 2, 1}})
-#define group_triangle_diff group::Group(group::Group::S3, {{1, 2, 0}, {2, 1, 0}})
+#define group_triangle_diff_one group::Group(group::Group::S3, {{1, 2, 0}, {2, 1, 0}})
+#define group_triangle_diff_two group::Group(group::Group::S3, {{1, 2, 0}, {1, 0, 2}})
 
 TEST_P(triangle, NoGFactors) {
     std::vector<std::vector<spin_algebra::Multiplicity>> multss = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
@@ -475,17 +476,102 @@ INSTANTIATE_TEST_SUITE_P(
         OptimizationList(OptimizationList::LEX).TzSort(),
         OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
         OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle),
-        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle_diff),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle_diff_one),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle_diff_two),
         OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle).NonAbelianSimplify(),
-        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle_diff).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle_diff_one).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_triangle_diff_two).NonAbelianSimplify(),
         OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle),
-        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle_diff),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle_diff_one),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle_diff_two),
         OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle).NonAbelianSimplify(),
-        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle_diff).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle_diff_one).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_triangle_diff_two).NonAbelianSimplify(),
         OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle),
-        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle_diff),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle_diff_one),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle_diff_two),
         OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle).NonAbelianSimplify(),
-        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle_diff).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle_diff_one).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_triangle_diff_two).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections()
+    )
+);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void initialize_four_centers_exchange_square(model::ModelInput& model, double first) {
+    auto Jfirst = model.addSymbol("J1", first);
+    model.assignSymbolToIsotropicExchange(Jfirst, 0, 1)
+        .assignSymbolToIsotropicExchange(Jfirst, 1, 2)
+        .assignSymbolToIsotropicExchange(Jfirst, 2, 3)
+        .assignSymbolToIsotropicExchange(Jfirst, 3, 0);
+}
+
+class square : public SpectrumFinalEquivalenceTest {};
+
+#define group_square group::Group(group::Group::D4, {{1, 2, 3, 0}, {1, 0, 3, 2}})
+#define group_square_diff_one group::Group(group::Group::D4, {{{1, 2, 3, 0}, {3, 2, 1, 0}}})
+#define group_square_diff_two group::Group(group::Group::D4, {{{1, 2, 3, 0}, {0, 3, 2, 1}}})
+#define group_square_diff_thr group::Group(group::Group::D4, {{{1, 2, 3, 0}, {2, 1, 0, 3}}})
+
+
+TEST_P(square, NoGFactors) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2}, 
+        {3, 3, 3, 3}, 
+        {4, 4, 4, 4}};
+    std::vector<double> js = {10, 17.17, 33};
+
+    for (const auto& mults : multss) {
+        for (auto Jfirst : js) {
+            model::ModelInput model(mults);
+            initialize_four_centers_exchange_square(model, Jfirst);
+
+            runner::Runner runner_simple(model);
+
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);                
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    square,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square_diff_one),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square_diff_two),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square_diff_thr),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square_diff_one).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square_diff_two).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_square_diff_thr).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square_diff_one),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square_diff_two),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square_diff_thr),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square_diff_one).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square_diff_two).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_square_diff_thr).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square_diff_one),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square_diff_two),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square_diff_thr),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square_diff_one).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square_diff_two).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_square_diff_thr).NonAbelianSimplify(),
         OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
         OptimizationList(OptimizationList::ITO),
         OptimizationList(OptimizationList::ITO).TzSort(),
