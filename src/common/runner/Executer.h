@@ -9,6 +9,7 @@ namespace runner {
 class Executer {
   public:
     static void execute(input::Parser parser);
+    static void dry_execute(input::Parser parser);
 };
 
 }  // namespace runner

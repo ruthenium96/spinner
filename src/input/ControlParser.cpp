@@ -35,9 +35,13 @@ std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFac
 
 
 namespace input {
-ControlParser::ControlParser(YAML::Node control_node) {
+ControlParser::ControlParser(YAML::Node control_node, bool dry_run) {
     print_level_ = extractValue<common::PrintLevel>(control_node, "print_level");
-    common::Logger::set_level(print_level_.value());
+    if (!dry_run) {
+        common::Logger::set_level(print_level_.value());
+    } else {
+        common::Logger::set_level(common::error);
+    }
 
     constructFactoriesList(control_node);
 

@@ -14,7 +14,7 @@ namespace input {
 
 class Parser {
   public:
-    explicit Parser(const std::string& filename);
+    Parser(const std::string& filename, bool dry_run = false);
 
     const std::vector<model::ModelInput>& getModelInputs() const;
     const std::optional<common::physical_optimization::OptimizationList>&

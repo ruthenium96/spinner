@@ -1,6 +1,7 @@
 #include "Executer.h"
 
 #include "src/common/PrintingFunctions.h"
+#include "src/common/runner/ConsistentModelOptimizationList.h"
 
 namespace runner {
 void Executer::execute(input::Parser parser) {
@@ -31,4 +32,13 @@ void Executer::execute(input::Parser parser) {
         }
     }
 }
+
+void Executer::dry_execute(input::Parser parser) {
+    auto optimization_list = parser.getOptimizationList().value();
+
+    for (const auto& model_input : parser.getModelInputs()) {
+        ConsistentModelOptimizationList model_optimization_list(model_input, optimization_list);
+    }
+}
+
 }  // namespace runner

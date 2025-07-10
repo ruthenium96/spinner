@@ -11,7 +11,7 @@ namespace input {
 
 class ControlParser {
   public:
-    explicit ControlParser(YAML::Node control_node);
+    ControlParser(YAML::Node control_node, bool dry_run);
     common::PrintLevel getPrintLevel() const;
     const std::optional<quantum::linear_algebra::FactoriesList>& getFactoriesList() const;
   private:

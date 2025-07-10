@@ -7,14 +7,14 @@
 
 namespace input {
 
-Parser::Parser(const std::string& filename) {
+Parser::Parser(const std::string& filename, bool dry_run) {
     auto input_node = YAML::LoadFile(filename);
 
     // save initial input into variable:
     auto initial_input_string = Dump(input_node);
 
     // create ControlParser and set correct print_level inside
-    control_parser_.emplace(extractValue<YAML::Node>(input_node, "control"));
+    control_parser_.emplace(extractValue<YAML::Node>(input_node, "control"), dry_run);
 
     // print initial input with correct print_level
     common::inputPrint(initial_input_string);
