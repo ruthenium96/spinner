@@ -328,6 +328,25 @@ fit:
     }
 }
 
+TEST(parser_tests, job_parser_fit_with_uncertaincies) {
+  {
+      std::string string = R""""(
+mode: fit
+fit:
+  solver: optim_nm
+  experiment:
+    data: [[1.0, 1.0, 0.001], [2.0, 3.0, 0.002], [6.0, 7.0, 0.008], [11.1, 22.2, 0.1]]
+    dimension: chiT_in_cm_cubed_kelvin_per_mol
+    ratio: 1.0
+    weights: per_interval
+)"""";
+      auto parser = input::JobParser(YAML::Load(string));
+      EXPECT_FALSE(parser.getTemperaturesForSimulation().has_value());
+      EXPECT_NO_THROW(parser.getNonlinearSolver().value());
+      EXPECT_NO_THROW(parser.getExperimentalValuesWorker().value());
+  }
+}
+
 TEST(parser_tests, job_parser_throw) {
     {
         std::string string = R""""(
