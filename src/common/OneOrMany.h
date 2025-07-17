@@ -115,6 +115,30 @@ OneOrMany<W> transform_one_or_many(
     }
 }
 
+template <typename T, typename U, typename W>
+OneOrMany<W> transform_one_or_many(
+    std::function<W(const T&, const U&)> f, 
+    const OneOrMany<T>& one_or_many_first,
+    const OneOrMany<U>& one_or_many_second) {
+    std::optional<size_t> mb_size_of_many;
+    update_size(one_or_many_first, mb_size_of_many);
+    update_size(one_or_many_second, mb_size_of_many);
+
+    if (!mb_size_of_many.has_value()) {
+        const T& one_first = getOneRef(one_or_many_first);
+        const U& one_second = getOneRef(one_or_many_second);
+        return f(one_first, one_second);
+    } else {
+        std::vector<W> answer;
+        for (int i = 0; i < mb_size_of_many.value(); ++i) {
+            const auto& el_first = get_element(one_or_many_first, i);
+            const auto& el_second = get_element(one_or_many_second, i);
+            answer.emplace_back(f(el_first, el_second));
+        }
+        return answer;
+    }
+}
+
 template <typename T, typename U, typename W, typename Z>
 OneOrMany<Z> transform_one_or_many(
     std::function<Z(T, U, W)> f, 
