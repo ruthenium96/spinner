@@ -25,6 +25,10 @@ class FlattenedSpectra {
     std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
         getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enum, 
           const model::symbols::SymbolName& symbol_name) const;
+    std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
+        getFlattenDerivativeProductSpectrum(common::QuantityEnum quantity_enum, common::QuantityEnum quantity_enum_derivative,
+        const model::symbols::SymbolName& symbol_name) const;
+  
     OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> getWeights() const;
 
   private:
@@ -32,6 +36,9 @@ class FlattenedSpectra {
         OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> flattenedSpectra_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, 
         OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> flattenedDerivativeSpectra_;
+    std::map<std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>>, 
+        OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> flattenedDerivativeProductSpectra_;
+
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> degeneracyValues_;
     OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flattenedWeights_;
 };

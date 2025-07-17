@@ -41,15 +41,8 @@ std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
         for (size_t i = 0; i < temperatures.size(); ++i) {
             auto first_term = ensemble_averager_->ensemble_average(quantity, temperatures[i])
                 * ensemble_averager_->ensemble_average(energy_derivative, temperatures[i]);
-            auto second_term_value = transform_one_or_many(
-                std::function([](std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> a, 
-                    std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> b){
-                    return a.get()->element_wise_multiplication(b.get());
-                }),
-                quantity,
-                energy_derivative);
-            auto second_term_value_ref = copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(second_term_value);
-            auto second_term = ensemble_averager_->ensemble_average(second_term_value_ref, temperatures[i]);
+            auto quantity_derivative_product = flattenedSpectra_->getFlattenDerivativeProductSpectrum(quantity_enum_for_averaging_, common::Energy, symbol_name).value();
+            auto second_term = ensemble_averager_->ensemble_average(quantity_derivative_product, temperatures[i]);
             auto value = g_unique_getter_() * g_unique_getter_() * quantity_factor_ * 
                 (first_term - second_term) / temperatures[i];
             derivatives[i] = {temperatures[i], value};

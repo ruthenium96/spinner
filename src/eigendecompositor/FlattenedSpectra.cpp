@@ -71,6 +71,28 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
             }
         }
     }   
+    for (const auto& [quantity_enum, spectrum] : flattenedSpectra_) {
+        if (quantity_enum == common::Energy) {
+            continue;
+        }
+        for (const auto& [derivative_key, spectrum_derivative] : flattenedDerivativeSpectra_) {
+            const auto& [quantity_enum_derivative, symbol_name] = derivative_key;
+            if (quantity_enum_derivative != common::Energy) {
+                continue;
+            }
+            std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>> 
+                derivative_product_key = {quantity_enum, derivative_key};
+            flattenedDerivativeProductSpectra_[derivative_product_key] = 
+                transform_one_or_many(
+                std::function([](
+                    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& a, 
+                    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& b){
+                    return a->element_wise_multiplication(b);
+                }), 
+                spectrum,
+                spectrum_derivative);
+        }
+    }
 }
 
 std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
@@ -89,6 +111,19 @@ FlattenedSpectra::getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enu
         const model::symbols::SymbolName& symbol_name) const {
     if (flattenedDerivativeSpectra_.contains({quantity_enum, symbol_name})) {
         const auto& spectrum = flattenedDerivativeSpectra_.at({quantity_enum, symbol_name});
+        return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
+            std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(spectrum);
+    } else {
+        return std::nullopt;
+    }
+}
+
+std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
+FlattenedSpectra::getFlattenDerivativeProductSpectrum(common::QuantityEnum quantity_enum, common::QuantityEnum quantity_enum_derivative,
+const model::symbols::SymbolName& symbol_name) const {
+    std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>> key = {quantity_enum, {quantity_enum_derivative, symbol_name}};
+    if (flattenedDerivativeProductSpectra_.contains(key)) {
+        const auto& spectrum = flattenedDerivativeProductSpectra_.at(key);
         return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
             std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(spectrum);
     } else {
