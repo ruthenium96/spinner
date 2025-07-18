@@ -9,6 +9,24 @@
 #include "src/eigendecompositor/AllQuantitiesGetter.h"
 #include "src/entities/spectrum/Spectrum.h"
 
+namespace {
+
+OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flatten(
+    OneOrMany<SpectrumRef> spectrum,
+    const quantum::linear_algebra::FactoriesList& factories) {
+    return std::move(transform_one_or_many(
+        std::function([factories](SpectrumRef spectrum){
+            auto vector = factories.createVector();
+            for (const auto& subspectrum_ref : spectrum.blocks) {
+                const auto& subspectrum = subspectrum_ref.get();
+                vector->concatenate_with(subspectrum.raw_data);
+            }
+            return std::move(vector);
+        }), 
+        spectrum));
+    }
+} // namespace
+
 namespace eigendecompositor {
 
 void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGetter,
@@ -19,16 +37,7 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
         auto maybe_spectrum = allQuantitiesGetter.getSpectrum(quantity_enum);
         if (maybe_spectrum.has_value()) {
             auto spectrum = maybe_spectrum.value();
-            flattenedSpectra_[quantity_enum] = transform_one_or_many(
-                std::function([factories](SpectrumRef spectrum){
-                    auto vector = factories.createVector();
-                    for (const auto& subspectrum_ref : spectrum.blocks) {
-                        const auto& subspectrum = subspectrum_ref.get();
-                        vector->concatenate_with(subspectrum.raw_data);
-                    }
-                    return std::move(vector);
-                }), 
-                spectrum);
+            flattenedSpectra_[quantity_enum] = flatten(spectrum, factories);
         }
     }
     flattenedWeights_ = transform_one_or_many(
@@ -57,17 +66,7 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
             auto maybe_spectrum = allQuantitiesGetter.getSpectrumDerivative(quantity_enum, symbol_name);
             if (maybe_spectrum.has_value()) {
                 const auto& spectrum = maybe_spectrum.value();
-                flattenedDerivativeSpectra_[{quantity_enum, symbol_name}] = transform_one_or_many(
-                    std::function([factories](SpectrumRef spectrum){
-                        auto vector = factories.createVector();
-                        for (const auto& subspectrum_ref : spectrum.blocks) {
-                            const auto& subspectrum = subspectrum_ref.get();
-                            vector->concatenate_with(subspectrum.raw_data);
-                        }
-                        return std::move(vector);
-                    }), 
-                    spectrum
-                );
+                flattenedDerivativeSpectra_[{quantity_enum, symbol_name}] = flatten(spectrum, factories);
             }
         }
     }   
