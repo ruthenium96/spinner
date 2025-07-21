@@ -19,6 +19,8 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
     getSubspectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
     getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+    getSubspectrumDerivativeProduct(common::QuantityEnum, common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
 
     OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
     getWeightsOfBlockStates(size_t number_of_block) const override;
@@ -42,6 +44,7 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
     std::map<common::QuantityEnum, std::vector<OneOrMany<Subspectrum>>> quantities_spectra_map_;
     std::map<common::QuantityEnum, std::vector<Submatrix>> quantities_matrix_map_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, std::vector<OneOrMany<Subspectrum>>> derivatives_spectra_map_;
+    std::map<std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>>, std::vector<OneOrMany<Subspectrum>>> derivatives_product_spectra_map_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, std::vector<Submatrix>> derivatives_matrix_map_;
     std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>
         quantities_operators_map_;

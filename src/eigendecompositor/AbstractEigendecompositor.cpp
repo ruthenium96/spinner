@@ -148,6 +148,16 @@ AbstractEigendecompositor::getSpectrumDerivative(common::QuantityEnum quantity_e
     );
 }
 
+std::optional<OneOrMany<SpectrumRef>>
+AbstractEigendecompositor::getSpectrumDerivativeProduct(common::QuantityEnum quantity_enum, common::QuantityEnum quantity_enum_derivative, const model::symbols::SymbolName& symbol_name) const {
+    return getEntity<Subspectrum, SpectrumRef>(
+        number_of_subspaces_, 
+        [this, quantity_enum, quantity_enum_derivative, symbol_name](size_t number_of_block){
+            return getSubspectrumDerivativeProduct(quantity_enum, quantity_enum_derivative, symbol_name, number_of_block);
+        }
+    );
+}
+
 std::optional<OneOrMany<MatrixRef>>
 AbstractEigendecompositor::getMatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name) const {
     return getEntity<Submatrix, MatrixRef>(

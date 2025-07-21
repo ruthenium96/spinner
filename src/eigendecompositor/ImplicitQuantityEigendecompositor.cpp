@@ -83,6 +83,16 @@ ImplicitQuantityEigendecompositor::getSubmatrixDerivative(common::QuantityEnum q
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
+// Despite ImplicitQuantityEigendecompositor stores quantity, required for quantity x derivative product
+// it can return nothing: let B be arbitary derivative and A our quantity:
+// diag(UABU*)=diag(UAU*xUBU*), stored blocks of A are propotional to identity matrix, A=vI, thus UAU*=A=vI:
+// diag(UAU*xUBU*)_a = diag(AxUBU*)_a  = \sum_b A_ab x (UBU*)_ba = v x (UBU*)_aa = diag(UAU*)_a x diag(UBU*)_a
+// therefore, we can just multiply diagonals closer to calculation of magnetic susceptibility
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ImplicitQuantityEigendecompositor::getSubspectrumDerivativeProduct(common::QuantityEnum quantity, common::QuantityEnum quantity_derivative, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
+    return eigendecompositor_->getSubspectrumDerivativeProduct(quantity, quantity_derivative, symbol_name, number_of_block);
+}
+
 OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
 ImplicitQuantityEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return eigendecompositor_->getWeightsOfBlockStates(number_of_block);

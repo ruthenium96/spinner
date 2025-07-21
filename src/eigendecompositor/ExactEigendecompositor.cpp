@@ -96,6 +96,11 @@ ExactEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enu
     return std::nullopt;
 }
 
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ExactEigendecompositor::getSubspectrumDerivativeProduct(common::QuantityEnum, common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const {
+    return std::nullopt;
+}
+
 OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
 ExactEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return weights_[number_of_block];
