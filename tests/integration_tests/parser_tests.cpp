@@ -21,7 +21,7 @@ TEST(integration_parser_tests, do_not_throw_on_examples) {
 		// this "../../" may cause troubles in the case of unusual location of build directory 
 		auto absolute_path = old_path.parent_path().parent_path() / "examples" / file;
 		std::filesystem::current_path(absolute_path.parent_path());
-		EXPECT_NO_THROW(auto parser = input::Parser(absolute_path));
+		EXPECT_NO_THROW(auto parser = input::Parser(absolute_path, true));
 		common::Logger::set_level(common::PrintLevel::off);
 	}
 	std::filesystem::current_path(old_path);
