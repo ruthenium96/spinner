@@ -41,13 +41,6 @@ void EigenKrylovDenseSemiunitaryMatrix<T>::print(std::ostream& os) const {
 }
 
 template <typename T>
-std::unique_ptr<AbstractDenseVector>
-EigenKrylovDenseSemiunitaryMatrix<T>::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    return getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(matrix_to_transform);
-}
-
-template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix> EigenKrylovDenseSemiunitaryMatrix<T>::unitaryTransform(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
     throw std::invalid_argument("EigenKrylovDenseSemiunitaryMatrix cannot do unitaryTransform");

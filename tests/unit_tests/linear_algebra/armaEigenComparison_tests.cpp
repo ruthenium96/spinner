@@ -31,10 +31,10 @@ TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
             auto& denseUnitatyMatrix_j = denseUnitaryMatrices[j];
             if (i != j) {
                 EXPECT_ANY_THROW(denseUnitatyMatrix_j->
-                                 unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix_i));
+                    getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix_i));
             } else {
                 EXPECT_NO_THROW(denseUnitatyMatrix_j->
-                                unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix_i));
+                    getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix_i));
             }
         }
     }
@@ -307,7 +307,7 @@ TEST(linearAlgebraFactories, unitary_transformation_and_return_main_diagonal) {
             const auto& denseUnitaryMatrix = denseUnitaryMatrices[i];
 
             denseTransformedMainDiagonal.emplace_back(
-                denseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix));
+                denseUnitaryMatrix->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix));
         }
 
         // check equality:

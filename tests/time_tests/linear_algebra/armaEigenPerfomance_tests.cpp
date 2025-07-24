@@ -220,19 +220,19 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_d
 
         // unitary transformation
         std::function<void(void)> armaDoubleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[0]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrices[0]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 denseDiagonalizableMatrices[0]);
         };
         std::function<void(void)> armaSingleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[1]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrices[1]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 denseDiagonalizableMatrices[1]);
         };
         std::function<void(void)> eigenDoubleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[2]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrices[2]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 denseDiagonalizableMatrices[2]);
         };
         std::function<void(void)> eigenSingleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[3]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrices[3]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 denseDiagonalizableMatrices[3]);
         };
         std::cout << "Armadillo double precision:" << std::endl;
@@ -272,19 +272,19 @@ TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_s
 
         // unitary transformation
         std::function<void(void)> armaDoubleUnitaryTransformation = [&]() {
-            denseUnitaryMatrix[0]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrix[0]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 sparseDiagonalizableMatrices[0]);
         };
         std::function<void(void)> armaSingleUnitaryTransformation = [&]() {
-            denseUnitaryMatrix[1]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrix[1]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 sparseDiagonalizableMatrices[1]);
         };
         std::function<void(void)> eigenDoubleUnitaryTransformation = [&]() {
-            denseUnitaryMatrix[2]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrix[2]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 sparseDiagonalizableMatrices[2]);
         };
         std::function<void(void)> eigenSingleUnitaryTransformation = [&]() {
-            denseUnitaryMatrix[3]->unitaryTransformAndReturnMainDiagonal(
+            denseUnitaryMatrix[3]->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(
                 sparseDiagonalizableMatrices[3]);
         };
         std::cout << "Armadillo double precision:" << std::endl;

@@ -173,7 +173,8 @@ OneOrMany<Subspectrum> ExplicitQuantitiesEigendecompositor::non_energy_subspectr
         unitary_transformation_matrix) {
     return transform_one_or_many(
     std::function([&non_hamiltonian_submatrix](std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix> unitary_transformation_matrix) {
-        auto raw_data = unitary_transformation_matrix->unitaryTransformAndReturnMainDiagonal(
+        const auto& transformer = unitary_transformation_matrix->getUnitaryTransformer();
+        auto raw_data = transformer->calculateUnitaryTransformationOfMatrix(
             non_hamiltonian_submatrix.raw_data);
     
         auto non_energy_subspectrum =

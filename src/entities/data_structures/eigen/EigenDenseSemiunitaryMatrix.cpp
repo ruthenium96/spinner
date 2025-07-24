@@ -43,13 +43,6 @@ void EigenDenseSemiunitaryMatrix<T>::print(std::ostream& os) const {
 }
 
 template <typename T>
-std::unique_ptr<AbstractDenseVector>
-EigenDenseSemiunitaryMatrix<T>::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    return getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(matrix_to_transform);
-}
-
-template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix> EigenDenseSemiunitaryMatrix<T>::unitaryTransform(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
     EigenLogic<T> eigenLogic;

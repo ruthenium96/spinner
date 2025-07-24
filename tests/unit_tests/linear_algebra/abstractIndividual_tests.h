@@ -43,7 +43,7 @@ TYPED_TEST_P(
         auto denseDiagonalizableMatrixTransformedMatrix =
             denseUnitaryMatrix->unitaryTransform(denseDiagonalizableMatrix);
         auto denseDiagonalizableMatrixTransformedMainDiagonal =
-            denseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix);
+            denseUnitaryMatrix->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix);
 
         // check equality:
         for (size_t i = 0; i < size; ++i) {
@@ -79,9 +79,9 @@ TYPED_TEST_P(
             denseDiagonalizableMatrixToGenerateUnitary->krylovDiagonalizeValuesVectors(seedVector, size).eigenvectors;
 
         auto denseDiagonalizableMatrixTransformedMainDiagonalOrdinary =
-            denseSemiunitaryMatrixOrdinary->unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrixForTransform);
+            denseSemiunitaryMatrixOrdinary->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrixForTransform);
         auto denseDiagonalizableMatrixTransformedMainDiagonalKrylov =
-            denseSemiunitaryMatrixKrylov->unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrixForTransform);
+            denseSemiunitaryMatrixKrylov->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrixForTransform);
 
         // check equality:
         for (size_t i = 0; i < size; ++i) {

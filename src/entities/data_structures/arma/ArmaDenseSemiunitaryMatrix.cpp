@@ -41,13 +41,6 @@ void ArmaDenseSemiunitaryMatrix<T>::resize(size_t size_rows, size_t size_cols) {
 }
 
 template <typename T>
-std::unique_ptr<AbstractDenseVector>
-ArmaDenseSemiunitaryMatrix<T>::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    return getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(matrix_to_transform);
-}
-
-template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix> ArmaDenseSemiunitaryMatrix<T>::unitaryTransform(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
     ArmaLogic<T> logic;
