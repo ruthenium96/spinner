@@ -1,9 +1,18 @@
 #include "EigenKrylovDenseSemiunitaryMatrix.h"
 
-#include "EigenDenseVector.h"
-#include "EigenLogic.h"
+#include "EigenKrylovDenseSemiunitaryTransformer.h"
 
 namespace quantum::linear_algebra {
+
+template <typename T>
+EigenKrylovDenseSemiunitaryMatrix<T>::EigenKrylovDenseSemiunitaryMatrix() {
+    transformer_ = std::make_unique<EigenKrylovDenseSemiunitaryTransformer<T>>(this);
+}
+
+template <typename T>
+const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& EigenKrylovDenseSemiunitaryMatrix<T>::getUnitaryTransformer() const {
+    return transformer_;
+}
 
 template <typename T>
 uint32_t EigenKrylovDenseSemiunitaryMatrix<T>::size_rows() const {
@@ -35,9 +44,7 @@ template <typename T>
 std::unique_ptr<AbstractDenseVector>
 EigenKrylovDenseSemiunitaryMatrix<T>::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    EigenLogic<T> eigenLogic;
-
-    return eigenLogic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
+    return getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(matrix_to_transform);
 }
 
 template <typename T>

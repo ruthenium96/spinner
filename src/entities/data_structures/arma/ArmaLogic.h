@@ -30,12 +30,6 @@ class ArmaLogic {
         const AbstractDenseVector& seed_vector,
         size_t krylov_subspace_size) const;
     
-    std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
-    std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const ArmaKrylovDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
     std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;

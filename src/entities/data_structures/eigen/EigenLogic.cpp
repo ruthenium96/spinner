@@ -176,63 +176,6 @@ inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagona
     return std::move(main_diagonal);
 }
 
-template <typename T>
-std::unique_ptr<AbstractDenseVector> EigenLogic<T>::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
-    if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return unitaryTransformAndReturnMainDiagonal_(
-            maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix().transpose(),
-            denseSemiunitaryMatrix
-        );
-    }
-    if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return unitaryTransformAndReturnMainDiagonal_(
-            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
-            denseSemiunitaryMatrix
-        );
-    }
-    throw std::bad_cast();
-}
-
-template<typename T, typename M>
-inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
-    const M& symmetric_matrix,
-    const EigenKrylovDenseSemiunitaryMatrix<T>& denseKrylovSemiunitaryMatrix) {
-    auto main_diagonal = std::make_unique<EigenDenseVector<T>>();
-
-    Eigen::Vector<T, -1> firstMultiplicationResult =
-    symmetric_matrix * denseKrylovSemiunitaryMatrix.getSeedVector();
-    main_diagonal->modifyDenseVector() = 
-        denseKrylovSemiunitaryMatrix.getKrylovDenseSemiunitaryMatrix().transpose()
-        * firstMultiplicationResult;
-    // instead of <n|A|r><r|n>, here we are using <n|A|r>/<r|n>,
-    // putting |<r|n>|^2 in the weight of state
-    main_diagonal->modifyDenseVector().array() /= denseKrylovSemiunitaryMatrix.getBackProjectionVector().array();
-    return std::move(main_diagonal);
-}
-
-template <typename T>
-std::unique_ptr<AbstractDenseVector> EigenLogic<T>::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const EigenKrylovDenseSemiunitaryMatrix<T>& denseKrylovSemiunitaryMatrix) const {
-    if (auto maybeSparseSymmetricMatrix =
-        dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return unitaryTransformAndReturnMainDiagonal_(
-            maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix(), 
-            denseKrylovSemiunitaryMatrix);
-    }
-    if (auto maybeDenseSymmetricMatrix =
-        dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return unitaryTransformAndReturnMainDiagonal_(
-            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(), 
-            denseKrylovSemiunitaryMatrix);
-    }
-    throw std::bad_cast();    
-}
-
 template <typename T, typename M>
 inline KrylovCouple krylovDiagonalizeValues_(
     const M& diagonalizableMatrix,

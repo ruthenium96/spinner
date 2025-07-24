@@ -4,11 +4,14 @@
 #include <armadillo>
 
 #include "src/entities/data_structures/AbstractDenseSemiunitaryMatrix.h"
+#include "src/entities/data_structures/AbstractDenseSemiunitaryTransformer.h"
 
 namespace quantum::linear_algebra {
 template <typename T>
 class ArmaDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
   public:
+    ArmaDenseSemiunitaryMatrix();
+
     uint32_t size_rows() const override;
     uint32_t size_cols() const override;
     double at(uint32_t i, uint32_t j) const override;
@@ -24,8 +27,11 @@ class ArmaDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     arma::Mat<T>& modifyDenseSemiunitaryMatrix();
     void normalize() override;
 
+    const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& getUnitaryTransformer() const override;
+
   private:
     arma::Mat<T> denseSemiunitaryMatrix_;
+    std::unique_ptr<AbstractDenseSemiunitaryTransformer> transformer_;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_ARMADENSESEMIUNITARYMATRIX_H

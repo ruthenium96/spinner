@@ -18,7 +18,9 @@ if (ARMADILLO_FOUND)
             arma/ArmaDenseVector.cpp arma/ArmaDenseVector.h
             arma/ArmaSparseDiagonalizableMatrix.cpp
             arma/ArmaDenseSemiunitaryMatrix.cpp arma/ArmaDenseSemiunitaryMatrix.h
+            arma/ArmaDenseSemiunitaryTransformer.cpp arma/ArmaDenseSemiunitaryTransformer.h
             arma/ArmaKrylovDenseSemiunitaryMatrix.cpp arma/ArmaKrylovDenseSemiunitaryMatrix.h
+            arma/ArmaKrylovDenseSemiunitaryTransformer.cpp arma/ArmaKrylovDenseSemiunitaryTransformer.h
             arma/ArmaDenseDiagonalizableMatrix.cpp arma/ArmaDenseDiagonalizableMatrix.h
             arma/ArmaLogic.cpp arma/ArmaLogic.h
             arma/ArmaSparseSemiunitaryMatrix.cpp arma/ArmaSparseSemiunitaryMatrix.h
@@ -39,8 +41,10 @@ if (Eigen3_FOUND)
             eigen/EigenFactories.cpp eigen/EigenFactories.h
             eigen/EigenDenseVector.cpp eigen/EigenDenseVector.h
             eigen/EigenDenseDiagonalizableMatrix.cpp eigen/EigenDenseDiagonalizableMatrix.h
+            eigen/EigenDenseSemiunitaryTransformer.cpp eigen/EigenDenseSemiunitaryTransformer.h
             eigen/EigenDenseSemiunitaryMatrix.cpp eigen/EigenDenseSemiunitaryMatrix.h
             eigen/EigenKrylovDenseSemiunitaryMatrix.cpp eigen/EigenKrylovDenseSemiunitaryMatrix.h
+            eigen/EigenKrylovDenseSemiunitaryTransformer.cpp eigen/EigenKrylovDenseSemiunitaryTransformer.h
             eigen/EigenSparseDiagonalizableMatrix.cpp eigen/EigenSparseDiagonalizableMatrix.h
             eigen/EigenLogic.cpp eigen/EigenLogic.h)
     target_link_libraries(eigen_structures Eigen3::Eigen)

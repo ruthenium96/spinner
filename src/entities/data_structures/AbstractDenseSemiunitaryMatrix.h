@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "AbstractDenseVector.h"
+#include "AbstractDenseSemiunitaryTransformer.h"
 
 namespace quantum::linear_algebra {
 class AbstractDiagonalizableMatrix;
@@ -21,6 +22,8 @@ class AbstractDenseSemiunitaryMatrix {
         const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix) const = 0;
     virtual std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const = 0;
+
+    virtual const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& getUnitaryTransformer() const = 0;
 
     virtual void normalize() = 0;
 

@@ -28,13 +28,6 @@ class EigenLogic {
       const AbstractDenseVector& seed_vector,
       size_t krylov_subspace_size) const;
 
-    std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
-    std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-      const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-      const EigenKrylovDenseSemiunitaryMatrix<T>& denseKrylovSemiunitaryMatrix) const;
-
     std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
         const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;

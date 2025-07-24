@@ -1,9 +1,18 @@
 #include "ArmaKrylovDenseSemiunitaryMatrix.h"
+#include "ArmaKrylovDenseSemiunitaryTransformer.h"
 #include <stdexcept>
 
-#include "ArmaLogic.h"
-
 namespace quantum::linear_algebra {
+
+template <typename T>
+ArmaKrylovDenseSemiunitaryMatrix<T>::ArmaKrylovDenseSemiunitaryMatrix() {
+    transformer_ = std::make_unique<ArmaKrylovDenseSemiunitaryTransformer<T>>(this);
+}
+
+template <typename T>
+const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& ArmaKrylovDenseSemiunitaryMatrix<T>::getUnitaryTransformer() const {
+    return transformer_;
+}
 
 template <typename T>
 uint32_t ArmaKrylovDenseSemiunitaryMatrix<T>::size_rows() const {
@@ -37,9 +46,7 @@ template <typename T>
 std::unique_ptr<AbstractDenseVector>
 ArmaKrylovDenseSemiunitaryMatrix<T>::unitaryTransformAndReturnMainDiagonal(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    ArmaLogic<T> logic;
-
-    return logic.unitaryTransformAndReturnMainDiagonal(matrix_to_transform, *this);
+    return getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(matrix_to_transform);
 }
 
 template <typename T>

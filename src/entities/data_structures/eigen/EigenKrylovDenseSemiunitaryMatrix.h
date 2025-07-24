@@ -4,11 +4,14 @@
 #include <Eigen/Core>
 
 #include "src/entities/data_structures/AbstractDenseSemiunitaryMatrix.h"
+#include "src/entities/data_structures/AbstractDenseSemiunitaryTransformer.h"
 
 namespace quantum::linear_algebra {
 template <typename T>
 class EigenKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
   public:
+    EigenKrylovDenseSemiunitaryMatrix();
+
     uint32_t size_rows() const override;
     uint32_t size_cols() const override;
     void resize(size_t size_rows, size_t size_cols);
@@ -30,10 +33,14 @@ class EigenKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
 
     void normalize() override;
 
+    const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& getUnitaryTransformer() const override;
+
   private:
     Eigen::Matrix<T, -1, -1> denseKrylovSemiunitaryMatrix_;
     Eigen::Vector<T, -1> backProjectionVector_;
     Eigen::Vector<T, -1> seed_vector_;
+
+    std::unique_ptr<AbstractDenseSemiunitaryTransformer> transformer_;
 };
 }  // namespace quantum::linear_algebra
 #endif  //SPINNER_EIGENKRYLOVDENSESEMIUNITARYMATRIX_H
