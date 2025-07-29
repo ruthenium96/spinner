@@ -69,7 +69,7 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
                 flattenedDerivativeSpectra_[{quantity_enum, symbol_name}] = flatten(spectrum, factories);
             }
         }
-    }   
+    }
     for (const auto& [quantity_enum, spectrum] : flattenedSpectra_) {
         if (quantity_enum == common::Energy) {
             continue;
@@ -85,8 +85,8 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
             auto mb_derivative_product = allQuantitiesGetter.getSpectrumDerivativeProduct(
                 quantity_enum, quantity_enum_derivative, symbol_name);
             if (mb_derivative_product.has_value()) {
-                const auto& spectrum = mb_derivative_product.value();
-                flattenedDerivativeProductSpectra_[derivative_product_key] = flatten(spectrum, factories);
+                const auto& spectrum_product = mb_derivative_product.value();
+                flattenedDerivativeProductSpectra_[derivative_product_key] = flatten(spectrum_product, factories);
             } else {
                 flattenedDerivativeProductSpectra_[derivative_product_key] = 
                     transform_one_or_many(
