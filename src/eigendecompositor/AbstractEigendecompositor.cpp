@@ -105,8 +105,10 @@ void AbstractEigendecompositor::BuildSpectra(
     //  thus, openblas_num_threads can be set as floor(max_threads / num_threads)
 
     common::Logger::debug_msg("Eigendecomposition of...");
-#pragma omp parallel for shared(space, operators, derivatives_operators) default(shared)
-    for (size_t i = 0; i < space.getBlocks().size(); ++i) {
+#pragma omp parallel master 
+    for (size_t i = 0; i < space.getBlocks().size(); ++i) 
+#pragma omp task
+    {
         common::Logger::debug_msg("block {} has started", i);
         const auto& subspace = space.getBlocks().at(i);
         BuildSubspectra(i, subspace);

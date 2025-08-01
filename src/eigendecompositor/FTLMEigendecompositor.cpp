@@ -51,6 +51,7 @@ FTLMEigendecompositor::BuildSubspectra(
         std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
         weights_of_all_seeds_.resize(number_of_seeds_);
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
+#pragma omp taskloop default(shared)
         for (int seed = 0; seed < number_of_seeds_; ++seed) {
             auto krylov_couple = 
                 hamiltonian_submatrix.raw_data->krylovDiagonalizeValues(
@@ -75,6 +76,7 @@ FTLMEigendecompositor::BuildSubspectra(
     
         std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
         weights_of_all_seeds_.resize(number_of_seeds_);
+#pragma omp taskloop default(shared)
         for (int seed = 0; seed < number_of_seeds_; ++seed) {
             auto krylov_triple = 
                 hamiltonian_submatrix.raw_data->krylovDiagonalizeValuesVectors(
