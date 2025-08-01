@@ -22,7 +22,7 @@ magnetic_susceptibility::ValueAtTemperature YAML::Node::as() const {
     if (temp_and_value.size() == 1 || temp_and_value.size() > 3) {
         throw std::invalid_argument(
             "Cannot parse experimental data, size of the point: "
-            + std::to_string(temp_and_value.size()));
+            + std::to_string(temp_and_value.size()) + " " +as<std::string>());
     }
     if (temp_and_value.size() == 2) {
         return {temp_and_value[0], common::UncertainValue(temp_and_value[1])};
@@ -144,7 +144,7 @@ void JobParser::read_data_from_file(
         if (values.size() == 1 || values.size() > 3) {
             throw std::invalid_argument(
                 "Cannot parse experimental data, size of the point: "
-                + std::to_string(values.size()));    
+                + std::to_string(values.size()) + line);    
         }
 
         magnetic_susceptibility::ValueAtTemperature temp_and_value; 
