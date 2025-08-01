@@ -89,7 +89,7 @@ void inputPrint(const std::string& input_string) {
 
 void nonSingleModeParametersPrint(const model::ModelInput& model_input) {
     common::Logger::basic_msg("Calculation with model input parameters:");
-    for (const auto& name : model_input.getSymbolicWorker().getChangeableNames()) {
+    for (const auto& name : model_input.getSymbolicWorker().getAllNames()) {
         common::Logger::basic("{}: {}", name.get_name(), model_input.getSymbolicWorker().getValueOfName(name));
     }
     common::Logger::separate(0, common::basic);
