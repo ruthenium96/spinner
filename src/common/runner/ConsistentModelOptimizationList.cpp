@@ -94,6 +94,22 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
 void ConsistentModelOptimizationList::InitializeDerivatives() {
     if (derivatives_for_explicit_construction_.empty()) {
         for (const auto& [pair, shared_ptr] : model_->getOperatorDerivatives()) {
+            auto quantity_enum = pair.first;
+            auto type_of_symbol = getModel().getSymbolicWorker().getSymbolProperty(pair.second).type_enum.value();
+            if (type_of_symbol == model::symbols::g_factor) {
+                if (isImplicitSSquarePossible() || isImplicitMSquarePossible()) {
+                    continue;
+                }
+                if (isExplicitMSquarePossible() && quantity_enum != common::M_total_squared) {
+                    continue;
+                }
+                if (isGSquaredT00Possible() && quantity_enum != common::g_squared_T00) {
+                    continue;
+                }
+                if (isGSzSquaredPossible() && quantity_enum != common::gSz_total_squared) {
+                    continue;
+                }
+            }
             derivatives_for_explicit_construction_[pair] = shared_ptr;
         }
     }
