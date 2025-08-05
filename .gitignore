@@ -2,4 +2,7 @@ build*
 .idea
 .cache
 .vscode
+diagrams
+unpublished
+*.opj
 compile_commands.json
