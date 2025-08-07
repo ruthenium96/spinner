@@ -149,7 +149,7 @@ TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
     }
 }
 
-TEST(symmetrizer, 4444) {
+TEST(symmetrizer, 4444_S2_S2) {
     std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 4};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
@@ -188,7 +188,7 @@ TEST(symmetrizer, 4444) {
     }
 }
 
-TEST(symmetrizer, 333) {
+TEST(symmetrizer, 333_S3) {
     std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
@@ -230,7 +230,7 @@ TEST(symmetrizer, 333) {
     }
 }
 
-TEST(symmetrizer, 222222) {
+TEST(symmetrizer, 222222_S3_S2) {
     std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
@@ -287,7 +287,7 @@ TEST(symmetrizer, 222222) {
     }
 }
 
-TEST(symmetrizer, 333333) {
+TEST(symmetrizer, 333333_S3_S2) {
     std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
