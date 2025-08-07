@@ -62,7 +62,7 @@ class Group {
         std::optional<unsigned int> order;
 
         GroupType(GroupTypeEnum enum_) : type_enum(enum_), order(std::nullopt) {};
-        GroupType(GroupTypeEnum enum_, unsigned int order_) : type_enum(enum_), order(order_) {};
+        GroupType(GroupTypeEnum enum_, std::optional<unsigned int> order_) : type_enum(enum_), order(order_) {};
     };
 
     explicit Group(GroupType group_type, std::vector<Permutation> generators);

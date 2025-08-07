@@ -1,5 +1,6 @@
 #include "OptimizationsParser.h"
 #include <cstddef>
+#include <optional>
 #include "Tools.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 
@@ -69,11 +70,15 @@ void OptimizationsParser::symmetrizerParser(YAML::Node symmetrizer_node) {
 
 void OptimizationsParser::groupParser(YAML::Node group_node) {
     auto group_name = extractValue<group::Group::GroupTypeEnum>(group_node, "group_name");
+    std::optional<unsigned int> order = std::nullopt;
+    if (!group_node["order"].IsNull()) {
+        order = extractValue<unsigned int>(group_node, "order");
+    }
     auto generators_vector = extractValue<std::vector<group::Permutation>>(group_node, "generators");
 
     throw_if_node_is_not_empty(group_node);
 
-    auto group = group::Group(group_name, generators_vector);
+    auto group = group::Group({group_name, order}, generators_vector);
     optimizations_list_->Symmetrize(group);
 }
 
