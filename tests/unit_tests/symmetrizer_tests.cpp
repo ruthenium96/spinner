@@ -111,7 +111,23 @@ bool isEqualUpToVectorOrder(
     std::sort(lhs_.begin(), lhs_.end());
     std::sort(rhs_.begin(), rhs_.end());
 
-    return (lhs_ == rhs_);
+    for (int map = 0; map < lhs_.size(); ++map) {
+        auto lhs_iter = lhs_[map].begin();
+        auto rhs_iter = rhs_[map].begin();
+        while (lhs_iter != lhs_[map].end()) {
+            auto [lhs_key, lhs_value] = *lhs_iter;
+            auto [rhs_key, rhs_value] = *rhs_iter;
+            if (lhs_key != rhs_key) {
+                return false;
+            }
+            if (std::abs(lhs_value - rhs_value) > 1e-12) {
+                return false;
+            }
+            lhs_iter++;
+            rhs_iter++;
+        }
+    }
+    return true;
 }
 
 TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
