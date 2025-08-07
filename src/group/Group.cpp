@@ -196,12 +196,6 @@ Group::return_group_info_by_group_type(Group::GroupType group_type) {
     if (group_type.type_enum == S2) {
         return GroupInfoS2;
     }
-    if (group_type.type_enum == S3) {
-        return constructDihedral(3);
-    }
-    if (group_type.type_enum == D4) {
-        return constructDihedral(4);
-    }
     if (group_type.type_enum == Dihedral) {
         if (!group_type.order.has_value()) {
             throw InitializationError("Dihedral must have an order");

@@ -448,9 +448,9 @@ void initialize_three_centers_exchange_triangle(model::ModelInput& model, double
 
 class triangle : public SpectrumFinalEquivalenceTest {};
 
-#define group_triangle group::Group(group::Group::S3, {{2, 0, 1}, {0, 2, 1}})
-#define group_triangle_diff_one group::Group(group::Group::S3, {{1, 2, 0}, {2, 1, 0}})
-#define group_triangle_diff_two group::Group(group::Group::S3, {{1, 2, 0}, {1, 0, 2}})
+#define group_triangle group::Group({group::Group::Dihedral, 3}, {{2, 0, 1}, {0, 2, 1}})
+#define group_triangle_diff_one group::Group({group::Group::Dihedral, 3}, {{1, 2, 0}, {2, 1, 0}})
+#define group_triangle_diff_two group::Group({group::Group::Dihedral, 3}, {{1, 2, 0}, {1, 0, 2}})
 
 TEST_P(triangle, NoGFactors) {
     std::vector<std::vector<spin_algebra::Multiplicity>> multss = {{2, 2, 2}, {3, 3, 3}, {4, 4, 4}};
@@ -516,10 +516,10 @@ void initialize_four_centers_exchange_square(model::ModelInput& model, double fi
 
 class square : public SpectrumFinalEquivalenceTest {};
 
-#define group_square group::Group(group::Group::D4, {{1, 2, 3, 0}, {1, 0, 3, 2}})
-#define group_square_diff_one group::Group(group::Group::D4, {{{1, 2, 3, 0}, {3, 2, 1, 0}}})
-#define group_square_diff_two group::Group(group::Group::D4, {{{1, 2, 3, 0}, {0, 3, 2, 1}}})
-#define group_square_diff_thr group::Group(group::Group::D4, {{{1, 2, 3, 0}, {2, 1, 0, 3}}})
+#define group_square group::Group({group::Group::Dihedral, 4}, {{1, 2, 3, 0}, {1, 0, 3, 2}})
+#define group_square_diff_one group::Group({group::Group::Dihedral, 4}, {{{1, 2, 3, 0}, {3, 2, 1, 0}}})
+#define group_square_diff_two group::Group({group::Group::Dihedral, 4}, {{{1, 2, 3, 0}, {0, 3, 2, 1}}})
+#define group_square_diff_thr group::Group({group::Group::Dihedral, 4}, {{{1, 2, 3, 0}, {2, 1, 0, 3}}})
 
 
 TEST_P(square, NoGFactors) {
@@ -659,7 +659,7 @@ void initialize_six_centers_exchange_prism(model::ModelInput& model, double firs
 
 class triangle_prism : public SpectrumFinalEquivalenceTest {};
 
-#define group_prism_tr group::Group(group::Group::S3, {{2, 0, 1, 5, 3, 4}, {0, 2, 1, 3, 5, 4}})
+#define group_prism_tr group::Group({group::Group::Dihedral, 3}, {{2, 0, 1, 5, 3, 4}, {0, 2, 1, 3, 5, 4}})
 #define group_prism_di group::Group(group::Group::S2, {{3, 4, 5, 0, 1, 2}})
 
 TEST_P(triangle_prism, NoGFactors) {
@@ -747,8 +747,8 @@ void initialize_nine_centers_torus(model::ModelInput& model, double first) {
 
 class torus : public SpectrumFinalEquivalenceTest {};
 
-#define group_torus_hor group::Group(group::Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}})
-#define group_torus_ver group::Group(group::Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+#define group_torus_hor group::Group({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}})
+#define group_torus_ver group::Group({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
 
 TEST_P(torus, NoGFactors) {
     std::vector<std::vector<spin_algebra::Multiplicity>> multss = {

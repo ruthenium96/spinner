@@ -259,59 +259,59 @@ TEST(
 
 TEST(group_tests, throw_wrong_number_of_generators) {
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}),
         group::InitializationError);
-    EXPECT_THROW(group::Group group(group::Group::S3, {{1, 2, 0}}), group::InitializationError);
+    EXPECT_THROW(group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}}), group::InitializationError);
 }
 
 TEST(group_tests, throw_wrong_size_of_generators) {
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 1, 4}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1, 4}}),
         group::InitializationError);
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2}}),
         group::InitializationError);
 }
 
 TEST(group_tests, throw_duplicate_of_number_in_generator) {
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 2}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 2}}),
         group::InitializationError);
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0}, {2, 2, 2}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}, {2, 2, 2}}),
         group::InitializationError);
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 0, 0}, {0, 2, 1}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 0, 0}, {0, 2, 1}}),
         group::InitializationError);
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{0, 0, 0}, {0, 2, 1}}),
+        group::Group group({group::Group::Dihedral, 3}, {{0, 0, 0}, {0, 2, 1}}),
         group::InitializationError);
 }
 
 TEST(group_tests, throw_contains_wrong_number) {
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0}, {0, 2, 3}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 3}}),
         group::InitializationError);
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 3}, {0, 2, 1}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 3}, {0, 2, 1}}),
         group::InitializationError);
 }
 
 TEST(group_tests, throw_wrong_order_of_generators) {
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 3, 0}, {0, 2, 1, 3}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 3, 0}, {0, 2, 1, 3}}),
         group::InitializationError);
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0, 3}, {1, 2, 0, 3}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0, 3}, {1, 2, 0, 3}}),
         group::InitializationError);
 }
 
 TEST(group_tests, throw_wrong_order_of_elements) {
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0, 3}, {0, 1, 3, 2}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0, 3}, {0, 1, 3, 2}}),
         group::InitializationError);
     EXPECT_THROW(
-        group::Group group(group::Group::S3, {{1, 2, 0, 3}, {3, 1, 2, 0}}),
+        group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0, 3}, {3, 1, 2, 0}}),
         group::InitializationError);
 }
 
@@ -320,7 +320,7 @@ TEST(group_tests, construct_orbits_of_mults) {
         {group::Group(group::Group::S2, {{1, 0, 3, 2, 4}}), {{0, 1}, {2, 3}, {4}}},
         {group::Group(group::Group::S2, {{4, 3, 2, 1, 0}}), {{0, 4}, {1, 3}, {2}}},
         {group::Group(group::Group::S2, {{4, 1, 2, 3, 0}}), {{0, 4}, {1}, {2}, {3}}},
-        {group::Group(group::Group::S3, {{1, 2, 0, 3}, {0, 2, 1, 3}}), {{0, 1, 2}, {3}}},
+        {group::Group({group::Group::Dihedral, 3}, {{1, 2, 0, 3}, {0, 2, 1, 3}}), {{0, 1, 2}, {3}}},
     };
     for (const auto& [group, right_answer] : cases) {
         auto orbits_of_mults = group.construct_orbits_of_mults();
@@ -344,7 +344,7 @@ TEST(group_tests, commutation_of_P2s_in_rectangle) {
 }
 
 TEST(group_tests, commutation_of_P3s_in_toroid) {
-    auto group_one = group::Group(group::Group::S3, {
+    auto group_one = group::Group({group::Group::Dihedral, 3}, {
                                                         {
                                                             3, 4, 5,
                                                             6, 7, 8,
@@ -356,7 +356,7 @@ TEST(group_tests, commutation_of_P3s_in_toroid) {
                                                             6, 7, 8,
                                                         }
                                                     });
-    auto group_two = group::Group(group::Group::S3, {
+    auto group_two = group::Group({group::Group::Dihedral, 3}, {
                                                         {
                                                             1, 2, 0,
                                                             4, 5, 3,

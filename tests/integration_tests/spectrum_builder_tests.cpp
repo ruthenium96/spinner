@@ -131,27 +131,27 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
         model.assignSymbolToIsotropicExchange(J, 0, 1)
             .assignSymbolToIsotropicExchange(J, 1, 2)
             .assignSymbolToIsotropicExchange(J, 2, 0);
-        // S3_SYMMETRIZE
+        // Dih3_SYMMETRIZE
         {
             common::physical_optimization::OptimizationList optimizationList;
-            optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+            optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
 
             runner::Runner runner(model, optimizationList);
 
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
-        // TZ_SORT + S3_SYMMETRIZE
+        // TZ_SORT + Dih3_SYMMETRIZE
         {
             common::physical_optimization::OptimizationList optimizationList;
-            optimizationList.TzSort().Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+            optimizationList.TzSort().Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
             runner::Runner runner(model, optimizationList);
 
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
-        // S3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
-        {}  // TZ_SORT + S3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
+        // Dih3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
+        {}  // TZ_SORT + Dih3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
         {}
     }
 }

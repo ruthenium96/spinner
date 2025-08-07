@@ -191,7 +191,8 @@ custom:
   symmetrizer:
     - group_name: S2
       generators: [[3, 4, 5, 0, 1, 2]]
-    - group_name: S3
+    - group_name: Dihedral
+      order: 3
       generators: [[1, 2, 0, 4, 5, 3], [0, 2, 1, 3, 5, 4]]
 )"""";
         auto parser = input::OptimizationsParser(YAML::Load(string));

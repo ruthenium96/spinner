@@ -52,8 +52,6 @@ class Group {
 
     enum GroupTypeEnum {
         S2,
-        S3,
-        D4,
         Dihedral,
     };
 
@@ -99,7 +97,5 @@ struct InitializationError: public std::logic_error {
 group::Group::AlgebraicProperties constructDihedral(unsigned int order);
 
 extern const group::Group::AlgebraicProperties GroupInfoS2;
-extern const group::Group::AlgebraicProperties GroupInfoS3;
-extern const group::Group::AlgebraicProperties GroupInfoD4;
 
 #endif  //SPINNER_GROUP_H
