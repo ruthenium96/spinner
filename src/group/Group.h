@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <map>
+#include <optional>
 #include <set>
 #include <stdexcept>
 #include <vector>
@@ -55,7 +56,15 @@ class Group {
         D4,
     };
 
-    explicit Group(GroupTypeEnum group_name, std::vector<Permutation> generators);
+    struct GroupType {
+        GroupTypeEnum type_enum;
+        std::optional<unsigned int> order;
+
+        GroupType(GroupTypeEnum enum_) : type_enum(enum_), order(std::nullopt) {};
+        GroupType(GroupTypeEnum enum_, unsigned int order_) : type_enum(enum_), order(order_) {};
+    };
+
+    explicit Group(GroupType group_type, std::vector<Permutation> generators);
 
     size_t size_of_permutations() const;
 
@@ -67,11 +76,11 @@ class Group {
 
     bool operator!=(const Group& rhs) const;
 
-    const Group::AlgebraicProperties& properties;
+    const Group::AlgebraicProperties properties;
 
     const std::vector<Permutation>& getElements() const;
 
-    static const AlgebraicProperties& return_group_info_by_group_name(GroupTypeEnum group_name);
+    static AlgebraicProperties return_group_info_by_group_type(GroupType group_name);
 
   private:
     std::vector<Permutation> elements_;

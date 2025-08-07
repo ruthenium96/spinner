@@ -85,9 +85,9 @@ bool ElementsInPowerLowerThanItsOrderIsNotIdentity(
 }  // namespace
 
 namespace group {
-Group::Group(GroupTypeEnum group_name, std::vector<Permutation> generators) :
+Group::Group(GroupType group_type, std::vector<Permutation> generators) :
     generators_(std::move(generators)),
-    properties(Group::return_group_info_by_group_name(group_name)) {
+    properties(Group::return_group_info_by_group_type(group_type)) {
     if (!NumberOfGeneratorsConsistent(generators_, properties)) {
         throw InitializationError(
             "The number of generators does not equal to the number of group number_of_generators.");
@@ -191,16 +191,15 @@ bool Group::operator!=(const Group& rhs) const {
     return !(rhs == *this);
 }
 
-const Group::AlgebraicProperties&
-Group::return_group_info_by_group_name(Group::GroupTypeEnum group_name) {
-    if (group_name == S2) {
+const Group::AlgebraicProperties
+Group::return_group_info_by_group_type(Group::GroupType group_type) {
+    if (group_type.type_enum == S2) {
         return GroupInfoS2;
     }
-    if (group_name == S3) {
+    if (group_type.type_enum == S3) {
         return GroupInfoS3;
     }
-    if (group_name == D4) {
-        return GroupInfoD4;
+    if (group_type.type_enum == D4) {
     }
 }
 

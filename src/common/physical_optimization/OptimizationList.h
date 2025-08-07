@@ -25,7 +25,7 @@ class OptimizationList {
     OptimizationList& SSquaredTransform();
     OptimizationList& Symmetrize(group::Group new_group);
     OptimizationList&
-    Symmetrize(group::Group::GroupTypeEnum group_name, std::vector<group::Permutation> generators);
+    Symmetrize(group::Group::GroupType group_type, std::vector<group::Permutation> generators);
     OptimizationList& NonAbelianSimplify();
     OptimizationList& FTLMApproximate(FTLMSettings ftlmSettings);
 
