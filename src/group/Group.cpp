@@ -65,6 +65,23 @@ bool ElementsInPowerOfItsOrderIsIdentity(
     return true;
 }
 
+bool ElementsInPowerLowerThanItsOrderIsNotIdentity(
+    const std::vector<group::Permutation>& elements,
+    const std::vector<size_t>& order_of_elements) {
+    group::Permutation identity(elements[0].size());
+    for (size_t i = 0; i < elements[0].size(); ++i) {
+        identity[i] = i;
+    }
+    for (size_t g = 0; g < elements.size(); ++g) {
+        for (int order = 1; order < order_of_elements[g]-1; ++order) {
+            if (ElementInPower(elements[g], order) == identity) {
+                return false;
+            }    
+        }
+    }
+    return true;
+}
+
 }  // namespace
 
 namespace group {
@@ -86,6 +103,10 @@ Group::Group(GroupTypeEnum group_name, std::vector<Permutation> generators) :
 
     if (!ElementsInPowerOfItsOrderIsIdentity(generators_, properties.orders_of_generators)) {
         throw InitializationError("Generator in power of its order does not equal identity.");
+    }
+
+    if (!ElementsInPowerLowerThanItsOrderIsNotIdentity(generators_, properties.orders_of_generators)) {
+        throw InitializationError("Generator in power lower than its order equals to identity.");
     }
 
     Permutation identity(generators_[0].size());
@@ -113,6 +134,10 @@ Group::Group(GroupTypeEnum group_name, std::vector<Permutation> generators) :
 
     if (!ElementsInPowerOfItsOrderIsIdentity(elements_, properties.orders_of_elements)) {
         throw InitializationError("Element in power of its order does not equal identity.");
+    }
+    
+    if (!ElementsInPowerLowerThanItsOrderIsNotIdentity(elements_, properties.orders_of_elements)) {
+        throw InitializationError("Element in power lower than its order equals to identity.");
     }
 }
 
