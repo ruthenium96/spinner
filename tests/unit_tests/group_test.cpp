@@ -4,7 +4,16 @@
 #include "gtest/gtest.h"
 #include "magic_enum.hpp"
 
-auto group_names = magic_enum::enum_values<group::Group::GroupTypeEnum>();
+static std::vector<group::Group::GroupType> constuct_group_types() {
+    std::vector<group::Group::GroupType> answer;
+    answer.push_back(group::Group::S2);
+    for (unsigned int order = 3; order < 50; order++) {
+        answer.push_back({group::Group::Dihedral, order});
+    }
+    return answer;
+}
+
+static auto group_types = constuct_group_types();
 
 TEST(group_info_tests, size_of_group_in_form_of_generators_equals_group_size) {
     for (auto& group_type : group_types) {

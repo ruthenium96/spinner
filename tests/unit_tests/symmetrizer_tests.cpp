@@ -360,6 +360,51 @@ TEST(symmetrizer, 3333_D4) {
 
 }
 
+TEST(symmetrizer, 33333_D5) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize({group::Group::Dihedral, 5}, {{1, 2, 3, 4, 0}, {0, 4, 3, 2, 1}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 333333_D6) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize({group::Group::Dihedral, 6}, {{1, 2, 3, 4, 5, 0}, {0, 5, 4,  3, 2, 1}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 3333333_D7) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize({group::Group::Dihedral, 7}, {{1, 2, 3, 4, 5, 6, 0}, {0, 6, 5, 4, 3, 2, 1}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
 TEST(symmetrizer, 222222222_S3xS3) {
     std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
     model::ModelInput model(mults);

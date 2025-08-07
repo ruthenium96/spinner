@@ -54,6 +54,7 @@ class Group {
         S2,
         S3,
         D4,
+        Dihedral,
     };
 
     struct GroupType {
@@ -94,6 +95,8 @@ struct InitializationError: public std::logic_error {
 };
 
 }  // namespace group
+
+group::Group::AlgebraicProperties constructDihedral(unsigned int order);
 
 extern const group::Group::AlgebraicProperties GroupInfoS2;
 extern const group::Group::AlgebraicProperties GroupInfoS3;

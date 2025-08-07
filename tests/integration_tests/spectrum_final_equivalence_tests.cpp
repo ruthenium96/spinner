@@ -583,6 +583,66 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void initialize_five_centers_exchange_pentagon(model::ModelInput& model, double first) {
+    auto Jfirst = model.addSymbol("J1", first);
+    model.assignSymbolToIsotropicExchange(Jfirst, 0, 1)
+        .assignSymbolToIsotropicExchange(Jfirst, 1, 2)
+        .assignSymbolToIsotropicExchange(Jfirst, 2, 3)
+        .assignSymbolToIsotropicExchange(Jfirst, 3, 4)
+        .assignSymbolToIsotropicExchange(Jfirst, 4, 0);
+}
+
+class pentagon : public SpectrumFinalEquivalenceTest {};
+
+#define group_pentagon group::Group({group::Group::Dihedral, 5}, {{1, 2, 3, 4, 0}, {0, 4, 3, 2, 1}})
+
+TEST_P(pentagon, NoGFactors) {
+    std::vector<std::vector<spin_algebra::Multiplicity>> multss = {
+        {2, 2, 2, 2, 2}, 
+        {3, 3, 3, 3, 3}, 
+        {4, 4, 4, 4, 4}};
+    std::vector<double> js = {10, 17.17, 33};
+
+    for (const auto& mults : multss) {
+        for (auto Jfirst : js) {
+            model::ModelInput model(mults);
+            initialize_five_centers_exchange_pentagon(model, Jfirst);
+
+            runner::Runner runner_simple(model);
+
+            runner::Runner runner(model, GetParam());
+            expect_final_vectors_equivalence(runner_simple, runner);                
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    spectrum_final_equivalence,
+    pentagon,
+    ::testing::Values(
+        OptimizationList(OptimizationList::LEX).TzSort(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_pentagon),
+        OptimizationList(OptimizationList::LEX).Symmetrize(group_pentagon).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_pentagon),
+        OptimizationList(OptimizationList::LEX).TzSort().Symmetrize(group_pentagon).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_pentagon),
+        OptimizationList(OptimizationList::LEX).TzSort().EliminatePositiveProjections().Symmetrize(group_pentagon).NonAbelianSimplify(),
+        OptimizationList(OptimizationList::LEX).TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform(),
+        OptimizationList(OptimizationList::ITO),
+        OptimizationList(OptimizationList::ITO).TzSort(),
+        OptimizationList(OptimizationList::ITO).TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort(),
+        OptimizationList(OptimizationList::ITO).TzSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminatePositiveProjections(),
+        OptimizationList(OptimizationList::ITO).TzSort().TSquaredSort().EliminateNonMininalProjections()
+    )
+);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 void initialize_six_centers_exchange_prism(model::ModelInput& model, double first, double second) {
     auto Jfirst = model.addSymbol("J1", first);
     model.assignSymbolToIsotropicExchange(Jfirst, 0, 1)
