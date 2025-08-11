@@ -42,10 +42,14 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
     // todo: we need only J and D if there is no field
     size_t number_of_all_J =
         symbolic_worker.getAllNames(model::symbols::J).size();
+    size_t number_of_changeable_J =
+        symbolic_worker.getChangeableNames(model::symbols::J).size();
     size_t number_of_all_D =
         symbolic_worker.getAllNames(model::symbols::D).size();
-    if (number_of_all_J == 1 && number_of_all_D == 0
-        || number_of_all_J == 0 && number_of_all_D == 1) {
+    size_t number_of_changeable_D =
+        symbolic_worker.getChangeableNames(model::symbols::D).size();
+    if (number_of_all_J == 1 && number_of_changeable_J == 1 && number_of_all_D == 0
+        || number_of_all_J == 0 && number_of_all_D == 1 && number_of_changeable_D == 1) {
         model::symbols::SymbolName symbol_name;
         if (number_of_all_J == 1) {
             symbol_name = symbolic_worker.getChangeableNames(model::symbols::J)[0];
