@@ -49,11 +49,10 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
     optimizationList_(std::move(optimizationList)) {
     // this function throw an exception if ModelInput and OptimizationList are inconsistent
     checkModelOptimizationListConsistence(modelInput, optimizationList_);
-    lex_index_converter_ = std::make_shared<index_converter::lexicographic::IndexConverter>(modelInput.getMults());
 
     std::unique_ptr<model::operators::AbstractOperatorConstructor> operator_constructor;
     if (getOptimizationList().isITOBasis()) {
-        const auto number_of_mults = getIndexConverter()->get_mults().size();
+        const auto number_of_mults = modelInput.getMults().size();
         auto group_adapter =
             spin_algebra::GroupAdapter(optimizationList_.getGroupsToApply(), number_of_mults);
 
@@ -63,6 +62,7 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
 
         operator_constructor = std::make_unique<model::operators::ITOOperatorConstructor>(s_squared_index_converter_);
     } else {
+        lex_index_converter_ = std::make_shared<index_converter::lexicographic::IndexConverter>(modelInput.getMults());
         operator_constructor = std::make_unique<model::operators::LexOperatorConstructor>(lex_index_converter_);
     }
 
