@@ -35,60 +35,60 @@ class Logger {
     };
 
     template <typename... Args>
-    static void log(PrintLevel level, fmt::format_string<Args...> s, Args&&... args) {
+    static void log(PrintLevel level, spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         logger_without_message->log(
             static_cast<spdlog::level::level_enum>(level),
             s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void trace(fmt::format_string<Args...> s, Args&&... args) {
+    static void trace(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log(common::PrintLevel::trace, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void debug(fmt::format_string<Args...> s, Args&&... args) {
+    static void debug(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log(common::PrintLevel::debug, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void verbose(fmt::format_string<Args...> s, Args&&... args) {
+    static void verbose(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log(common::PrintLevel::verbose, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void detailed(fmt::format_string<Args...> s, Args&&... args) {
+    static void detailed(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log(common::PrintLevel::detailed, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void basic(fmt::format_string<Args...> s, Args&&... args) {
+    static void basic(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log(common::PrintLevel::basic, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void error(fmt::format_string<Args...> s, Args&&... args) {
+    static void error(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log(common::PrintLevel::error, s, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    static void log_msg(PrintLevel level, fmt::format_string<Args...> s, Args&&... args) {
+    static void log_msg(PrintLevel level, spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         logger_with_message->log(
             static_cast<spdlog::level::level_enum>(level),
             s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void debug_msg(fmt::format_string<Args...> s, Args&&... args) {
+    static void debug_msg(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log_msg(common::PrintLevel::debug, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void verbose_msg(fmt::format_string<Args...> s, Args&&... args) {
+    static void verbose_msg(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log_msg(common::PrintLevel::verbose, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void detailed_msg(fmt::format_string<Args...> s, Args&&... args) {
+    static void detailed_msg(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log_msg(common::PrintLevel::detailed, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void basic_msg(fmt::format_string<Args...> s, Args&&... args) {
+    static void basic_msg(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log_msg(common::PrintLevel::basic, s, std::forward<Args>(args)...);
     }
     template <typename... Args>
-    static void error_msg(fmt::format_string<Args...> s, Args&&... args) {
+    static void error_msg(spdlog::fmt_lib::format_string<Args...> s, Args&&... args) {
         log_msg(common::PrintLevel::error, s, std::forward<Args>(args)...);
     }
 

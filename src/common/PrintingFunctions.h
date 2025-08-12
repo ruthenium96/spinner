@@ -1,7 +1,8 @@
 #ifndef SPINNER_PRINTINGFUNCTIONS_H
 #define SPINNER_PRINTINGFUNCTIONS_H
 
-#include <fmt/ostream.h>
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/spdlog.h>
 
 #include <ostream>
 
@@ -24,10 +25,10 @@
 std::ostream& operator<<(std::ostream& os, const space::Space& space);
 std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace);
 std::ostream& operator<<(std::ostream& os, const SpectrumRef& spectrum_ref);
-template <> struct fmt::formatter<SpectrumRef> : fmt::ostream_formatter {};
+template <> struct spdlog::fmt_lib::formatter<SpectrumRef> : spdlog::fmt_lib::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum);
 std::ostream& operator<<(std::ostream& os, const MatrixRef& matrix);
-template <> struct fmt::formatter<MatrixRef> : fmt::ostream_formatter {};
+template <> struct spdlog::fmt_lib::formatter<MatrixRef> : spdlog::fmt_lib::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
