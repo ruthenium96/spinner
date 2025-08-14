@@ -209,6 +209,11 @@ const std::vector<Permutation>& Group::getElements() const {
     return elements_;
 }
 
+const std::vector<Permutation>& Group::getGenerators() const {
+    return generators_;
+}
+
+
 bool Group::do_groups_commute(const Group& rhs) const {
     size_t lhs_size = generators_.size();
     size_t rhs_size = rhs.generators_.size();

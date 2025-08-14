@@ -78,6 +78,7 @@ class Group {
     const Group::AlgebraicProperties properties;
 
     const std::vector<Permutation>& getElements() const;
+    const std::vector<Permutation>& getGenerators() const;
 
     static AlgebraicProperties return_group_info_by_group_type(GroupType group_name);
 
