@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "gtest/gtest.h"
 #include "src/common/Logger.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
@@ -167,13 +168,8 @@ TEST(symmetrizer, 4444_S2_S2) {
     // S2 * the same S2 group
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
-            .Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
-            {model, optimizationList},
-            factories);
-        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
-        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
     }
     // S2 * other S2
     {
@@ -206,13 +202,8 @@ TEST(symmetrizer, 4444_S2_S2_ITO) {
     // S2 * the same S2 group
     {
         common::physical_optimization::OptimizationList optimizationList(common::physical_optimization::OptimizationList::ITO);
-        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
-            .Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
-            {model, optimizationList},
-            factories);
-        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
-        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
     }
     // S2 * other S2
     {
@@ -265,25 +256,14 @@ TEST(symmetrizer, 333_Dih3) {
     // Dih3 * the same Dih3
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}})
-            .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
-            {model, optimizationList},
-            factories);
-        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
-        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+        EXPECT_THROW(optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}}), std::invalid_argument);
     }
     // Dih3 * the same Dih3 (but different generators)
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}})
-            .Symmetrize({group::Group::Dihedral, 3}, {{2, 0, 1}, {1, 0, 2}});
-        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
-            {model, optimizationList},
-            factories);
-
-        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
-        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+        EXPECT_THROW(optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{2, 0, 1}, {1, 0, 2}}), std::invalid_argument);
     }
 }
 

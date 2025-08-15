@@ -86,50 +86,6 @@ TEST(nonAbelianSimplifier, 333_Dih3) {
     compare_two_spaces(space_full, space_simplified);
 }
 
-TEST(nonAbelianSimplifier, 333_doubleDih3) {
-   std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3};
-   model::ModelInput model(mults);
-
-   common::physical_optimization::OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-   common::physical_optimization::OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-   optimizationListSimplified.NonAbelianSimplify();
-
-   space::Space space_full = space::optimization::OptimizedSpaceConstructor::construct(
-       {model, optimizationListFull},
-       factories);
-   space::Space space_simplified = space::optimization::OptimizedSpaceConstructor::construct(
-       {model, optimizationListFull},
-       factories);
-
-   compare_two_spaces(space_full, space_simplified);
-}
-
-TEST(nonAbelianSimplifier, 333_doubleDih3_tricky) {
-   std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3};
-   model::ModelInput model(mults);
-
-   common::physical_optimization::OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{2, 0, 1}, {1, 0, 2}});
-   common::physical_optimization::OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{2, 0, 1}, {1, 0, 2}});
-   optimizationListSimplified.NonAbelianSimplify();
-
-   space::Space space_full = space::optimization::OptimizedSpaceConstructor::construct(
-       {model, optimizationListFull},
-       factories);
-   space::Space space_simplified = space::optimization::OptimizedSpaceConstructor::construct(
-       {model, optimizationListFull},
-       factories);
-
-   compare_two_spaces(space_full, space_simplified);
-}
-
 TEST(nonAbelianSimplifier, 333333_Dih3) {
    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
    model::ModelInput model(mults);

@@ -88,7 +88,7 @@ OptimizationList& OptimizationList::FTLMApproximate(FTLMSettings ftlmSettings) {
 OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
     // check if user trying to use the same Group for a second time:
     if (std::count(groupsToApply_.begin(), groupsToApply_.end(), new_group)) {
-        return *this;
+        throw std::invalid_argument("Trying to apply group isomorphing to already applied");
     }
     // check if groups can be applied at the same time
     for (const auto& old_group : groupsToApply_) {
