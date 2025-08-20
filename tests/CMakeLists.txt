@@ -17,7 +17,8 @@ endif ()
 
 add_library(tests_tools
         tools/MeanAndDeviation.cpp
-        tools/GenerateSameMatrix.cpp)
+        tools/GenerateSameMatrix.cpp
+        tools/OptimizationListsGenerator.cpp)
 
 add_executable(spinner_time_test
         time_tests/main.cpp)
