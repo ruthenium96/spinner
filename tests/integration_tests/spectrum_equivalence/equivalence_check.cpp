@@ -66,58 +66,6 @@ inline std::vector<QuantumValues> construct_final_vector(runner::Runner& runner)
     return vector;
 }
 
-std::ostream& common::physical_optimization::operator<<(std::ostream& os, const common::physical_optimization::OptimizationList& optimization_list) {
-    os << std::string(optimization_list.isLexBasis() ? "LEX|" : "ITO|"); 
-    if (optimization_list.isTzSorted()) { 
-        os << "tz|"; 
-    } 
-    if (optimization_list.isTSquaredSorted()) { 
-        os << "t^2|"; 
-    } 
-    if (optimization_list.isPositiveProjectionsEliminated()) { 
-        os << "posElim|"; 
-    } 
-    if (optimization_list.isNonMinimalProjectionsEliminated()) { 
-        os << "nonminElim|"; 
-    } 
-    if (optimization_list.isSSquaredTransformed()) { 
-        os << "s^2|"; 
-    } 
-    if (optimization_list.isFTLMApproximated()) { 
-        os << "FTLM|"; 
-    } 
-    if (!optimization_list.getGroupsToApply().empty()) {
-        os << "Groups:{"; 
-        for (int i = 0; i < optimization_list.getGroupsToApply().size(); ++i) { 
-            os << "["; 
-            const auto& group = optimization_list.getGroupsToApply()[i]; 
-            for (int j = 0; j < group.getGenerators().size(); ++j) { 
-                const auto& el = group.getGenerators()[j];
-                os << "(";
-                for (int k = 0; k < el.size(); ++k) { 
-                    os << std::to_string(el[k]);
-                    if (k + 1 < el.size()) {
-                        os << ", ";
-                    }
-                } 
-                os << ")"; 
-                if (j + 1 < group.getGenerators().size()) {
-                    os << ", ";
-                }
-            }
-            os << "]";
-            if (i + 1 < optimization_list.getGroupsToApply().size()) {
-                os << "; ";
-            }
-        } 
-        os << "}";
-        if (optimization_list.isNonAbelianSimplified()) { 
-            os << "|nonabSimp"; 
-        } 
-    }
-    return os;
-}
-
 void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& second) {
 
     auto first_vector = construct_final_vector(simple);
@@ -179,4 +127,111 @@ void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& se
         }
         last_energy = first_vector[i][magic_enum::enum_integer<common::QuantityEnum>(common::Energy)].value();
     }
+}
+
+std::string spectrum_final_equivalence_test_name_generator(const ::testing::TestParamInfo<TestParam>& info) {
+    const auto& [optimization_list, mults] = info.param;
+    std::string name; 
+
+    name += std::string(optimization_list.isLexBasis() ? "lex" : "ito");
+    if (optimization_list.isTzSorted()) {
+        name += "_tz";
+    }
+    if (optimization_list.isTSquaredSorted()) {
+        name += "_t2";
+    }
+    if (optimization_list.isPositiveProjectionsEliminated()) {
+        name += "_posElim";
+    }
+    if (optimization_list.isNonMinimalProjectionsEliminated()) {
+        name += "_nonminElim";
+    }
+    if (optimization_list.isSSquaredTransformed()) {
+        name += "_s2";
+    }
+    if (optimization_list.isFTLMApproximated()) {
+        name += "_FTLM";
+    }
+    if (!optimization_list.getGroupsToApply().empty()) {
+        for (int i = 0; i < optimization_list.getGroupsToApply().size(); ++i) {
+            name += "_g" + std::to_string(i) + "_";
+            const auto& group = optimization_list.getGroupsToApply()[i];
+            for (int j = 0; j < group.getGenerators().size(); ++j) { // skip first
+                const auto& gen = group.getGenerators()[j];                
+                for (int k = 0; k < gen.size(); ++k) {
+                    name += std::to_string(gen[k]);
+                    if (k + 1 < gen.size()) {
+                        name += "x";
+                    }
+                }
+                if (j + 1 < group.getGenerators().size()) {
+                    name += "_";
+                }
+            }
+        }
+        if (optimization_list.isNonAbelianSimplified()) {
+            name += "_nonabSimp";
+        }
+    }
+    name += "_";
+    for (int i = 0; i < mults.size(); ++i) {
+        name += std::to_string(mults[i]);
+        if (i + 1 < mults.size()) {
+            name += "x";
+        }
+    }
+
+    return name;
+}
+
+std::ostream& common::physical_optimization::operator<<(std::ostream& os, const common::physical_optimization::OptimizationList& optimization_list) {
+    os << std::string(optimization_list.isLexBasis() ? "LEX|" : "ITO|"); 
+    if (optimization_list.isTzSorted()) { 
+        os << "tz|"; 
+    } 
+    if (optimization_list.isTSquaredSorted()) { 
+        os << "t^2|"; 
+    } 
+    if (optimization_list.isPositiveProjectionsEliminated()) { 
+        os << "posElim|"; 
+    } 
+    if (optimization_list.isNonMinimalProjectionsEliminated()) { 
+        os << "nonminElim|"; 
+    } 
+    if (optimization_list.isSSquaredTransformed()) { 
+        os << "s^2|"; 
+    } 
+    if (optimization_list.isFTLMApproximated()) { 
+        os << "FTLM|"; 
+    } 
+    if (!optimization_list.getGroupsToApply().empty()) {
+        os << "Groups:{"; 
+        for (int i = 0; i < optimization_list.getGroupsToApply().size(); ++i) { 
+            os << "["; 
+            const auto& group = optimization_list.getGroupsToApply()[i]; 
+            for (int j = 0; j < group.getGenerators().size(); ++j) { 
+                const auto& el = group.getGenerators()[j];
+                os << "(";
+                for (int k = 0; k < el.size(); ++k) { 
+                    os << std::to_string(el[k]);
+                    if (k + 1 < el.size()) {
+                        os << ", ";
+                    }
+                } 
+                os << ")"; 
+                if (j + 1 < group.getGenerators().size()) {
+                    os << ", ";
+                }
+            }
+            os << "]";
+            if (i + 1 < optimization_list.getGroupsToApply().size()) {
+                os << "; ";
+            }
+        } 
+        os << "}";
+        if (optimization_list.isNonAbelianSimplified()) { 
+            os << "|nonabSimp"; 
+        } 
+    }
+    return os;
 }

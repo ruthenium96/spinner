@@ -27,7 +27,8 @@ add_executable(spinner_test
         main.cpp
         unit_tests/clebsh_gordon_calculator_tests.cpp
         integration_tests/ftlm_tests.cpp
-        integration_tests/spectrum_final_equivalence_tests.cpp
+        integration_tests/spectrum_equivalence/equivalence_check.cpp
+        integration_tests/spectrum_equivalence/chains.cpp
         integration_tests/simple_analytical_dependencies_tests.cpp
         unit_tests/OneOrMany_tests.cpp
         unit_tests/group_test.cpp
