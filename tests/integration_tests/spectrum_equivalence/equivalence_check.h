@@ -7,7 +7,7 @@
 #include "src/common/runner/Runner.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 
-void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& second);
+void expect_final_vectors_equivalence(runner::Runner& simple, runner::Runner& second, bool assert=false);
 
 using TestParam = std::tuple<common::physical_optimization::OptimizationList, std::vector<spin_algebra::Multiplicity>>;
 class SpectrumFinalEquivalenceTest : public ::testing::TestWithParam<TestParam> {};
