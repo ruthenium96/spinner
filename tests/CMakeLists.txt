@@ -28,6 +28,7 @@ add_executable(spinner_test
         unit_tests/clebsh_gordon_calculator_tests.cpp
         integration_tests/ftlm_tests.cpp
         integration_tests/spectrum_equivalence/equivalence_check.cpp
+        integration_tests/spectrum_equivalence/alternating_polygons.cpp
         integration_tests/spectrum_equivalence/chains.cpp
         integration_tests/spectrum_equivalence/regular_polygons.cpp
         integration_tests/simple_analytical_dependencies_tests.cpp
