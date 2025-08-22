@@ -32,6 +32,7 @@ add_executable(spinner_test
         integration_tests/spectrum_equivalence/chains.cpp
         integration_tests/spectrum_equivalence/pyramids.cpp
         integration_tests/spectrum_equivalence/regular_polygons.cpp
+        integration_tests/spectrum_equivalence/torus.cpp
         integration_tests/simple_analytical_dependencies_tests.cpp
         unit_tests/OneOrMany_tests.cpp
         unit_tests/group_test.cpp
