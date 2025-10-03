@@ -110,16 +110,6 @@ OneSymbolInHamiltonianEigendecompositor::getSubmatrixDerivative(common::Quantity
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-// Despite OneSymbolInHamiltonianEigendecompositor stores derivative from the Energy,
-// it can return nothing: let B=dH/dp and A arbitary matrix:
-// diag(UABU*)=diag(UAU*xUBU*), UBU* is diagonal matrix (B has the same eigenvectors as Hamiltonian), thus:
-// diag(UAU*xUBU*)_a = \sum_b (UAU*)_ab x (UBU*)_ba = (UAU*)_aa x (UBU*)_aa = diag(UAU*)_a x diag(UBU*)_a
-// therefore, we can just multiply diagonals closer to calculation of magnetic susceptibility
-std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
-OneSymbolInHamiltonianEigendecompositor::getSubspectrumDerivativeProduct(common::QuantityEnum quantity, common::QuantityEnum quantity_derivative, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
-    return eigendecompositor_->getSubspectrumDerivativeProduct(quantity, quantity_derivative, symbol_name, number_of_block);
-}
-
 OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
 OneSymbolInHamiltonianEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return eigendecompositor_->getWeightsOfBlockStates(number_of_block);

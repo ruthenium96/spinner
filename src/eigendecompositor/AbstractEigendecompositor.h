@@ -21,8 +21,6 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
     std::optional<OneOrMany<MatrixRef>> getMatrix(common::QuantityEnum) const override;
     std::optional<OneOrMany<SpectrumRef>>
     getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
-    std::optional<OneOrMany<SpectrumRef>>
-    getSpectrumDerivativeProduct(common::QuantityEnum, common::QuantityEnum, const model::symbols::SymbolName&) const override;
     std::optional<OneOrMany<MatrixRef>>
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
     size_t getSubspectrumSize(common::QuantityEnum, size_t number_of_block) const;

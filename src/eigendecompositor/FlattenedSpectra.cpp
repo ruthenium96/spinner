@@ -82,22 +82,15 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
             std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>> 
                 derivative_product_key = {quantity_enum, derivative_key};
 
-            auto mb_derivative_product = allQuantitiesGetter.getSpectrumDerivativeProduct(
-                quantity_enum, quantity_enum_derivative, symbol_name);
-            if (mb_derivative_product.has_value()) {
-                const auto& spectrum_product = mb_derivative_product.value();
-                flattenedDerivativeProductSpectra_[derivative_product_key] = flatten(spectrum_product, factories);
-            } else {
-                flattenedDerivativeProductSpectra_[derivative_product_key] = 
-                    transform_one_or_many(
-                    std::function([](
-                        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& a, 
-                        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& b){
-                        return a->element_wise_multiplication(b);
-                    }), 
-                    spectrum,
-                    spectrum_derivative);
-            }
+            flattenedDerivativeProductSpectra_[derivative_product_key] = 
+                transform_one_or_many(
+                std::function([](
+                    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& a, 
+                    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& b){
+                    return a->element_wise_multiplication(b);
+                }), 
+                spectrum,
+                spectrum_derivative);
         }
     }
 }

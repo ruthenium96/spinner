@@ -50,16 +50,6 @@ ExplicitQuantitiesEigendecompositor::getSubmatrixDerivative(common::QuantityEnum
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
-ExplicitQuantitiesEigendecompositor::getSubspectrumDerivativeProduct(common::QuantityEnum quantity, common::QuantityEnum quantity_derivative, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
-    std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>> key = {quantity, {quantity_derivative, symbol_name}};
-    if (derivatives_product_spectra_map_.contains(key)) {
-        return copyRef<Subspectrum, std::reference_wrapper<const Subspectrum>>(
-            derivatives_product_spectra_map_.at(key)[number_of_block]);
-    }
-    return eigendecompositor_->getSubspectrumDerivativeProduct(quantity, quantity_derivative, symbol_name, number_of_block);
-}
-
 OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
 ExplicitQuantitiesEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
@@ -98,8 +88,6 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
         derivative_matrix[number_of_block] = std::move(derivative_submatrix);
 #endif
     }
-
-    // TODO: code for actual calculation of the diagonal of product matrix
 
     return mb_unitary_transformation_matrix;
 }
