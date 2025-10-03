@@ -29,6 +29,7 @@ add_executable(spinner_test
         integration_tests/ftlm_tests.cpp
         integration_tests/spectrum_equivalence/equivalence_check.cpp
         integration_tests/spectrum_equivalence/alternating_polygons.cpp
+        integration_tests/spectrum_equivalence/antiprisms.cpp
         integration_tests/spectrum_equivalence/chains.cpp
         integration_tests/spectrum_equivalence/prisms.cpp
         integration_tests/spectrum_equivalence/pyramids.cpp
