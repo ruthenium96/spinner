@@ -14,9 +14,6 @@ class AbstractDenseSemiunitaryTransformer {
 public:
     virtual std::unique_ptr<AbstractDenseVector> calculateUnitaryTransformationOfMatrix(
         std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> matrix) const = 0;
-    virtual std::unique_ptr<AbstractDenseVector> calculateUnitaryTransformationOfMatrixProduct(
-        std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> left_matrix,
-        std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> right_matrix) const = 0;
 };
 } // namespace quantum::linear_algebra
 

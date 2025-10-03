@@ -13,12 +13,12 @@ public:
 
     std::unique_ptr<AbstractDenseVector> calculateUnitaryTransformationOfMatrix(
         std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> matrix) const override;
-    std::unique_ptr<AbstractDenseVector> calculateUnitaryTransformationOfMatrixProduct(
-        std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> left_matrix,
-        std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> right_matrix) const override;
 
 private:
     const ArmaDenseSemiunitaryMatrix<T>* unitary_matrix_;
+
+    arma::Mat<T> getFirstMultiplicationResult(const AbstractDiagonalizableMatrix*) const;
+    arma::Col<T> multiplyAndReturnMainDiagonal(const arma::Mat<T>& left, const arma::Mat<T>& right) const;
 };
     
 }  // namespace quantum::linear_algebra

@@ -44,13 +44,6 @@ std::unique_ptr<AbstractDenseVector> ArmaKrylovDenseSemiunitaryTransformer<T>::c
     throw std::bad_cast();
 }
 
-template <typename T>
-std::unique_ptr<AbstractDenseVector> ArmaKrylovDenseSemiunitaryTransformer<T>::calculateUnitaryTransformationOfMatrixProduct(
-    std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> left_matrix,
-    std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> right_matrix) const {
-    return nullptr;
-}
-
 template class ArmaKrylovDenseSemiunitaryTransformer<double>;
 template class ArmaKrylovDenseSemiunitaryTransformer<float>;
 } // namespace quantum::linear_algebra

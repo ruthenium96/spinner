@@ -51,13 +51,6 @@ std::unique_ptr<AbstractDenseVector> EigenDenseSemiunitaryTransformer<T>::calcul
     throw std::bad_cast();
 }
 
-template <typename T>
-std::unique_ptr<AbstractDenseVector> EigenDenseSemiunitaryTransformer<T>::calculateUnitaryTransformationOfMatrixProduct(
-    std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> left_matrix,
-    std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> right_matrix) const {
-    return nullptr;
-}
-
 template class EigenDenseSemiunitaryTransformer<double>;
 template class EigenDenseSemiunitaryTransformer<float>;
 } // namespace quantum::linear_algebra
