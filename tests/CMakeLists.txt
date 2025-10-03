@@ -116,3 +116,5 @@ target_link_libraries(spinner_test gtest gtest_main tests_tools
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver eigendecompositor)
+
+target_compile_definitions(spinner_test PRIVATE CMAKE_SOURCE_DIR_DEFINE="${CMAKE_SOURCE_DIR}")
