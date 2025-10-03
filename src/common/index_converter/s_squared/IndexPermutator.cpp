@@ -1,5 +1,8 @@
 #include "IndexPermutator.h"
 #include <cassert>
+#include <stdexcept>
+#include "src/group/Group.h"
+#include "src/spin_algebra/Multiplicity.h"
 
 namespace index_converter::s_squared {
 
@@ -31,29 +34,31 @@ inline void IndexPermutator::construct_level_and_sign(
         permutated_level.setMultiplicity(position, multiplicity_to_push);
     }
 
+    std::map<unsigned long, spin_algebra::Multiplicity> visited_multiplicities;
+
     for (const auto& instruction : converter_->getOrderOfSummation()->getInstructions()) {
         const auto pos_one = instruction.positions_of_summands[0];
         const auto pos_two = instruction.positions_of_summands[1];
         const auto pos_res = instruction.position_of_sum;
 
-        if ((pos_one == extended_g[pos_one] && pos_two == extended_g[pos_two])
-        ) { // || or &&?
+        if (pos_one == extended_g[pos_one] || pos_two == extended_g[pos_two]) {
             continue;
         }
 
         auto mult_one = permutated_level.getMultiplicity(pos_one);
         auto mult_two = permutated_level.getMultiplicity(pos_two);
         auto mult_res = permutated_level.getMultiplicity(pos_res);
-        if (mult_one == mult_two) {
-            auto maxMultiplicity = mult_one + mult_two - 1;
-            if ((maxMultiplicity - mult_res) % 4 == 0) {
-                sign *= 1;
-            } else {
-                sign *= -1;
-            }
-        } else {
-            sign *= 1;
-        }
+        visited_multiplicities[pos_one] = mult_one;
+        visited_multiplicities[pos_two] = mult_two;
+        visited_multiplicities[pos_res] = mult_res;
+    }
+    size_t acc = 0;
+    for (const auto& [key, value] : visited_multiplicities)
+    {
+        acc += value;
+    }
+    if (acc % 4 != visited_multiplicities.size() % 4) {
+        sign *= -1;
     }
 }
 
