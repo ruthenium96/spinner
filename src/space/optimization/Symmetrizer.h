@@ -3,7 +3,6 @@
 
 #include <cmath>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 #include "src/common/index_converter/AbstractIndexPermutator.h"
@@ -27,24 +26,13 @@ class Symmetrizer {
 
     // TODO: these functions are not about symmetrization.
     //  Should we refactor them and create a new class?
-    static void increment_visited(
-        const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
-            decomposition,
-        uint32_t index_of_vector,
-        std::unordered_map<uint32_t, uint8_t>& hs);
-
-    static uint8_t count_how_many_orbit_was_visited(
-        const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
-            decomposition,
-        uint32_t index_of_vector,
-        std::unordered_map<uint32_t, uint8_t>& hs);
-
-    static bool is_orthogonal_to_others(
-        const std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
-            decomposition_from,
-        uint32_t index_of_vector,
-        std::unordered_map<uint32_t, std::vector<size_t>>& hs,
+    static void gram_schmidt_orthogonalize(
+        std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
+        const std::unordered_map<uint32_t, std::vector<size_t>>& indexes_to_vectors_map,
         const Subspace& subspace_to);
+    static void gram_schmidt_selforthogonalize(
+        std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
+            decomposition_from);
     static void move_vector_and_remember_it(
         std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
             decomposition_from,

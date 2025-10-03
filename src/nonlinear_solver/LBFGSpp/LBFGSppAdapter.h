@@ -14,6 +14,7 @@ class LBFGSppAdapter: public AbstractNonlinearSolver {
     bool doesGradientsRequired() const override {
         return true;
     };
+    std::optional<std::vector<double>> getMainDiagonalOfInverseHessian() const override;
 };
 
 }  // namespace nonlinear_solver

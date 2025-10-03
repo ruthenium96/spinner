@@ -1,6 +1,7 @@
 #include "IndexConverter.h"
 #include <functional>
 #include <numeric>
+#include "src/common/PrintingFunctions.h"
 #include "src/common/index_converter/AbstractIndexConverter.h"
 
 namespace index_converter::lexicographic {
@@ -15,6 +16,7 @@ IndexConverter::IndexConverter(std::vector<spin_algebra::Multiplicity> mults) :
         get_mults().rend(),
         cumulative_product_.rbegin() + 1,
         std::multiplies<>());
+    common::lexIndexConverterPrint(*this);
 }
 
 std::vector<uint8_t> IndexConverter::convert_lex_index_to_all_sz_projections(uint32_t lex) const {

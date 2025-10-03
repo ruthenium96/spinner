@@ -119,6 +119,14 @@ std::vector<SymbolName> SymbolicWorker::getAllNames(SymbolTypeEnum type_enum) co
     return answer;
 }
 
+std::vector<SymbolName> SymbolicWorker::getAllNames() const {
+    std::vector<SymbolName> answer;
+    for (const auto& [symbol_name, symbol_data] : symbolsProperties_) {
+        answer.push_back(symbol_name);
+    }
+    return answer;
+}
+
 std::vector<SymbolName> SymbolicWorker::getChangeableNames(SymbolTypeEnum type_enum) const {
     std::vector<SymbolName> answer;
     for (const auto& [symbol_name, symbol_data] : symbolsProperties_) {

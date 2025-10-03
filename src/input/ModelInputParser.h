@@ -3,8 +3,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include <variant>
-
+#include "src/common/OneOrMany.h"
 #include "src/model/ModelInput.h"
 
 namespace input {
@@ -22,7 +21,7 @@ class ModelInputParser {
     std::vector<model::ModelInput> model_input_;
     void parametersParser(YAML::Node parameters_node);
     void parameterParser(YAML::Node symbol_node);
-    std::variant<double, std::vector<double>> valuesParser(YAML::Node values_node);
+    OneOrMany<double> valuesParser(YAML::Node values_node);
 
     std::optional<size_t> trajectory_size_;
 

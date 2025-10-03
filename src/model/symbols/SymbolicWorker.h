@@ -53,6 +53,7 @@ class SymbolicWorker {
     void setNewValueToChangeableSymbol(const SymbolName& symbol_name, double new_value);
 
     std::vector<SymbolName> getAllNames(SymbolTypeEnum type_enum) const;
+    std::vector<SymbolName> getAllNames() const;
     std::vector<SymbolName> getChangeableNames(SymbolTypeEnum type_enum) const;
     std::vector<SymbolName> getChangeableNames() const;
     double getValueOfName(const SymbolName& symbol_name) const;

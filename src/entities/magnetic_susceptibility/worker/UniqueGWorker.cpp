@@ -1,44 +1,50 @@
 #include "UniqueGWorker.h"
+#include "src/common/UncertainValue.h"
+#include "src/model/symbols/SymbolName.h"
+
 namespace magnetic_susceptibility::worker {
 
 UniqueGWorker::UniqueGWorker(
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy,
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& quantity,
-    double g_unique) :
-    BasicWorker(std::move(energy), std::move(degeneracy)),
-    quantity_(std::move(quantity)),
-    g_unique_(g_unique) {}
+    std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
+    std::function<double()> g_unique_getter,
+    common::QuantityEnum quantity_enum_for_averaging, 
+    double quantity_factor) :
+    BasicWorker(flattenedSpectra),
+    flattenedSpectra_(flattenedSpectra),
+    g_unique_getter_(g_unique_getter),
+    quantity_enum_for_averaging_(quantity_enum_for_averaging),
+    quantity_factor_(quantity_factor) {}
 
-double UniqueGWorker::calculateTheoreticalMuSquared(double temperature) const {
-    double quantity_averaged = ensemble_averager_.ensemble_average(quantity_, temperature);
-    return g_unique_ * g_unique_ * quantity_averaged;
+common::UncertainValue UniqueGWorker::calculateTheoreticalMuSquared(double temperature) const {
+    auto quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value();
+    auto quantity_averaged = ensemble_averager_->ensemble_average(quantity, temperature);
+    return g_unique_getter_() * g_unique_getter_() * quantity_averaged * quantity_factor_;
 }
 
 std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
     model::symbols::SymbolTypeEnum symbol_type,
-    std::map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-        values_derivatives_map) const {
+    model::symbols::SymbolName symbol_name) const {
+    auto quantity = flattenedSpectra_->getFlattenSpectrum(quantity_enum_for_averaging_).value();
     std::vector<double> temperatures = experimental_values_worker_.value()->getTemperatures();
     std::vector<ValueAtTemperature> derivatives(temperatures.size());
     if (symbol_type == model::symbols::SymbolTypeEnum::g_factor) {
         // d(mu_squared)/dg = d(g^2*<S^2>)/dg = d(g^2)/dg*<S^2> + g^2*d(<S^2>)/dg = 2g*<S^2>
         for (size_t i = 0; i < temperatures.size(); ++i) {
-            double value =
-                2 * g_unique_ * ensemble_averager_.ensemble_average(quantity_, temperatures[i]);
+            auto quantity_averaged = ensemble_averager_->ensemble_average(quantity, temperatures[i]);
+            auto value = 2 * g_unique_getter_() * quantity_averaged * quantity_factor_;
             derivatives[i] = {temperatures[i], value};
         }
     } else {
         // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/da = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
-        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_derivative =
-            values_derivatives_map[common::Energy];
+        auto energy_derivative =
+            flattenedSpectra_->getFlattenDerivativeSpectrum(common::Energy, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
-            double first_term = ensemble_averager_.ensemble_average(quantity_, temperatures[i])
-                * ensemble_averager_.ensemble_average(energy_derivative, temperatures[i]);
-            double second_term = ensemble_averager_.ensemble_average(
-                quantity_->element_wise_multiplication(energy_derivative),
-                temperatures[i]);
-            double value = g_unique_ * g_unique_ * (first_term - second_term) / temperatures[i];
+            auto first_term = ensemble_averager_->ensemble_average(quantity, temperatures[i])
+                * ensemble_averager_->ensemble_average(energy_derivative, temperatures[i]);
+            auto quantity_derivative_product = flattenedSpectra_->getFlattenDerivativeProductSpectrum(quantity_enum_for_averaging_, common::Energy, symbol_name).value();
+            auto second_term = ensemble_averager_->ensemble_average(quantity_derivative_product, temperatures[i]);
+            auto value = g_unique_getter_() * g_unique_getter_() * quantity_factor_ * 
+                (first_term - second_term) / temperatures[i];
             derivatives[i] = {temperatures[i], value};
         }
     }

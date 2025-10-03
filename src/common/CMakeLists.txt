@@ -3,6 +3,7 @@ add_library(common
         runner/Runner.cpp
         runner/Executer.cpp runner/Executer.h
         PrintingFunctions.cpp PrintingFunctions.h
+        UncertainValue.cpp UncertainValue.h
         physical_optimization/OptimizationList.cpp physical_optimization/OptimizationList.h
         runner/ConsistentModelOptimizationList.h runner/ConsistentModelOptimizationList.cpp
         MumxHash.h)

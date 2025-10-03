@@ -14,8 +14,12 @@ class EigenDenseVector: public AbstractDenseVector {
     void add_identical_values(size_t number, double value) override;
     void subtract_minimum() override;
     void wise_exp() override;
+    void makeRandomUnitVector(uint32_t size);
+
     std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const override;
     double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
+    double triple_dot(const std::unique_ptr<AbstractDenseVector>& second, 
+      const std::unique_ptr<AbstractDenseVector>& third) const override;
     std::unique_ptr<AbstractDenseVector>
     element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
     uint32_t size() const override;
@@ -23,7 +27,7 @@ class EigenDenseVector: public AbstractDenseVector {
     void print(std::ostream& os) const override;
 
     Eigen::Vector<T, -1>& modifyDenseVector();
-    const Eigen::Vector<T, -1>& getDenseVector();
+    const Eigen::Vector<T, -1>& getDenseVector() const;
 
   private:
     Eigen::Vector<T, -1> vector_;

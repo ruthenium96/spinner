@@ -11,21 +11,23 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
     OneSymbolInHamiltonianEigendecompositor(
         std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
         std::function<double()> currentValueGetter);
-    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(
         size_t number_of_block,
         const space::Subspace& subspace) override;
 
-    std::optional<std::reference_wrapper<const Spectrum>>
-    getSpectrum(common::QuantityEnum quantity_enum) const override;
-    std::optional<std::reference_wrapper<const Matrix>>
-    getMatrix(common::QuantityEnum quantity_enum) const override;
-    std::optional<std::reference_wrapper<const Spectrum>> getSpectrumDerivative(
-        common::QuantityEnum quantity_enum,
-        const model::symbols::SymbolName& symbol_name) const override;
-    std::optional<std::reference_wrapper<const Matrix>> getMatrixDerivative(
-        common::QuantityEnum quantity_enum,
-        const model::symbols::SymbolName& symbol_name) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+    getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+    getSubmatrix(common::QuantityEnum, size_t number_of_block) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+    getSubspectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
+    std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+    getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
+
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+        getWeightsOfBlockStates(size_t number_of_block) const override;
+
     void initialize(
         std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
             operators_to_calculate,
@@ -37,11 +39,14 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
 
   private:
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor_;
-    Spectrum current_energy_spectrum_;
-    std::optional<Spectrum> current_energy_derivative_spectrum_;
+    std::vector<OneOrMany<Subspectrum>> current_energy_spectrum_;
+    std::optional<std::vector<OneOrMany<Subspectrum>>> current_energy_derivative_spectrum_;
     std::vector<
-        std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+        std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>>
         eigenvectors_;
+#ifndef NDEBUG
+    std::vector<OneOrMany<Submatrix>> current_energy_matrix_;
+#endif
     double initial_value_of_symbol_;
     bool first_iteration_has_been_done_ = false;
     std::function<double()> currentValueGetter_;

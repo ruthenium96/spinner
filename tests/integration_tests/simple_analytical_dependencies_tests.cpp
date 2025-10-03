@@ -1,3 +1,4 @@
+#include <cmath>
 #include <random>
 
 #include "gtest/gtest.h"
@@ -11,7 +12,7 @@ double sum_of_s_squared(std::shared_ptr<const index_converter::AbstractIndexConv
     return sum_of_s_squared;
 }
 
-// mu_2 = g^2 \sum_a s_a (s_a + 1)
+// mu^2 = g^2 \sum_a s_a (s_a + 1)
 
 TEST(simple_analytical_dependencies, nothing) {
     std::vector<std::vector<spin_algebra::Multiplicity>> mults_cases =
@@ -35,18 +36,18 @@ TEST(simple_analytical_dependencies, nothing) {
             double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
             for (size_t temperature = 1; temperature < 301; ++temperature) {
-                double calculated_value =
+                auto calculated_value =
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
                         temperature);
                 double exact_value = (g_exact * g_exact * sum_of_s_squared_);
                 // TODO: epsilon
-                EXPECT_NEAR(calculated_value, exact_value, 1e-9);
+                EXPECT_NEAR(calculated_value.mean(), exact_value, 1e-9);
             }
         }
     }
 }
 
-// mu_2 = T/(T-Theta) g^2 \sum_a s_a (s_a + 1)
+// mu^2 = T/(T-Theta) g^2 \sum_a s_a (s_a + 1)
 
 TEST(simple_analytical_dependencies, Theta) {
     std::random_device dev;
@@ -78,14 +79,57 @@ TEST(simple_analytical_dependencies, Theta) {
                 double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
                 for (size_t temperature = 1; temperature < 301; ++temperature) {
-                    double calculated_value =
+                    auto calculated_value =
                         runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
                             temperature);
                     double exact_value = (g_exact * g_exact * sum_of_s_squared_) * temperature
                         / (temperature - Theta_exact);
                     // TODO: epsilon
-                    EXPECT_NEAR(calculated_value, exact_value, 1e-9);
+                    EXPECT_NEAR(calculated_value.mean(), exact_value, 1e-9);
                 }
+            }
+        }
+    }
+}
+
+// mu^2 = g^2 * 2 / (3 + exp(-2J/T))
+
+TEST(simple_analytical_dependencies, 22_J_analytical) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> J_dist(-100, +100.0);
+
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2};
+
+    for (size_t _ = 0; _ < 10; ++_) {
+        const double J_exact = J_dist(rng);
+        const double g_exact = 2.0;
+
+        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+
+        {
+            model::ModelInput model(mults);
+            auto J = model.addSymbol("J", J_exact);
+            model.assignSymbolToIsotropicExchange(J, 0, 1);
+            double g_value = g_exact;
+            auto g = model.addSymbol("g", g_value);
+            for (size_t i = 0; i < mults.size(); ++i) {
+                model.assignSymbolToGFactor(g, i);
+            }
+
+            runner::Runner runner(model);
+
+            auto s_squared_function = [J_exact](double temperature){
+                return 2.0 / (3 + exp(-2 * J_exact / temperature));
+            };
+
+            for (size_t temperature = 1; temperature < 301; ++temperature) {
+                auto calculated_value =
+                    runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(
+                        temperature);
+                double exact_value = 3 * g_exact * g_exact * s_squared_function(temperature);
+                // TODO: epsilon
+                EXPECT_NEAR(calculated_value.mean(), exact_value, 1e-9);
             }
         }
     }

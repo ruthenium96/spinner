@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "gtest/gtest.h"
 #include "src/common/Logger.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
@@ -7,7 +8,7 @@ const auto factories = quantum::linear_algebra::FactoriesList();
 size_t number_of_vectors(const space::Space& space) {
     size_t acc = 0;
     for (const auto& subspace : space.getBlocks()) {
-        acc += subspace.decomposition->size_cols();
+        acc += subspace.size() * subspace.properties.degeneracy;
     }
     return acc;
 }
@@ -54,7 +55,7 @@ concatenateSpace(const space::Space& space) {
 bool orthogonality_of_basis(const space::Space& space) {
     auto unitary_matrix = concatenateSpace(space);
     bool answer = true;
-#pragma omp parallel for shared(space, unitary_matrix, answer) default(none)
+#pragma omp parallel for shared(space, unitary_matrix, answer) default(none) collapse(2)
     for (size_t index_of_vector_i = 0; index_of_vector_i < unitary_matrix->size_cols();
          ++index_of_vector_i) {
         for (size_t index_of_vector_j = index_of_vector_i + 1;
@@ -71,7 +72,6 @@ bool orthogonality_of_basis(const space::Space& space) {
             // TODO: epsilon
             if (std::abs(accumulator) > 1e-9) {
                 answer = false;
-                break;
             }
         }
     }
@@ -112,7 +112,23 @@ bool isEqualUpToVectorOrder(
     std::sort(lhs_.begin(), lhs_.end());
     std::sort(rhs_.begin(), rhs_.end());
 
-    return (lhs_ == rhs_);
+    for (int map = 0; map < lhs_.size(); ++map) {
+        auto lhs_iter = lhs_[map].begin();
+        auto rhs_iter = rhs_[map].begin();
+        while (lhs_iter != lhs_[map].end()) {
+            auto [lhs_key, lhs_value] = *lhs_iter;
+            auto [rhs_key, rhs_value] = *rhs_iter;
+            if (lhs_key != rhs_key) {
+                return false;
+            }
+            if (std::abs(lhs_value - rhs_value) > 1e-12) {
+                return false;
+            }
+            lhs_iter++;
+            rhs_iter++;
+        }
+    }
+    return true;
 }
 
 TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
@@ -134,7 +150,7 @@ TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
     }
 }
 
-TEST(symmetrizer, 4444) {
+TEST(symmetrizer, 4444_S2_S2) {
     std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 4};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
@@ -152,13 +168,8 @@ TEST(symmetrizer, 4444) {
     // S2 * the same S2 group
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
-            .Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
-        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
-            {model, optimizationList},
-            factories);
-        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
-        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
     }
     // S2 * other S2
     {
@@ -173,15 +184,67 @@ TEST(symmetrizer, 4444) {
     }
 }
 
-TEST(symmetrizer, 333) {
+TEST(symmetrizer, 4444_S2_S2_ITO) {
+    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 4};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    // S2 group
+    {
+        common::physical_optimization::OptimizationList optimizationList(common::physical_optimization::OptimizationList::ITO);
+        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList},
+            factories);
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+    }
+    // S2 * the same S2 group
+    {
+        common::physical_optimization::OptimizationList optimizationList(common::physical_optimization::OptimizationList::ITO);
+        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+        EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
+    }
+    // S2 * other S2
+    {
+        common::physical_optimization::OptimizationList optimizationList(common::physical_optimization::OptimizationList::ITO);
+        optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
+            .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList},
+            factories);
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+    }
+}
+
+TEST(symmetrizer, 22222222_S2_S2_ITO) {
+    std::vector<spin_algebra::Multiplicity> mults(8, 2);
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    // S2 * other S2
+    {
+        common::physical_optimization::OptimizationList optimizationList(common::physical_optimization::OptimizationList::ITO);
+        optimizationList.Symmetrize(group::Group::S2, {{7, 6, 5, 4, 3, 2, 1, 0}})
+            .Symmetrize(group::Group::S2, {{3, 2, 1, 0, 7, 6, 5, 4}});
+        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList},
+            factories);
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+    }
+}
+
+TEST(symmetrizer, 333_Dih3) {
     std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
-    // S3
+    // Dih3
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
         space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -190,40 +253,29 @@ TEST(symmetrizer, 333) {
         EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
     }
     // TODO: move these testes to another place!
-    // S3 * the same S3
+    // Dih3 * the same Dih3
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}})
-            .Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
-        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
-            {model, optimizationList},
-            factories);
-        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
-        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+        EXPECT_THROW(optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}}), std::invalid_argument);
     }
-    // S3 * the same S3 (but different generators)
+    // Dih3 * the same Dih3 (but different generators)
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}})
-            .Symmetrize(group::Group::S3, {{2, 0, 1}, {1, 0, 2}});
-        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
-            {model, optimizationList},
-            factories);
-
-        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
-        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+        EXPECT_THROW(optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{2, 0, 1}, {1, 0, 2}}), std::invalid_argument);
     }
 }
 
-TEST(symmetrizer, 333333) {
-    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
+TEST(symmetrizer, 222222_Dih3_S2) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
-    // S3
+    // Dih3
     {
         common::physical_optimization::OptimizationList optimizationList;
-        optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
         space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -231,12 +283,12 @@ TEST(symmetrizer, 333333) {
         EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
         EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
     }
-    // S3 * S2, S2 * S3, their commutativity
+    // Dih3 * S2, S2 * Dih3, their commutativity
     {
-        // S3 * S2
+        // Dih3 * S2
         common::physical_optimization::OptimizationList optimizationList_first;
         optimizationList_first
-            .Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
+            .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
             .Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
         space::Space space_first = space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_first},
@@ -245,10 +297,10 @@ TEST(symmetrizer, 333333) {
         EXPECT_EQ(totalSpaceSize, number_of_vectors(space_first));
         EXPECT_TRUE(orthogonality_of_basis(space_first)) << "Vectors are not orthogonal";
 
-        // S2 * S3
+        // S2 * Dih3
         common::physical_optimization::OptimizationList optimizationList_second;
         optimizationList_second.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}})
-            .Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+            .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
         space::Space space_second = space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_second},
             factories);
@@ -256,7 +308,7 @@ TEST(symmetrizer, 333333) {
         EXPECT_EQ(totalSpaceSize, number_of_vectors(space_second));
         EXPECT_TRUE(orthogonality_of_basis(space_second)) << "Vectors are not orthogonal";
 
-        // check equivalence of S2*S3 and S3*S2:
+        // check equivalence of S2*Dih3 and Dih3*S2:
         for (const auto& subspace_first : space_first.getBlocks()) {
             for (const auto& subspace_second : space_second.getBlocks()) {
                 if (subspace_first.properties.representation[0]
@@ -272,15 +324,86 @@ TEST(symmetrizer, 333333) {
     }
 }
 
-TEST(symmetrizer, 222222222_S3xS3) {
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+TEST(symmetrizer, 333333_Dih3_S2) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    // Dih3
+    {
+        common::physical_optimization::OptimizationList optimizationList;
+        optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList},
+            factories);
+
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+        EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+    }
+    // Dih3 * S2, S2 * Dih3, their commutativity
+    {
+        // Dih3 * S2
+        common::physical_optimization::OptimizationList optimizationList_first;
+        optimizationList_first
+            .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
+            .Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
+        space::Space space_first = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList_first},
+            quantum::linear_algebra::FactoriesList());
+
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space_first));
+        EXPECT_TRUE(orthogonality_of_basis(space_first)) << "Vectors are not orthogonal";
+
+        // S2 * Dih3
+        common::physical_optimization::OptimizationList optimizationList_second;
+        optimizationList_second.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}})
+            .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        space::Space space_second = space::optimization::OptimizedSpaceConstructor::construct(
+            {model, optimizationList_second},
+            factories);
+
+        EXPECT_EQ(totalSpaceSize, number_of_vectors(space_second));
+        EXPECT_TRUE(orthogonality_of_basis(space_second)) << "Vectors are not orthogonal";
+
+        // check equivalence of S2*Dih3 and Dih3*S2:
+        for (const auto& subspace_first : space_first.getBlocks()) {
+            for (const auto& subspace_second : space_second.getBlocks()) {
+                if (subspace_first.properties.representation[0]
+                        == subspace_second.properties.representation[1]
+                    && subspace_first.properties.representation[1]
+                        == subspace_second.properties.representation[0]) {
+                    EXPECT_TRUE(isEqualUpToVectorOrder(
+                        subspace_first.decomposition,
+                        subspace_second.decomposition));
+                }
+            }
+        }
+    }
+}
+
+TEST(symmetrizer, 3333_Dih4) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     common::physical_optimization::OptimizationList optimizationList;
-    optimizationList
-        .Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize(group::Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    optimizationList.Symmetrize({group::Group::Dihedral, 4}, {{1, 2, 3, 0}, {1, 0, 3, 2}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+
+}
+
+TEST(symmetrizer, 33333_Dih5) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize({group::Group::Dihedral, 5}, {{1, 2, 3, 4, 0}, {0, 4, 3, 2, 1}});
     space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -289,15 +412,130 @@ TEST(symmetrizer, 222222222_S3xS3) {
     EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
 }
 
-TEST(symmetrizer, 333333333_S3xS3) {
+TEST(symmetrizer, 333333_Dih6) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize({group::Group::Dihedral, 6}, {{1, 2, 3, 4, 5, 0}, {0, 5, 4,  3, 2, 1}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 3333333_Dih7) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList.Symmetrize({group::Group::Dihedral, 7}, {{1, 2, 3, 4, 5, 6, 0}, {0, 6, 5, 4, 3, 2, 1}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 222222222_Dih3xDih3) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList
+        .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 222222222_Dih3xDih3_different_one) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList
+        .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {6, 7, 8, 3, 4, 5, 0, 1, 2}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 222222222_Dih3xDih3_different_two) {
+    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList
+        .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {3, 4, 5, 0, 1, 2, 6, 7, 8}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 333333333_Dih3xDih3) {
     std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
     model::ModelInput model(mults);
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList
-        .Symmetrize(group::Group::S3, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize(group::Group::S3, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+        .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 333333333_Dih3xDih3_different_one) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList
+        .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {6, 7, 8, 3, 4, 5, 0, 1, 2}});
+    space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
+        {model, optimizationList},
+        factories);
+
+    EXPECT_EQ(totalSpaceSize, number_of_vectors(space));
+    EXPECT_TRUE(orthogonality_of_basis(space)) << "Vectors are not orthogonal";
+}
+
+TEST(symmetrizer, 333333333_Dih3xDih3_different_two) {
+    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+    model::ModelInput model(mults);
+    uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
+
+    common::physical_optimization::OptimizationList optimizationList;
+    optimizationList
+        .Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {3, 4, 5, 0, 1, 2, 6, 7, 8}});
     space::Space space = space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);

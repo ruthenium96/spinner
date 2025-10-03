@@ -1,7 +1,10 @@
 #ifndef SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H
 #define SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H
 
+#include <cstdint>
+#include <memory>
 #include "gtest/gtest.h"
+#include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/data_structures/AbstractFactories.h"
 #include "tests/tools/GenerateSameMatrix.h"
 
@@ -27,7 +30,7 @@ TYPED_TEST_P(AbstractDenseTransformAndDiagonalizeFactoryIndividualTest, NonNullp
 
 TYPED_TEST_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
-    unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence) {
+    unitaryTransformation_and_unitaryTransformationAndReturnMainDiagonalEquivalence) {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> dist(-1000, +1000);
@@ -40,7 +43,7 @@ TYPED_TEST_P(
         auto denseDiagonalizableMatrixTransformedMatrix =
             denseUnitaryMatrix->unitaryTransform(denseDiagonalizableMatrix);
         auto denseDiagonalizableMatrixTransformedMainDiagonal =
-            denseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix);
+            denseUnitaryMatrix->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix);
 
         // check equality:
         for (size_t i = 0; i < size; ++i) {
@@ -54,9 +57,182 @@ TYPED_TEST_P(
     }
 }
 
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    krylovUnitaryTransformationAndReturnMainDiagonal_and_UnitaryTransformationAndReturnMainDiagonal_Equivalence) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-1000, +1000);
+
+    for (size_t size = 8; size <= 16; size*=2) {
+        auto denseDiagonalizableMatrixForTransform =
+            generateDenseDiagonalizableMatrix(size, this->factory_, dist, rng);
+
+        auto denseDiagonalizableMatrixToGenerateUnitary =
+            generateDenseDiagonalizableMatrix(size, this->factory_, dist, rng);
+
+        auto seedVector = generateOrthDenseVector(size, this->factory_);
+
+        auto denseSemiunitaryMatrixOrdinary = 
+            denseDiagonalizableMatrixToGenerateUnitary->diagonalizeValuesVectors().eigenvectors;
+        auto denseSemiunitaryMatrixKrylov = 
+            denseDiagonalizableMatrixToGenerateUnitary->krylovDiagonalizeValuesVectors(seedVector, size).eigenvectors;
+
+        auto denseDiagonalizableMatrixTransformedMainDiagonalOrdinary =
+            denseSemiunitaryMatrixOrdinary->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrixForTransform);
+        auto denseDiagonalizableMatrixTransformedMainDiagonalKrylov =
+            denseSemiunitaryMatrixKrylov->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrixForTransform);
+
+        // check equality:
+        for (size_t i = 0; i < size; ++i) {
+            double epsilon =
+                std::abs(denseDiagonalizableMatrixTransformedMainDiagonalOrdinary->at(i) * 1e-1);
+            EXPECT_NEAR(
+                denseDiagonalizableMatrixTransformedMainDiagonalOrdinary->at(i),
+                denseDiagonalizableMatrixTransformedMainDiagonalKrylov->at(i),
+                epsilon);
+        }
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    krylovDiagonalizeValues_and_krylovDiagonalizeValuesVectors) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-1000, +1000);
+
+    for (size_t size = 8; size <= 16; size*=2) {
+        auto denseDiagonalizableMatrix =
+            generateDenseDiagonalizableMatrix(size, this->factory_, dist, rng);
+
+        auto seedVector = generateOrthDenseVector(size, this->factory_);
+
+        auto couple = denseDiagonalizableMatrix->krylovDiagonalizeValues(
+            seedVector,
+            size);
+        auto triple = denseDiagonalizableMatrix->krylovDiagonalizeValuesVectors(
+            seedVector,
+            size
+        );
+
+        // check equality:
+        for (size_t i = 0; i < size; ++i) {
+            double epsilon_energies =
+                std::abs(couple.eigenvalues->at(i) * 1e-6);
+            EXPECT_NEAR(
+                couple.eigenvalues->at(i),
+                triple.eigenvalues->at(i),
+                epsilon_energies);
+
+            double epsilon_ftlm_weights_of_states =
+                std::abs(couple.ftlm_weights_of_states->at(i) * 1e-6);
+            EXPECT_NEAR(
+                couple.ftlm_weights_of_states->at(i),
+                triple.ftlm_weights_of_states->at(i),
+                epsilon_ftlm_weights_of_states);
+        }
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    krylovDiagonalizeValues_and_diagonalizeValues) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-100, +100);
+    
+    for (size_t size = 8; size <= 16; size*=2) {
+        auto matrix = generateSparseDiagonalizableMatrix(size, this->factory_, dist, rng);
+        auto seed_vector = generateOrthDenseVector(size, this->factory_);
+
+        auto krylov_eigenvalues = std::move(matrix->krylovDiagonalizeValues(seed_vector, size).eigenvalues);
+        auto exact_eigenvalues = matrix->diagonalizeValues();
+        ASSERT_EQ(krylov_eigenvalues->size(), exact_eigenvalues->size());
+        for (size_t i = 0; i < krylov_eigenvalues->size(); ++i) {
+            double range = std::abs(krylov_eigenvalues->at(i) * 1e-1);
+            EXPECT_NEAR(krylov_eigenvalues->at(i), exact_eigenvalues->at(i), range);
+        }
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    randomUnitVectorsAreUnit) {
+    
+    for (size_t size = 1; size <= 2048; size*=2) {
+        auto vector = std::move(this->factory_->createRandomUnitVectors(size, 1)[0]);
+
+        ASSERT_EQ(vector->size(), size);
+        double norm = 0.0;
+        for (size_t i = 0; i < size; ++i) {
+            double value = vector->at(i);
+            norm += value * value; 
+        }
+        EXPECT_NEAR(norm, 1.0, 1e-6);
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    randomUnitVectorsAreUnbiased) {
+    for (size_t size = 1024; size <= 65536; size*=2) {
+        auto vector = std::move(this->factory_->createRandomUnitVectors(size, 1)[0]);
+
+        ASSERT_EQ(vector->size(), size);
+        double sum = 0.0;
+        for (size_t i = 0; i < size; ++i) {
+            double value = vector->at(i);
+            sum += value; 
+        }
+        sum /= size;
+        EXPECT_NEAR(sum, 0.0, 5e-3);
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    correctNumberOfRandomUnitVectors) {
+    for (size_t size = 2048; size <= 65536; size*=2) {
+        for (size_t number_of_vectors = 1; number_of_vectors <= 1000; number_of_vectors*=10) {
+            auto random_vectors = this->factory_->createRandomUnitVectors(size, number_of_vectors);
+            EXPECT_EQ(random_vectors.size(), number_of_vectors);
+        }
+    }
+}
+
+TYPED_TEST_P(
+    AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
+    randomUnitVectorsAreIndependent) {
+    const uint32_t number_of_vectors = 500;
+    for (size_t size = 2048; size <= 65536; size*=2) {
+        auto random_vectors = this->factory_->createRandomUnitVectors(size, number_of_vectors);
+        auto gramian = this->factory_->createDenseDiagonalizableMatrix(number_of_vectors);
+        for (int i = 0; i < number_of_vectors; ++i) {
+            for (int j = i; j < number_of_vectors; ++j) {
+                double scalar_product = random_vectors[i]->dot(random_vectors[j]);
+                gramian->add_to_position(scalar_product, i, j);
+            }
+        }
+        auto eigenvalues_of_gramian = gramian->diagonalizeValues();
+        ASSERT_EQ(eigenvalues_of_gramian->size(), number_of_vectors);
+        for (int i = 0; i < number_of_vectors; ++i) {
+            EXPECT_GE(std::abs(eigenvalues_of_gramian->at(i)), 1e-5) 
+            << "Eigenvalue of Gramian is close to zero: " << eigenvalues_of_gramian->at(i);
+        }
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_P(
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,
     NonNullptrObjects,
-    unitary_transformation_and_unitary_transformation_and_return_main_diagonal_equivalence);
+    krylovUnitaryTransformationAndReturnMainDiagonal_and_UnitaryTransformationAndReturnMainDiagonal_Equivalence,
+    unitaryTransformation_and_unitaryTransformationAndReturnMainDiagonalEquivalence,
+    krylovDiagonalizeValues_and_krylovDiagonalizeValuesVectors,
+    krylovDiagonalizeValues_and_diagonalizeValues,
+    randomUnitVectorsAreUnit,
+    randomUnitVectorsAreUnbiased,
+    correctNumberOfRandomUnitVectors,
+    randomUnitVectorsAreIndependent);
 
 #endif  //SPINNER_ABSTRACT_INDIVIDUAL_TESTS_H

@@ -1,6 +1,8 @@
 #include "ExactEigendecompositor.h"
 
+#include <functional>
 #include <utility>
+#include <vector>
 
 namespace eigendecompositor {
 
@@ -10,14 +12,15 @@ ExactEigendecompositor::ExactEigendecompositor(
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ExactEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
     std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
         mb_unitary_transformation_matrix;
 
-    auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_);
+    // return_sparse_if_possible is false, because eigendecomposition of dense matrix is faster
+    auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_, false);
 
     if (!do_we_need_eigenvectors_) {
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
@@ -28,7 +31,14 @@ ExactEigendecompositor::BuildSubspectra(
         mb_unitary_transformation_matrix = std::move(pair.second);
         energy_.spectrum_.blocks[number_of_block] = std::move(pair.first);
     }
+#ifndef NDEBUG
     energy_.matrix_.blocks[number_of_block] = std::move(hamiltonian_submatrix);
+#endif
+
+    if (!first_iteration_has_been_done_) {
+        weights_[number_of_block] = factories_list_.createVector();
+        weights_[number_of_block]->add_identical_values(subspace.size(), subspace.properties.degeneracy);
+    }
 
     return mb_unitary_transformation_matrix;
 }
@@ -44,6 +54,9 @@ void ExactEigendecompositor::initialize(
     energy_.spectrum_.blocks.clear();
     energy_.matrix_.blocks.resize(number_of_subspaces);
     energy_.spectrum_.blocks.resize(number_of_subspaces);
+    if (!first_iteration_has_been_done_) {
+        weights_.resize(number_of_subspaces);
+    }
 
     energy_operator_ = operators_to_calculate.at(common::Energy);
     do_we_need_eigenvectors_ =
@@ -51,34 +64,41 @@ void ExactEigendecompositor::initialize(
     std::erase_if(operators_to_calculate, [](const auto& p) { return p.first == common::Energy; });
 }
 
-void ExactEigendecompositor::finalize() {}
+void ExactEigendecompositor::finalize() {
+    first_iteration_has_been_done_ = true;
+}
 
-std::optional<std::reference_wrapper<const Matrix>>
-ExactEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ExactEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == common::Energy) {
-        return energy_.matrix_;
+        return energy_.spectrum_.blocks[number_of_block];
     }
     return std::nullopt;
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
-ExactEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExactEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
+#ifndef NDEBUG
     if (quantity_enum == common::Energy) {
-        return energy_.spectrum_;
+        return energy_.matrix_.blocks[number_of_block];
     }
+#endif
     return std::nullopt;
 }
 
-std::optional<std::reference_wrapper<const Spectrum>> ExactEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ExactEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol, size_t number_of_block) const {
     return std::nullopt;
 }
 
-std::optional<std::reference_wrapper<const Matrix>> ExactEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExactEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol, size_t number_of_block) const {
     return std::nullopt;
+}
+
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+ExactEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    return weights_[number_of_block];
 }
 
 Subspectrum ExactEigendecompositor::energy_subspectrum_eigenvalues_only(

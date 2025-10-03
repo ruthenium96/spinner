@@ -2,8 +2,6 @@
 
 #include <set>
 
-#include "src/common/Logger.h"
-
 Submatrix::Submatrix(
     std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
     BlockProperties properties_) :
@@ -14,7 +12,8 @@ Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    const quantum::linear_algebra::FactoriesList& factories) {
+    const quantum::linear_algebra::FactoriesList& factories,
+    bool return_sparse_if_possible) {
     auto totalSpaceSize = converter->get_total_space_size();
     auto matrix_in_lexicografical_basis = factories.createSparseSymmetricMatrix(totalSpaceSize);
 
@@ -35,7 +34,7 @@ Submatrix::Submatrix(
     }
 
     properties = subspace.properties;
-    if (subspace.dense_semiunitary_matrix.has_value()) {
+    if (subspace.dense_semiunitary_matrix.has_value() || return_sparse_if_possible) {
         raw_data = factories.createSparseDiagonalizableMatrix(matrix_in_space_basis_size);
     } else {
         raw_data = factories.createDenseDiagonalizableMatrix(matrix_in_space_basis_size);

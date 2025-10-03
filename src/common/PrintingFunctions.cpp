@@ -1,6 +1,7 @@
 #include "PrintingFunctions.h"
 
 #include "src/common/Logger.h"
+#include "src/common/UncertainValue.h"
 
 #include <magic_enum.hpp>
 #include <string>
@@ -24,8 +25,8 @@ std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace) {
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Spectrum& spectrum) {
-    for (const Subspectrum& subspectrum : spectrum.blocks) {
+std::ostream& operator<<(std::ostream& os, const SpectrumRef& spectrum_ref) {
+    for (const Subspectrum& subspectrum : spectrum_ref.blocks) {
         os << subspectrum;
     }
     os << "------" << std::endl;
@@ -39,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum) {
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
+std::ostream& operator<<(std::ostream& os, const MatrixRef& matrix) {
     for (const Submatrix& submatrix : matrix.blocks) {
         os << submatrix;
     }
@@ -86,6 +87,14 @@ void inputPrint(const std::string& input_string) {
     common::Logger::separate(0, common::verbose);
 }
 
+void nonSingleModeParametersPrint(const model::ModelInput& model_input) {
+    common::Logger::basic_msg("Calculation with model input parameters:");
+    for (const auto& name : model_input.getSymbolicWorker().getAllNames()) {
+        common::Logger::basic("{}: {}", name.get_name(), model_input.getSymbolicWorker().getValueOfName(name));
+    }
+    common::Logger::separate(0, common::basic);
+}
+
 void preRegressionPrint(
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>& quantities,
     const std::map<
@@ -119,14 +128,17 @@ void preRegressionPrint(
 
 void postRegressionPrint(
     const std::vector<model::symbols::SymbolName>& changeable_names,
-    const std::vector<double>& changeable_values,
-    double rss) {
+    const std::vector<UncertainValue>& final_changeable_uncertain_values,
+    UncertainValue rss) {
     common::Logger::basic_msg("Regression is finished. Final values:");
     for (size_t i = 0; i < changeable_names.size(); ++i) {
-        common::Logger::basic("{}: {}", changeable_names[i].get_name(), changeable_values[i]);
+        common::Logger::basic("{}: {} +/- {}", 
+            changeable_names[i].get_name(), 
+            final_changeable_uncertain_values[i].mean(),
+            final_changeable_uncertain_values[i].stdev_total());
     }
     common::Logger::separate(2, common::basic);
-    common::Logger::basic("Loss function = {}", rss);
+    common::Logger::basic("Loss function = {} +/- {}", rss.mean(), rss.stdev_total());
     common::Logger::separate(0, common::basic);
 }
 
@@ -140,8 +152,8 @@ void stepOfRegressionStartPrint(
     common::Logger::separate(2, common::verbose);
 }
 
-void stepOfRegressionFinishPrint(double loss) {
-    common::Logger::verbose("Loss function = {}", loss);
+void stepOfRegressionFinishPrint(UncertainValue loss) {
+    common::Logger::verbose("Loss function = {} +/- {}", loss.mean(), loss.stdev_total());
     common::Logger::separate(1, common::verbose);
 }
 
@@ -152,9 +164,10 @@ void initialExperimentalValuesPrint(
                               magic_enum::enum_name(experimental_values_type));
     for (size_t i = 0; i < experimental_values.size(); ++i) {
         common::Logger::debug(
-            "{:.8e}    {:.8e}",
+            "{:.8e}    {:.8e} +/- {:.8e}",
             experimental_values.at(i).temperature,
-            experimental_values.at(i).value);
+            experimental_values.at(i).value.mean(),
+            experimental_values.at(i).value.stdev_total());
     }
     common::Logger::separate(0, common::debug);
 }
@@ -162,12 +175,13 @@ void initialExperimentalValuesPrint(
 void experimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_mu_squared,
     const std::vector<double>& weights) {
-    common::Logger::verbose_msg("Experimental values, corrected by ratio and in mu-squared, and weights:");
+    common::Logger::verbose_msg("Experimental values, corrected by ratio and in mu-squared, uncertainties and weights:");
     for (size_t i = 0; i < experimental_mu_squared.size(); ++i) {
         common::Logger::verbose(
-            "{:.8e}    {:.8e}    {:.8e}",
+            "{:.8e}    {:.8e} +/- {:.8e}    {:.8e}",
             experimental_mu_squared.at(i).temperature,
-            experimental_mu_squared.at(i).value,
+            experimental_mu_squared.at(i).value.mean(),
+            experimental_mu_squared.at(i).value.stdev_total(),
             weights.at(i));
     }
     common::Logger::separate(0, common::verbose);
@@ -176,9 +190,12 @@ void experimentalValuesPrint(
 // todo: also print magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type
 void theoreticalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& theor_values) {
-    common::Logger::basic_msg("\nValue, Temperature");
+    common::Logger::basic_msg("\nTemperature, Value, Uncertainty");
     for (auto [temperature, value] : theor_values) {
-        common::Logger::basic("{:.8e}    {:.8e}", temperature, value);
+        common::Logger::basic("{:.8e}    {:.8e} +/- {:.8e}", 
+            temperature, 
+            value.mean(), 
+            value.stdev_total());
     }
     common::Logger::separate(0, common::basic);
 }
@@ -187,14 +204,14 @@ void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& o
     common::Logger::verbose_msg("Order of spin summation:");
     for (const auto& instruction : order_of_summation) {
         common::Logger::verbose("{} -> {}",
-                                fmt::join(instruction.positions_of_summands, " + "),
+                                spdlog::fmt_lib::join(instruction.positions_of_summands, " + "),
                                 instruction.position_of_sum);
     }
 }
 
 void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverter& index_converter) {
-    common::Logger::debug("Indexes to states mapping. Initial multiplicities: [{}] were skipped.", 
-        fmt::join(index_converter.get_mults(), " "));
+    common::Logger::trace("Indexes to states mapping. Initial multiplicities: [{}] were skipped.", 
+        spdlog::fmt_lib::join(index_converter.get_mults(), " "));
     for (auto index = 0; index < index_converter.get_total_space_size(); ++index) {
         auto state = index_converter.convert_index_to_state(index);
 
@@ -204,10 +221,23 @@ void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverte
             level_string += std::to_string(state.first.getMultiplicity(i));
         }
 
-        common::Logger::debug("{} -> |{};{}>",
+        common::Logger::trace("{} -> |{};{}>",
         index,
         level_string,
         state.second);
+    }
+    common::Logger::separate(0, common::debug);
+}
+
+void lexIndexConverterPrint(const index_converter::lexicographic::IndexConverter& index_converter) {
+    common::Logger::trace("Indexes to states mapping.", 
+        spdlog::fmt_lib::join(index_converter.get_mults(), " "));
+    for (auto index = 0; index < index_converter.get_total_space_size(); ++index) {
+        auto state = index_converter.convert_lex_index_to_all_sz_projections(index);
+
+        common::Logger::trace("{} -> |{}>",
+        index,
+        state);
     }
     common::Logger::separate(0, common::debug);
 }

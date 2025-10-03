@@ -2,6 +2,7 @@
 #define SPINNER_ABSTRACTNONLINEARSOLVER_H
 
 #include <functional>
+#include <optional>
 #include <vector>
 
 namespace nonlinear_solver {
@@ -14,6 +15,8 @@ class AbstractNonlinearSolver {
         std::vector<double>& changeable_values) = 0;
 
     virtual bool doesGradientsRequired() const = 0;
+
+    virtual std::optional<std::vector<double>> getMainDiagonalOfInverseHessian() const = 0;
 
     virtual ~AbstractNonlinearSolver() = default;
 };

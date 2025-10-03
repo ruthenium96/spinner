@@ -17,7 +17,8 @@ endif ()
 
 add_library(tests_tools
         tools/MeanAndDeviation.cpp
-        tools/GenerateSameMatrix.cpp)
+        tools/GenerateSameMatrix.cpp
+        tools/OptimizationListsGenerator.cpp)
 
 add_executable(spinner_time_test
         time_tests/main.cpp)
@@ -25,8 +26,17 @@ add_executable(spinner_time_test
 add_executable(spinner_test
         main.cpp
         unit_tests/clebsh_gordon_calculator_tests.cpp
-        integration_tests/spectrum_final_equivalence_tests.cpp
+        integration_tests/ftlm_tests.cpp
+        integration_tests/spectrum_equivalence/equivalence_check.cpp
+        integration_tests/spectrum_equivalence/alternating_polygons.cpp
+        integration_tests/spectrum_equivalence/antiprisms.cpp
+        integration_tests/spectrum_equivalence/chains.cpp
+        integration_tests/spectrum_equivalence/prisms.cpp
+        integration_tests/spectrum_equivalence/pyramids.cpp
+        integration_tests/spectrum_equivalence/regular_polygons.cpp
+        integration_tests/spectrum_equivalence/torus.cpp
         integration_tests/simple_analytical_dependencies_tests.cpp
+        unit_tests/OneOrMany_tests.cpp
         unit_tests/group_test.cpp
         unit_tests/consistentModelOptimizationList_tests.cpp
         unit_tests/symmetrizer_tests.cpp
@@ -36,6 +46,8 @@ add_executable(spinner_test
         unit_tests/hamiltonian_operator_tests.cpp
         unit_tests/symbols_tests.cpp
         unit_tests/parser_tests.cpp
+        unit_tests/ftlm_tests.cpp
+        unit_tests/uncertain_value_tests.cpp
         non_hamiltonian_operators_tests.cpp
         unit_tests/magnetic_susceptibility_tests.cpp
         integration_tests/spectrum_builder_tests.cpp
@@ -104,3 +116,5 @@ target_link_libraries(spinner_test gtest gtest_main tests_tools
 
 target_link_libraries(spinner_time_test gtest gtest_main tests_tools
         group space model spectrum common matrix magnetic_susceptibility nonlinear_solver eigendecompositor)
+
+target_compile_definitions(spinner_test PRIVATE CMAKE_SOURCE_DIR_DEFINE="${CMAKE_SOURCE_DIR}")

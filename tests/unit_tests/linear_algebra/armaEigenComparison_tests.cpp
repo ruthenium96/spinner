@@ -31,10 +31,10 @@ TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
             auto& denseUnitatyMatrix_j = denseUnitaryMatrices[j];
             if (i != j) {
                 EXPECT_ANY_THROW(denseUnitatyMatrix_j->
-                                 unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix_i));
+                    getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix_i));
             } else {
                 EXPECT_NO_THROW(denseUnitatyMatrix_j->
-                                unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix_i));
+                    getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix_i));
             }
         }
     }
@@ -74,8 +74,6 @@ TEST(linearAlgebraFactories, eigendecomposition) {
             constructAllDenseTransformAndDiagonalizeFactories(),
             dist,
             rng);
-        auto& armaMatrix = matrices[0];
-        auto& eigenMatrix = matrices[2];
         // only-values-eigendecomposition:
         {
             // decomposition
@@ -130,6 +128,98 @@ TEST(linearAlgebraFactories, eigendecomposition) {
                                 eigencouple_i.eigenvectors->at(k, l),
                                 sign * eigencouple_j.eigenvectors->at(k, l),
                                 5e-4);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+TEST(linearAlgebraFactories, krylov_eigendecomposition) {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_real_distribution<double> dist(-1000, +1000);
+
+    for (size_t size = 8; size <= 16; size*=2) {
+        // construct identical dense diagonalizable matrix:
+        auto matrices = generateSparseDiagonalizableMatrices(
+            size,
+            constructAllDenseTransformAndDiagonalizeFactories(),
+            dist,
+            rng);
+        auto orth_vectors = generateOrthDenseVectors(
+            size, 
+            constructAllDenseTransformAndDiagonalizeFactories());
+        // only-values-eigendecomposition:
+        {
+            // decomposition
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsEnergy;
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsWeights;
+            for (int i = 0; i < matrices.size(); ++i) {
+                const auto& matrix = matrices[i];
+                const auto& orth_vector = orth_vectors[i];
+                auto pair = matrix->krylovDiagonalizeValues(orth_vector, size);
+                denseVectorsEnergy.emplace_back(std::move(pair.eigenvalues));
+                denseVectorsWeights.emplace_back(std::move(pair.ftlm_weights_of_states));
+            }
+            // check equality:
+            for (size_t i = 0; i < denseVectorsEnergy.size(); ++i) {
+                const auto& denseVectorEnergy_i = denseVectorsEnergy[i];
+                const auto& denseVectorsWeights_i = denseVectorsWeights[i];
+                for (size_t j = 0; j < denseVectorsEnergy.size(); ++j) {
+                    if (i == j) {
+                        continue;
+                    }
+                    const auto& denseVectorEnergy_j = denseVectorsEnergy[j];
+                    const auto& denseVectorsWeights_j = denseVectorsWeights[j];
+                    for (size_t k = 0; k < size; ++k) {
+                        double epsilonEnergy = std::abs(denseVectorEnergy_i->at(k) * 5e-3);
+                        EXPECT_NEAR(denseVectorEnergy_i->at(k), denseVectorEnergy_j->at(k), epsilonEnergy);
+                        EXPECT_NEAR(denseVectorsWeights_i->at(k), denseVectorsWeights_j->at(k), 1e-3);
+                    }
+                }
+            }
+        }
+        // eigendecomposition-with-eigenvectors
+        {
+            // decomposition
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsEnergy;
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsWeights;
+            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>> denseUnitaryMatrices;
+            for (int i = 0; i < matrices.size(); ++i) {
+                const auto& matrix = matrices[i];
+                const auto& orth_vector = orth_vectors[i];
+                auto triple = matrix->krylovDiagonalizeValuesVectors(orth_vector, size);
+                denseVectorsEnergy.emplace_back(std::move(triple.eigenvalues));
+                denseVectorsWeights.emplace_back(std::move(triple.ftlm_weights_of_states));
+                denseUnitaryMatrices.emplace_back(std::move(triple.eigenvectors));
+            }
+            // check equality:
+            for (size_t i = 0; i < denseVectorsEnergy.size(); ++i) {
+                const auto& denseVectorEnergy_i = denseVectorsEnergy[i];
+                const auto& denseVectorsWeights_i = denseVectorsWeights[i];
+                for (size_t j = 0; j < denseVectorsEnergy.size(); ++j) {
+                    if (i == j) {
+                        continue;
+                    }
+                    const auto& denseVectorEnergy_j = denseVectorsEnergy[j];
+                    const auto& denseVectorsWeights_j = denseVectorsWeights[j];
+                    for (size_t k = 0; k < size; ++k) {
+                        double epsilonEnergy = std::abs(denseVectorEnergy_i->at(k) * 5e-3);
+                        EXPECT_NEAR(denseVectorEnergy_i->at(k), denseVectorEnergy_j->at(k), epsilonEnergy);
+                        EXPECT_NEAR(denseVectorsWeights_i->at(k), denseVectorsWeights_j->at(k), 1e-3);
+                        int sign;
+                        for (size_t l = 0; l < size; ++l) {
+                            if (l == 0) {
+                                sign = sign_f(denseUnitaryMatrices[i]->at(k, l),
+                                denseUnitaryMatrices[j]->at(k, l));
+                            }
+                            // TODO: epsilon
+                            EXPECT_NEAR(
+                                denseUnitaryMatrices[i]->at(k, l),
+                                sign * denseUnitaryMatrices[j]->at(k, l),
+                                5e-3);
                         }
                     }
                 }
@@ -217,7 +307,7 @@ TEST(linearAlgebraFactories, unitary_transformation_and_return_main_diagonal) {
             const auto& denseUnitaryMatrix = denseUnitaryMatrices[i];
 
             denseTransformedMainDiagonal.emplace_back(
-                denseUnitaryMatrix->unitaryTransformAndReturnMainDiagonal(denseDiagonalizableMatrix));
+                denseUnitaryMatrix->getUnitaryTransformer()->calculateUnitaryTransformationOfMatrix(denseDiagonalizableMatrix));
         }
 
         // check equality:

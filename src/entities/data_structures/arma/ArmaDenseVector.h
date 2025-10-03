@@ -16,9 +16,12 @@ class ArmaDenseVector: public AbstractDenseVector {
     void add_identical_values(size_t number, double value) override;
     void subtract_minimum() override;
     void wise_exp() override;
+    void makeRandomUnitVector(uint32_t size);
 
     std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const override;
     double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
+    double triple_dot(const std::unique_ptr<AbstractDenseVector>& second, 
+      const std::unique_ptr<AbstractDenseVector>& third) const override;
     std::unique_ptr<AbstractDenseVector>
     element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
     uint32_t size() const override;
@@ -26,7 +29,7 @@ class ArmaDenseVector: public AbstractDenseVector {
     void print(std::ostream& os) const override;
 
     arma::Col<T>& modifyDenseVector();
-    const arma::Col<T>& getDenseVector();
+    const arma::Col<T>& getDenseVector() const;
 
   private:
     // c-like pointers are necessary to avoid double-free error

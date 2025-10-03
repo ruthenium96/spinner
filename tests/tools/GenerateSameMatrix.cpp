@@ -90,6 +90,18 @@ generateDenseUnitaryMatrices(
 }
 
 std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>
+generateSparseDiagonalizableMatrix(
+    size_t size,
+    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory,
+    std::uniform_real_distribution<double> dist,
+    std::mt19937 rng) {
+    std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        factories = {factory};
+    return std::move(generateSparseDiagonalizableMatrices(size, factories, dist, rng)[0]);
+}
+
+std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>
 generateDenseDiagonalizableMatrix(
     size_t size,
     std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory,
@@ -110,4 +122,32 @@ std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix> generat
         std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
         factories = {factory};
     return std::move(generateDenseUnitaryMatrices(size, factories, dist, rng)[0]);
+}
+
+std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>
+generateOrthDenseVector(
+    size_t size,
+    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory) {
+    std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        factories = {factory};
+    return std::move(generateOrthDenseVectors(size, factories)[0]);
+}
+
+
+std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
+generateOrthDenseVectors(
+    size_t size,
+    const std::vector<
+        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
+        factories) {
+    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> answer;
+    answer.reserve(factories.size());
+
+    for (const auto& factory : factories) {
+        answer.emplace_back(factory->createVector());
+        answer.back()->add_identical_values(1, 1.0);
+        answer.back()->add_identical_values(size - 1, 0.0);
+    }
+    return std::move(answer);
 }

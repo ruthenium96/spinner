@@ -14,6 +14,9 @@ class stlbfgsAdapter: public AbstractNonlinearSolver {
     bool doesGradientsRequired() const override {
         return true;
     };
+    std::optional<std::vector<double>> getMainDiagonalOfInverseHessian() const override;
+  private:
+    std::vector<double> mainDiagonalOfInverseHessian_;
 };
 
 }  // namespace nonlinear_solver

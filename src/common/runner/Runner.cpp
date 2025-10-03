@@ -6,9 +6,39 @@
 #include "src/common/Logger.h"
 #include "src/common/PrintingFunctions.h"
 #include "src/common/Quantity.h"
+#include "src/common/UncertainValue.h"
+#include "src/eigendecompositor/AllQuantitiesGetter.h"
 #include "src/eigendecompositor/EigendecompositorConstructor.h"
 #include "src/entities/magnetic_susceptibility/worker/WorkerConstructor.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
+
+namespace {
+std::vector<common::UncertainValue> construct_final_uncertain_values_of_parameters(
+    const std::vector<double>& changeable_values,
+    const std::optional<std::vector<double>>& mb_main_diagonal_of_inverse_hessian,
+    double final_residual_error,
+    size_t number_of_points) {
+    size_t number_of_parameters = changeable_values.size();
+    std::vector<common::UncertainValue> final_changeable_uncertain_values(number_of_parameters);
+
+    if (mb_main_diagonal_of_inverse_hessian.has_value()) {
+        const auto& inv_hessian = mb_main_diagonal_of_inverse_hessian.value();
+        for (size_t i = 0; i < inv_hessian.size(); ++i) {
+            double sigma_squared = final_residual_error * inv_hessian[i] / 
+                (number_of_points - number_of_parameters);
+            final_changeable_uncertain_values[i] = 
+                common::UncertainValue(changeable_values[i], 
+                    std::sqrt(sigma_squared), 
+                    common::FIT);
+        }
+    } else {
+        for (size_t i = 0; i < number_of_parameters; ++i) {
+            final_changeable_uncertain_values[i] = common::UncertainValue(changeable_values[i]);
+        }
+    }
+    return final_changeable_uncertain_values;
+}
+}
 
 namespace runner {
 
@@ -46,7 +76,9 @@ Runner::Runner(
     eigendecompositor_(eigendecompositor::EigendecompositorConstructor::construct(
         consistentModelOptimizationList_,
         dataStructuresFactories_
-        )) {}
+        )) {
+    flattenedSpectra_ = std::make_shared<eigendecompositor::FlattenedSpectra>();
+}
 
 const space::Space& runner::Runner::getSpace() const {
     return space_;
@@ -57,28 +89,32 @@ void Runner::BuildSpectra() {
         consistentModelOptimizationList_.getOperatorsForExplicitConstruction(),
         consistentModelOptimizationList_.getDerivativeOperatorsForExplicitConstruction(),
         getSpace());
+    flattenedSpectra_->updateValues(*eigendecompositor_, getDataStructuresFactories());
+    flattenedSpectra_->updateDerivativeValues(*eigendecompositor_, 
+        getSymbolicWorker().getChangeableNames(), 
+        getDataStructuresFactories());
     for (const auto& quantity_enum : magic_enum::enum_values<common::QuantityEnum>()) {
         auto maybe_matrix = getMatrix(quantity_enum);
         if (maybe_matrix.has_value()) {
             common::Logger::trace("Matrix of {}:\n", magic_enum::enum_name(quantity_enum));
-            common::Logger::trace("{}", maybe_matrix.value().get());
+            common::Logger::trace("{}", maybe_matrix.value());
         }
-        auto maybe_spectrum = getSpectrum(quantity_enum);
-        if (maybe_spectrum.has_value()) {
+        auto maybe_spectrum_ref = getSpectrum(quantity_enum);
+        if (maybe_spectrum_ref.has_value()) {
             common::Logger::trace("Spectrum of {}:\n", magic_enum::enum_name(quantity_enum));
-            common::Logger::trace("{}", maybe_spectrum.value().get());
+            common::Logger::trace("{}", maybe_spectrum_ref.value());
         }
     }
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
+std::optional<OneOrMany<MatrixRef>>
 Runner::getMatrix(common::QuantityEnum quantity_enum) {
-    return getEigendecompositor()->getMatrix(quantity_enum);
+    return getAllQuantitiesGetter().getMatrix(quantity_enum);
 }
 
-std::optional<std::reference_wrapper<const Spectrum>> 
+std::optional<OneOrMany<SpectrumRef>>
 Runner::getSpectrum(common::QuantityEnum quantity_enum) {
-    return getEigendecompositor()->getSpectrum(quantity_enum);
+    return getAllQuantitiesGetter().getSpectrum(quantity_enum);
 }
 
 std::optional<std::shared_ptr<const model::operators::Operator>>
@@ -96,27 +132,29 @@ std::optional<std::shared_ptr<const model::operators::Operator>> Runner::getOper
     return getModel().getOperatorDerivative(quantity_enum, symbol);
 }
 
-const Spectrum& Runner::getSpectrumDerivative(
+std::optional<OneOrMany<SpectrumRef>> Runner::getSpectrumDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    return getEigendecompositor()->getSpectrumDerivative(quantity_enum, symbol).value().get();
+    return getAllQuantitiesGetter().getSpectrumDerivative(quantity_enum, symbol);
 }
 
-std::optional<std::reference_wrapper<const Matrix>> Runner::getMatrixDerivative(
+std::optional<OneOrMany<MatrixRef>> Runner::getMatrixDerivative(
     common::QuantityEnum quantity_enum,
     const model::symbols::SymbolName& symbol) {
-    return getEigendecompositor()->getMatrixDerivative(quantity_enum, symbol);
+    return getAllQuantitiesGetter().getMatrixDerivative(quantity_enum, symbol);
 }
 
 void Runner::BuildMuSquaredWorker() {
-    auto magnetic_susceptibility_worker =
-        magnetic_susceptibility::worker::WorkerConstructor::construct(
-            consistentModelOptimizationList_,
-            getEigendecompositor(),
-            getDataStructuresFactories());
+    if (!magnetic_susceptibility_controller_.has_value()) {
+        auto magnetic_susceptibility_worker =
+            magnetic_susceptibility::worker::WorkerConstructor::construct(
+                consistentModelOptimizationList_,
+                getFlattenedSpectra(),
+                getDataStructuresFactories());
 
-    magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
-        std::move(magnetic_susceptibility_worker));
+        magnetic_susceptibility_controller_ = magnetic_susceptibility::MagneticSusceptibilityController(
+            std::move(magnetic_susceptibility_worker));
+    }
 
     if (experimental_values_worker_.has_value()) {
         magnetic_susceptibility_controller_.value().initializeExperimentalValues(
@@ -155,80 +193,20 @@ void Runner::initializeExperimentalValues(
 }
 
 std::map<model::symbols::SymbolName, double> Runner::calculateTotalDerivatives() {
-    // TODO: it is awful. Fix it somehow, this code should be moved from Runner.
-
     initializeDerivatives();
 
     std::map<model::symbols::SymbolName, double> answer;
 
-    for (const auto& changeable_symbol :
-         getSymbolicWorker().getChangeableNames(model::symbols::J)) {
-        auto derivative_vector = dataStructuresFactories_.createVector();
-        for (const auto& subspectrum :
-             getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
-            derivative_vector->concatenate_with(subspectrum.raw_data);
-        }
-        auto derivative_map = std::map<
-            common::QuantityEnum,
-            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
-        derivative_map[common::Energy] = std::move(derivative_vector);
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::J,
-            std::move(derivative_map));
-        answer[changeable_symbol] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
-    }
-
-    for (const auto& changeable_symbol :
-         getSymbolicWorker().getChangeableNames(model::symbols::D)) {
-        auto derivative_vector = dataStructuresFactories_.createVector();
-        for (const auto& subspectrum :
-             getSpectrumDerivative(common::Energy, changeable_symbol).blocks) {
-            derivative_vector->concatenate_with(subspectrum.raw_data);
-        }
-        auto derivative_map = std::map<
-            common::QuantityEnum,
-            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
-        derivative_map[common::Energy] = std::move(derivative_vector);
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::D,
-            std::move(derivative_map));
-        answer[changeable_symbol] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
-    }
-
-    for (const auto& changeable_symbol :
-         getSymbolicWorker().getChangeableNames(model::symbols::g_factor)) {
-        auto map = std::map<
-            common::QuantityEnum,
-            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
-        if (consistentModelOptimizationList_.getModel().is_g_sz_squared_derivatives_initialized()) {
-            auto derivative_vector = dataStructuresFactories_.createVector();
-            for (const auto& subspectrum :
-                 getSpectrumDerivative(common::gSz_total_squared, changeable_symbol).blocks) {
-                derivative_vector->concatenate_with(subspectrum.raw_data);
-            }
-            map[common::gSz_total_squared] = std::move(derivative_vector);
-        }
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::g_factor,
-            std::move(map));
-        answer[changeable_symbol] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", changeable_symbol.get_name(), value);
-    }
-
-    // Theta calculation:
-    if (!getSymbolicWorker().getChangeableNames(model::symbols::Theta).empty()) {
-        model::symbols::SymbolName Theta_name =
-            getSymbolicWorker().getChangeableNames(model::symbols::Theta)[0];
-        auto empty_map = std::map<
-            common::QuantityEnum,
-            std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>();
-        double value = getMagneticSusceptibilityController().calculateTotalDerivative(
-            model::symbols::Theta,
-            std::move(empty_map));
-        answer[Theta_name] = value;
-        common::Logger::debug("d(Loss function)/d{}: {}", Theta_name.get_name(), value);
+    for (const auto& changeable_symbol : getSymbolicWorker().getChangeableNames()) {
+        auto symbol_type = getSymbolicWorker().getSymbolProperty(changeable_symbol).type_enum.value();
+        auto value = getMagneticSusceptibilityController().calculateTotalDerivative(
+            symbol_type,
+            changeable_symbol);
+        answer[changeable_symbol] = value.mean();
+        common::Logger::debug("d(Loss function)/d{}: {} +/- {}", 
+            changeable_symbol.get_name(), 
+            value.mean(),
+            value.stdev_total());
     }
     common::Logger::separate(2, common::debug);
 
@@ -264,10 +242,19 @@ void Runner::minimizeResidualError(
 
     solver->optimize(oneStepFunction, changeable_values);
 
+    auto mb_main_diagonal_of_inverse_hessian = solver->getMainDiagonalOfInverseHessian();
+    auto final_residual_error = getMagneticSusceptibilityController().calculateResidualError();
+
+    auto final_changeable_uncertain_values = construct_final_uncertain_values_of_parameters(
+        changeable_values, 
+        mb_main_diagonal_of_inverse_hessian, 
+        final_residual_error.mean(),
+        getMagneticSusceptibilityController().getTheoreticalValues().size());
+
     common::postRegressionPrint(
         changeable_names,
-        changeable_values,
-        getMagneticSusceptibilityController().calculateResidualError());
+        final_changeable_uncertain_values,
+        final_residual_error);
 }
 
 double Runner::stepOfRegression(
@@ -290,7 +277,7 @@ double Runner::stepOfRegression(
     BuildMuSquaredWorker();
 
     // Calculate residual error and write it to external variable:
-    double residual_error = getMagneticSusceptibilityController().calculateResidualError();
+    auto residual_error = getMagneticSusceptibilityController().calculateResidualError();
 
     if (isGradientRequired) {
         // Calculate derivatives...
@@ -303,7 +290,7 @@ double Runner::stepOfRegression(
 
     common::stepOfRegressionFinishPrint(residual_error);
 
-    return residual_error;
+    return residual_error.mean();
 }
 
 void Runner::initializeDerivatives() {
@@ -334,12 +321,19 @@ quantum::linear_algebra::FactoriesList Runner::getDataStructuresFactories() cons
     return dataStructuresFactories_;
 }
 
-const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>&
-Runner::getEigendecompositor() {
+const eigendecompositor::AllQuantitiesGetter& Runner::getAllQuantitiesGetter() {
     if (!eigendecompositor_->BuildSpectraWasCalled()) {
         BuildSpectra();
     }
 
-    return eigendecompositor_;
+    return *eigendecompositor_;
+}
+
+const std::shared_ptr<eigendecompositor::FlattenedSpectra>& Runner::getFlattenedSpectra() {
+    if (!eigendecompositor_->BuildSpectraWasCalled()) {
+        BuildSpectra();
+    }
+
+    return flattenedSpectra_;
 }
 }  // namespace runner

@@ -1,5 +1,8 @@
 #include "IndexPermutator.h"
 #include <cassert>
+#include <stdexcept>
+#include "src/group/Group.h"
+#include "src/spin_algebra/Multiplicity.h"
 
 namespace index_converter::s_squared {
 
@@ -21,6 +24,44 @@ uint32_t IndexPermutator::get_total_space_size() const {
 	return converter_->get_total_space_size();
 }
 
+inline void IndexPermutator::construct_level_and_sign(
+    const group::Permutation& extended_g,
+    const Level& level,
+    Level& permutated_level, 
+    int8_t& sign) const {
+    for (int position = initial_size_of_permutation_; position < extended_g.size(); ++position) {
+        spin_algebra::Multiplicity multiplicity_to_push = level.getMultiplicity(extended_g[position]);
+        permutated_level.setMultiplicity(position, multiplicity_to_push);
+    }
+
+    std::map<unsigned long, spin_algebra::Multiplicity> visited_multiplicities;
+
+    for (const auto& instruction : converter_->getOrderOfSummation()->getInstructions()) {
+        const auto pos_one = instruction.positions_of_summands[0];
+        const auto pos_two = instruction.positions_of_summands[1];
+        const auto pos_res = instruction.position_of_sum;
+
+        if (pos_one == extended_g[pos_one] || pos_two == extended_g[pos_two]) {
+            continue;
+        }
+
+        auto mult_one = permutated_level.getMultiplicity(pos_one);
+        auto mult_two = permutated_level.getMultiplicity(pos_two);
+        auto mult_res = permutated_level.getMultiplicity(pos_res);
+        visited_multiplicities[pos_one] = mult_one;
+        visited_multiplicities[pos_two] = mult_two;
+        visited_multiplicities[pos_res] = mult_res;
+    }
+    size_t acc = 0;
+    for (const auto& [key, value] : visited_multiplicities)
+    {
+        acc += value;
+    }
+    if (acc % 4 != visited_multiplicities.size() % 4) {
+        sign *= -1;
+    }
+}
+
 std::vector<IndexWithSign> IndexPermutator::convert_index_to_permutated_indexes(uint32_t index) const {
 	auto order_of_summation = converter_->getOrderOfSummation();
 
@@ -35,39 +76,7 @@ std::vector<IndexWithSign> IndexPermutator::convert_index_to_permutated_indexes(
     std::vector<int8_t> signs(extended_permutations_.size(), +1);
 
     for (int g_position = 0; g_position < extended_permutations_.size(); ++g_position) {
-        const group::Permutation& extended_g = extended_permutations_[g_position];
-
-        for (int position = initial_size_of_permutation_; position < extended_g.size(); ++position) {
-            spin_algebra::Multiplicity multiplicity_to_push = level.getMultiplicity(extended_g[position]);
-            permutated_levels[g_position].setMultiplicity(position, multiplicity_to_push);
-        }
-
-        for (size_t position_from = 0; position_from < extended_g.size(); ++position_from) {
-            auto position_to = extended_g[position_from];
-            if (position_to == position_from) {
-                continue;
-            }
-            // this code works only for P2, so we need to explicitly check:
-            assert(extended_g[position_to] == position_from);
-            for (const auto& instruction : order_of_summation->getInstructions()) {
-                auto pos_one = instruction.positions_of_summands[0];
-                auto pos_two = instruction.positions_of_summands[1];
-                auto pos_res = instruction.position_of_sum;
-                auto mult_one = permutated_levels[g_position].getMultiplicity(pos_one);
-                auto mult_two = permutated_levels[g_position].getMultiplicity(pos_two);
-                auto mult_res = permutated_levels[g_position].getMultiplicity(pos_res);
-                if (mult_one == mult_two) {
-                    auto maxMultiplicity = mult_one + mult_two - 1;
-                    if ((maxMultiplicity - mult_res) % 4 == 0) {
-                        signs[g_position] *= 1;
-                    } else {
-                        signs[g_position] *= -1;
-                    }
-                } else {
-					signs[g_position] *= 1;
-				}
-            }
-        }
+        construct_level_and_sign(extended_permutations_[g_position], level, permutated_levels[g_position], signs[g_position]);
     }
 
     std::vector<IndexWithSign> answer;

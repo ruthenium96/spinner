@@ -2,33 +2,19 @@
 #include "magic_enum.hpp"
 #include "src/common/runner/Runner.h"
 
-size_t size_of_matrix_without_degeneracy(const Matrix& matrix) {
+size_t size_of_matrix_with_degeneracy(const MatrixRef& matrix) {
     size_t accumulator = 0;
-    for (const auto& submatrix : matrix.blocks) {
-        accumulator += submatrix.raw_data->size();
-    }
-    return accumulator;
-}
-
-size_t size_of_matrix_with_degeneracy(const Matrix& matrix) {
-    size_t accumulator = 0;
-    for (const auto& submatrix : matrix.blocks) {
+    for (const auto& submatrix_ref : matrix.blocks) {
+        const auto& submatrix = submatrix_ref.get();
         accumulator += submatrix.raw_data->size() * submatrix.properties.degeneracy;
     }
     return accumulator;
 }
 
-size_t size_of_spectrum_without_degeneracy(const Spectrum& spectrum) {
+size_t size_of_spectrum_with_degeneracy(const SpectrumRef& spectrum_ref) {
     size_t accumulator = 0;
-    for (const auto& subspectrum : spectrum.blocks) {
-        accumulator += subspectrum.raw_data->size();
-    }
-    return accumulator;
-}
-
-size_t size_of_spectrum_with_degeneracy(const Spectrum& spectrum) {
-    size_t accumulator = 0;
-    for (const auto& subspectrum : spectrum.blocks) {
+    for (const auto& subspectrum_ref : spectrum_ref.blocks) {
+        const auto& subspectrum = subspectrum_ref.get();
         accumulator += subspectrum.raw_data->size() * subspectrum.properties.degeneracy;
     }
     return accumulator;
@@ -37,33 +23,27 @@ size_t size_of_spectrum_with_degeneracy(const Spectrum& spectrum) {
 void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner::Runner& runner) {
     auto mb_energy_matrix = runner.getMatrix(common::Energy);
     if (mb_energy_matrix.has_value()) {
+        auto energy_matrix = getOneRef(mb_energy_matrix.value());
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_with_degeneracy(mb_energy_matrix.value()));
-        EXPECT_EQ(
-            runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_without_degeneracy(mb_energy_matrix.value()));
+            size_of_matrix_with_degeneracy(energy_matrix));
     }
     auto mb_s_squared_matrix = runner.getMatrix(common::S_total_squared);
     if (mb_s_squared_matrix.has_value()) {
+        auto s_squared_matrix = getOneRef(mb_s_squared_matrix.value());
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_with_degeneracy(mb_s_squared_matrix.value()));
-        EXPECT_EQ(
-            runner.getIndexConverter()->get_total_space_size(),
-            size_of_matrix_without_degeneracy(mb_s_squared_matrix.value()));
+            size_of_matrix_with_degeneracy(s_squared_matrix));
     }
 }
 
 void EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner::Runner& runner) {
     for (const auto& quantity_enum_ : magic_enum::enum_values<common::QuantityEnum>()) {
         if (runner.getSpectrum(quantity_enum_).has_value()) {
+            auto quantity = getOneRef(runner.getSpectrum(quantity_enum_).value());
             EXPECT_EQ(
                 runner.getIndexConverter()->get_total_space_size(),
-                size_of_spectrum_with_degeneracy(runner.getSpectrum(quantity_enum_).value().get()));
-            EXPECT_EQ(
-                runner.getIndexConverter()->get_total_space_size(),
-                size_of_spectrum_without_degeneracy(runner.getSpectrum(quantity_enum_).value().get()));        
+                size_of_spectrum_with_degeneracy(quantity));
         }
     }
 }
@@ -151,27 +131,27 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
         model.assignSymbolToIsotropicExchange(J, 0, 1)
             .assignSymbolToIsotropicExchange(J, 1, 2)
             .assignSymbolToIsotropicExchange(J, 2, 0);
-        // S3_SYMMETRIZE
+        // Dih3_SYMMETRIZE
         {
             common::physical_optimization::OptimizationList optimizationList;
-            optimizationList.Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+            optimizationList.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
 
             runner::Runner runner(model, optimizationList);
 
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
-        // TZ_SORT + S3_SYMMETRIZE
+        // TZ_SORT + Dih3_SYMMETRIZE
         {
             common::physical_optimization::OptimizationList optimizationList;
-            optimizationList.TzSort().Symmetrize(group::Group::S3, {{1, 2, 0}, {0, 2, 1}});
+            optimizationList.TzSort().Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
             runner::Runner runner(model, optimizationList);
 
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);
             EXPECT_SIZE_CONSISTENCE_OF_SPECTRA(runner);
         }
-        // S3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
-        {}  // TZ_SORT + S3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
+        // Dih3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
+        {}  // TZ_SORT + Dih3_SYMMETRIZE + NON_ABELIAN_SIMPLIFY
         {}
     }
 }

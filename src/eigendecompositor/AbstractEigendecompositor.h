@@ -1,12 +1,12 @@
 #ifndef SPINNER_ABSTRACTEIGENDECOMPOSITOR_H
 #define SPINNER_ABSTRACTEIGENDECOMPOSITOR_H
 
-#include <optional>
-
-#include "src/model/Model.h"
+#include "src/common/OneOrMany.h"
+#include "src/eigendecompositor/AllQuantitiesGetter.h"
 
 namespace eigendecompositor {
-class AbstractEigendecompositor {
+
+class AbstractEigendecompositor : public AllQuantitiesGetter {
   public:
     void BuildSpectra(
         const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
@@ -17,18 +17,16 @@ class AbstractEigendecompositor {
         const space::Space& space);
     bool BuildSpectraWasCalled() const;
 
-    // What means Spectrum's optional?
-    // The getter *may* return std::nullopt if corresponding Operator has been passed into initialize.
-    // What means Matrix's optional?
-    // The getter returns some value if underlying wrapper actually store Matrix.
-    virtual std::optional<std::reference_wrapper<const Spectrum>>
-        getSpectrum(common::QuantityEnum) const = 0;
-    virtual std::optional<std::reference_wrapper<const Matrix>>
-        getMatrix(common::QuantityEnum) const = 0;
-    virtual std::optional<std::reference_wrapper<const Spectrum>>
-    getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
-    virtual std::optional<std::reference_wrapper<const Matrix>>
-    getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const = 0;
+    std::optional<OneOrMany<SpectrumRef>> getSpectrum(common::QuantityEnum) const override;
+    std::optional<OneOrMany<MatrixRef>> getMatrix(common::QuantityEnum) const override;
+    std::optional<OneOrMany<SpectrumRef>>
+    getSpectrumDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
+    std::optional<OneOrMany<MatrixRef>>
+    getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
+    size_t getSubspectrumSize(common::QuantityEnum, size_t number_of_block) const;
+
+    OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>
+    getWeightsOfAllStates() const override;
 
     virtual ~AbstractEigendecompositor() = default;
 
@@ -39,11 +37,12 @@ class AbstractEigendecompositor {
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
         uint32_t number_of_subspaces) = 0;
-    virtual std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    virtual std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(size_t number_of_block, const space::Subspace& subspace) = 0;
     virtual void finalize() = 0;
   private:
     bool buildSpectraWasCalled = false;
+    uint32_t number_of_subspaces_;
 };
 
 }  // namespace eigendecompositor

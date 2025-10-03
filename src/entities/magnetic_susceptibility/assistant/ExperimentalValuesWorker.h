@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "src/common/UncertainValue.h"
 #include "WeightingScheme.h"
 
 namespace magnetic_susceptibility {
@@ -12,7 +13,7 @@ constexpr double mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin
 
 struct ValueAtTemperature {
     double temperature;
-    double value;
+    common::UncertainValue value;
 };
 
 enum ExperimentalValuesEnum {
@@ -40,7 +41,7 @@ class ExperimentalValuesWorker {
     std::vector<ValueAtTemperature> getExperimentalMuSquared() const;
     const std::vector<double>& getWeights() const;
 
-    double calculateResidualError() const;
+    common::UncertainValue calculateResidualError() const;
     std::vector<ValueAtTemperature> calculateDerivative() const;
 
   private:
@@ -50,7 +51,7 @@ class ExperimentalValuesWorker {
     std::vector<ValueAtTemperature> theoretical_mu_squared_;
     ExperimentalValuesEnum experimental_values_type_;
     WeightingScheme weights_;
-    double weighted_sum_of_squares_of_experiment_;
+    common::UncertainValue weighted_sum_of_squares_of_experiment_;
     // Ratio between number of centers (or molar weight) of theoretical and experimental systems.
     double number_of_centers_ratio_;
 };

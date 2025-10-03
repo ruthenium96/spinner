@@ -1,37 +1,52 @@
 #ifndef SPINNER_PRINTINGFUNCTIONS_H
 #define SPINNER_PRINTINGFUNCTIONS_H
 
-#include <fmt/ostream.h>
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/spdlog.h>
 
 #include <ostream>
 
+#include "OneOrMany.h"
 #include "Quantity.h"
-#include "src/eigendecompositor/AbstractEigendecompositor.h"
+#include "UncertainValue.h"
 #include "src/entities/BlockProperties.h"
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/matrix/Submatrix.h"
 #include "src/entities/spectrum/Spectrum.h"
 #include "src/entities/spectrum/Subspectrum.h"
+#include "src/model/ModelInput.h"
 #include "src/model/symbols/SymbolName.h"
 #include "src/space/Space.h"
 #include "src/space/Subspace.h"
+#include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/common/index_converter/s_squared/IndexConverter.h"
 
 std::ostream& operator<<(std::ostream& os, const space::Space& space);
 std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace);
-std::ostream& operator<<(std::ostream& os, const Spectrum& spectrum);
+std::ostream& operator<<(std::ostream& os, const SpectrumRef& spectrum_ref);
+template <> struct spdlog::fmt_lib::formatter<SpectrumRef> : spdlog::fmt_lib::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum);
-template <> struct fmt::formatter<Spectrum> : fmt::ostream_formatter {};
-std::ostream& operator<<(std::ostream& os, const Matrix& matrix);
-template <> struct fmt::formatter<Matrix> : fmt::ostream_formatter {};
+std::ostream& operator<<(std::ostream& os, const MatrixRef& matrix);
+template <> struct spdlog::fmt_lib::formatter<MatrixRef> : spdlog::fmt_lib::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
 
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const OneOrMany<T>& one_or_many) {
+    apply_to_one_or_many(std::function([&os](const T& t){
+        os << t << std::endl;
+    }), 
+    one_or_many);
+    return os;
+}
+template <typename T> struct fmt::formatter<OneOrMany<T>> : fmt::ostream_formatter {};
+
 // todo: move it to class in different file
 namespace common {
 void inputPrint(const std::string& input_string);
+void nonSingleModeParametersPrint(const model::ModelInput& model_input);
 void preRegressionPrint(
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>& quantities,
     const std::map<
@@ -39,11 +54,11 @@ void preRegressionPrint(
         std::shared_ptr<const model::operators::Operator>>& derivatives);
 void postRegressionPrint(
     const std::vector<model::symbols::SymbolName>& changeable_names,
-    const std::vector<double>& changeable_values,
-    double rss);
+    const std::vector<UncertainValue>& final_changeable_uncertain_values,
+    UncertainValue rss);
 void stepOfRegressionStartPrint(const std::vector<model::symbols::SymbolName>& changeable_names,
                                const std::vector<double>& changeable_values);
-void stepOfRegressionFinishPrint(double loss);
+void stepOfRegressionFinishPrint(UncertainValue loss);
 void initialExperimentalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& experimental_values,
     magnetic_susceptibility::ExperimentalValuesEnum experimental_values_type);
@@ -54,6 +69,7 @@ void theoreticalValuesPrint(
     const std::vector<magnetic_susceptibility::ValueAtTemperature>& theor_values);
 void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& order_of_summation);
 void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverter& index_converter);
+void lexIndexConverterPrint(const index_converter::lexicographic::IndexConverter& index_converter);
 } // namespace common
 
 #endif  //SPINNER_PRINTINGFUNCTIONS_H

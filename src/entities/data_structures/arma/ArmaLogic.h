@@ -7,6 +7,8 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 #include "src/entities/data_structures/AbstractSymmetricMatrix.h"
+#include "src/entities/data_structures/arma/ArmaDenseSemiunitaryMatrix.h"
+#include "src/entities/data_structures/arma/ArmaKrylovDenseSemiunitaryMatrix.h"
 
 namespace quantum::linear_algebra {
 template <typename T>
@@ -14,23 +16,23 @@ class ArmaLogic {
   public:
     std::unique_ptr<AbstractDenseVector>
     diagonalizeValues(const AbstractDiagonalizableMatrix& diagonalizableMatrix) const;
-    std::unique_ptr<AbstractDenseVector> diagonalizeValues(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const;
 
     EigenCouple
     diagonalizeValuesVectors(const AbstractDiagonalizableMatrix& diagonalizableMatrix) const;
-    EigenCouple diagonalizeValuesVectors(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const;
 
-    std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
-    std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const std::unique_ptr<AbstractDenseSemiunitaryMatrix>& denseSemiunitaryMatrix) const;
+    KrylovCouple krylovDiagonalizeValues(
+        const AbstractDiagonalizableMatrix& diagonalizableMatrix,
+        const AbstractDenseVector& seed_vector,
+        size_t krylov_subspace_size) const;
+
+    KrylovTriple krylovDiagonalizeValuesVectors(
+        const AbstractDiagonalizableMatrix& diagonalizableMatrix,
+        const AbstractDenseVector& seed_vector,
+        size_t krylov_subspace_size) const;
+    
     std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
         const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const;
+        const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
 };
 }  // namespace quantum::linear_algebra
 

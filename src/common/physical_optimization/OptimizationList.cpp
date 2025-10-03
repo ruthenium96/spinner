@@ -1,6 +1,7 @@
 #include "OptimizationList.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 namespace common::physical_optimization {
 
@@ -66,10 +67,28 @@ OptimizationList& OptimizationList::SSquaredTransform() {
     return *this;
 }
 
+OptimizationList& OptimizationList::FTLMApproximate(FTLMSettings ftlmSettings) {
+    if (isSSquaredTransformed()) {
+        throw std::invalid_argument("Cannot use FTLM with SSquaredTransformation yet");
+    }
+    if (!isPositiveProjectionsEliminated()) {
+        throw std::invalid_argument("Positive projections elimination required for FTLM due accuracy issues");
+    }
+    if (ftlmSettings.krylov_subspace_size > ftlmSettings.exact_decomposition_threshold) {
+        throw std::invalid_argument("Size of Krylov subspace bigger than threshold of exact decomposition");
+    }
+    if (ftlmSettings.number_of_seeds == 0) {
+        throw std::invalid_argument("Number of seeds in FTLM equals to zero");
+    }
+    isFTLMApproximated_ = true;
+    ftlmSettings_ = ftlmSettings;
+    return *this;
+}
+
 OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
     // check if user trying to use the same Group for a second time:
     if (std::count(groupsToApply_.begin(), groupsToApply_.end(), new_group)) {
-        return *this;
+        throw std::invalid_argument("Trying to apply group isomorphing to already applied");
     }
     // check if groups can be applied at the same time
     for (const auto& old_group : groupsToApply_) {
@@ -83,6 +102,9 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
             throw std::invalid_argument("Groups do not commute!");
         }
     }
+    if (isNonAbelianSimplified()) {
+        throw std::invalid_argument("Cannot symmetrize after non-Abelian simplification");
+    }
     if (basis_type_ == ITO && !new_group.properties.is_abelian) {
         throw std::invalid_argument("Currently cannot perform use ITO-basis with non-Abelian symmetries");
     }
@@ -95,10 +117,33 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
 }
 
 OptimizationList& OptimizationList::Symmetrize(
-    group::Group::GroupTypeEnum group_name,
+    group::Group::GroupType group_type,
     std::vector<group::Permutation> generators) {
-    group::Group new_group(group_name, std::move(generators));
+    group::Group new_group(group_type, std::move(generators));
     return Symmetrize(new_group);
+}
+
+OptimizationList& OptimizationList::NonAbelianSimplify() {
+    if (getGroupsToApply().empty()) {
+        throw std::invalid_argument("Cannot non-Abelian simplify without symmetrizing");
+    }
+    size_t number_of_nonabelian_groups = 0;
+    for (const auto& group : getGroupsToApply()) {
+        if (!group.properties.is_abelian) {
+            ++number_of_nonabelian_groups;
+        }
+    }
+    if (number_of_nonabelian_groups == 0) {
+        throw std::invalid_argument("Only Abelian groups. Cannot non-Abelian simplify them");
+    }
+    if (number_of_nonabelian_groups > 1) {
+        throw std::invalid_argument("More than one non-Abelian group. Cannot non-Abelian simplify them yet");
+    }
+    if (getGroupsToApply()[0].properties.is_abelian) {
+        throw std::invalid_argument("Non-Abelian group need to be the first group to apply for non-Abelian simplification");
+    }
+    isNonAbelianSimplified_ = true;
+    return *this;
 }
 
 bool OptimizationList::isLexBasis() const {
@@ -129,8 +174,20 @@ bool OptimizationList::isSSquaredTransformed() const {
     return isSSquaredTransformed_;
 }
 
+bool OptimizationList::isFTLMApproximated() const {
+    return isFTLMApproximated_;
+}
+
 const std::vector<group::Group>& OptimizationList::getGroupsToApply() const {
     return groupsToApply_;
+}
+
+bool OptimizationList::isNonAbelianSimplified() const {
+    return isNonAbelianSimplified_;
+}
+
+const OptimizationList::FTLMSettings& OptimizationList::getFTLMSettings() const {
+    return ftlmSettings_.value();
 }
 
 }  // namespace common::physical_optimization

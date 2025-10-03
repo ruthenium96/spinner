@@ -12,43 +12,50 @@ ExplicitQuantitiesEigendecompositor::ExplicitQuantitiesEigendecompositor(
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
-std::optional<std::reference_wrapper<const Spectrum>>
-ExplicitQuantitiesEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
-    if (quantities_map_.contains(quantity_enum)) {
-        return quantities_map_.at(quantity_enum).spectrum_;
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ExplicitQuantitiesEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
+    if (quantities_spectra_map_.contains(quantity_enum)) {
+        return copyRef<Subspectrum, std::reference_wrapper<const Subspectrum>>(
+            quantities_spectra_map_.at(quantity_enum)[number_of_block]);
     }
-    return eigendecompositor_->getSpectrum(quantity_enum);
+    return eigendecompositor_->getSubspectrum(quantity_enum, number_of_block);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
-ExplicitQuantitiesEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
-    if (quantities_map_.contains(quantity_enum)) {
-        return quantities_map_.at(quantity_enum).matrix_;
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExplicitQuantitiesEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
+#ifndef NDEBUG
+    if (quantities_matrix_map_.contains(quantity_enum)) {
+        return quantities_matrix_map_.at(quantity_enum)[number_of_block];
     }
-    return eigendecompositor_->getMatrix(quantity_enum);
+#endif
+    return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
-ExplicitQuantitiesEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
-    if (derivatives_map_.contains({quantity_enum, symbol_name})) {
-        return derivatives_map_.at({quantity_enum, symbol_name}).spectrum_;
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ExplicitQuantitiesEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
+    if (derivatives_spectra_map_.contains({quantity_enum, symbol_name})) {
+        return copyRef<Subspectrum, std::reference_wrapper<const Subspectrum>>(
+            derivatives_spectra_map_.at({quantity_enum, symbol_name})[number_of_block]);
     }
-    return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubspectrumDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
-ExplicitQuantitiesEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
-    if (derivatives_map_.contains({quantity_enum, symbol_name})) {
-        return derivatives_map_.at({quantity_enum, symbol_name}).matrix_;
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ExplicitQuantitiesEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
+#ifndef NDEBUG
+    if (derivatives_matrix_map_.contains({quantity_enum, symbol_name})) {
+        return derivatives_matrix_map_.at({quantity_enum, symbol_name})[number_of_block];
     }
-    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
+#endif
+    return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+ExplicitQuantitiesEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
+}
+
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ExplicitQuantitiesEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
@@ -56,22 +63,30 @@ ExplicitQuantitiesEigendecompositor::BuildSubspectra(
         eigendecompositor_->BuildSubspectra(number_of_block, subspace);
 
     for (const auto& [quantity_enum, operator_to_calculate] : quantities_operators_map_) {
+        // return_sparse_if_possible is true, because unitary transformation of sparse matrix is faster
         auto non_hamiltonian_submatrix =
-            Submatrix(subspace, *operator_to_calculate, converter_, factories_list_);
-        auto& quantity = quantities_map_[quantity_enum];
-        quantity.spectrum_.blocks[number_of_block] = non_energy_subspectrum(
+            Submatrix(subspace, *operator_to_calculate, converter_, factories_list_, true);
+        auto& quantity_spectrum = quantities_spectra_map_[quantity_enum];
+        quantity_spectrum[number_of_block] = non_energy_subspectrum(
             non_hamiltonian_submatrix,
             mb_unitary_transformation_matrix.value());
-        quantity.matrix_.blocks[number_of_block] = std::move(non_hamiltonian_submatrix);
+#ifndef NDEBUG
+        auto& quantity_matrix = quantities_matrix_map_[quantity_enum];
+        quantity_matrix[number_of_block] = std::move(non_hamiltonian_submatrix);
+#endif
     }
 
     for (auto& [pair, derivative_operator] : derivatives_operators_map_) {
+        // return_sparse_if_possible is true, because unitary transformation of sparse matrix is faster
         auto derivative_submatrix =
-            Submatrix(subspace, *derivative_operator, converter_, factories_list_);
-        auto& derivative = derivatives_map_[pair];
-        derivative.spectrum_.blocks[number_of_block] =
+            Submatrix(subspace, *derivative_operator, converter_, factories_list_, true);
+        auto& derivative_spectrum = derivatives_spectra_map_[pair];
+        derivative_spectrum[number_of_block] =
             non_energy_subspectrum(derivative_submatrix, mb_unitary_transformation_matrix.value());
-        derivative.matrix_.blocks[number_of_block] = std::move(derivative_submatrix);
+#ifndef NDEBUG
+        auto& derivative_matrix = derivatives_matrix_map_[pair];
+        derivative_matrix[number_of_block] = std::move(derivative_submatrix);
+#endif
     }
 
     return mb_unitary_transformation_matrix;
@@ -95,34 +110,40 @@ void ExplicitQuantitiesEigendecompositor::initialize(
                 "Energy operator passed to ExplicitQuantitiesEigendecompositor");
         }
         quantities_operators_map_[quantity_enum] = operator_to_calculate;
-        if (!quantities_map_.contains(quantity_enum)) {
-            quantities_map_[quantity_enum] = common::Quantity();
+        if (!quantities_spectra_map_.contains(quantity_enum)) {
+            quantities_spectra_map_[quantity_enum] = std::vector<OneOrMany<Subspectrum>>();
         }
-        quantities_map_[quantity_enum].matrix_.blocks.clear();
-        quantities_map_[quantity_enum].spectrum_.blocks.clear();
-        quantities_map_[quantity_enum].matrix_.blocks.resize(number_of_subspaces);
-        quantities_map_[quantity_enum].spectrum_.blocks.resize(number_of_subspaces);
+        if (!quantities_matrix_map_.contains(quantity_enum)) {
+            quantities_matrix_map_[quantity_enum] = std::vector<Submatrix>();
+        }
+        quantities_matrix_map_[quantity_enum].clear();
+        quantities_spectra_map_[quantity_enum].clear();
+        quantities_matrix_map_[quantity_enum].resize(number_of_subspaces);
+        quantities_spectra_map_[quantity_enum].resize(number_of_subspaces);
     }
 
     for (auto& [pair, derivative_operator] : derivatives_operators_to_calculate) {
         derivatives_operators_map_[pair] = derivative_operator;
-        if (!derivatives_map_.contains(pair)) {
-            derivatives_map_[pair] = common::Quantity();
+        if (!derivatives_spectra_map_.contains(pair)) {
+            derivatives_spectra_map_[pair] = std::vector<OneOrMany<Subspectrum>>();
         }
-        derivatives_map_[pair].matrix_.blocks.clear();
-        derivatives_map_[pair].spectrum_.blocks.clear();
-        derivatives_map_[pair].matrix_.blocks.resize(number_of_subspaces);
-        derivatives_map_[pair].spectrum_.blocks.resize(number_of_subspaces);
+        if (!derivatives_matrix_map_.contains(pair)) {
+            derivatives_matrix_map_[pair] = std::vector<Submatrix>();
+        }
+        derivatives_spectra_map_[pair].clear();
+        derivatives_matrix_map_[pair].clear();
+        derivatives_spectra_map_[pair].resize(number_of_subspaces);
+        derivatives_matrix_map_[pair].resize(number_of_subspaces);
     }
 
     // delete operators, because we are going to calculate corresponding spectra
-    for (const auto& p : quantities_map_) {
+    for (const auto& p : quantities_spectra_map_) {
         auto quantity_enum = p.first;
         std::erase_if(operators_to_calculate, [quantity_enum](const auto& p) {
             return p.first == quantity_enum;
         });
     }
-    for (const auto& p : derivatives_map_) {
+    for (const auto& p : derivatives_spectra_map_) {
         auto pair = p.first;
         std::erase_if(derivatives_operators_to_calculate, [pair](const auto& p) {
             return p.first == pair;
@@ -134,16 +155,20 @@ void ExplicitQuantitiesEigendecompositor::finalize() {
     eigendecompositor_->finalize();
 }
 
-Subspectrum ExplicitQuantitiesEigendecompositor::non_energy_subspectrum(
+OneOrMany<Subspectrum> ExplicitQuantitiesEigendecompositor::non_energy_subspectrum(
     const Submatrix& non_hamiltonian_submatrix,
-    const std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>&
+    const OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>&
         unitary_transformation_matrix) {
-    auto raw_data = unitary_transformation_matrix->unitaryTransformAndReturnMainDiagonal(
-        non_hamiltonian_submatrix.raw_data);
-
-    auto non_energy_subspectrum =
-        Subspectrum(std::move(raw_data), non_hamiltonian_submatrix.properties);
-
-    return std::move(non_energy_subspectrum);
+    return transform_one_or_many(
+    std::function([&non_hamiltonian_submatrix](std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix> unitary_transformation_matrix) {
+        const auto& transformer = unitary_transformation_matrix->getUnitaryTransformer();
+        auto raw_data = transformer->calculateUnitaryTransformationOfMatrix(
+            non_hamiltonian_submatrix.raw_data);
+    
+        auto non_energy_subspectrum =
+            Subspectrum(std::move(raw_data), non_hamiltonian_submatrix.properties);
+    
+        return std::move(non_energy_subspectrum);
+    }), unitary_transformation_matrix);
 }
 }  // namespace eigendecompositor

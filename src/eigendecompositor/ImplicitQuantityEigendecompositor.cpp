@@ -28,7 +28,7 @@ ImplicitQuantityEigendecompositor::ImplicitQuantityEigendecompositor(
     quantity_implicit_spectrum_ = Spectrum();
 }
 
-std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ImplicitQuantityEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
@@ -38,17 +38,12 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
         subspace);
 
     if (!first_iteration_has_been_done_) {
-        // todo: we use energy_subspectrum only because of size_of_subspace
-        //  can we implement calculation of size_of_subspace in Subspace class?
-        const auto& energy_subspectrum =
-            eigendecompositor_->getSpectrum(common::Energy).value().get().blocks.at(number_of_block);
-
         double value = calculate_value(subspace.properties);
 
-        size_t size_of_subspace = energy_subspectrum.raw_data->size();
+        size_t size_of_subspectrum = getSubspectrumSize(common::Energy, number_of_block);
 
         auto raw_data = factories_list_.createVector();
-        raw_data->add_identical_values(size_of_subspace, value);
+        raw_data->add_identical_values(size_of_subspectrum, value);
         quantity_implicit_spectrum_.blocks[number_of_block] =
             Subspectrum(std::move(raw_data), subspace.properties);
     }
@@ -56,40 +51,41 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
     return mb_unitary_transformation_matrix;
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
-ImplicitQuantityEigendecompositor::getSpectrum(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ImplicitQuantityEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
-        return quantity_implicit_spectrum_;
+        return quantity_implicit_spectrum_.blocks[number_of_block];
     }
-    return eigendecompositor_->getSpectrum(quantity_enum);
+    return eigendecompositor_->getSubspectrum(quantity_enum, number_of_block);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
-ImplicitQuantityEigendecompositor::getMatrix(common::QuantityEnum quantity_enum) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ImplicitQuantityEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return std::nullopt;
     }
-    return eigendecompositor_->getMatrix(quantity_enum);
+    return eigendecompositor_->getSubmatrix(quantity_enum, number_of_block);
 }
 
-std::optional<std::reference_wrapper<const Spectrum>>
-ImplicitQuantityEigendecompositor::getSpectrumDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
+ImplicitQuantityEigendecompositor::getSubspectrumDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return std::nullopt;
     }
-    return eigendecompositor_->getSpectrumDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubspectrumDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-std::optional<std::reference_wrapper<const Matrix>>
-ImplicitQuantityEigendecompositor::getMatrixDerivative(
-    common::QuantityEnum quantity_enum,
-    const model::symbols::SymbolName& symbol_name) const {
+std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
+ImplicitQuantityEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enum, const model::symbols::SymbolName& symbol_name, size_t number_of_block) const {
     if (quantity_enum == quantity_implicit_enum_) {
         return std::nullopt;
     }
-    return eigendecompositor_->getMatrixDerivative(quantity_enum, symbol_name);
+    return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
+}
+
+OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+ImplicitQuantityEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
+    return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
 }
 
 void ImplicitQuantityEigendecompositor::initialize(

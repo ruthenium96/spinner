@@ -18,6 +18,7 @@ class OptimizationsParser {
     void customParser(YAML::Node custom_node);
     void symmetrizerParser(YAML::Node symmetrizer_node);
     void groupParser(YAML::Node group_node);
+    void ftlmParser(YAML::Node ftlm_node);
 };
 
 }  // namespace input

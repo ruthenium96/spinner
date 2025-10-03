@@ -1,16 +1,146 @@
 #include "ArmaLogic.h"
+#include <stdexcept>
 
 #include "ArmaDenseDiagonalizableMatrix.h"
 #include "ArmaDenseSemiunitaryMatrix.h"
 #include "ArmaDenseVector.h"
 #include "ArmaSparseDiagonalizableMatrix.h"
 
-namespace quantum::linear_algebra {
-template <typename T>
-std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::diagonalizeValues(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& diagonalizableMatrix) const {
-    return diagonalizeValues(*diagonalizableMatrix);
+namespace {
+
+template <typename T, typename M>
+std::pair<arma::Col<T>, arma::Col<T>> krylovProcedureDiagonalizeValues_(
+    const M& matrix,
+    const arma::Col<T>& seed_vector,
+    size_t krylov_subspace_size) {
+    arma::Mat<T> krylov_matrix(krylov_subspace_size, krylov_subspace_size);
+        
+    if (krylov_subspace_size > matrix.n_cols) {
+        throw std::invalid_argument("krylov_subspace_size bigger than size of matrix!");
+    }
+
+    auto current_vector = arma::Col<T>(seed_vector);
+    double vec_norm = arma::vecnorm(current_vector);
+    if (vec_norm < std::numeric_limits<double>::epsilon()) {
+        throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
+    }
+    current_vector /= vec_norm;
+
+    auto previous_vector = arma::Col<T>(current_vector.size(), arma::fill::zeros);
+    auto next_vector = arma::Col<T>(current_vector.size(), arma::fill::zeros);
+
+    double diag_element, non_diag_element;
+
+    for (size_t k = 0; k < krylov_subspace_size; ++k) {
+        next_vector = matrix * current_vector;
+        diag_element = arma::dot(current_vector, next_vector);
+        if (k > 0) {
+            non_diag_element = arma::dot(previous_vector, next_vector);
+        }
+
+        krylov_matrix.at(k, k) = diag_element;
+        if (k > 0) {
+            krylov_matrix.at(k-1, k) = non_diag_element;
+            krylov_matrix.at(k, k-1) = non_diag_element;
+        }
+
+        next_vector -= current_vector * diag_element;
+        if (k > 0) {
+            next_vector -= previous_vector * non_diag_element;
+        }
+
+        double vec_norm = arma::vecnorm(next_vector);
+        if (vec_norm < std::numeric_limits<double>::epsilon()) {
+            throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
+        }
+        next_vector /= vec_norm;
+
+        arma::swap(previous_vector, current_vector);
+        arma::swap(current_vector, next_vector);
+    }
+
+    arma::Col<T> eigenvalues;
+    arma::Mat<T> eigenvectors;
+    arma::eig_sym(
+        eigenvalues,
+        eigenvectors,
+        krylov_matrix);
+    
+    arma::Col<T> back_projection = eigenvectors.row(0).t();
+
+    return {std::move(eigenvalues), std::move(back_projection)};
 }
+
+template <typename T, typename M>
+std::tuple<arma::Col<T>, arma::Mat<T>, arma::Col<T>> krylovProcedureDiagonalizeValuesVectors_(
+    const M& matrix,
+    const arma::Col<T>& seed_vector,
+    size_t krylov_subspace_size) {
+    arma::Mat<T> krylov_matrix(krylov_subspace_size, krylov_subspace_size);
+        
+    if (krylov_subspace_size > matrix.n_cols) {
+        throw std::invalid_argument("krylov_subspace_size bigger than size of matrix!");
+    }
+
+    arma::Mat<T> krylov_vectors(seed_vector.size(), krylov_subspace_size, arma::fill::zeros);
+    krylov_vectors.col(0) = seed_vector;
+
+    double vec_norm = arma::vecnorm(krylov_vectors.col(0));
+    if (vec_norm < std::numeric_limits<double>::epsilon()) {
+        throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
+    }
+    krylov_vectors.col(0) /= vec_norm;
+
+    auto next_vector = arma::Col<T>(seed_vector.size(), arma::fill::zeros);
+
+    double diag_element, non_diag_element;
+
+    for (size_t k = 0; k < krylov_subspace_size; ++k) {
+        next_vector = matrix * krylov_vectors.col(k);
+        diag_element = arma::dot(krylov_vectors.col(k), next_vector);
+        if (k > 0) {
+            non_diag_element = arma::dot(krylov_vectors.col(k-1), next_vector);
+        }
+
+        krylov_matrix.at(k, k) = diag_element;
+        if (k > 0) {
+            krylov_matrix.at(k-1, k) = non_diag_element;
+            krylov_matrix.at(k, k-1) = non_diag_element;
+        }
+
+        next_vector -= krylov_vectors.col(k) * diag_element;
+        if (k > 0) {
+            next_vector -= krylov_vectors.col(k-1) * non_diag_element;
+        }
+
+        double vec_norm = arma::vecnorm(next_vector);
+        if (vec_norm < std::numeric_limits<double>::epsilon()) {
+            throw std::invalid_argument("Extremely small value of vector norm in Krylov procedure: " + std::to_string(vec_norm));
+        }
+        next_vector /= vec_norm;
+
+        if (k + 1 < krylov_subspace_size) {
+            krylov_vectors.col(k+1) = next_vector;
+        }
+    }
+
+    arma::Col<T> eigenvalues;
+    arma::Mat<T> eigenvectors;
+    arma::eig_sym(
+        eigenvalues,
+        eigenvectors,
+        krylov_matrix);
+    
+    arma::Col<T> back_projection = eigenvectors.row(0).t();
+
+    arma::Mat<T> total_eigenvectors = krylov_vectors * eigenvectors;
+
+    return {std::move(eigenvalues), std::move(total_eigenvectors), std::move(back_projection)};
+}
+
+} // namespace
+
+namespace quantum::linear_algebra {
 
 template <typename T>
 std::unique_ptr<AbstractDenseVector>
@@ -32,12 +162,6 @@ ArmaLogic<T>::diagonalizeValues(const AbstractDiagonalizableMatrix& diagonalizab
     }
 
     return eigenvalues_;
-}
-
-template <typename T>
-EigenCouple ArmaLogic<T>::diagonalizeValuesVectors(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix) const {
-    return diagonalizeValuesVectors(*symmetricMatrix);
 }
 
 template <typename T>
@@ -70,78 +194,153 @@ EigenCouple ArmaLogic<T>::diagonalizeValuesVectors(
     return answer;
 }
 
-template <typename T>
-std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const std::unique_ptr<AbstractDenseSemiunitaryMatrix>& denseSemiunitaryMatrix) const {
-    return unitaryTransformAndReturnMainDiagonal(symmetricMatrix, *denseSemiunitaryMatrix);
+template <typename T, typename M>
+inline KrylovCouple krylovDiagonalizeValues_(
+    const M& diagonalizableMatrix,
+    const ArmaDenseVector<T>& seed_vector,
+    size_t krylov_subspace_size) {
+    auto eigenvalues_ = std::make_unique<ArmaDenseVector<T>>();
+    auto ftlm_weights_of_states_ = std::make_unique<ArmaDenseVector<T>>();
+
+    auto pair = krylovProcedureDiagonalizeValues_(
+        diagonalizableMatrix,
+        seed_vector.getDenseVector(),
+        krylov_subspace_size);
+
+    eigenvalues_->modifyDenseVector() = std::move(pair.first);
+    ftlm_weights_of_states_->modifyDenseVector() = std::move(arma::square(pair.second));
+
+    KrylovCouple answer;
+    answer.eigenvalues = std::move(eigenvalues_);
+    answer.ftlm_weights_of_states = std::move(ftlm_weights_of_states_);
+    return answer;
 }
 
 template <typename T>
-std::unique_ptr<AbstractDenseVector> ArmaLogic<T>::unitaryTransformAndReturnMainDiagonal(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
-    auto main_diagonal = std::make_unique<ArmaDenseVector<T>>();
+KrylovCouple ArmaLogic<T>::krylovDiagonalizeValues(
+    const AbstractDiagonalizableMatrix& diagonalizableMatrix,
+    const AbstractDenseVector& seed_vector,
+    size_t krylov_subspace_size) const {
+    if (auto maybeDenseVector =
+        dynamic_cast<const ArmaDenseVector<T>*>(&seed_vector)) {
+        if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            // It is slow, avoid this branch.
+            return krylovDiagonalizeValues_(
+                maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
+        } else if (auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            return krylovDiagonalizeValues_(
+                maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
+       } else {
+           throw std::bad_cast();
+       }
+   } else {
+       throw std::bad_cast();
+   }
+}
 
-    auto maybeDenseSemiunitaryMatrix =
-        dynamic_cast<const ArmaDenseSemiunitaryMatrix<T>*>(&denseSemiunitaryMatrix);
-    if (maybeDenseSemiunitaryMatrix == nullptr) {
+template <typename T, typename M>
+inline KrylovTriple krylovDiagonalizeValuesVectors_(
+    const M& diagonalizableMatrix,
+    const ArmaDenseVector<T>& seed_vector,
+    size_t krylov_subspace_size) {
+    auto eigenvalues_ = std::make_unique<ArmaDenseVector<T>>();
+    auto eigenvectors_ = std::make_unique<ArmaKrylovDenseSemiunitaryMatrix<T>>();
+    auto ftlm_weights_of_states_ = std::make_unique<ArmaDenseVector<T>>();
+
+    auto triple = krylovProcedureDiagonalizeValuesVectors_(
+        diagonalizableMatrix,
+        seed_vector.getDenseVector(),
+        krylov_subspace_size);
+
+    eigenvalues_->modifyDenseVector() = std::move(std::get<0>(triple));
+    ftlm_weights_of_states_->modifyDenseVector() = arma::square(std::get<2>(triple));
+    eigenvectors_->modifyKrylovDenseSemiunitaryMatrix() = std::move(std::get<1>(triple));
+    eigenvectors_->modifyBackProjectionVector() = std::move(std::get<2>(triple));
+    eigenvectors_->modifySeedVector() = seed_vector.getDenseVector();
+
+    // instead of <n|A|r><r|n>, here we are using <n|A|r>/<r|n>,
+    // putting |<r|n>|^2 in the weight of state
+    // in the case of small <r|n>, we substitute it with infinity 
+    // to avoid numerical instabilities
+    const T EPSILON = 1e-14;
+    eigenvectors_->modifyBackProjectionVector().clean(EPSILON);
+    eigenvectors_->modifyBackProjectionVector().replace(0, arma::datum::inf);
+
+    KrylovTriple answer;
+    answer.eigenvalues = std::move(eigenvalues_);
+    answer.eigenvectors = std::move(eigenvectors_);
+    answer.ftlm_weights_of_states = std::move(ftlm_weights_of_states_);
+    return answer;
+}
+
+template <typename T>
+KrylovTriple ArmaLogic<T>::krylovDiagonalizeValuesVectors(
+    const AbstractDiagonalizableMatrix& diagonalizableMatrix,
+    const AbstractDenseVector& seed_vector,
+    size_t krylov_subspace_size) const { 
+    if (auto maybeDenseVector =
+        dynamic_cast<const ArmaDenseVector<T>*>(&seed_vector)) {
+        if (auto maybeDenseSymmetricMatrix =
+            dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            // It is slow, avoid this branch.
+            return krylovDiagonalizeValuesVectors_(
+                maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
+        } else if (auto maybeSparseSymmetricMatrix =
+            dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(&diagonalizableMatrix)) {
+            return krylovDiagonalizeValuesVectors_(
+                maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
+                *maybeDenseVector,
+                krylov_subspace_size
+            );
+        } else {
+            throw std::bad_cast();
+        }
+    } else {
         throw std::bad_cast();
     }
+}
 
-    if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        arma::Mat<T> firstMultiplicationResult =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
-            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix();
-        main_diagonal->modifyDenseVector() = arma::diagvec(
-            firstMultiplicationResult * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix());
-        return std::move(main_diagonal);
-    }
+template<typename T, typename M>
+inline std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform_(
+    const M& symmetric_matrix,
+    const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) {
+    auto result = std::make_unique<ArmaDenseDiagonalizableMatrix<T>>();
 
-    if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        arma::Mat<T> firstMultiplicationResult =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
-            * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix();
-        main_diagonal->modifyDenseVector() = arma::diagvec(
-            firstMultiplicationResult * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix());
-        return std::move(main_diagonal);
-    }
+    result->modifyDenseDiagonalizableMatrix() =
+        denseSemiunitaryMatrix.getDenseSemiunitaryMatrix().t()
+        * symmetric_matrix
+        * denseSemiunitaryMatrix.getDenseSemiunitaryMatrix();
 
-    throw std::bad_cast();
+    return std::move(result);
 }
 
 template <typename T>
 std::unique_ptr<AbstractDiagonalizableMatrix> ArmaLogic<T>::unitaryTransform(
     const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const AbstractDenseSemiunitaryMatrix& denseSemiunitaryMatrix) const {
-    auto result = std::make_unique<ArmaDenseDiagonalizableMatrix<T>>();
-
-    auto maybeDenseSemiunitaryMatrix =
-        dynamic_cast<const ArmaDenseSemiunitaryMatrix<T>*>(&denseSemiunitaryMatrix);
-    if (maybeDenseSemiunitaryMatrix == nullptr) {
-        throw std::bad_cast();
-    }
-
+    const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
     if (auto maybeSparseSymmetricMatrix =
             dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        result->modifyDenseDiagonalizableMatrix() =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
-            * maybeSparseSymmetricMatrix->getSparseSymmetricMatrix()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
-        return std::move(result);
+        return std::move(unitaryTransform_(
+            maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
+            denseSemiunitaryMatrix));
     }
-
     if (auto maybeDenseSymmetricMatrix =
             dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        result->modifyDenseDiagonalizableMatrix() =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().t()
-            * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
-        return std::move(result);
+        return std::move(unitaryTransform_(
+            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
+            denseSemiunitaryMatrix));
     }
-
     throw std::bad_cast();
 }
 

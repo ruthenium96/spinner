@@ -220,7 +220,8 @@ TEST(
             runner.getSpace(),
             *runner.getOperator(common::QuantityEnum::S_total_squared).value(),
             runner.getIndexConverter(),
-            runner.getDataStructuresFactories());
+            runner.getDataStructuresFactories(),
+            true);
 
         auto s_squared_vector = runner.getDataStructuresFactories().createVector();
 

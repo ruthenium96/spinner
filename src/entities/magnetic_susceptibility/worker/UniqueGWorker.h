@@ -2,6 +2,8 @@
 #define SPINNER_UNIQUEGWORKER_H
 
 #include "BasicWorker.h"
+#include "src/common/Quantity.h"
+#include "src/model/symbols/SymbolName.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -10,21 +12,21 @@ namespace magnetic_susceptibility::worker {
 class UniqueGWorker: public BasicWorker {
   public:
     UniqueGWorker(
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& energy,
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& degeneracy,
-        std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>&& quantity,
-        double g_unique);
+        std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
+        std::function<double()> g_unique_getter, 
+        common::QuantityEnum quantity_enum_for_averaging, 
+        double quantity_factor);
 
-    double calculateTheoreticalMuSquared(double temperature) const override;
+    common::UncertainValue calculateTheoreticalMuSquared(double temperature) const override;
     std::vector<ValueAtTemperature> calculateDerivative(
         model::symbols::SymbolTypeEnum symbol_type,
-        std::
-            map<common::QuantityEnum, std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
-                values_derivatives_map) const override;
+        model::symbols::SymbolName symbol_name) const override;
 
   private:
-    double g_unique_;
-    std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> quantity_;
+    std::function<double()> g_unique_getter_;
+    std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;
+    double quantity_factor_;
+    common::QuantityEnum quantity_enum_for_averaging_;
 };
 
 }  // namespace magnetic_susceptibility

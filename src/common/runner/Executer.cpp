@@ -1,6 +1,7 @@
 #include "Executer.h"
 
 #include "src/common/PrintingFunctions.h"
+#include "src/common/runner/ConsistentModelOptimizationList.h"
 
 namespace runner {
 void Executer::execute(input::Parser parser) {
@@ -8,12 +9,15 @@ void Executer::execute(input::Parser parser) {
     auto factoriesList = parser.getFactoriesList().value();
 
     for (const auto& model_input : parser.getModelInputs()) {
+        if (parser.getModelInputs().size() > 1) {
+            common::nonSingleModeParametersPrint(model_input);
+        }
         auto runner = runner::Runner(model_input, optimization_list, factoriesList);
 
         if (parser.getTemperaturesForSimulation().has_value()) {
             std::vector<magnetic_susceptibility::ValueAtTemperature> theor_values;
             for (auto temp : parser.getTemperaturesForSimulation().value()) {
-                double value = runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(temp);
+                auto value = runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(temp);
                 theor_values.push_back({temp, value});
             }
 
@@ -28,4 +32,13 @@ void Executer::execute(input::Parser parser) {
         }
     }
 }
+
+void Executer::dry_execute(input::Parser parser) {
+    auto optimization_list = parser.getOptimizationList().value();
+
+    for (const auto& model_input : parser.getModelInputs()) {
+        ConsistentModelOptimizationList model_optimization_list(model_input, optimization_list);
+    }
+}
+
 }  // namespace runner

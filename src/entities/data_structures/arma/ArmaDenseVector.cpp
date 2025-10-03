@@ -1,10 +1,29 @@
 #include "ArmaDenseVector.h"
+#include <stdexcept>
 
 namespace quantum::linear_algebra {
 
 template <typename T>
 void ArmaDenseVector<T>::resize(uint32_t new_size) {
     vector_.resize(new_size);
+}
+
+template <typename T>
+void ArmaDenseVector<T>::makeRandomUnitVector(uint32_t size) {
+    if (!vector_.empty()) {
+        throw std::invalid_argument("Trying to make random unit vector from non-empty vector.");
+    }
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+    std::normal_distribution d{0.0, 1.0};
+
+    vector_.resize(size);
+    for (uint32_t i = 0; i < size; ++i) {
+        vector_(i) = d(gen);
+    }
+
+    double vec_norm = arma::vecnorm(vector_);
+    vector_ /= vec_norm;
 }
 
 template <typename T>
@@ -53,6 +72,16 @@ double ArmaDenseVector<T>::dot(const std::unique_ptr<AbstractDenseVector>& rhs) 
 }
 
 template <typename T>
+double ArmaDenseVector<T>::triple_dot(
+    const std::unique_ptr<AbstractDenseVector>& second, 
+    const std::unique_ptr<AbstractDenseVector>& third) const {
+    auto second_ = downcast_ptr(second);
+    auto third_ = downcast_ptr(third);
+
+    return arma::dot(vector_, second_->vector_ % third_->vector_);
+}
+
+template <typename T>
 std::unique_ptr<AbstractDenseVector> ArmaDenseVector<T>::element_wise_multiplication(
     const std::unique_ptr<AbstractDenseVector>& rhs) const {
     auto rhs_ = downcast_ptr(rhs);
@@ -93,7 +122,7 @@ arma::Col<T>& ArmaDenseVector<T>::modifyDenseVector() {
 }
 
 template <typename T>
-const arma::Col<T>& ArmaDenseVector<T>::getDenseVector() {
+const arma::Col<T>& ArmaDenseVector<T>::getDenseVector() const {
     return vector_;
 }
 

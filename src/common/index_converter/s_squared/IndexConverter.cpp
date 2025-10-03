@@ -71,6 +71,8 @@ IndexConverter::IndexConverter(
         ++i;
     }
 
+    common::orderOfSummationPrint(*order_of_summation);
+
     common::sSquaredIndexConverterPrint(*this);
 }
 

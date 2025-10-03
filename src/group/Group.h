@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <map>
+#include <optional>
 #include <set>
 #include <stdexcept>
 #include <vector>
@@ -51,10 +52,18 @@ class Group {
 
     enum GroupTypeEnum {
         S2,
-        S3,
+        Dihedral,
     };
 
-    explicit Group(GroupTypeEnum group_name, std::vector<Permutation> generators);
+    struct GroupType {
+        GroupTypeEnum type_enum;
+        std::optional<unsigned int> order;
+
+        GroupType(GroupTypeEnum enum_) : type_enum(enum_), order(std::nullopt) {};
+        GroupType(GroupTypeEnum enum_, std::optional<unsigned int> order_) : type_enum(enum_), order(order_) {};
+    };
+
+    explicit Group(GroupType group_type, std::vector<Permutation> generators);
 
     size_t size_of_permutations() const;
 
@@ -66,11 +75,12 @@ class Group {
 
     bool operator!=(const Group& rhs) const;
 
-    const Group::AlgebraicProperties& properties;
+    const Group::AlgebraicProperties properties;
 
     const std::vector<Permutation>& getElements() const;
+    const std::vector<Permutation>& getGenerators() const;
 
-    static const AlgebraicProperties& return_group_info_by_group_name(GroupTypeEnum group_name);
+    static AlgebraicProperties return_group_info_by_group_type(GroupType group_name);
 
   private:
     std::vector<Permutation> elements_;
@@ -85,7 +95,8 @@ struct InitializationError: public std::logic_error {
 
 }  // namespace group
 
+group::Group::AlgebraicProperties constructDihedral(unsigned int order);
+
 extern const group::Group::AlgebraicProperties GroupInfoS2;
-extern const group::Group::AlgebraicProperties GroupInfoS3;
 
 #endif  //SPINNER_GROUP_H

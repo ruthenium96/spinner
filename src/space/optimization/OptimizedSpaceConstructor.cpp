@@ -51,7 +51,7 @@ Space OptimizedSpaceConstructor::construct(
         TzSorter tz_sorter(indexConverter, factories);
         common::Logger::detailed_msg("Tz-sortation has started.");
         space = tz_sorter.apply(std::move(space));
-        common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+        common::Logger::verbose("Sizes of blocks:\n{}", spdlog::fmt_lib::join(sizes_of_blocks(space), ", "));
         common::Logger::detailed_msg("Tz-sortation is finished.");
     }
 
@@ -61,7 +61,7 @@ Space OptimizedSpaceConstructor::construct(
         TSquaredSorter tsquared_sorter(sSquaredIndexConverter, factories);
         common::Logger::detailed_msg("T2-sortation has started.");
         space = tsquared_sorter.apply(std::move(space));
-        common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+        common::Logger::verbose("Sizes of blocks:\n{}", spdlog::fmt_lib::join(sizes_of_blocks(space), ", "));
         common::Logger::detailed_msg("T2-sortation is finished.");
     }
 
@@ -71,7 +71,7 @@ Space OptimizedSpaceConstructor::construct(
         PositiveProjectionsEliminator positiveProjectionsEliminator(max_ntz_proj);
         common::Logger::detailed_msg("Positive projections elimination has started.");
         space = positiveProjectionsEliminator.apply(std::move(space));
-        common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+        common::Logger::verbose("Sizes of blocks:\n{}", spdlog::fmt_lib::join(sizes_of_blocks(space), ", "));
         common::Logger::detailed_msg("Positive projections elimination is finished.");
         common::Logger::separate(1, common::detailed);
     }
@@ -82,7 +82,7 @@ Space OptimizedSpaceConstructor::construct(
         NonMinimalProjectionsEliminator nonMinimalProjectionsEliminator(max_ntz_proj);
         common::Logger::detailed_msg("Non-minimal projections elimination has started.");
         space = nonMinimalProjectionsEliminator.apply(std::move(space));
-        common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+        common::Logger::verbose("Sizes of blocks:\n{}", spdlog::fmt_lib::join(sizes_of_blocks(space), ", "));
         common::Logger::detailed_msg("Non-minimal projections elimination is finished.");
         common::Logger::separate(1, common::detailed);
     }
@@ -104,8 +104,16 @@ Space OptimizedSpaceConstructor::construct(
         Symmetrizer symmetrizer(permutator, group, factories);
         common::Logger::detailed_msg("Symmetrization has started.");
         space = symmetrizer.apply(std::move(space));
-        common::Logger::verbose("Sizes of blocks:\n{}", fmt::join(sizes_of_blocks(space), ", "));
+        common::Logger::verbose("Sizes of blocks:\n{}", spdlog::fmt_lib::join(sizes_of_blocks(space), ", "));
         common::Logger::detailed_msg("Symmetrization is finished.");
+        if (!group.properties.is_abelian && optimizationList.isNonAbelianSimplified()) {
+            common::Logger::separate(2, common::verbose);
+            common::Logger::detailed_msg("Non-Abelian Simplification has started.");
+            NonAbelianSimplifier non_abelian_simplifier(factories);
+            space = non_abelian_simplifier.apply(std::move(space));
+            common::Logger::verbose("Sizes of blocks:\n{}", spdlog::fmt_lib::join(sizes_of_blocks(space), ", "));
+            common::Logger::detailed_msg("Non-Abelian Simplification is finished.");    
+        }
         if (i + 1 == optimizationList.getGroupsToApply().size()) {
             common::Logger::separate(1, common::detailed);
         } else {

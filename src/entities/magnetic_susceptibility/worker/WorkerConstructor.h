@@ -5,7 +5,7 @@
 
 #include "AbstractWorker.h"
 #include "src/common/runner/ConsistentModelOptimizationList.h"
-#include "src/eigendecompositor/AbstractEigendecompositor.h"
+#include "src/eigendecompositor/FlattenedSpectra.h"
 
 namespace magnetic_susceptibility::worker {
 
@@ -13,7 +13,7 @@ class WorkerConstructor {
   public:
     static std::unique_ptr<AbstractWorker> construct(
         const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-        const std::unique_ptr<eigendecompositor::AbstractEigendecompositor>& eigendecompositor,
+        std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
         const quantum::linear_algebra::FactoriesList& factories);
 };
 

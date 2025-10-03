@@ -2,8 +2,11 @@
 
 #include <fstream>
 #include <iostream>
+#include <stdexcept>
+#include <string>
 
 #include "Tools.h"
+#include "src/common/UncertainValue.h"
 #include "src/nonlinear_solver/optimNM/optimNMAdapter.h"
 #include "src/nonlinear_solver/stlbfgs/stlbfgsAdapter.h"
 
@@ -14,9 +17,19 @@
 
 template<>
 magnetic_susceptibility::ValueAtTemperature YAML::Node::as() const {
-    auto temp_and_value = as<std::array<double, 2>>();
+    auto temp_and_value = as<std::vector<double>>();
 
-    return {temp_and_value[0], temp_and_value[1]};
+    if (temp_and_value.size() == 1 || temp_and_value.size() > 3) {
+        throw std::invalid_argument(
+            "Cannot parse experimental data, size of the point: "
+            + std::to_string(temp_and_value.size()) + " " +as<std::string>());
+    }
+    if (temp_and_value.size() == 2) {
+        return {temp_and_value[0], common::UncertainValue(temp_and_value[1])};
+    } else {
+        common::UncertainValue value(temp_and_value[1], temp_and_value[2], common::EXPERIMENT);
+        return {temp_and_value[0], value};
+    }
 }
 
 template<>
@@ -120,11 +133,26 @@ void JobParser::read_data_from_file(
     std::vector<magnetic_susceptibility::ValueAtTemperature>& exp_data,
     const std::string& exp_filename) {
     std::ifstream exp_filestream (exp_filename);
-    while (exp_filestream) {
-        double temp;
-        double value;
-        exp_filestream >> temp >> value;
-        magnetic_susceptibility::ValueAtTemperature temp_and_value = {temp, value};
+    std::string line; 
+    while (std::getline(exp_filestream, line)) {
+        std::istringstream iss(line);
+        std::vector<double> values;
+        std::string value_string;
+        while (std::getline(iss, value_string, ' ')) {
+            values.emplace_back(std::stod(value_string));
+        }
+        if (values.size() == 1 || values.size() > 3) {
+            throw std::invalid_argument(
+                "Cannot parse experimental data, size of the point: "
+                + std::to_string(values.size()) + line);    
+        }
+
+        magnetic_susceptibility::ValueAtTemperature temp_and_value; 
+        if (values.size() == 2){
+            temp_and_value = {values[0], common::UncertainValue(values[1])};
+        } else {
+            temp_and_value = {values[0], common::UncertainValue(values[1], values[2], common::EXPERIMENT)};
+        }
         exp_data.emplace_back(temp_and_value);
     }
 }

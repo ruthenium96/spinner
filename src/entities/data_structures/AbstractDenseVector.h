@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 namespace quantum::linear_algebra {
 class AbstractDenseVector {
@@ -15,6 +14,9 @@ class AbstractDenseVector {
 
     virtual std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const = 0;
     virtual double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const = 0;
+    // einsum of "iii->" type:
+    virtual double triple_dot(const std::unique_ptr<AbstractDenseVector>& second, 
+      const std::unique_ptr<AbstractDenseVector>& third) const = 0;
     virtual std::unique_ptr<AbstractDenseVector>
     element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const = 0;
 
