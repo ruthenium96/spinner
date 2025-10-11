@@ -1,5 +1,4 @@
 add_library(common
-        Logger.h
         runner/Runner.cpp
         runner/Executer.cpp runner/Executer.h
         PrintingFunctions.cpp PrintingFunctions.h
@@ -7,6 +6,9 @@ add_library(common
         physical_optimization/OptimizationList.cpp physical_optimization/OptimizationList.h
         runner/ConsistentModelOptimizationList.h runner/ConsistentModelOptimizationList.cpp
         MumxHash.h)
+
+add_library(logger Logger.h)
+set_target_properties(logger PROPERTIES LINKER_LANGUAGE CXX)
 
 add_library(index_converter
         index_converter/lexicographic/IndexConverter.cpp index_converter/lexicographic/IndexConverter.h
@@ -18,15 +20,17 @@ add_library(index_converter
         index_converter/s_squared/OrderOfSummation.cpp index_converter/s_squared/OrderOfSummation.h)
 
 find_package(spdlog)
-#todo: download if necessary
-# Include(FetchContent)
-#FetchContent_Declare(
-#    spdlog
-#    GIT_REPOSITORY https://github.com/gabime/spdlog.git
-#    GIT_TAG v1.9.2
-#)
-#FetchContent_MakeAvailable(spdlog)
+Include(FetchContent)
+FetchContent_Declare(
+   spdlog
+   GIT_REPOSITORY https://github.com/gabime/spdlog.git
+   GIT_TAG v1.9.2
+)
+FetchContent_MakeAvailable(spdlog)
 
+target_link_libraries(logger spdlog::spdlog magic_enum)
+
+target_link_libraries(index_converter logger)
 
 target_link_libraries(common index_converter model space magnetic_susceptibility nonlinear_solver eigendecompositor
-        spdlog::spdlog magic_enum)
+        logger magic_enum)
