@@ -25,7 +25,7 @@ if (Eigen3_FOUND)
     target_link_libraries(nonlinear_solver lbfgspp_adapter)
 endif ()
 
-find_package(Armadillo 10.6)
+find_package(Armadillo 12.4)
 if (ARMADILLO_FOUND OR Eigen3_FOUND)
     FetchContent_Declare(
             optim
