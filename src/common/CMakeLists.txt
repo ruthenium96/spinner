@@ -32,5 +32,5 @@ target_link_libraries(logger spdlog::spdlog magic_enum)
 
 target_link_libraries(index_converter logger)
 
-target_link_libraries(common index_converter model space magnetic_susceptibility nonlinear_solver eigendecompositor
+target_link_libraries(common index_converter model space magnetic_susceptibility nonlinear_solver eigendecompositor input
         logger magic_enum)
