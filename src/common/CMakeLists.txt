@@ -20,13 +20,18 @@ add_library(index_converter
         index_converter/s_squared/OrderOfSummation.cpp index_converter/s_squared/OrderOfSummation.h)
 
 find_package(spdlog)
-Include(FetchContent)
-FetchContent_Declare(
-   spdlog
-   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-   GIT_TAG v1.9.2
-)
-FetchContent_MakeAvailable(spdlog)
+if (spdlog_FOUND)
+        message(" *** System spdlog was found")
+else ()
+        Include(FetchContent)
+        FetchContent_Declare(
+        spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.15.3
+        )
+        FetchContent_MakeAvailable(spdlog)
+        message(" *** spdlog was downloaded")
+endif ()
 
 target_link_libraries(logger spdlog::spdlog magic_enum)
 
