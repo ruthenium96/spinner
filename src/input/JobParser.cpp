@@ -10,10 +10,6 @@
 #include "src/nonlinear_solver/optimNM/optimNMAdapter.h"
 #include "src/nonlinear_solver/stlbfgs/stlbfgsAdapter.h"
 
-#ifdef _LBFGSppAdapter_BUILT
-    #include "src/nonlinear_solver/LBFGSpp/LBFGSppAdapter.h"
-#endif
-
 
 template<>
 magnetic_susceptibility::ValueAtTemperature YAML::Node::as() const {
@@ -40,12 +36,6 @@ std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> YAML::Node::as() cons
         return std::make_shared<nonlinear_solver::optimNMAdapter>();
     } else if (solver_string == "stl_bfgs") {
         return std::make_shared<nonlinear_solver::stlbfgsAdapter>();
-    } else if (solver_string == "lbfgs_cpp") {
-#ifdef _LBFGSppAdapter_BUILT
-        return std::make_shared<nonlinear_solver::LBFGSppAdapter>();
-#else
-        throw std::invalid_argument("LBFGSppAdapter was not built");
-#endif
     } else {
         throw std::invalid_argument("Incorrect job::fit::solver: " + solver_string);
     }

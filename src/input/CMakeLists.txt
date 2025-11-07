@@ -33,7 +33,6 @@ add_library(input
         JobParser.cpp JobParser.h
         ControlParser.cpp ControlParser.h)
 
-add_definitions(-D_LBFGSppAdapter_BUILT=${Eigen3_FOUND}) # necessary for using of lbfgs-cpp
 add_definitions(-D_Eigen_BUILT=${Eigen3_FOUND}) # necessary for construction of FactoriesList
 add_definitions(-D_Arma_BUILT=${ARMADILLO_FOUND}) # necessary for construction of FactoriesList
 

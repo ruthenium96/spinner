@@ -126,7 +126,7 @@ job:
 
 #### `fit`
 
-In this case, it is necessary to determine the nonlinear regression method (`optim_nm`, `stl_bfgs` or `lbfgs_cpp`) and to specify the experimental data for which the inverse problem must be solved. To specify the experimental data, it is necessary to specify 
+In this case, it is necessary to determine the nonlinear regression method (`optim_nm` or `stl_bfgs`) and to specify the experimental data for which the inverse problem must be solved. To specify the experimental data, it is necessary to specify 
 - the ratio of the number of centres in the experiment to the number of centres in the model, 
 - the dimensionality of the experimental data (`mu_in_bohr_magnetons`,`mu_squared_in_bohr_magnetons_squared`, `chiT_in_cm_cubed_kelvin_per_mol`, `chi_in_cm_cubed_per_mol`), 
 - the method of weighting the experimental data (`per_point`, `per_interval`),
