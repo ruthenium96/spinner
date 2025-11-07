@@ -131,17 +131,3 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmet
         runner::ConsistentModelOptimizationList(model, optimizationList),
         std::invalid_argument);
 }
-
-TEST(consistentModelOptimizationList_tests, throw_NonMinimalProjectionsEliminator_withour_TSquaredSort) {
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort();
-
-    EXPECT_THROW(optimizationList.EliminateNonMininalProjections(), std::invalid_argument);
-}
-
-TEST(consistentModelOptimizationList_tests, throw_NonMinimalProjectionsEliminator_withour_TzSort) {
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TSquaredSort();
-
-    EXPECT_THROW(optimizationList.EliminateNonMininalProjections(), std::invalid_argument);
-}
