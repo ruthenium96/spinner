@@ -78,16 +78,6 @@ arma::Col<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::modifyBackProjectionVector() 
     return backProjectionVector_;
 }
 
-template <typename T>
-void ArmaKrylovDenseSemiunitaryMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
-    throw std::invalid_argument("ArmaKrylovDenseSemiunitaryMatrix cannot do add_to_position");
-}
-
-template <typename T>
-void ArmaKrylovDenseSemiunitaryMatrix<T>::normalize() {
-    throw std::invalid_argument("ArmaKrylovDenseSemiunitaryMatrix cannot do normalize");
-}
-
 template class ArmaKrylovDenseSemiunitaryMatrix<double>;
 template class ArmaKrylovDenseSemiunitaryMatrix<float>;
 }  // namespace quantum::linear_algebra

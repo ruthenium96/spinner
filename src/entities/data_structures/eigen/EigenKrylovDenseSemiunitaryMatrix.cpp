@@ -76,16 +76,6 @@ Eigen::Vector<T, -1>& EigenKrylovDenseSemiunitaryMatrix<T>::modifySeedVector() {
     return seed_vector_;
 }
 
-template <typename T>
-void EigenKrylovDenseSemiunitaryMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
-    throw std::invalid_argument("EigenKrylovDenseSemiunitaryMatrix cannot do add_to_position");
-}
-
-template <typename T>
-void EigenKrylovDenseSemiunitaryMatrix<T>::normalize() {
-    throw std::invalid_argument("EigenKrylovDenseSemiunitaryMatrix cannot do normalize");
-}
-
 template class EigenKrylovDenseSemiunitaryMatrix<double>;
 template class EigenKrylovDenseSemiunitaryMatrix<float>;
 }  // namespace quantum::linear_algebra

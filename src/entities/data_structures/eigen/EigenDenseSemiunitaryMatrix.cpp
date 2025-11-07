@@ -60,18 +60,6 @@ Eigen::Matrix<T, -1, -1>& EigenDenseSemiunitaryMatrix<T>::modifyDenseSemiunitary
     return denseSemiunitaryMatrix_;
 }
 
-template <typename T>
-void EigenDenseSemiunitaryMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
-    denseSemiunitaryMatrix_(j, i) += value;
-}
-
-template <typename T>
-void EigenDenseSemiunitaryMatrix<T>::normalize() {
-    for (int i = 0; i < denseSemiunitaryMatrix_.cols(); i++) {
-        denseSemiunitaryMatrix_.col(i).normalize();
-    }
-}
-
 template class EigenDenseSemiunitaryMatrix<double>;
 template class EigenDenseSemiunitaryMatrix<float>;
 }  // namespace quantum::linear_algebra

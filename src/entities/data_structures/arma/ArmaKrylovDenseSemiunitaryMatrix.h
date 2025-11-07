@@ -15,7 +15,6 @@ class ArmaKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     uint32_t size_rows() const override;
     uint32_t size_cols() const override;
     double at(uint32_t i, uint32_t j) const override;
-    void add_to_position(double value, uint32_t i, uint32_t j) override;
 
     void print(std::ostream& os) const override;
     std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
@@ -27,8 +26,6 @@ class ArmaKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     arma::Col<T>& modifyBackProjectionVector();
     const arma::Col<T>& getSeedVector() const;
     arma::Col<T>& modifySeedVector();
-
-    void normalize() override;
 
     const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& getUnitaryTransformer() const override;
 
