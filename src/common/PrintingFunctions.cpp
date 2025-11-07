@@ -17,10 +17,6 @@ std::ostream& operator<<(std::ostream& os, const space::Space& space) {
 std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace) {
     os << subspace.properties;
     subspace.decomposition->print(os);
-    if (subspace.dense_semiunitary_matrix.has_value()) {
-        os << std::endl;
-        subspace.dense_semiunitary_matrix.value()->print(os);
-    }
     os << std::endl;
     return os;
 }
