@@ -41,17 +41,6 @@ std::vector<common::physical_optimization::OptimizationList> generate_all_optimi
             answer.push_back(copy);
         } catch (std::invalid_argument) {}
     }
-    last_size = answer.size();
-    for (int i = 0; i < last_size; ++i) {
-        if (answer[i].isITOBasis()) {
-            continue;
-        }
-        try {
-            common::physical_optimization::OptimizationList copy = answer[i];
-            copy.TSquaredSort().EliminateNonMininalProjections().SSquaredTransform();
-            answer.push_back(copy);
-        } catch (std::invalid_argument) {}
-    }
 
     last_size = answer.size();
     for (int i = 0; i < last_size; ++i) {

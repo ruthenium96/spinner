@@ -157,29 +157,6 @@ custom:
 
         EXPECT_FALSE(optimizationList.isTzSorted());
         EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
-        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
-        EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
-        EXPECT_TRUE(optimizationList.isLexBasis());
-    }
-    {
-        std::string string = R""""(
-mode: custom
-custom:
-  basis: lex
-  tz_sorter:
-  tsquared_sorter:
-  nonminimal_tz_eliminator:
-  s2_transformer:
-)"""";
-        auto parser = input::OptimizationsParser(YAML::Load(string));
-
-        EXPECT_NO_THROW(parser.getOptimizationList().value());
-
-        const auto& optimizationList = parser.getOptimizationList().value();
-
-        EXPECT_TRUE(optimizationList.isTzSorted());
-        EXPECT_TRUE(optimizationList.isNonMinimalProjectionsEliminated());
-        EXPECT_TRUE(optimizationList.isSSquaredTransformed());
         EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
         EXPECT_TRUE(optimizationList.isLexBasis());
     }
@@ -203,7 +180,6 @@ custom:
 
         EXPECT_FALSE(optimizationList.isTzSorted());
         EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
-        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
         EXPECT_EQ(optimizationList.getGroupsToApply().size(), 2);
         EXPECT_TRUE(optimizationList.isLexBasis());
     }
@@ -224,7 +200,6 @@ custom:
 
         EXPECT_FALSE(optimizationList.isTzSorted());
         EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
-        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
         EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
         EXPECT_TRUE(optimizationList.isITOBasis());
     }
@@ -245,7 +220,6 @@ custom:
 
         EXPECT_TRUE(optimizationList.isTzSorted());
         EXPECT_TRUE(optimizationList.isPositiveProjectionsEliminated());
-        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
         EXPECT_TRUE(optimizationList.getGroupsToApply().empty());
         EXPECT_TRUE(optimizationList.isITOBasis());
     }
@@ -266,7 +240,6 @@ custom:
 
         EXPECT_FALSE(optimizationList.isTzSorted());
         EXPECT_FALSE(optimizationList.isPositiveProjectionsEliminated());
-        EXPECT_FALSE(optimizationList.isSSquaredTransformed());
         EXPECT_EQ(optimizationList.getGroupsToApply().size(), 1);
         EXPECT_TRUE(optimizationList.isITOBasis());
     }

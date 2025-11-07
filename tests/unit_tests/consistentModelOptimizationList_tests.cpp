@@ -132,36 +132,6 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmet
         std::invalid_argument);
 }
 
-TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_of_ZFS) {
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
-    model::ModelInput model(mults);
-    double J_value = 10;
-    double g_value = 2.0;
-    double D_value = 5.0;
-    auto J = model.addSymbol("J", J_value);
-    auto g = model.addSymbol("g1", g_value);
-    auto D = model.addSymbol("D", D_value);
-    model.assignSymbolToIsotropicExchange(J, 0, 1)
-        .assignSymbolToIsotropicExchange(J, 1, 2)
-        .assignSymbolToIsotropicExchange(J, 2, 3)
-        .assignSymbolToIsotropicExchange(J, 3, 0)
-        .assignSymbolToGFactor(g, 0)
-        .assignSymbolToGFactor(g, 1)
-        .assignSymbolToGFactor(g, 2)
-        .assignSymbolToGFactor(g, 3)
-        .assignSymbolToZFSNoAnisotropy(D, 0);
-
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort()
-        .TSquaredSort()
-        .EliminateNonMininalProjections()
-        .SSquaredTransform();
-
-    EXPECT_THROW(
-        runner::ConsistentModelOptimizationList(model, optimizationList),
-        std::invalid_argument);
-}
-
 TEST(consistentModelOptimizationList_tests, throw_NonMinimalProjectionsEliminator_withour_TSquaredSort) {
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.TzSort();
@@ -174,11 +144,4 @@ TEST(consistentModelOptimizationList_tests, throw_NonMinimalProjectionsEliminato
     optimizationList.TSquaredSort();
 
     EXPECT_THROW(optimizationList.EliminateNonMininalProjections(), std::invalid_argument);
-}
-
-TEST(consistentModelOptimizationList_tests, throw_SSquaredTransformation_without_NonMininalProjectionsElimination) {
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort().TSquaredSort();
-
-    EXPECT_THROW(optimizationList.SSquaredTransform(), std::invalid_argument);
 }

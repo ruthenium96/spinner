@@ -88,7 +88,7 @@ optimizations:
   mode: none
 ```
 
-In the `custom` mode, it is nessesary to specify initial basis, either `lex` or `ito`. it is also possible to specify different optimizations: `tz_sorter`, `tsquared_sorter`, `positive_tz_eliminator`, `nonminimal_tz_eliminator`, `s2_transformer` and `symmetrizer`. `symmetrizer` should be a list of commuting groups, to specify group one need to specify name of group (`S2` or `Dihedral` + its order) and list of generators of this group.
+In the `custom` mode, it is nessesary to specify initial basis, either `lex` or `ito`. it is also possible to specify different optimizations: `tz_sorter`, `tsquared_sorter`, `positive_tz_eliminator`, `nonminimal_tz_eliminator` and `symmetrizer`. `symmetrizer` should be a list of commuting groups, to specify group one need to specify name of group (`S2` or `Dihedral` + its order) and list of generators of this group.
 
 ```yml
 optimizations:

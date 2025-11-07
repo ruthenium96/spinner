@@ -8,7 +8,6 @@ add_library(space
         optimization/PositiveProjectionsEliminator.cpp optimization/PositiveProjectionsEliminator.h
         optimization/NonAbelianSimplifier.cpp optimization/NonAbelianSimplifier.h
         optimization/NonMinimalProjectionsEliminator.h optimization/NonMinimalProjectionsEliminator.cpp
-        optimization/OptimizedSpaceConstructor.cpp optimization/OptimizedSpaceConstructor.h
-        optimization/S2Transformer.cpp optimization/S2Transformer.h)
+        optimization/OptimizedSpaceConstructor.cpp optimization/OptimizedSpaceConstructor.h)
 
 target_link_libraries(space spin_algebra data_structures common)

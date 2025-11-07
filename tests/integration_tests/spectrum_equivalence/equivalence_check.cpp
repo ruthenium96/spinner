@@ -157,9 +157,6 @@ std::string spectrum_final_equivalence_test_name_generator(const ::testing::Test
     if (optimization_list.isNonMinimalProjectionsEliminated()) {
         name += "_nonminElim";
     }
-    if (optimization_list.isSSquaredTransformed()) {
-        name += "_s2";
-    }
     if (optimization_list.isFTLMApproximated()) {
         name += "_FTLM";
     }
@@ -208,9 +205,6 @@ std::ostream& common::physical_optimization::operator<<(std::ostream& os, const 
     } 
     if (optimization_list.isNonMinimalProjectionsEliminated()) { 
         os << "nonminElim|"; 
-    } 
-    if (optimization_list.isSSquaredTransformed()) { 
-        os << "s^2|"; 
     } 
     if (optimization_list.isFTLMApproximated()) { 
         os << "FTLM|"; 
