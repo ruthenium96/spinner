@@ -21,4 +21,4 @@ add_library(model
         symbols/SymbolName.h symbols/SymbolName.cpp
         Model.cpp Model.h)
 
-target_link_libraries(model group index_converter)
+target_link_libraries(model group index_converter spin_algebra)
