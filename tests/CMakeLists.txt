@@ -53,7 +53,7 @@ add_executable(spinner_test
         integration_tests/spectrum_builder_tests.cpp
         integration_tests/parser_tests.cpp)
 
-find_package(Armadillo 10.6)
+find_package(Armadillo 12.4)
 find_package(Eigen3 3.3)
 
 if (ARMADILLO_FOUND)
