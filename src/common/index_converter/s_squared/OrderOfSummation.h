@@ -2,7 +2,6 @@
 #define SPINNER_ORDEROFSUMMATION_H
 
 #include <memory>
-#include <optional>
 #include <set>
 #include <vector>
 
@@ -14,8 +13,6 @@ class OrderOfSummation {
     struct AdditionInstruction {
         std::vector<uint64_t> positions_of_summands;
         uint64_t position_of_sum;
-        // TODO: delete it
-        std::optional<size_t> number_of_group = std::nullopt;
     };
 
     static std::shared_ptr<const OrderOfSummation> constructFromOrbits(
