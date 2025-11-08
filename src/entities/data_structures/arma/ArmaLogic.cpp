@@ -4,6 +4,7 @@
 #include "ArmaDenseDiagonalizableMatrix.h"
 #include "ArmaDenseSemiunitaryMatrix.h"
 #include "ArmaDenseVector.h"
+#include "ArmaKrylovDenseSemiunitaryMatrix.h"
 #include "ArmaSparseDiagonalizableMatrix.h"
 
 namespace {

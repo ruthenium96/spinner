@@ -5,10 +5,7 @@
 
 #include "src/entities/data_structures/AbstractDenseSemiunitaryMatrix.h"
 #include "src/entities/data_structures/AbstractDenseVector.h"
-#include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
-#include "src/entities/data_structures/AbstractSymmetricMatrix.h"
-#include "src/entities/data_structures/arma/ArmaDenseSemiunitaryMatrix.h"
-#include "src/entities/data_structures/arma/ArmaKrylovDenseSemiunitaryMatrix.h"
+#include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
 
 namespace quantum::linear_algebra {
 template <typename T>

@@ -5,6 +5,7 @@
 #include "EigenDenseDiagonalizableMatrix.h"
 #include "EigenDenseSemiunitaryMatrix.h"
 #include "EigenDenseVector.h"
+#include "EigenKrylovDenseSemiunitaryMatrix.h"
 #include "EigenSparseDiagonalizableMatrix.h"
 
 namespace {
