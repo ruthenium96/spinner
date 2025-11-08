@@ -1,7 +1,5 @@
 #include "EigenDenseSemiunitaryMatrix.h"
 
-#include "EigenDenseVector.h"
-#include "EigenLogic.h"
 #include "EigenDenseSemiunitaryTransformer.h"
 
 namespace quantum::linear_algebra {

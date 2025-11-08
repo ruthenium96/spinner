@@ -1,6 +1,5 @@
 #include "ArmaDenseSemiunitaryMatrix.h"
 
-#include "ArmaLogic.h"
 #include "ArmaDenseSemiunitaryTransformer.h"
 
 namespace quantum::linear_algebra {
