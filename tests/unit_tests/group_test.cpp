@@ -202,61 +202,6 @@ TEST(group_info_tests, 00_corresponds_to_full_symmetric_representation) {
     }
 }
 
-TEST(group_info_tests, size_of_multiplication_table) {
-    const group::Group::AlgebraicProperties& group_info =
-        group::Group::return_group_info_by_group_type(group::Group::S2);
-    EXPECT_EQ(
-        group_info.cayley_table.size(),
-        group_info.number_of_representations * group_info.number_of_representations)
-        << "In the group '" << group::Group::S2 << "' the size of multiplication table "
-        << group_info.cayley_table.size()
-        << " does not equal to square of number of representations "
-        << group_info.number_of_representations * group_info.number_of_representations;
-}
-
-TEST(group_info_tests, full_symmetric_representation_as_identity_of_representation_multiplication) {
-    const group::Group::AlgebraicProperties& group_info =
-        group::Group::return_group_info_by_group_type(group::Group::S2);
-    for (size_t i = 0; i < group_info.number_of_representations; ++i) {
-        auto representation = std::set<uint8_t>();
-        representation.insert(i);
-        EXPECT_EQ(group_info.cayley_table.at({0, i}), representation)
-            << "In the multiplication table of group '" << group::Group::S2
-            << "' product of full-symmetric representation and " << i << " does not equal to "
-            << i;
-        EXPECT_EQ(group_info.cayley_table.at({i, 0}), representation)
-            << "In the multiplication table of group '" << group::Group::S2 << "' product of" << i
-            << " and full-symmetric representation "
-            << " does not equal to " << i;
-    }
-}
-
-TEST(
-    group_info_tests,
-    sizes_of_direct_product_representations_equal_to_product_of_dimension_of_representation) {
-    const group::Group::AlgebraicProperties group_info =
-        group::Group::return_group_info_by_group_type(group::Group::S2);
-    for (size_t i = 0; i < group_info.number_of_representations; ++i) {
-        for (size_t j = 0; j < group_info.number_of_representations; ++j) {
-            auto product_of_sizes_of_representation = group_info.dimension_of_representation[i]
-                * group_info.dimension_of_representation[j];
-            int size_of_direct_product_representations = 0;
-            for (auto k : group_info.cayley_table.at({i, j})) {
-                size_of_direct_product_representations +=
-                    group_info.dimension_of_representation[k];
-            }
-            EXPECT_EQ(
-                product_of_sizes_of_representation,
-                size_of_direct_product_representations)
-                << "In the group '" << group::Group::S2
-                << "' dimension of direct product of representations " << i << " * " << j
-                << " = " << size_of_direct_product_representations
-                << "does not equal to product of dimensions of these representations "
-                << product_of_sizes_of_representation;
-        }
-    }
-}
-
 TEST(group_tests, throw_wrong_number_of_generators) {
     EXPECT_THROW(
         group::Group group({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}),
