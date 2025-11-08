@@ -47,7 +47,6 @@ class Group {
         std::vector<std::vector<size_t>> group_in_form_of_generators;
         std::vector<size_t> orders_of_elements;
         std::vector<std::vector<std::vector<double>>> coefficients_of_projectors;
-        CayleyTable cayley_table;
     };
 
     enum GroupTypeEnum {

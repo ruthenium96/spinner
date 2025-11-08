@@ -12,19 +12,6 @@ target_link_libraries(stlbfgs_adapter stlbfgs logger)
 target_link_libraries(nonlinear_solver stlbfgs_adapter)
 
 find_package(Eigen3 3.3)
-if (Eigen3_FOUND)
-    FetchContent_Declare(
-            lbfgspp
-            GIT_REPOSITORY https://github.com/yixuan/LBFGSpp.git
-            GIT_TAG "563106b85477adcd462509d1c4c2a92cde7501f5"
-    )
-    FetchContent_MakeAvailable(lbfgspp)
-    include_directories(${lbfgspp_SOURCE_DIR}/include/)
-    add_library(lbfgspp_adapter LBFGSpp/LBFGSppAdapter.cpp LBFGSpp/LBFGSppAdapter.h)
-    target_link_libraries(lbfgspp_adapter Eigen3::Eigen lbfgspp logger)
-    target_link_libraries(nonlinear_solver lbfgspp_adapter)
-endif ()
-
 find_package(Armadillo 12.4)
 if (ARMADILLO_FOUND OR Eigen3_FOUND)
     FetchContent_Declare(

@@ -41,12 +41,6 @@ void EigenKrylovDenseSemiunitaryMatrix<T>::print(std::ostream& os) const {
 }
 
 template <typename T>
-std::unique_ptr<AbstractDiagonalizableMatrix> EigenKrylovDenseSemiunitaryMatrix<T>::unitaryTransform(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    throw std::invalid_argument("EigenKrylovDenseSemiunitaryMatrix cannot do unitaryTransform");
-}
-
-template <typename T>
 const Eigen::Matrix<T, -1, -1>& EigenKrylovDenseSemiunitaryMatrix<T>::getKrylovDenseSemiunitaryMatrix() const {
     return denseKrylovSemiunitaryMatrix_;
 }
@@ -74,16 +68,6 @@ const Eigen::Vector<T, -1>& EigenKrylovDenseSemiunitaryMatrix<T>::getSeedVector(
 template <typename T>
 Eigen::Vector<T, -1>& EigenKrylovDenseSemiunitaryMatrix<T>::modifySeedVector() {
     return seed_vector_;
-}
-
-template <typename T>
-void EigenKrylovDenseSemiunitaryMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
-    throw std::invalid_argument("EigenKrylovDenseSemiunitaryMatrix cannot do add_to_position");
-}
-
-template <typename T>
-void EigenKrylovDenseSemiunitaryMatrix<T>::normalize() {
-    throw std::invalid_argument("EigenKrylovDenseSemiunitaryMatrix cannot do normalize");
 }
 
 template class EigenKrylovDenseSemiunitaryMatrix<double>;

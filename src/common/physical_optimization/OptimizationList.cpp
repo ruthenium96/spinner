@@ -10,14 +10,14 @@ OptimizationList::OptimizationList(BasisType basis_type) {
 }
 
 OptimizationList& OptimizationList::TzSort() {
-    if (isSSquaredTransformed_) {
-        throw std::invalid_argument("Cannot TzSort *AFTER* S2-transformation");
-    }
     isTzSorted_ = true;
     return *this;
 }
 
 OptimizationList& OptimizationList::TSquaredSort() {
+    if (isLexBasis()) {
+        throw std::invalid_argument("Cannot TSquaredSort in lex basis");
+    }
     isTSquaredSorted_ = true;
     return *this;
 }
@@ -34,6 +34,9 @@ OptimizationList& OptimizationList::EliminatePositiveProjections() {
 }
 
 OptimizationList& OptimizationList::EliminateNonMininalProjections() {
+    if (isLexBasis()) {
+        throw std::invalid_argument("Cannot EliminateNonMininalProjections in lex basis");
+    }
     if (isPositiveProjectionsEliminated_) {
         throw std::invalid_argument("Cannot simultaneously eliminate both positive and non-minimal projections");
     }
@@ -44,33 +47,7 @@ OptimizationList& OptimizationList::EliminateNonMininalProjections() {
     return *this;
 }
 
-OptimizationList& OptimizationList::SSquaredTransform() {
-    if (basis_type_ == ITO) {
-        throw std::invalid_argument("Cannot use S2-transformation with ITO-basis");
-    }
-    if (!isTzSorted_) {
-        throw std::invalid_argument("Cannot perform S2-transformation without tz-sort");
-    }
-    if (!isTSquaredSorted_) {
-        throw std::invalid_argument("Cannot perform S2-transformation without t2-sort");
-    }
-    if (!isNonMinimalProjectionsEliminated_) {
-        throw std::invalid_argument("Cannot perform S2-transformation without elimination of non-minimal projections");
-    }
-    for (const auto& group : groupsToApply_) {
-        if (!group.properties.is_abelian) {
-            throw std::invalid_argument(
-                "Currently cannot perform S2-transformation with non-Abelian symmetries");
-        }
-    }
-    isSSquaredTransformed_ = true;
-    return *this;
-}
-
 OptimizationList& OptimizationList::FTLMApproximate(FTLMSettings ftlmSettings) {
-    if (isSSquaredTransformed()) {
-        throw std::invalid_argument("Cannot use FTLM with SSquaredTransformation yet");
-    }
     if (!isPositiveProjectionsEliminated()) {
         throw std::invalid_argument("Positive projections elimination required for FTLM due accuracy issues");
     }
@@ -107,9 +84,6 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
     }
     if (basis_type_ == ITO && !new_group.properties.is_abelian) {
         throw std::invalid_argument("Currently cannot perform use ITO-basis with non-Abelian symmetries");
-    }
-    if (isSSquaredTransformed_ && !new_group.properties.is_abelian) {
-        throw std::invalid_argument("Currently cannot perform S2-transformation with non-Abelian symmetries");
     }
     groupsToApply_.emplace_back(std::move(new_group));
 
@@ -168,10 +142,6 @@ bool OptimizationList::isPositiveProjectionsEliminated() const {
 
 bool OptimizationList::isNonMinimalProjectionsEliminated() const {
     return isNonMinimalProjectionsEliminated_;
-}
-
-bool OptimizationList::isSSquaredTransformed() const {
-    return isSSquaredTransformed_;
 }
 
 bool OptimizationList::isFTLMApproximated() const {

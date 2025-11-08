@@ -33,7 +33,6 @@ std::shared_ptr<const OrderOfSummation> OrderOfSummation::constructFromOrbits(
                 continue;
             }
             OrderOfSummation::AdditionInstruction instruction;
-            instruction.number_of_group = number_of_group;
             instruction.position_of_sum = number_of_mults + performed_summations;
             for (auto pos : orbit) {
                 while (pos_of_results_of_sum[pos].has_value()) {

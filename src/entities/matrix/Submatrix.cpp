@@ -34,14 +34,11 @@ Submatrix::Submatrix(
     }
 
     properties = subspace.properties;
-    if (subspace.dense_semiunitary_matrix.has_value() || return_sparse_if_possible) {
+    if (return_sparse_if_possible) {
         raw_data = factories.createSparseDiagonalizableMatrix(matrix_in_space_basis_size);
     } else {
         raw_data = factories.createDenseDiagonalizableMatrix(matrix_in_space_basis_size);
     }
 
     subspace.decomposition->unitaryTransform(matrix_in_lexicografical_basis, raw_data);
-    if (subspace.dense_semiunitary_matrix.has_value()) {
-        raw_data = subspace.dense_semiunitary_matrix.value()->unitaryTransform(raw_data);
-    }
 }
