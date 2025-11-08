@@ -325,25 +325,6 @@ inline std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform_(
     return std::move(result);
 }
 
-template <typename T>
-std::unique_ptr<AbstractDiagonalizableMatrix> ArmaLogic<T>::unitaryTransform(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
-    if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return std::move(unitaryTransform_(
-            maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
-            denseSemiunitaryMatrix));
-    }
-    if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return std::move(unitaryTransform_(
-            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
-            denseSemiunitaryMatrix));
-    }
-    throw std::bad_cast();
-}
-
 template class ArmaLogic<double>;
 template class ArmaLogic<float>;
 }  // namespace quantum::linear_algebra

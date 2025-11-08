@@ -43,12 +43,6 @@ void ArmaKrylovDenseSemiunitaryMatrix<T>::resize(size_t size_rows, size_t size_c
 }
 
 template <typename T>
-std::unique_ptr<AbstractDiagonalizableMatrix> ArmaKrylovDenseSemiunitaryMatrix<T>::unitaryTransform(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    throw std::invalid_argument("ArmaKrylovDenseSemiunitaryMatrix cannot do unitaryTransform");
-}
-
-template <typename T>
 const arma::Mat<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::getKrylovDenseSemiunitaryMatrix() const {
     return denseKrylovSemiunitaryMatrix_;
 }

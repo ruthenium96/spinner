@@ -18,8 +18,6 @@ class EigenKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     double at(uint32_t i, uint32_t j) const override;
 
     void print(std::ostream& os) const override;
-    std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const override;
 
     const Eigen::Matrix<T, -1, -1>& getKrylovDenseSemiunitaryMatrix() const;
     Eigen::Matrix<T, -1, -1>& modifyKrylovDenseSemiunitaryMatrix();

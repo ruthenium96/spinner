@@ -17,8 +17,6 @@ class ArmaKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     double at(uint32_t i, uint32_t j) const override;
 
     void print(std::ostream& os) const override;
-    std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const override;
     void resize(size_t size_rows, size_t size_cols);
     const arma::Mat<T>& getKrylovDenseSemiunitaryMatrix() const;
     arma::Mat<T>& modifyKrylovDenseSemiunitaryMatrix();

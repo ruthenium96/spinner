@@ -29,10 +29,6 @@ class ArmaLogic {
         const AbstractDiagonalizableMatrix& diagonalizableMatrix,
         const AbstractDenseVector& seed_vector,
         size_t krylov_subspace_size) const;
-    
-    std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
 };
 }  // namespace quantum::linear_algebra
 

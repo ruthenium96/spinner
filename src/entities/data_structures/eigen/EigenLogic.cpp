@@ -292,40 +292,6 @@ KrylovTriple EigenLogic<T>::krylovDiagonalizeValuesVectors(
 }
 
 template <typename T>
-std::unique_ptr<AbstractDiagonalizableMatrix> EigenLogic<T>::unitaryTransform(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
-    auto result = std::make_unique<EigenDenseDiagonalizableMatrix<T>>();
-
-    auto maybeDenseSemiunitaryMatrix =
-        dynamic_cast<const EigenDenseSemiunitaryMatrix<T>*>(&denseSemiunitaryMatrix);
-    if (maybeDenseSemiunitaryMatrix == nullptr) {
-        throw std::bad_cast();
-    }
-
-    if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const EigenSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        // TODO: check if all transpositions are efficient
-        result->modifyDenseDiagonalizableMatrix() =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeSparseSymmetricMatrix->getSparseDiagonalizableMatrix().transpose()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
-        return std::move(result);
-    }
-
-    if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const EigenDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        result->modifyDenseDiagonalizableMatrix() =
-            maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix().transpose()
-            * maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix()
-            * maybeDenseSemiunitaryMatrix->getDenseSemiunitaryMatrix();
-        return std::move(result);
-    }
-
-    throw std::bad_cast();
-}
-
-template <typename T>
 std::unique_ptr<AbstractDenseVector>
 EigenLogic<T>::diagonalizeValues(const AbstractDiagonalizableMatrix& symmetricMatrix) const {
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix<T, -1, -1>> es;

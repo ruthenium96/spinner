@@ -27,10 +27,6 @@ class EigenLogic {
       const AbstractDiagonalizableMatrix& diagonalizableMatrix,
       const AbstractDenseVector& seed_vector,
       size_t krylov_subspace_size) const;
-
-    std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform(
-        const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-        const EigenDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const;
 };
 
 }  // namespace quantum::linear_algebra
