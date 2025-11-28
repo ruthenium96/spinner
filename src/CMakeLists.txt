@@ -10,3 +10,4 @@ add_subdirectory(spin_algebra)
 
 add_executable(spinner_main main.cpp)
 target_link_libraries(spinner_main input)
+install(TARGETS spinner_main RUNTIME DESTINATION bin)
