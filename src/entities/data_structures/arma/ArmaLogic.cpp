@@ -4,6 +4,7 @@
 #include "ArmaDenseDiagonalizableMatrix.h"
 #include "ArmaDenseSemiunitaryMatrix.h"
 #include "ArmaDenseVector.h"
+#include "ArmaKrylovDenseSemiunitaryMatrix.h"
 #include "ArmaSparseDiagonalizableMatrix.h"
 
 namespace {
@@ -323,25 +324,6 @@ inline std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform_(
         * denseSemiunitaryMatrix.getDenseSemiunitaryMatrix();
 
     return std::move(result);
-}
-
-template <typename T>
-std::unique_ptr<AbstractDiagonalizableMatrix> ArmaLogic<T>::unitaryTransform(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrix,
-    const ArmaDenseSemiunitaryMatrix<T>& denseSemiunitaryMatrix) const {
-    if (auto maybeSparseSymmetricMatrix =
-            dynamic_cast<const ArmaSparseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return std::move(unitaryTransform_(
-            maybeSparseSymmetricMatrix->getSparseSymmetricMatrix(),
-            denseSemiunitaryMatrix));
-    }
-    if (auto maybeDenseSymmetricMatrix =
-            dynamic_cast<const ArmaDenseDiagonalizableMatrix<T>*>(symmetricMatrix.get())) {
-        return std::move(unitaryTransform_(
-            maybeDenseSymmetricMatrix->getDenseDiagonalizableMatrix(),
-            denseSemiunitaryMatrix));
-    }
-    throw std::bad_cast();
 }
 
 template class ArmaLogic<double>;

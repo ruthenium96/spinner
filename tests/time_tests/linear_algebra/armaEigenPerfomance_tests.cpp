@@ -150,54 +150,6 @@ TEST(DenseFactoriesPerfomance, eigendecomposition_sparse) {
     }
 }
 
-// Compare time of unitary transformation of the same matrix:
-TEST(DenseFactoriesPerfomance, unitary_transformation_dense) {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_real_distribution<double> dist(-1000, +1000);
-
-    for (size_t size = 2; size <= 2048; size *= 2) {
-        size_t cycles = 2048 * 16 / size;
-        std::cout << "SIZE = " << size << std::endl;
-        auto denseDiagonalizableMatrices = generateDenseDiagonalizableMatrices(
-            size,
-            constructAllDenseTransformAndDiagonalizeFactories(),
-            dist,
-            rng);
-        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
-            size,
-            constructAllDenseTransformAndDiagonalizeFactories(),
-            dist,
-            rng);
-
-        // unitary transformation
-        std::function<void(void)> armaDoubleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[0]->unitaryTransform(denseDiagonalizableMatrices[0]);
-        };
-        std::function<void(void)> armaSingleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[1]->unitaryTransform(denseDiagonalizableMatrices[1]);
-        };
-        std::function<void(void)> eigenDoubleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[2]->unitaryTransform(denseDiagonalizableMatrices[2]);
-        };
-        std::function<void(void)> eigenSingleUnitaryTransformation = [&]() {
-            denseUnitaryMatrices[3]->unitaryTransform(denseDiagonalizableMatrices[3]);
-        };
-        std::cout << "Armadillo double precision:" << std::endl;
-        PerformanceTest(armaDoubleUnitaryTransformation, cycles);
-
-        std::cout << "Armadillo single precision:" << std::endl;
-        PerformanceTest(armaSingleUnitaryTransformation, cycles);
-
-        std::cout << "Eigen double precision:" << std::endl;
-        PerformanceTest(eigenDoubleUnitaryTransformation, cycles);
-
-        std::cout << "Eigen single precision:" << std::endl;
-        PerformanceTest(eigenSingleUnitaryTransformation, cycles);
-        std::cout << std::endl;
-    }
-}
-
 // Compare time of unitary transformation (main diagonal only) of the same matrix:
 TEST(DenseFactoriesPerfomance, unitary_transformation_and_return_main_diagonal_dense) {
     std::random_device dev;

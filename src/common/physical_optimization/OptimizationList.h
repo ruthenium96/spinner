@@ -22,7 +22,6 @@ class OptimizationList {
     OptimizationList& TSquaredSort();
     OptimizationList& EliminateNonMininalProjections();
     OptimizationList& EliminatePositiveProjections();
-    OptimizationList& SSquaredTransform();
     OptimizationList& Symmetrize(group::Group new_group);
     OptimizationList&
     Symmetrize(group::Group::GroupType group_type, std::vector<group::Permutation> generators);
@@ -35,7 +34,6 @@ class OptimizationList {
     bool isTSquaredSorted() const;
     bool isPositiveProjectionsEliminated() const;
     bool isNonMinimalProjectionsEliminated() const;
-    bool isSSquaredTransformed() const;
     bool isFTLMApproximated() const;
     const std::vector<group::Group>& getGroupsToApply() const;
     bool isNonAbelianSimplified() const;
@@ -46,7 +44,6 @@ class OptimizationList {
     bool isTSquaredSorted_ = false;
     bool isPositiveProjectionsEliminated_ = false;
     bool isNonMinimalProjectionsEliminated_ = false;
-    bool isSSquaredTransformed_ = false;
     std::vector<group::Group> groupsToApply_;
     bool isNonAbelianSimplified_ = false;
     BasisType basis_type_;

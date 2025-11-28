@@ -6,12 +6,10 @@
 #include "src/space/optimization/NonAbelianSimplifier.h"
 #include "src/space/optimization/PositiveProjectionsEliminator.h"
 #include "src/space/optimization/NonMinimalProjectionsEliminator.h"
-#include "src/space/optimization/S2Transformer.h"
 #include "src/space/optimization/Symmetrizer.h"
 #include "src/space/optimization/TSquaredSorter.h"
 #include "src/space/optimization/TzSorter.h"
 #include "src/spin_algebra/GroupAdapter.h"
-#include "src/spin_algebra/SSquaredConverter.h"
 #include "src/common/index_converter/lexicographic/IndexPermutator.h"
 #include "src/common/index_converter/s_squared/IndexPermutator.h"
 
@@ -63,7 +61,7 @@ Space OptimizedSpaceConstructor::construct(
 
     common::Logger::separate(1, common::PrintLevel::detailed);
 
-    if (optimizationList.isITOBasis() && optimizationList.isTSquaredSorted()) {
+    if (optimizationList.isTSquaredSorted()) {
         TSquaredSorter tsquared_sorter(sSquaredIndexConverter, factories);
         common::Logger::detailed_msg("T2-sortation has started.");
         space = tsquared_sorter.apply(std::move(space));
@@ -82,7 +80,7 @@ Space OptimizedSpaceConstructor::construct(
         common::Logger::separate(1, common::detailed);
     }
 
-    if (optimizationList.isNonMinimalProjectionsEliminated() && optimizationList.isITOBasis()) {
+    if (optimizationList.isNonMinimalProjectionsEliminated()) {
         uint32_t max_ntz_proj = indexConverter->get_max_ntz_proj();
 
         NonMinimalProjectionsEliminator nonMinimalProjectionsEliminator(max_ntz_proj);
@@ -117,7 +115,7 @@ Space OptimizedSpaceConstructor::construct(
             common::Logger::detailed_msg("Non-Abelian Simplification has started.");
             NonAbelianSimplifier non_abelian_simplifier(factories);
             space = non_abelian_simplifier.apply(std::move(space));
-        print_sizes_of_blocks(space);
+            print_sizes_of_blocks(space);
             common::Logger::detailed_msg("Non-Abelian Simplification is finished.");    
         }
         if (i + 1 == optimizationList.getGroupsToApply().size()) {
@@ -131,26 +129,6 @@ Space OptimizedSpaceConstructor::construct(
         for (auto& subspace : space.getBlocks()) {
             subspace.decomposition->normalize();
         }
-    }
-
-    if (optimizationList.isSSquaredTransformed()) {
-        const auto number_of_mults = indexConverter->get_mults().size();
-        auto group_adapter = spin_algebra::GroupAdapter(optimizationList.getGroupsToApply(), number_of_mults);
-        auto old_ssquared_converter = std::make_shared<spin_algebra::SSquaredConverter>(
-            indexConverter->get_mults(),
-            group_adapter.getOrderOfSummations(),
-            group_adapter.getRepresentationMultiplier());
-
-        S2Transformer transformer(
-            lexIndexConverter,
-            factories,
-            old_ssquared_converter);
-
-        common::Logger::detailed_msg("S2-transformation has started.");
-        common::orderOfSummationPrint(
-            *old_ssquared_converter->getOrderOfSummation());
-        space = transformer.apply(std::move(space));
-        common::Logger::detailed_msg("S2-transformation is finished.");
     }
 
     common::Logger::separate(0, common::detailed);

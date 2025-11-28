@@ -145,7 +145,6 @@ group::Group::AlgebraicProperties constructDihedral(unsigned int order)
         }
     }
 
-    // TODO: properties.cayley_table;
     return properties;
 }
 
@@ -166,11 +165,7 @@ const group::Group::AlgebraicProperties GroupInfoS2 = {2,
                                                        {{0}, {1}},
                                                        {1, 2},
                                                        {{{1,  1}},  // "a" representation
-                                                       {{1, -1}}},  // "b" representation
-                                                       {{{0, 0}, {0}}, // "a" * "a" = "a"
-                                                       {{0, 1}, {1}},  // "a" * "b" = "b"
-                                                       {{1, 0}, {1}},  // "b" * "a" = "b"
-                                                       {{1, 1}, {0}}}  // "b" * "b" = "a"
+                                                       {{1, -1}}}  // "b" representation
 };
 
 // clang-format on

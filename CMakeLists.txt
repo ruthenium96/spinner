@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+
 project(spinner)
 
 include(FetchContent)

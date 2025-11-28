@@ -229,59 +229,6 @@ TEST(linearAlgebraFactories, krylov_eigendecomposition) {
 }
 
 // Check if different linear algebra packages make the same unitary transformation
-TEST(linearAlgebraFactories, unitary_transformation) {
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_real_distribution<double> dist(-1000, +1000);
-
-    for (size_t size = 2; size < 100; ++size) {
-        auto denseDiagonalizableMatrices = generateDenseDiagonalizableMatrices(
-            size,
-            constructAllDenseTransformAndDiagonalizeFactories(),
-            dist,
-            rng);
-        auto denseUnitaryMatrices = generateDenseUnitaryMatrices(
-            size,
-            constructAllDenseTransformAndDiagonalizeFactories(),
-            dist,
-            rng);
-
-        // unitary transformation:
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
-            denseTransformedMatrices;
-        for (size_t i = 0; i < denseDiagonalizableMatrices.size(); ++i) {
-            const auto& denseDiagonalizableMatrix = denseDiagonalizableMatrices[i];
-            const auto& denseUnitaryMatrix = denseUnitaryMatrices[i];
-
-            denseTransformedMatrices.emplace_back(
-                denseUnitaryMatrix->unitaryTransform(denseDiagonalizableMatrix));
-        }
-
-        // check equality:
-        for (size_t i = 0; i < denseTransformedMatrices.size(); ++i) {
-            const auto& transformedMatrix_i = denseTransformedMatrices[i];
-            for (size_t j = 0; j < denseTransformedMatrices.size(); ++j) {
-                if (i == j) {
-                    continue;
-                }
-                const auto& transformedMatrix_j = denseTransformedMatrices[j];
-                for (size_t k = 0; k < size; ++k) {
-                    for (size_t l = 0; l < size; ++l) {
-                        double epsilon = std::max(
-                            std::abs(transformedMatrix_i->at(k, l) * 1e-5),
-                            3e-2);
-                        EXPECT_NEAR(
-                            transformedMatrix_i->at(k, l),
-                            transformedMatrix_j->at(k, l),
-                            epsilon);
-                    }
-                }
-            }
-        }
-    }
-}
-
-// Check if different linear algebra packages make the same unitary transformation
 TEST(linearAlgebraFactories, unitary_transformation_and_return_main_diagonal) {
     std::random_device dev;
     std::mt19937 rng(dev());

@@ -5,11 +5,10 @@
 #include <memory>
 
 namespace quantum::linear_algebra {
-class AbstractDenseSemiunitaryMatrix;
 class AbstractDenseVector;
 class AbstractDiagonalizableMatrix;
 
-// This class calculates UAU* and UABU* main diagonals:
+// This class calculates UAU* main diagonals:
 class AbstractDenseSemiunitaryTransformer {
 public:
     virtual std::unique_ptr<AbstractDenseVector> calculateUnitaryTransformationOfMatrix(

@@ -1,13 +1,13 @@
+#include <algorithm>
 #include <cmath>
 #include <deque>
 
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 #include "src/spin_algebra/GroupAdapter.h"
+#include "src/spin_algebra/Multiplicity.h"
 #include "src/spin_algebra/MultiplicityDirectSum.h"
 #include "src/common/index_converter/s_squared/OrderOfSummation.h"
-#include "src/spin_algebra/SSquaredConverter.h"
-#include "src/spin_algebra/SSquaredLevelAndRepresentations.h"
 
 #include <functional>
 #include <numeric>
@@ -154,53 +154,6 @@ TEST(order_of_summation, AAAAAAAAA_S1_S2_S2xS2) {
             *group_adapter.getOrderOfSummations(),
             number_of_initial_mults,
             number_of_all_mults);
-    }
-}
-
-// TODO: add more cases and tests for OrderOfSummation
-
-TEST(addAllMultiplicitiesAndSort, 2222) {
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
-    size_t number_of_initial_mults = mults.size();
-    size_t number_of_summation = mults.size() - 1;
-    group::Group group_one(group::Group::S2, {{1, 0, 3, 2}});
-    group::Group group_two(group::Group::S2, {{2, 3, 0, 1}});
-
-    std::vector<std::pair<
-        std::vector<group::Group>,
-        std::map<spin_algebra::SSquaredLevelAndRepresentations::Properties, size_t>>>
-        input_and_correct_answers;
-
-    input_and_correct_answers.push_back({{}, {{{5, {}}, 1}, {{3, {}}, 3}, {{1, {}}, 2}}});
-
-    input_and_correct_answers.push_back(
-        {{group_one}, {{{5, {0}}, 1}, {{3, {0}}, 1}, {{3, {1}}, 2}, {{1, {0}}, 2}}});
-
-    input_and_correct_answers.push_back(
-        {{group_two}, {{{5, {0}}, 1}, {{3, {0}}, 1}, {{3, {1}}, 2}, {{1, {0}}, 2}}});
-
-    input_and_correct_answers.push_back(
-        {{group_one, group_two},
-         {{{5, {0, 0}}, 1},
-          {{3, {0, 1}}, 1},
-          {{3, {1, 0}}, 1},
-          {{3, {1, 1}}, 1},
-          {{1, {0, 0}}, 2}}});
-
-    for (const auto& [groups, correct_answer] : input_and_correct_answers) {
-        auto group_adapter = spin_algebra::GroupAdapter(groups, number_of_initial_mults);
-        auto converter = spin_algebra::SSquaredConverter(
-            mults,
-            group_adapter.getOrderOfSummations(),
-            group_adapter.getRepresentationMultiplier());
-
-        for (const auto& [properties, number] : correct_answer) {
-            EXPECT_EQ(number, converter.block_with_property(properties).value().get().size())
-                << "The number of states with multiplicity = " << properties.multiplicity
-                << " and representation " << representationName(properties.representations)
-                << " should be equal to " << number << ", but actually is equal to "
-                << converter.block_with_property(properties).value().get().size();
-        }
     }
 }
 

@@ -6,6 +6,7 @@
 #include "OrderOfSummation.h"
 #include "Level.h"
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace index_converter::s_squared {

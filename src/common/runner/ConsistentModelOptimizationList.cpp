@@ -191,15 +191,6 @@ void checkModelOptimizationListConsistence(
         // ...if Hamiltonian terms invariant to group elements:
         checkAllSymbolNamesGroupConsistence(modelInput.getSymbolicWorker(), group);
     }
-    if (optimizationList.isSSquaredTransformed()) {
-        // S2-transformation can be applied only for HDvV-Hamiltionian:
-        if (modelInput.getSymbolicWorker().isZFSInitialized()) {
-            throw std::invalid_argument("S2-transformation cannot be applied to ZFS-Hamiltonian");
-        }
-    }
-    if (optimizationList.isLexBasis() && optimizationList.isTSquaredSorted() && !optimizationList.isSSquaredTransformed()) {
-        throw std::invalid_argument("In the case of lex basis, we cannot TSquared Sort without SSquared Transformer");
-    }
 }
 
 void checkMultiplicitiesGroupConsistence(

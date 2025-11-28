@@ -1,6 +1,5 @@
 #include "ArmaDenseSemiunitaryMatrix.h"
 
-#include "ArmaLogic.h"
 #include "ArmaDenseSemiunitaryTransformer.h"
 
 namespace quantum::linear_algebra {
@@ -41,14 +40,6 @@ void ArmaDenseSemiunitaryMatrix<T>::resize(size_t size_rows, size_t size_cols) {
 }
 
 template <typename T>
-std::unique_ptr<AbstractDiagonalizableMatrix> ArmaDenseSemiunitaryMatrix<T>::unitaryTransform(
-    const std::unique_ptr<AbstractDiagonalizableMatrix>& matrix_to_transform) const {
-    ArmaLogic<T> logic;
-
-    return logic.unitaryTransform(matrix_to_transform, *this);
-}
-
-template <typename T>
 const arma::Mat<T>& ArmaDenseSemiunitaryMatrix<T>::getDenseSemiunitaryMatrix() const {
     return denseSemiunitaryMatrix_;
 }
@@ -56,16 +47,6 @@ const arma::Mat<T>& ArmaDenseSemiunitaryMatrix<T>::getDenseSemiunitaryMatrix() c
 template <typename T>
 arma::Mat<T>& ArmaDenseSemiunitaryMatrix<T>::modifyDenseSemiunitaryMatrix() {
     return denseSemiunitaryMatrix_;
-}
-
-template <typename T>
-void ArmaDenseSemiunitaryMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
-    denseSemiunitaryMatrix_.at(j, i) += value;
-}
-
-template <typename T>
-void ArmaDenseSemiunitaryMatrix<T>::normalize() {
-    denseSemiunitaryMatrix_ = arma::normalise(denseSemiunitaryMatrix_, 2, 0);
 }
 
 template class ArmaDenseSemiunitaryMatrix<double>;

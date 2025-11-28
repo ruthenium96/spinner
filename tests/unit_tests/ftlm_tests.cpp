@@ -2,13 +2,6 @@
 #include "gtest/gtest.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 
-TEST(ftlm_tests, throw_ssquared_transformation) {
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.TzSort().TSquaredSort().EliminateNonMininalProjections().SSquaredTransform();
-    EXPECT_THROW(optimizationList.FTLMApproximate({400, 1024, 200}),
-        std::invalid_argument);
-}
-
 TEST(ftlm_tests, throw_no_positive_projections_eliminationssquared_transformation) {
     common::physical_optimization::OptimizationList optimizationList;
     optimizationList.TzSort();
