@@ -1,5 +1,7 @@
 #include "EmhashSparseSymmetricMatrix.h"
 
+#include <ostream>
+
 namespace quantum::linear_algebra {
 
 void EmhashSparseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
