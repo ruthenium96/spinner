@@ -12,6 +12,6 @@ constructAllDenseTransformAndDiagonalizeFactories() {
     auto eigenDouble = std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
     eigenDouble->setPrecision(quantum::linear_algebra::DOUBLE);
     auto eigenSingle = std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
-    eigenDouble->setPrecision(quantum::linear_algebra::SINGLE);
+    eigenSingle->setPrecision(quantum::linear_algebra::SINGLE);
     return {armaDouble, armaFloat, eigenDouble, eigenSingle};
 }
