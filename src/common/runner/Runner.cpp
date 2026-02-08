@@ -46,7 +46,7 @@ Runner::Runner(model::ModelInput model) :
     Runner(
         std::move(model),
         common::physical_optimization::OptimizationList(),
-        quantum::linear_algebra::FactoriesList()) {}
+        linear_algebra::FactoriesList()) {}
 
 Runner::Runner(
     model::ModelInput model,
@@ -54,11 +54,11 @@ Runner::Runner(
     Runner(
         std::move(model),
         std::move(optimizationList),
-        quantum::linear_algebra::FactoriesList()) {}
+        linear_algebra::FactoriesList()) {}
 
 Runner::Runner(
     model::ModelInput model,
-    quantum::linear_algebra::FactoriesList dataStructuresFactories) :
+    linear_algebra::FactoriesList dataStructuresFactories) :
     Runner(
         std::move(model),
         common::physical_optimization::OptimizationList(),
@@ -67,7 +67,7 @@ Runner::Runner(
 Runner::Runner(
     model::ModelInput model,
     common::physical_optimization::OptimizationList optimizationList,
-    quantum::linear_algebra::FactoriesList dataStructuresFactories) :
+    linear_algebra::FactoriesList dataStructuresFactories) :
     consistentModelOptimizationList_(std::move(model), std::move(optimizationList)),
     dataStructuresFactories_(std::move(dataStructuresFactories)),
     space_(space::optimization::OptimizedSpaceConstructor::construct(
@@ -317,7 +317,7 @@ const common::physical_optimization::OptimizationList& Runner::getOptimizationLi
     return consistentModelOptimizationList_.getOptimizationList();
 }
 
-quantum::linear_algebra::FactoriesList Runner::getDataStructuresFactories() const {
+linear_algebra::FactoriesList Runner::getDataStructuresFactories() const {
     return dataStructuresFactories_;
 }
 

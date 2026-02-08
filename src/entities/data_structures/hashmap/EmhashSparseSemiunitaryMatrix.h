@@ -10,7 +10,7 @@
 
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 class EmhashSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   public:
     using Map = emhash8::HashMap<uint32_t, double>;
@@ -59,6 +59,6 @@ class EmhashSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
     static EmhashSparseSemiunitaryMatrix*
     downcast_ptr(std::unique_ptr<AbstractSparseSemiunitaryMatrix>& ptr);
 };
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra
 
 #endif  //SPINNER_EMHASHSPARSESEMIUNITARYMATRIX_H

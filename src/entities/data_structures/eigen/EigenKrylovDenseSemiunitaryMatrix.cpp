@@ -2,7 +2,7 @@
 
 #include "EigenKrylovDenseSemiunitaryTransformer.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 template <typename T>
 EigenKrylovDenseSemiunitaryMatrix<T>::EigenKrylovDenseSemiunitaryMatrix() {
@@ -72,4 +72,4 @@ Eigen::Vector<T, -1>& EigenKrylovDenseSemiunitaryMatrix<T>::modifySeedVector() {
 
 template class EigenKrylovDenseSemiunitaryMatrix<double>;
 template class EigenKrylovDenseSemiunitaryMatrix<float>;
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra

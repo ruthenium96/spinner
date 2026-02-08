@@ -51,7 +51,7 @@ Parser::getExperimentalValuesWorker() const {
     return job_parser_->getExperimentalValuesWorker();
 }
 
-const std::optional<quantum::linear_algebra::FactoriesList>& Parser::getFactoriesList() const {
+const std::optional<linear_algebra::FactoriesList>& Parser::getFactoriesList() const {
     return control_parser_->getFactoriesList();
 }
 } // namespace spinner::input

@@ -2,7 +2,7 @@
 
 namespace spinner::space {
 Subspace::Subspace(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&&
+    std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>&&
         new_basis_decomposition):
     decomposition(std::move(new_basis_decomposition)) {}
 

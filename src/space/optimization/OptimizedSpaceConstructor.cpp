@@ -36,7 +36,7 @@ namespace spinner::space::optimization {
 //  it should be static constructor of Space.
 Space OptimizedSpaceConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-    const quantum::linear_algebra::FactoriesList& factories) {
+    const linear_algebra::FactoriesList& factories) {
 
     const common::physical_optimization::OptimizationList& optimizationList =
         consistentModelOptimizationList.getOptimizationList();

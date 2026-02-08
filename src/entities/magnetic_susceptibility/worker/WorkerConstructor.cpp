@@ -12,7 +12,7 @@ namespace spinner::magnetic_susceptibility::worker {
 std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
-    const quantum::linear_algebra::FactoriesList& factories) {
+    const linear_algebra::FactoriesList& factories) {
 
     common::Logger::detailed_msg("magnetic_susceptibility::Worker information:");
     

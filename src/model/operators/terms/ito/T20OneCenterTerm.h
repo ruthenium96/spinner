@@ -16,7 +16,7 @@ class T20OneCenterTerm : public OneCenterTerm {
         double prefactor = 1);
     std::unique_ptr<Term> clone() const override;
     void construct(
-        quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+        linear_algebra::AbstractSymmetricMatrix& matrix,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a) const override;
 
@@ -27,7 +27,7 @@ class T20OneCenterTerm : public OneCenterTerm {
     WignerEckartHelper wigner_eckart_helper_;
 
     void add_ttwo_term(
-        quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+        linear_algebra::AbstractSymmetricMatrix& matrix,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a,
         double factor) const;

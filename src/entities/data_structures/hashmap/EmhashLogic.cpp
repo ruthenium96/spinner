@@ -2,7 +2,7 @@
 
 #include <hash_table8.hpp>
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 void EmhashLogic::unitaryTransform(
     const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
     std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd,
@@ -74,4 +74,4 @@ void EmhashLogic::unitaryTransform(
         }
     }
 }
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra

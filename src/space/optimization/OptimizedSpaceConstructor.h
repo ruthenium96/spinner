@@ -12,7 +12,7 @@ class OptimizedSpaceConstructor {
   public:
     static Space construct(
         const runner::ConsistentModelOptimizationList&,
-        const quantum::linear_algebra::FactoriesList& factories);
+        const linear_algebra::FactoriesList& factories);
 };
 } // namespace spinner::space::optimization
 

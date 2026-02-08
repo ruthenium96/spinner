@@ -4,7 +4,7 @@
 
 namespace spinner::space::optimization {
 TSquaredSorter::TSquaredSorter(std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
-    quantum::linear_algebra::FactoriesList factories) :
+    linear_algebra::FactoriesList factories) :
 	converter_(std::move(converter)),
     factories_(std::move(factories)) {
 	max_total_mult_ = converter_->get_max_ntz_proj();

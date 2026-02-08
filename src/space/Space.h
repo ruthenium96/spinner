@@ -15,7 +15,7 @@ class Space {
   public:
     explicit Space(
         uint32_t total_space_size,
-        const quantum::linear_algebra::FactoriesList& factories);
+        const linear_algebra::FactoriesList& factories);
     explicit Space(std::vector<Subspace>&& m);
 
     std::vector<Subspace>& getBlocks();

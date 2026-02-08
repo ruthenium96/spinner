@@ -8,10 +8,10 @@
 namespace spinner::space {
 struct Subspace {
     BlockProperties properties;
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix> decomposition;
+    std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix> decomposition;
 
     explicit Subspace(
-        std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&&);
+        std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>&&);
             
     uint32_t size() const;
 };

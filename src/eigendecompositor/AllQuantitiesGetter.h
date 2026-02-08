@@ -31,9 +31,9 @@ class AllQuantitiesGetter {
       virtual std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
       getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const = 0;
 
-      virtual OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>
+      virtual OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>
         getWeightsOfAllStates() const = 0;
-      virtual OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+      virtual OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
         getWeightsOfBlockStates(size_t number_of_block) const = 0;
 };
 } // namespace spinner::eigendecompositor

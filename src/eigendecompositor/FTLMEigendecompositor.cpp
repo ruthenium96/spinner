@@ -16,7 +16,7 @@ namespace spinner::eigendecompositor {
 
 FTLMEigendecompositor::FTLMEigendecompositor(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    quantum::linear_algebra::FactoriesList factories_list,
+    linear_algebra::FactoriesList factories_list,
     size_t krylov_subspace_size,
     size_t exact_decomposition_threshold,
     size_t number_of_seeds) :
@@ -27,7 +27,7 @@ FTLMEigendecompositor::FTLMEigendecompositor(
     exact_decomposition_threshold_(exact_decomposition_threshold),
     number_of_seeds_(number_of_seeds) {}
     
-std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 FTLMEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
@@ -41,14 +41,14 @@ FTLMEigendecompositor::BuildSubspectra(
         seed_vectors_[number_of_block] = factories_list_.createRandomUnitVectors(size_of_subspace, number_of_seeds_);
     }
 
-    std::optional<std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+    std::optional<std::vector<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
         mb_unitary_transformation_matrix;
 
     // return_sparse_if_possible is true, because krylov eigendecomposition of sparse matrix is faster
     auto hamiltonian_submatrix = Submatrix(subspace, *energy_operator_, converter_, factories_list_, true);
 
     if (!do_we_need_eigenvectors_) {
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
+        std::vector<std::unique_ptr<linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
         weights_of_all_seeds_.resize(number_of_seeds_);
         // if we need to explicitly calculate _only_ energy, we do not need eigenvectors:
 #pragma omp taskloop default(shared)
@@ -72,9 +72,9 @@ FTLMEigendecompositor::BuildSubspectra(
         weights_[number_of_block] = std::move(weights_of_all_seeds_);
     } else {
         mb_unitary_transformation_matrix = 
-            std::vector<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>(number_of_seeds_);
+            std::vector<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>(number_of_seeds_);
     
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
+        std::vector<std::unique_ptr<linear_algebra::AbstractDenseVector>> weights_of_all_seeds_;
         weights_of_all_seeds_.resize(number_of_seeds_);
 #pragma omp taskloop default(shared)
         for (int seed = 0; seed < number_of_seeds_; ++seed) {
@@ -153,7 +153,7 @@ FTLMEigendecompositor::getSubmatrix(common::QuantityEnum quantity_enum, size_t n
     return std::nullopt;
 }
 
-OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
 FTLMEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     auto exact_weights = ExactEigendecompositor::getWeightsOfBlockStates(number_of_block);
 
@@ -168,7 +168,7 @@ FTLMEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
         if (ftlm_weights[0] == nullptr) {
             throw std::logic_error("Neither exact nor FTLM constructed weights of block #" + std::to_string(number_of_block));
         }
-        std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> answer;
+        std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>> answer;
         for (const auto& el : ftlm_weights) {
             answer.push_back(std::reference_wrapper(el));
         }

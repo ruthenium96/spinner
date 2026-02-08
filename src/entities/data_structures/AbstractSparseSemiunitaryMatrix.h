@@ -6,7 +6,7 @@
 #include "AbstractDiagonalizableMatrix.h"
 #include "AbstractSymmetricMatrix.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 class AbstractSparseSemiunitaryMatrix {
   public:
@@ -53,5 +53,5 @@ class AbstractSparseSemiunitaryMatrix {
 
     virtual void print(std::ostream& os) const = 0;
 };
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_ABSTRACTSPARSESEMIUNITARYMATRIX_H

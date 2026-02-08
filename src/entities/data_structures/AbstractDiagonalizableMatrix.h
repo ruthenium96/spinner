@@ -4,7 +4,7 @@
 #include "AbstractDenseVector.h"
 #include "AbstractSymmetricMatrix.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 class AbstractDenseSemiunitaryMatrix;
 struct EigenCouple {
     std::unique_ptr<AbstractDenseVector> eigenvalues;
@@ -37,5 +37,5 @@ class AbstractDiagonalizableMatrix: public AbstractSymmetricMatrix {
     virtual std::unique_ptr<AbstractDiagonalizableMatrix> multiply_by(double multiplier) const = 0;
     ~AbstractDiagonalizableMatrix() override = default;
 };
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_ABSTRACTDIAGONALIZABLESYMMETRICMATRIX_H

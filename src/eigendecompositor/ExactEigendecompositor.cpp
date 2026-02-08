@@ -8,15 +8,15 @@ namespace spinner::eigendecompositor {
 
 ExactEigendecompositor::ExactEigendecompositor(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    quantum::linear_algebra::FactoriesList factories_list) :
+    linear_algebra::FactoriesList factories_list) :
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
 
-std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ExactEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
-    std::optional<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+    std::optional<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>
         mb_unitary_transformation_matrix;
 
     // return_sparse_if_possible is false, because eigendecomposition of dense matrix is faster
@@ -96,7 +96,7 @@ ExactEigendecompositor::getSubmatrixDerivative(common::QuantityEnum quantity_enu
     return std::nullopt;
 }
 
-OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
 ExactEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return weights_[number_of_block];
 }
@@ -110,7 +110,7 @@ Subspectrum ExactEigendecompositor::energy_subspectrum_eigenvalues_only(
     return std::move(energy_subspectrum);
 }
 
-std::pair<Subspectrum, std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::pair<Subspectrum, std::unique_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>
 ExactEigendecompositor::energy_subspectrum_with_eigenvectors(
     const Submatrix& hamiltonian_submatrix) {
     auto eigencouple = hamiltonian_submatrix.raw_data->diagonalizeValuesVectors();

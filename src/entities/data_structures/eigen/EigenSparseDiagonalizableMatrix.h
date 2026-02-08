@@ -4,7 +4,7 @@
 #include "Eigen/Sparse"
 #include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 class EigenSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   public:
@@ -33,5 +33,5 @@ class EigenSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   private:
     Eigen::SparseMatrix<T> sparseDiagonalizableMatrix_;
 };
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_EIGENSPARSEDIAGONALIZABLEMATRIX_H

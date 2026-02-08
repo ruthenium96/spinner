@@ -7,11 +7,11 @@
 namespace spinner::space::optimization {
 class NonAbelianSimplifier {
   public:
-    explicit NonAbelianSimplifier(quantum::linear_algebra::FactoriesList factories);
+    explicit NonAbelianSimplifier(linear_algebra::FactoriesList factories);
     Space apply(Space&& space) const;
 
   private:
-    const quantum::linear_algebra::FactoriesList factories_;
+    const linear_algebra::FactoriesList factories_;
 };
 } // namespace spinner::space::optimization
 

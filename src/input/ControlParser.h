@@ -13,12 +13,12 @@ class ControlParser {
   public:
     ControlParser(YAML::Node control_node, bool dry_run);
     common::PrintLevel getPrintLevel() const;
-    const std::optional<quantum::linear_algebra::FactoriesList>& getFactoriesList() const;
+    const std::optional<linear_algebra::FactoriesList>& getFactoriesList() const;
   private:
     void constructFactoriesList(YAML::Node& control_node);
 
     std::optional<common::PrintLevel> print_level_;
-    std::optional<quantum::linear_algebra::FactoriesList> factoriesList_;
+    std::optional<linear_algebra::FactoriesList> factoriesList_;
 };
 
 } // namespace spinner::input

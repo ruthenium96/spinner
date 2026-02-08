@@ -10,7 +10,7 @@ std::unique_ptr<Term> LocalSSquaredOneCenterTerm::clone() const {
 }
 
 void LocalSSquaredOneCenterTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix&
+    linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a) const {

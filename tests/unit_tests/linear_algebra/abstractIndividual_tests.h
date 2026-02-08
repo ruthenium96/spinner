@@ -9,7 +9,7 @@
 #include "tests/tools/GenerateSameMatrix.h"
 
 template<class T>
-std::shared_ptr<spinner::quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>
+std::shared_ptr<spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>
 createConcreteFactory();
 
 template<class T>
@@ -17,7 +17,7 @@ class AbstractDenseTransformAndDiagonalizeFactoryIndividualTest: public testing:
   protected:
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest() :
         factory_(createConcreteFactory<T>()) {}
-    std::shared_ptr<spinner::quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> const
+    std::shared_ptr<spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> const
         factory_;
 };
 

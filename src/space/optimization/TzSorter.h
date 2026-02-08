@@ -13,13 +13,13 @@ class TzSorter {
   public:
     explicit TzSorter(
         std::shared_ptr<const index_converter::AbstractIndexConverter> indexConverter,
-        quantum::linear_algebra::FactoriesList factories);
+        linear_algebra::FactoriesList factories);
 
     Space apply(Space&& space) const;
 
   private:
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter_;
-    const quantum::linear_algebra::FactoriesList factories_;
+    const linear_algebra::FactoriesList factories_;
     uint32_t max_ntz_proj_;
 };
 } // namespace spinner::space::optimization

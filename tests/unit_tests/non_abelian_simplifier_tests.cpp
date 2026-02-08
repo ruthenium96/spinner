@@ -7,7 +7,7 @@
 using namespace spinner::common::physical_optimization;
 using namespace spinner::group;
 
-const auto factories = spinner::quantum::linear_algebra::FactoriesList();
+const auto factories = spinner::linear_algebra::FactoriesList();
 
 void compare_two_spaces(const spinner::space::Space& one, const spinner::space::Space& two) {
    ASSERT_EQ(one.getBlocks().size(), two.getBlocks().size())

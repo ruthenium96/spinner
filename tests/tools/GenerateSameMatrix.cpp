@@ -1,6 +1,6 @@
 #include "GenerateSameMatrix.h"
 
-using namespace spinner::quantum::linear_algebra;
+using namespace spinner::linear_algebra;
 
 std::vector<std::unique_ptr<AbstractDiagonalizableMatrix>>
 generateDenseDiagonalizableMatrices(

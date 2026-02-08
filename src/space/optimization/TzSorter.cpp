@@ -42,7 +42,7 @@ Space TzSorter::apply(Space&& space) const {
 
 TzSorter::TzSorter(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    quantum::linear_algebra::FactoriesList factories) :
+    linear_algebra::FactoriesList factories) :
     converter_(std::move(converter)),
     factories_(std::move(factories)) {
     max_ntz_proj_ = converter_->get_max_ntz_proj();

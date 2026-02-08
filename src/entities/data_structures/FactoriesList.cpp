@@ -1,7 +1,7 @@
 #include "FactoriesList.h"
 #include <vector>
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 std::unique_ptr<AbstractDiagonalizableMatrix>
 FactoriesList::createDenseDiagonalizableMatrix(uint32_t size) const {
@@ -43,4 +43,4 @@ FactoriesList::FactoriesList(
     denseFactory_ = symmetricMatrixFactory;
     sparseFactory_ = sparseMatrix;
 }
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra

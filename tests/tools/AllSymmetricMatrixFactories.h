@@ -5,7 +5,7 @@
 
 #include "src/entities/data_structures/AbstractFactories.h"
 
-std::vector<std::shared_ptr<spinner::quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+std::vector<std::shared_ptr<spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
 constructAllDenseTransformAndDiagonalizeFactories();
 
 #endif  //SPINNER_ALLSYMMETRICMATRIXFACTORIES_H

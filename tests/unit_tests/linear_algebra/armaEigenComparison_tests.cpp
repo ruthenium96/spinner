@@ -4,7 +4,7 @@
 #include "tests/tools/AllSymmetricMatrixFactories.h"
 #include "tests/tools/GenerateSameMatrix.h"
 
-using namespace spinner::quantum::linear_algebra;
+using namespace spinner::linear_algebra;
 
 inline int sign_f(double a, double b)
 {

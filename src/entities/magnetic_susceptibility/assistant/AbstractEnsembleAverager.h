@@ -11,14 +11,14 @@ namespace spinner::magnetic_susceptibility {
 class AbstractEnsembleAverager {
   public:
     virtual common::UncertainValue ensemble_average(
-        OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> value,
+        OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>> value,
         double temperature) const = 0;
   protected:
       std::pair<double, double> calculate_averaged_value_and_partition_function(
         double temperature,
-        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_vector, 
-        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& weights_vector, 
-        const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& value_vector) const;
+        const std::unique_ptr<linear_algebra::AbstractDenseVector>& energy_vector, 
+        const std::unique_ptr<linear_algebra::AbstractDenseVector>& weights_vector, 
+        const std::unique_ptr<linear_algebra::AbstractDenseVector>& value_vector) const;
 };
 } // namespace spinner::magnetic_susceptibility
 

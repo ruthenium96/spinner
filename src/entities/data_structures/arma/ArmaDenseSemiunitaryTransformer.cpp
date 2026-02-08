@@ -3,7 +3,7 @@
 #include "ArmaSparseDiagonalizableMatrix.h"
 #include "src/entities/data_structures/arma/ArmaDenseVector.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T, typename M>
 inline arma::Mat<T> first_multiplication_(
     const M& symmetric_matrix,
@@ -50,4 +50,4 @@ arma::Col<T> ArmaDenseSemiunitaryTransformer<T>::multiplyAndReturnMainDiagonal(c
 
 template class ArmaDenseSemiunitaryTransformer<double>;
 template class ArmaDenseSemiunitaryTransformer<float>;
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra

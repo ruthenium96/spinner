@@ -5,7 +5,7 @@
 
 #include "EmhashLogic.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
     EmhashSparseSemiunitaryMatrix::Map::const_iterator iter;
@@ -155,4 +155,4 @@ void EmhashSparseSemiunitaryMatrix::unitaryTransform(
 
     logic.unitaryTransform(symmetricMatrixToTransform, symmetricMatrixToAdd, *this);
 }
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra

@@ -1,7 +1,7 @@
 #include "abstractIndividual_tests.h"
 #include "src/entities/data_structures/arma/ArmaFactories.h"
 
-using namespace spinner::quantum::linear_algebra;
+using namespace spinner::linear_algebra;
 
 template<>
 std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>

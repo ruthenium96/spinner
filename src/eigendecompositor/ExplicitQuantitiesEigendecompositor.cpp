@@ -7,7 +7,7 @@ namespace spinner::eigendecompositor {
 ExplicitQuantitiesEigendecompositor::ExplicitQuantitiesEigendecompositor(
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    quantum::linear_algebra::FactoriesList factories_list) :
+    linear_algebra::FactoriesList factories_list) :
     eigendecompositor_(std::move(eigendecompositor)),
     converter_(std::move(converter)),
     factories_list_(std::move(factories_list)) {}
@@ -50,12 +50,12 @@ ExplicitQuantitiesEigendecompositor::getSubmatrixDerivative(common::QuantityEnum
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
 ExplicitQuantitiesEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
 }
 
-std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ExplicitQuantitiesEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
@@ -157,10 +157,10 @@ void ExplicitQuantitiesEigendecompositor::finalize() {
 
 OneOrMany<Subspectrum> ExplicitQuantitiesEigendecompositor::non_energy_subspectrum(
     const Submatrix& non_hamiltonian_submatrix,
-    const OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>&
+    const OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>&
         unitary_transformation_matrix) {
     return transform_one_or_many(
-    std::function([&non_hamiltonian_submatrix](std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix> unitary_transformation_matrix) {
+    std::function([&non_hamiltonian_submatrix](std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix> unitary_transformation_matrix) {
         const auto& transformer = unitary_transformation_matrix->getUnitaryTransformer();
         auto raw_data = transformer->calculateUnitaryTransformationOfMatrix(
             non_hamiltonian_submatrix.raw_data);

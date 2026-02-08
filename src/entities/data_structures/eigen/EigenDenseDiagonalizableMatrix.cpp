@@ -2,7 +2,7 @@
 
 #include "EigenLogic.h"
 
-namespace spinner::quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 template <typename T>
 void EigenDenseDiagonalizableMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
@@ -94,4 +94,4 @@ Eigen::Matrix<T, -1, -1>& EigenDenseDiagonalizableMatrix<T>::modifyDenseDiagonal
 
 template class EigenDenseDiagonalizableMatrix<double>;
 template class EigenDenseDiagonalizableMatrix<float>;
-} // namespace spinner::quantum::linear_algebra
+} // namespace spinner::linear_algebra
