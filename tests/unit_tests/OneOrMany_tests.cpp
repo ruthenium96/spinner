@@ -2,6 +2,8 @@
 
 #include "src/common/OneOrMany.h"
 
+using namespace spinner;
+
 template<typename T>
 T sum(T a, T b) {
     return a + b;

@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/Runner.h"
 
-double sum_of_s_squared(std::shared_ptr<const index_converter::AbstractIndexConverter> indexConverter) {
+double sum_of_s_squared(std::shared_ptr<const spinner::index_converter::AbstractIndexConverter> indexConverter) {
     double sum_of_s_squared = 0;
     for (auto spin : indexConverter->get_spins()) {
         sum_of_s_squared += spin * (spin + 1);
@@ -15,23 +15,23 @@ double sum_of_s_squared(std::shared_ptr<const index_converter::AbstractIndexConv
 // mu^2 = g^2 \sum_a s_a (s_a + 1)
 
 TEST(simple_analytical_dependencies, nothing) {
-    std::vector<std::vector<spin_algebra::Multiplicity>> mults_cases =
+    std::vector<std::vector<spinner::spin_algebra::Multiplicity>> mults_cases =
         {{2}, {3}, {4}, {5}, {2, 2}, {2, 2, 2, 2}, {2, 3, 4, 5}};
 
     for (const auto& mults : mults_cases) {
         const double g_exact = 2.0;
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        std::vector<spinner::magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             double g_value = g_exact;
             auto g = model.addSymbol("g", g_value);
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.assignSymbolToGFactor(g, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
@@ -54,7 +54,7 @@ TEST(simple_analytical_dependencies, Theta) {
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> Theta_dist(-100, -1.0);
 
-    std::vector<std::vector<spin_algebra::Multiplicity>> mults_cases =
+    std::vector<std::vector<spinner::spin_algebra::Multiplicity>> mults_cases =
         {{2}, {3}, {4}, {5}, {2, 2}, {2, 2, 2, 2}, {2, 3, 4, 5}};
 
     for (const auto& mults : mults_cases) {
@@ -62,10 +62,10 @@ TEST(simple_analytical_dependencies, Theta) {
             const double Theta_exact = Theta_dist(rng);
             const double g_exact = 2.0;
 
-            std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+            std::vector<spinner::magnetic_susceptibility::ValueAtTemperature> values;
 
             {
-                model::ModelInput model(mults);
+                spinner::model::ModelInput model(mults);
                 auto Theta = model.addSymbol("Theta", Theta_exact);
                 model.assignSymbolToTheta(Theta);
                 double g_value = g_exact;
@@ -74,7 +74,7 @@ TEST(simple_analytical_dependencies, Theta) {
                     model.assignSymbolToGFactor(g, i);
                 }
 
-                runner::Runner runner(model);
+                spinner::runner::Runner runner(model);
 
                 double sum_of_s_squared_ = sum_of_s_squared(runner.getIndexConverter());
 
@@ -99,16 +99,16 @@ TEST(simple_analytical_dependencies, 22_J_analytical) {
     std::mt19937 rng(dev());
     std::uniform_real_distribution<double> J_dist(-100, +100.0);
 
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2};
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2};
 
     for (size_t _ = 0; _ < 10; ++_) {
         const double J_exact = J_dist(rng);
         const double g_exact = 2.0;
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        std::vector<spinner::magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             auto J = model.addSymbol("J", J_exact);
             model.assignSymbolToIsotropicExchange(J, 0, 1);
             double g_value = g_exact;
@@ -117,7 +117,7 @@ TEST(simple_analytical_dependencies, 22_J_analytical) {
                 model.assignSymbolToGFactor(g, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             auto s_squared_function = [J_exact](double temperature){
                 return 2.0 / (3 + exp(-2 * J_exact / temperature));

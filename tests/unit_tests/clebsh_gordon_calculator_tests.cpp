@@ -6,7 +6,7 @@
 const double EPSILON = 1e-9;
 
 TEST(ClebshGordanCalculatorTest, Wigner9j) {
-	auto cg_calculator = spin_algebra::ClebshGordanCalculator();
+	auto cg_calculator = spinner::spin_algebra::ClebshGordanCalculator();
 
 	std::vector<std::pair<std::array<double, 9>, double>> test_cases = {
 		{{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0}, 1.0}, 

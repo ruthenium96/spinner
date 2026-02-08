@@ -1,14 +1,16 @@
 #include "GenerateSameMatrix.h"
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
+using namespace spinner::quantum::linear_algebra;
+
+std::vector<std::unique_ptr<AbstractDiagonalizableMatrix>>
 generateDenseDiagonalizableMatrices(
     size_t size,
     const std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>> answer;
+    std::vector<std::unique_ptr<AbstractDiagonalizableMatrix>> answer;
     answer.reserve(factories.size());
 
     // create zero matrices:
@@ -29,15 +31,15 @@ generateDenseDiagonalizableMatrices(
     return answer;
 }
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>>
+std::vector<std::unique_ptr<AbstractDiagonalizableMatrix>>
 generateSparseDiagonalizableMatrices(
     size_t size,
     const std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>> answer;
+    std::vector<std::unique_ptr<AbstractDiagonalizableMatrix>> answer;
     answer.reserve(factories.size());
 
     // create zero matrices:
@@ -66,11 +68,11 @@ generateSparseDiagonalizableMatrices(
     return answer;
 }
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>
+std::vector<std::unique_ptr<AbstractDenseSemiunitaryMatrix>>
 generateDenseUnitaryMatrices(
     size_t size,
     const std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>&
         factories,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
@@ -78,7 +80,7 @@ generateDenseUnitaryMatrices(
     auto symmetricMatrices = generateDenseDiagonalizableMatrices(size, factories, dist, rng);
 
     auto unitaryMatrices =
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>(
+        std::vector<std::unique_ptr<AbstractDenseSemiunitaryMatrix>>(
             symmetricMatrices.size());
 
     // construct unitary matrix as eigenvectors matrix:
@@ -89,59 +91,59 @@ generateDenseUnitaryMatrices(
     return unitaryMatrices;
 }
 
-std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>
+std::unique_ptr<AbstractDiagonalizableMatrix>
 generateSparseDiagonalizableMatrix(
     size_t size,
-    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory,
+    std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> factory,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
     std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>
         factories = {factory};
     return std::move(generateSparseDiagonalizableMatrices(size, factories, dist, rng)[0]);
 }
 
-std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix>
+std::unique_ptr<AbstractDiagonalizableMatrix>
 generateDenseDiagonalizableMatrix(
     size_t size,
-    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory,
+    std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> factory,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
     std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>
         factories = {factory};
     return std::move(generateDenseDiagonalizableMatrices(size, factories, dist, rng)[0]);
 }
 
-std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix> generateDenseUnitaryMatrix(
+std::unique_ptr<AbstractDenseSemiunitaryMatrix> generateDenseUnitaryMatrix(
     size_t size,
-    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory,
+    std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> factory,
     std::uniform_real_distribution<double> dist,
     std::mt19937 rng) {
     std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>
         factories = {factory};
     return std::move(generateDenseUnitaryMatrices(size, factories, dist, rng)[0]);
 }
 
-std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>
+std::unique_ptr<AbstractDenseVector>
 generateOrthDenseVector(
     size_t size,
-    std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> factory) {
+    std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> factory) {
     std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>
         factories = {factory};
     return std::move(generateOrthDenseVectors(size, factories)[0]);
 }
 
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
+std::vector<std::unique_ptr<AbstractDenseVector>>
 generateOrthDenseVectors(
     size_t size,
     const std::vector<
-        std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>&
+        std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>&
         factories) {
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> answer;
+    std::vector<std::unique_ptr<AbstractDenseVector>> answer;
     answer.reserve(factories.size());
 
     for (const auto& factory : factories) {

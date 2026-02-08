@@ -8,16 +8,16 @@
 #include "tests/tools/MeanAndDeviation.h"
 
 TEST(performanceTest, simple2ComponentSchema) {
-    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 4, 4, 4, 4, 4, 4};
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {4, 4, 4, 4, 4, 4, 4, 4, 4};
 
-    index_converter::lexicographic::IndexConverter converter(mults);
+    spinner::index_converter::lexicographic::IndexConverter converter(mults);
 
     auto sparseSemiunitaryfactories = constructAllSparseSemiunitaryMatrixFactories();
-    std::vector<quantum::linear_algebra::FactoriesList> allFactoriesLists;
+    std::vector<spinner::quantum::linear_algebra::FactoriesList> allFactoriesLists;
 
     for (const auto& sparseSemiunitaryfactory : sparseSemiunitaryfactories) {
-        quantum::linear_algebra::FactoriesList factoryList = quantum::linear_algebra::FactoriesList(
-            quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory(),
+        spinner::quantum::linear_algebra::FactoriesList factoryList = spinner::quantum::linear_algebra::FactoriesList(
+            spinner::quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory(),
             sparseSemiunitaryfactory);
         allFactoriesLists.push_back(factoryList);
     }
@@ -25,17 +25,17 @@ TEST(performanceTest, simple2ComponentSchema) {
     for (const auto& factoryList : allFactoriesLists)
         PerformanceTest(
             [&mults, &factoryList]() {
-                model::ModelInput model(mults);
-                common::physical_optimization::OptimizationList optimizationList;
+                spinner::model::ModelInput model(mults);
+                spinner::common::physical_optimization::OptimizationList optimizationList;
                 optimizationList.TzSort()
                     .EliminatePositiveProjections()
                     .Symmetrize(
-                        {group::Group::Dihedral, 3},
+                        {spinner::group::Group::Dihedral, 3},
                         {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
                     .Symmetrize(
-                        {group::Group::Dihedral, 3},
+                        {spinner::group::Group::Dihedral, 3},
                         {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-                runner::Runner runner(model, optimizationList, factoryList);
+                spinner::runner::Runner runner(model, optimizationList, factoryList);
             },
         1);
 }

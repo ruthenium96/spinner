@@ -6,9 +6,9 @@
 #include "tests/unit_tests/nonlinear_solver/abstractSolver_tests.h"
 
 template<>
-std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>
-createConcreteSolver<nonlinear_solver::optimNMAdapter>();
+std::shared_ptr<spinner::nonlinear_solver::AbstractNonlinearSolver>
+createConcreteSolver<spinner::nonlinear_solver::optimNMAdapter>();
 
-typedef testing::Types<nonlinear_solver::optimNMAdapter> optimNM;
+typedef testing::Types<spinner::nonlinear_solver::optimNMAdapter> optimNM;
 
 #endif  //SPINNER_CREATE_OPTIMNM_H
