@@ -2,7 +2,7 @@
 #include "src/common/UncertainValue.h"
 #include "src/model/symbols/SymbolName.h"
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 MagneticSusceptibilityController::MagneticSusceptibilityController(
     std::unique_ptr<worker::AbstractWorker>&& worker) :
@@ -61,4 +61,4 @@ common::UncertainValue MagneticSusceptibilityController::calculateTotalDerivativ
     return multiplyExperimentalAndTheoreticalDerivatives(std::move(theoretical_derivative));
 }
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility

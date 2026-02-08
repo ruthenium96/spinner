@@ -3,6 +3,8 @@
 #include <numeric>
 #include "Group.h"
 
+namespace spinner::group {
+
 // Projectors onto one-dimensional representations are uniquely specified using 
 // two characters: the rotation character (+1 or -1) and the reflection character (+1 or -1). 
 std::vector<std::vector<double>> one_dimension_projector_generator(
@@ -56,7 +58,7 @@ std::vector<std::vector<double>> two_dimension_projector_generator(
     return std::move(projectors);
 }
 
-group::Group::AlgebraicProperties constructDihedral(unsigned int order)
+Group::AlgebraicProperties constructDihedral(unsigned int order)
 {
     if (order == 0) {
         throw group::InitializationError("Order cannot be equal to zero");
@@ -155,7 +157,8 @@ group::Group::AlgebraicProperties constructDihedral(unsigned int order)
  It is symmetric group of order two. It has two group elements, two representations.
  Maximum size of orbit -- two, so the group has two projectors, one for each representation.
  */
-const group::Group::AlgebraicProperties GroupInfoS2 = {2,
+const Group::AlgebraicProperties GroupInfoS2 = {
+                                                       2,
                                                        2,
                                                        true,
                                                        {1, 1},
@@ -169,3 +172,5 @@ const group::Group::AlgebraicProperties GroupInfoS2 = {2,
 };
 
 // clang-format on
+
+} // namespace spinner::group

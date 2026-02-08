@@ -6,7 +6,7 @@
 #include "WignerEckartHelper.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 
 class T00TwoCenterTerm : public TwoCenterTerm {
   public:
@@ -40,6 +40,6 @@ class T00TwoCenterTerm : public TwoCenterTerm {
     std::vector<uint8_t> constructRanksOfTZero(uint32_t center_a, uint32_t center_b) const;
 };
 
-}  // namespace model::operators::ito
+} // namespace spinner::model::operators::ito
 
 #endif  //SPINNER_SCALARPRODUCTTERM_H

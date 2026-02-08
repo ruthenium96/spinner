@@ -1,6 +1,6 @@
 #include "TotalMSquaredTerm.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 
 TotalMSquaredTerm::TotalMSquaredTerm(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter) :
@@ -27,4 +27,4 @@ void TotalMSquaredTerm::construct(
     }
 }
 
-} // namespace model::operators
+} // namespace spinner::model::operators

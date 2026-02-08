@@ -1,5 +1,7 @@
 #include "Matrix.h"
 
+namespace spinner {
+
 Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {}
 
 Matrix::Matrix(
@@ -24,3 +26,5 @@ MatrixRef::MatrixRef(const Matrix& matrix) {
 MatrixRef::MatrixRef(std::vector<std::reference_wrapper<const Submatrix>>&& blocks_) {
     blocks = std::move(blocks_);
 }
+
+} // namespace spinner

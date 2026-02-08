@@ -7,14 +7,14 @@
 namespace {
 
 bool NumberOfGeneratorsConsistent(
-    std::vector<group::Permutation> const& generators,
-    group::Group::AlgebraicProperties const& info) {
+    std::vector<spinner::group::Permutation> const& generators,
+    spinner::group::Group::AlgebraicProperties const& info) {
     return generators.size() == info.number_of_generators;
 }
 
 bool SizesAreEqual(
-    std::vector<group::Permutation> const& generators,
-    group::Group::AlgebraicProperties const& info) {
+    std::vector<spinner::group::Permutation> const& generators,
+    spinner::group::Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         if (generators[0].size() != generators[i].size()) {
             return false;
@@ -24,10 +24,10 @@ bool SizesAreEqual(
 }
 
 bool GeneratorIsValid(
-    std::vector<group::Permutation> const& generators,
-    group::Group::AlgebraicProperties const& info) {
+    std::vector<spinner::group::Permutation> const& generators,
+    spinner::group::Group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
-        group::Permutation generator_sorted = generators[i];
+        auto generator_sorted = generators[i];
         std::sort(generator_sorted.begin(), generator_sorted.end());
         for (size_t j = 0; j < generator_sorted.size(); ++j) {
             if (generator_sorted[j] != j) {
@@ -38,10 +38,10 @@ bool GeneratorIsValid(
     return true;
 }
 
-group::Permutation ElementInPower(const group::Permutation& element, size_t power) {
-    group::Permutation result = element;
+spinner::group::Permutation ElementInPower(const spinner::group::Permutation& element, size_t power) {
+    spinner::group::Permutation result = element;
     for (size_t i = 1; i < power; ++i) {
-        group::Permutation tmp_result(result.size());
+        spinner::group::Permutation tmp_result(result.size());
         for (size_t n = 0; n < tmp_result.size(); ++n) {
             tmp_result[n] = result[element[n]];
         }
@@ -51,9 +51,9 @@ group::Permutation ElementInPower(const group::Permutation& element, size_t powe
 }
 
 bool ElementsInPowerOfItsOrderIsIdentity(
-    const std::vector<group::Permutation>& elements,
+    const std::vector<spinner::group::Permutation>& elements,
     const std::vector<size_t>& order_of_elements) {
-    group::Permutation identity(elements[0].size());
+    spinner::group::Permutation identity(elements[0].size());
     for (size_t i = 0; i < elements[0].size(); ++i) {
         identity[i] = i;
     }
@@ -66,9 +66,9 @@ bool ElementsInPowerOfItsOrderIsIdentity(
 }
 
 bool ElementsInPowerLowerThanItsOrderIsNotIdentity(
-    const std::vector<group::Permutation>& elements,
+    const std::vector<spinner::group::Permutation>& elements,
     const std::vector<size_t>& order_of_elements) {
-    group::Permutation identity(elements[0].size());
+    spinner::group::Permutation identity(elements[0].size());
     for (size_t i = 0; i < elements[0].size(); ++i) {
         identity[i] = i;
     }
@@ -81,10 +81,9 @@ bool ElementsInPowerLowerThanItsOrderIsNotIdentity(
     }
     return true;
 }
+} // namespace
 
-}  // namespace
-
-namespace group {
+namespace spinner::group {
 Group::Group(GroupType group_type, std::vector<Permutation> generators) :
     generators_(std::move(generators)),
     properties(Group::return_group_info_by_group_type(group_type)) {
@@ -236,4 +235,4 @@ bool Group::do_groups_commute(const Group& rhs) const {
 size_t Group::size_of_permutations() const {
     return elements_.back().size();
 }
-}  // namespace group
+} // namespace spinner::group

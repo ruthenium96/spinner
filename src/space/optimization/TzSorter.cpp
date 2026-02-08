@@ -3,7 +3,7 @@
 #include <cassert>
 #include <utility>
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 Space TzSorter::apply(Space&& space) const {
     assert(!space.getBlocks().empty());
@@ -47,4 +47,4 @@ TzSorter::TzSorter(
     factories_(std::move(factories)) {
     max_ntz_proj_ = converter_->get_max_ntz_proj();
 }
-}  // namespace space::optimization
+} // namespace spinner::space::optimization

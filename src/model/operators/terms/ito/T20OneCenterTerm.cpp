@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 
 T20OneCenterTerm::T20OneCenterTerm(
 	std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
@@ -105,4 +105,4 @@ std::vector<uint8_t> T20OneCenterTerm::constructRanksOfTTwo(uint32_t center_a) c
     return answer;
 }
 
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito

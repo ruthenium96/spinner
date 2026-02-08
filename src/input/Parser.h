@@ -10,7 +10,7 @@
 #include <string>
 #include <optional>
 
-namespace input {
+namespace spinner::input {
 
 class Parser {
   public:
@@ -31,6 +31,6 @@ class Parser {
     std::optional<input::ControlParser> control_parser_;
 };
 
-}  // namespace input
+} // namespace spinner::input
 
 #endif  //SPINNER_PARSER_H

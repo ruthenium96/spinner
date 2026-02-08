@@ -4,7 +4,7 @@
 #include "Runner.h"
 #include "src/input/Parser.h"
 
-namespace runner {
+namespace spinner::runner {
 
 class Executer {
   public:
@@ -12,6 +12,6 @@ class Executer {
     static void dry_execute(input::Parser parser);
 };
 
-}  // namespace runner
+} // namespace spinner::runner
 
 #endif  //SPINNER_EXECUTER_H

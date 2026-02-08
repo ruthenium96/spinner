@@ -1,7 +1,7 @@
 #include "IndexPermutator.h"
 #include "src/group/Group.h"
 
-namespace index_converter::lexicographic {
+namespace spinner::index_converter::lexicographic {
 
 IndexPermutator::IndexPermutator(std::shared_ptr<const IndexConverter> converter, const group::Group& group) :
 	converter_(converter), group_(group) {
@@ -35,4 +35,4 @@ std::vector<IndexWithSign> IndexPermutator::convert_index_to_permutated_indexes(
     return answer;
 }
 
-} // namespace index_converter::lexicographic
+} // namespace spinner::index_converter::lexicographic

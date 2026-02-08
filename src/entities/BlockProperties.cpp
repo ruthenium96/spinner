@@ -1,5 +1,7 @@
 #include "BlockProperties.h"
 
+namespace spinner {
+
 std::string BlockProperties::get_representation_name() const {
     if (representation.empty()) {
         return "none";
@@ -10,3 +12,5 @@ std::string BlockProperties::get_representation_name() const {
     }
     return s;
 }
+
+} // namespace spinner

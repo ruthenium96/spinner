@@ -1,6 +1,6 @@
 #include "ArmaSparseSemiunitaryMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 
 struct IteratorImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
     arma::sp_mat::const_col_iterator iter;
@@ -114,4 +114,4 @@ void ArmaSparseSemiunitaryMatrix::unitaryTransform(
     std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd) const {
     throw std::invalid_argument("unitaryTransform not implemented in ArmaSparseSemiunitaryMatrix");
 }
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra

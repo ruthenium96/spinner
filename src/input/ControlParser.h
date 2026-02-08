@@ -7,7 +7,7 @@
 #include "src/common/Logger.h"
 #include "src/entities/data_structures/FactoriesList.h"
 
-namespace input {
+namespace spinner::input {
 
 class ControlParser {
   public:
@@ -21,6 +21,6 @@ class ControlParser {
     std::optional<quantum::linear_algebra::FactoriesList> factoriesList_;
 };
 
-}  // namespace input
+} // namespace spinner::input
 
 #endif  //SPINNER_CONTROLPARSER_H

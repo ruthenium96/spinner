@@ -6,7 +6,7 @@
 #include "src/eigendecompositor/ExactEigendecompositor.h"
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 class FTLMEigendecompositor : public ExactEigendecompositor {
     public:
@@ -57,6 +57,6 @@ class FTLMEigendecompositor : public ExactEigendecompositor {
     bool first_iteration_has_been_done_ = false;
 };
 
-} // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif // SPINNER_FTLMEIGENDECOMPOSITOR_H

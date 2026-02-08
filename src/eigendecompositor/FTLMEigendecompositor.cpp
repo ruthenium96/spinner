@@ -12,7 +12,7 @@
 #include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
 #include "src/entities/spectrum/Subspectrum.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 FTLMEigendecompositor::FTLMEigendecompositor(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
@@ -216,4 +216,4 @@ void FTLMEigendecompositor::finalize() {
     first_iteration_has_been_done_ = true;
 }
 
-}
+} // namespace spinner::eigendecompositor

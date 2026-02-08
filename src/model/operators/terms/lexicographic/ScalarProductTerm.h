@@ -6,7 +6,7 @@
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators::lexicographic {
+namespace spinner::model::operators::lexicographic {
 class ScalarProductTerm: public TwoCenterTerm {
   public:
     ScalarProductTerm(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter, double value);
@@ -43,6 +43,6 @@ class ScalarProductTerm: public TwoCenterTerm {
         uint32_t projection_of_minus_center,
         double factor) const;
 };
-}  // namespace model::operators::lexicographic
+} // namespace spinner::model::operators::lexicographic
 
 #endif  //SPINNER_LEXSCALARPRODUCTTERM_H

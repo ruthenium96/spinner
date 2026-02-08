@@ -7,7 +7,7 @@
 #include "src/common/Quantity.h"
 #include "src/model/symbols/SymbolName.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 class AllQuantitiesGetter {
     public:
       // What means Spectrum's optional?
@@ -36,6 +36,6 @@ class AllQuantitiesGetter {
       virtual OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
         getWeightsOfBlockStates(size_t number_of_block) const = 0;
 };
-}
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_ALLQUANTITIESGETTER_H

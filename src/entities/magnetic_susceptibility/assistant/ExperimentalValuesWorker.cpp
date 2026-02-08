@@ -7,7 +7,7 @@
 #include "src/common/PrintingFunctions.h"
 #include "src/common/UncertainValue.h"
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 ExperimentalValuesWorker::ExperimentalValuesWorker(
     std::vector<ValueAtTemperature> experimental_values,
@@ -144,4 +144,4 @@ const std::vector<double>& ExperimentalValuesWorker::getWeights() const {
     return weights_.getWeights();
 }
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility

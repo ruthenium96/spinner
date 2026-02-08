@@ -9,7 +9,7 @@
 //  in case of space/optimization it can be done by means of replacing move_vector_from to
 //  move_vector_to function. In other cases it can be done through refactoring of constructors.
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 class FactoriesList {
   public:
     explicit FactoriesList(
@@ -34,5 +34,5 @@ class FactoriesList {
     std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> denseFactory_;
     std::shared_ptr<AbstractSparseTransformFactory> sparseFactory_;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra
 #endif  //SPINNER_FACTORIESLIST_H

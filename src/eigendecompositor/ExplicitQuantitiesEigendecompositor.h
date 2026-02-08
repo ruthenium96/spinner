@@ -3,7 +3,7 @@
 
 #include "AbstractEigendecompositor.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
   public:
@@ -56,6 +56,6 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
             unitary_transformation_matrix);
 };
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_EXPLICITQUANTITIESEIGENDECOMPOSITOR_H

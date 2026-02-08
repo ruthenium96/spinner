@@ -3,7 +3,7 @@
 #include <functional>
 #include <utility>
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 OneSymbolInHamiltonianEigendecompositor::OneSymbolInHamiltonianEigendecompositor(
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
@@ -164,4 +164,4 @@ void OneSymbolInHamiltonianEigendecompositor::finalize() {
     first_iteration_has_been_done_ = true;
 }
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

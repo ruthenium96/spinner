@@ -4,7 +4,7 @@
 #include "src/common/OneOrMany.h"
 #include "src/eigendecompositor/AllQuantitiesGetter.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 class AbstractEigendecompositor : public AllQuantitiesGetter {
   public:
@@ -45,6 +45,6 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
     uint32_t number_of_subspaces_;
 };
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_ABSTRACTEIGENDECOMPOSITOR_H

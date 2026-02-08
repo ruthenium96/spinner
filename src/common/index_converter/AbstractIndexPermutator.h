@@ -5,7 +5,7 @@
 #include <vector>
 
 
-namespace index_converter {
+namespace spinner::index_converter {
 
 struct IndexWithSign {
     uint32_t index;
@@ -19,6 +19,6 @@ public:
     virtual ~AbstractIndexPermutator() = default;
 
 };
-} // namespace index_converter
+} // namespace spinner::index_converter
 
 #endif // SPINNER_ABSTRACTINDEXPERMUTATOR_H

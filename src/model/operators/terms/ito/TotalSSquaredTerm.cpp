@@ -1,6 +1,6 @@
 #include "TotalSSquaredTerm.h"
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 
 TotalSSquaredTerm::TotalSSquaredTerm(
 	std::shared_ptr<const index_converter::s_squared::IndexConverter> converter) :
@@ -21,4 +21,4 @@ void TotalSSquaredTerm::construct(
 }
 
 
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito

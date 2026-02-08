@@ -7,7 +7,7 @@
 #include "src/model/NumericalParameters.h"
 #include "WignerEckartHelper.h"
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 class T20OneCenterTerm : public OneCenterTerm {
   public:
     T20OneCenterTerm(
@@ -34,6 +34,6 @@ class T20OneCenterTerm : public OneCenterTerm {
     std::vector<uint8_t> constructRanksOfTTwo(uint32_t center_a) const;
 };
 
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito
 
 #endif // SPINNER_T20ONECENTERTERM_H

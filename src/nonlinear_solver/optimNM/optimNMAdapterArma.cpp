@@ -35,9 +35,9 @@ adaptSignature(const std::function<double(const std::vector<double>&, std::vecto
     };
     return adaptedSignatureFunction;
 }
-}  // namespace
+} // namespace
 
-namespace nonlinear_solver {
+namespace spinner::nonlinear_solver {
 
 void optimNMAdapter::optimize(
     std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction,
@@ -59,4 +59,4 @@ void optimNMAdapter::optimize(
 
     changeable_values = convertFromArmaToSTL(changeable_values_arma);
 }
-}  // namespace nonlinear_solver
+} // namespace spinner::nonlinear_solver

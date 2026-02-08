@@ -7,7 +7,7 @@
 #include "ArmaSparseDiagonalizableMatrix.h"
 #include "ArmaSparseSemiunitaryMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 
 std::unique_ptr<AbstractDiagonalizableMatrix>
 ArmaDenseTransformAndDiagonalizeFactory::createDenseDiagonalizableMatrix(uint32_t size) {
@@ -91,4 +91,4 @@ ArmaSparseTransformFactory::createSparseSymmetricMatrix(uint32_t size) {
     matrix->resize(size);
     return matrix;
 }
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra

@@ -6,7 +6,7 @@
 #include <string>
 #include <yaml-cpp/yaml.h>
 
-namespace input {
+namespace spinner::input {
 
 template<class T,
          typename std::enable_if<!std::is_enum<T>{}, bool>::type = true>
@@ -46,6 +46,6 @@ std::vector<double> range_as(YAML::Node& node);
 
 void throw_if_node_is_not_empty(const YAML::Node& node);
 
-}
+} // namespace spinner::input
 
 #endif  //SPINNER_TOOLS_H

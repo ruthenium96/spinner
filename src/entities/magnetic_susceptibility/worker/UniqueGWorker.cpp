@@ -2,7 +2,7 @@
 #include "src/common/UncertainValue.h"
 #include "src/model/symbols/SymbolName.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 
 UniqueGWorker::UniqueGWorker(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
@@ -51,4 +51,4 @@ std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
     return derivatives;
 }
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility

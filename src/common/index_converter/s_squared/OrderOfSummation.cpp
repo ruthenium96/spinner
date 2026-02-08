@@ -9,9 +9,9 @@ bool has_duplicates(std::vector<T> vector) {
     std::sort(vector.begin(), vector.end());
     return std::adjacent_find(vector.begin(), vector.end()) != vector.end();
 }
-}  // namespace
+} // namespace
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 
 std::shared_ptr<const OrderOfSummation> OrderOfSummation::constructFromOrbits(
     const std::vector<std::vector<std::set<size_t>>>& all_groups_orbits_of_mults,
@@ -102,4 +102,4 @@ const std::vector<OrderOfSummation::AdditionInstruction>& OrderOfSummation::getI
 }
 
 
-}  // namespace index_converter::s_squared
+} // namespace spinner::index_converter::s_squared

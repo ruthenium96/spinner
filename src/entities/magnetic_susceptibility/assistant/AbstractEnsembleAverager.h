@@ -7,7 +7,7 @@
 #include "src/common/UncertainValue.h"
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 class AbstractEnsembleAverager {
   public:
     virtual common::UncertainValue ensemble_average(
@@ -20,6 +20,6 @@ class AbstractEnsembleAverager {
         const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& weights_vector, 
         const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& value_vector) const;
 };
-}
+} // namespace spinner::magnetic_susceptibility
 
 #endif //SPINNER_ABSTRACTENSEMBLEAVERAGER_H

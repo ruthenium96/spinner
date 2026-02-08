@@ -8,7 +8,7 @@
 #include "src/space/Space.h"
 #include "src/common/index_converter/AbstractIndexConverter.h"
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 class TzSorter {
   public:
     explicit TzSorter(
@@ -22,6 +22,6 @@ class TzSorter {
     const quantum::linear_algebra::FactoriesList factories_;
     uint32_t max_ntz_proj_;
 };
-}  // namespace space::optimization
+} // namespace spinner::space::optimization
 
 #endif  //SPINNER_TZSORTER_H

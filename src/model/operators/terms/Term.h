@@ -7,7 +7,7 @@
 
 #include "src/entities/data_structures/AbstractSymmetricMatrix.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class Term {
   public:
     // This method is required for deep copy of std::vector<std::unique_ptr<Term>>
@@ -83,6 +83,6 @@ class TwoCenterTerm : public Term {
     };
     ~TwoCenterTerm() override = default;
 };
-}  // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif  //SPINNER_TERM_H

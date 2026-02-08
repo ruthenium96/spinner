@@ -3,7 +3,7 @@
 
 #include "Term.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class ConstantTerm: public ZeroCenterTerm {
   public:
     explicit ConstantTerm(std::shared_ptr<const double> constant);
@@ -18,6 +18,6 @@ class ConstantTerm: public ZeroCenterTerm {
   private:
     std::shared_ptr<const double> constant_;
 };
-}  // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif  //SPINNER_CONSTANTTERM_H

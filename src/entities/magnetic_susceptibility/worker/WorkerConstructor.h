@@ -7,7 +7,7 @@
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 #include "src/eigendecompositor/FlattenedSpectra.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 
 class WorkerConstructor {
   public:
@@ -17,6 +17,6 @@ class WorkerConstructor {
         const quantum::linear_algebra::FactoriesList& factories);
 };
 
-}  // namespace magnetic_susceptibility::worker
+} // namespace spinner::magnetic_susceptibility::worker
 
 #endif  //SPINNER_WORKERCONSTRUCTOR_H

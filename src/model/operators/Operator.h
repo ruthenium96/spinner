@@ -6,7 +6,7 @@
 
 #include "src/model/operators/terms/Term.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class Operator {
   public:
     Operator() = default;
@@ -24,6 +24,6 @@ class Operator {
   private:
     std::vector<std::unique_ptr<const Term>> terms_;
 };
-}  // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif  //SPINNER_OPERATOR_H

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace model {
+namespace spinner::model {
 template<class T>
 class TwoDNumericalParameters {
   private:
@@ -43,6 +43,6 @@ class OneDNumericalParameters {
         return data_.at(i);
     }
 };
-}  // namespace model
+} // namespace spinner::model
 
 #endif  //SPINNER_NUMERICALPARAMETERS_H

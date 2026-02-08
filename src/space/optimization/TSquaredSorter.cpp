@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 TSquaredSorter::TSquaredSorter(std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
     quantum::linear_algebra::FactoriesList factories) :
 	converter_(std::move(converter)),
@@ -69,4 +69,4 @@ size_t TSquaredSorter::multiplicity_to_number_of_block(spin_algebra::Multiplicit
     }
 }
 
-}  // namespace space::optimization
+} // namespace spinner::space::optimization

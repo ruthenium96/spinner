@@ -3,7 +3,7 @@
 #include "EigenSparseDiagonalizableMatrix.h"
 #include "EigenDenseVector.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 
 template <typename T, typename M>
 inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
@@ -53,4 +53,4 @@ std::unique_ptr<AbstractDenseVector> EigenDenseSemiunitaryTransformer<T>::calcul
 
 template class EigenDenseSemiunitaryTransformer<double>;
 template class EigenDenseSemiunitaryTransformer<float>;
-} // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra

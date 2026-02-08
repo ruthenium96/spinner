@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace group {
+namespace spinner::group {
 
 using PermutationArrayType = uint8_t;
 using Permutation = std::vector<PermutationArrayType>;
@@ -92,10 +92,10 @@ struct InitializationError: public std::logic_error {
     explicit InitializationError(const std::string& arg) : logic_error(arg) {}
 };
 
-}  // namespace group
+Group::AlgebraicProperties constructDihedral(unsigned int order);
 
-group::Group::AlgebraicProperties constructDihedral(unsigned int order);
+extern const Group::AlgebraicProperties GroupInfoS2;
 
-extern const group::Group::AlgebraicProperties GroupInfoS2;
+} // namespace spinner::group
 
 #endif  //SPINNER_GROUP_H

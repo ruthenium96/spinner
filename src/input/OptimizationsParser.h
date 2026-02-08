@@ -6,7 +6,7 @@
 
 #include "src/common/physical_optimization/OptimizationList.h"
 
-namespace input {
+namespace spinner::input {
 
 class OptimizationsParser {
   public:
@@ -21,6 +21,6 @@ class OptimizationsParser {
     void ftlmParser(YAML::Node ftlm_node);
 };
 
-}  // namespace input
+} // namespace spinner::input
 
 #endif  //SPINNER_OPTIMIZATIONSPARSER_H

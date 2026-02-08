@@ -1,5 +1,5 @@
 #include "Space.h"
-namespace space {
+namespace spinner::space {
 Space::Space(uint32_t total_space_size, const quantum::linear_algebra::FactoriesList& factories) {
     auto identity_decomposition =
         factories.createSparseSemiunitaryMatrix(total_space_size, total_space_size);
@@ -25,4 +25,4 @@ const std::vector<Subspace>& Space::getBlocks() const {
     return blocks_;
 }
 
-}  // namespace space
+} // namespace spinner::space

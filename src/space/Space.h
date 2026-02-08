@@ -8,7 +8,7 @@
 #include "Subspace.h"
 #include "src/entities/data_structures/FactoriesList.h"
 
-namespace space {
+namespace spinner::space {
 // Space is responsible for _sparse_ unitary transformation of Hamiltonian matrix.
 // This transformation leads to block-diagonal Hamiltonian matrix.
 class Space {
@@ -24,6 +24,6 @@ class Space {
   private:
     std::vector<Subspace> blocks_;
 };
-}  // namespace space
+} // namespace spinner::space
 
 #endif  // SPINNER_SPACE_H

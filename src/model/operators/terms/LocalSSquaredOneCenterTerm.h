@@ -6,7 +6,7 @@
 #include "src/common/index_converter/AbstractIndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class LocalSSquaredOneCenterTerm: public OneCenterTerm {
   public:
     LocalSSquaredOneCenterTerm(
@@ -29,6 +29,6 @@ class LocalSSquaredOneCenterTerm: public OneCenterTerm {
     const double prefactor_ = 1;
 };
 
-}  // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif  //SPINNER_LOCALSSQUAREDONECENTERTERM_H

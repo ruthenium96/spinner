@@ -5,6 +5,8 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/matrix/Submatrix.h"
 
+namespace spinner {
+
 struct Subspectrum {
     BlockProperties properties;
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> raw_data;
@@ -15,5 +17,7 @@ struct Subspectrum {
         std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> raw_data_,
         BlockProperties properties_);
 };
+
+} // namespace spinner
 
 #endif  //SPINNER_SUBSPECTRUM_H

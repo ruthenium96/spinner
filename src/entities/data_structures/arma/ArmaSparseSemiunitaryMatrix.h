@@ -5,7 +5,7 @@
 
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 class ArmaSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   public:
     std::unique_ptr<Iterator> GetNewIterator(size_t index_of_vector) const override;
@@ -33,5 +33,5 @@ class ArmaSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   private:
     arma::sp_mat sparseSemiunitaryMatrix_;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra
 #endif  //SPINNER_ARMASPARSESEMIUNITARYMATRIX_H

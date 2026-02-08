@@ -2,7 +2,7 @@
 
 #include <utility>
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 ExplicitQuantitiesEigendecompositor::ExplicitQuantitiesEigendecompositor(
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
@@ -171,4 +171,4 @@ OneOrMany<Subspectrum> ExplicitQuantitiesEigendecompositor::non_energy_subspectr
         return std::move(non_energy_subspectrum);
     }), unitary_transformation_matrix);
 }
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

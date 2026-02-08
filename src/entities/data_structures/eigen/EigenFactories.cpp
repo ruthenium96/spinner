@@ -5,7 +5,7 @@
 #include "EigenDenseVector.h"
 #include "EigenSparseDiagonalizableMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 
 std::unique_ptr<AbstractDiagonalizableMatrix>
 EigenDenseTransformAndDiagonalizeFactory::createDenseDiagonalizableMatrix(uint32_t size) {
@@ -76,4 +76,4 @@ std::unique_ptr<AbstractDenseVector> EigenDenseTransformAndDiagonalizeFactory::c
     }
 }
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra

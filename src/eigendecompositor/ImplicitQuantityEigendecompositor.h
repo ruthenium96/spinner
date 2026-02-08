@@ -4,7 +4,7 @@
 #include "AbstractEigendecompositor.h"
 #include "src/common/Quantity.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 // This class implicitly calculate S^2 or M^2 values using block_properties data (total_mult or n_proj).
 class ImplicitQuantityEigendecompositor: public AbstractEigendecompositor {
@@ -51,6 +51,6 @@ class ImplicitQuantityEigendecompositor: public AbstractEigendecompositor {
     double calculate_value(const BlockProperties& properties) const;
 };
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_IMPLICITQUANTITYEIGENDECOMPOSITOR_H

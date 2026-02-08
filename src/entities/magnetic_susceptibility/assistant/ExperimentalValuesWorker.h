@@ -6,7 +6,7 @@
 #include "src/common/UncertainValue.h"
 #include "WeightingScheme.h"
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 constexpr double mu_squared_in_bohr_magnetons_squared_to_chiT_in_cm_cubed_kelvin_per_mol =
     0.125048612;
@@ -55,5 +55,5 @@ class ExperimentalValuesWorker {
     // Ratio between number of centers (or molar weight) of theoretical and experimental systems.
     double number_of_centers_ratio_;
 };
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility
 #endif  //SPINNER_EXPERIMENTALVALUESWORKER_H

@@ -4,7 +4,7 @@
 #include "src/common/Quantity.h"
 #include "src/common/UncertainValue.h"
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 CommonEnsembleAverager::CommonEnsembleAverager(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra) :
@@ -31,4 +31,4 @@ std::pair<double, double> CommonEnsembleAverager::ensemble_average_numerator_den
         value_vector);
 }
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility

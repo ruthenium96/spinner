@@ -7,7 +7,7 @@
 #include "src/entities/magnetic_susceptibility/worker/DifferentGWorker.h"
 #include "src/entities/magnetic_susceptibility/worker/UniqueGWorker.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 
 std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
@@ -86,4 +86,4 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
     return magnetic_susceptibility_worker;
 
 }
-}  // namespace magnetic_susceptibility::worker
+} // namespace spinner::magnetic_susceptibility::worker

@@ -3,7 +3,7 @@
 
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"
 
-namespace nonlinear_solver {
+namespace spinner::nonlinear_solver {
 
 class stlbfgsAdapter: public AbstractNonlinearSolver {
   public:
@@ -19,6 +19,6 @@ class stlbfgsAdapter: public AbstractNonlinearSolver {
     std::vector<double> mainDiagonalOfInverseHessian_;
 };
 
-}  // namespace nonlinear_solver
+} // namespace spinner::nonlinear_solver
 
 #endif  //SPINNER_STLBFGSADAPTER_H

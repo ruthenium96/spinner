@@ -1,6 +1,6 @@
 #include "ModelInput.h"
 
-namespace model {
+namespace spinner::model {
 
 ModelInput::ModelInput(const std::vector<spin_algebra::Multiplicity>& mults) :
     symbols_(mults.size()),
@@ -47,4 +47,4 @@ symbols::SymbolName ModelInput::addSymbol(
     return symbols_.addSymbol(name_string, initial_value, is_changeable, type_enum);
 }
 
-}  // namespace model
+} // namespace spinner::model

@@ -3,7 +3,7 @@
 
 #include "src/space/Space.h"
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 class PositiveProjectionsEliminator {
   public:
@@ -13,6 +13,6 @@ class PositiveProjectionsEliminator {
   private:
     uint32_t max_ntz_proj_;
 };
-}  // namespace space::optimization
+} // namespace spinner::space::optimization
 
 #endif  //SPINNER_POSITIVEPROJECTIONSELIMINATOR_H

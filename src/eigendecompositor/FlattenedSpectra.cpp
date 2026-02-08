@@ -11,11 +11,11 @@
 
 namespace {
 
-OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flatten(
-    OneOrMany<SpectrumRef> spectrum,
-    const quantum::linear_algebra::FactoriesList& factories) {
+spinner::OneOrMany<std::unique_ptr<spinner::quantum::linear_algebra::AbstractDenseVector>> flatten(
+    spinner::OneOrMany<spinner::SpectrumRef> spectrum,
+    const spinner::quantum::linear_algebra::FactoriesList& factories) {
     return std::move(transform_one_or_many(
-        std::function([factories](SpectrumRef spectrum){
+        std::function([factories](spinner::SpectrumRef spectrum){
             auto vector = factories.createVector();
             for (const auto& subspectrum_ref : spectrum.blocks) {
                 const auto& subspectrum = subspectrum_ref.get();
@@ -27,7 +27,7 @@ OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flatten
     }
 } // namespace
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGetter,
     const quantum::linear_algebra::FactoriesList& factories) {
@@ -139,4 +139,4 @@ OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::
 }
 
 
-} // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

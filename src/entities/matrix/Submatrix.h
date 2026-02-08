@@ -9,6 +9,8 @@
 
 #include "src/common/index_converter/AbstractIndexConverter.h"
 
+namespace spinner {
+
 struct Submatrix {
     BlockProperties properties;
     std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data;
@@ -26,5 +28,7 @@ struct Submatrix {
         const quantum::linear_algebra::FactoriesList& factories,
         bool return_sparse_if_possible);
 };
+
+} // namespace spinner
 
 #endif  //SPINNER_SUBMATRIX_H

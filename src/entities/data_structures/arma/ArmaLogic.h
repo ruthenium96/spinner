@@ -7,7 +7,7 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 template <typename T>
 class ArmaLogic {
   public:
@@ -27,6 +27,6 @@ class ArmaLogic {
         const AbstractDenseVector& seed_vector,
         size_t krylov_subspace_size) const;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra
 
 #endif  //SPINNER_ARMALOGIC_H

@@ -1,6 +1,6 @@
 #include "NonMinimalProjectionsEliminator.h"
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 NonMinimalProjectionsEliminator::NonMinimalProjectionsEliminator(uint32_t max_total_mult) :
 	max_total_mult_(max_total_mult) {}
@@ -24,4 +24,4 @@ Space NonMinimalProjectionsEliminator::apply(Space&& space) const {
 
 }
 
-}
+} // namespace spinner::space::optimization

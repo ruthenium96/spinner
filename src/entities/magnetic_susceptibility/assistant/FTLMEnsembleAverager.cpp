@@ -16,7 +16,7 @@ double average_over_seeds(const std::vector<double>& values) {
 
 } // namespace
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 FTLMEnsembleAverager::FTLMEnsembleAverager(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra) :
@@ -67,4 +67,4 @@ std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemb
     return {std::move(value_numerators), std::move(partition_functions)};
 }
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility

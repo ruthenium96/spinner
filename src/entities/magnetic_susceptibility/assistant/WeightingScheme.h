@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 enum WeightingSchemeEnum { per_point, per_interval };
 
@@ -18,6 +18,6 @@ class WeightingScheme {
     std::vector<double> weights_;
 };
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility
 
 #endif  //SPINNER_WEIGHTINGSCHEME_H

@@ -4,7 +4,7 @@
 #include "Term.h"
 #include "src/common/index_converter/AbstractIndexConverter.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class TotalMSquaredTerm : public model::operators::ZeroCenterTerm{
 public:
     TotalMSquaredTerm(
@@ -19,6 +19,6 @@ private:
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter_;
 
 };
-} // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif

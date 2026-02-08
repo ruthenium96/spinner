@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-namespace model::operators {
+namespace spinner::model::operators {
 
 std::unique_ptr<Term> LocalSSquaredOneCenterTerm::clone() const {
     return std::make_unique<LocalSSquaredOneCenterTerm>(converter_, coefficients_, prefactor_);
@@ -44,4 +44,4 @@ LocalSSquaredOneCenterTerm::LocalSSquaredOneCenterTerm(
     OneCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)) {}
-}  // namespace model::operators
+} // namespace spinner::model::operators

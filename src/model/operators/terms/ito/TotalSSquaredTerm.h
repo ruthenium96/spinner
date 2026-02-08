@@ -5,7 +5,7 @@
 #include "src/common/index_converter/s_squared/IndexConverter.h"
 
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 class TotalSSquaredTerm : public ZeroCenterTerm {
   public:
     TotalSSquaredTerm(std::shared_ptr<const index_converter::s_squared::IndexConverter> converter);
@@ -18,6 +18,6 @@ class TotalSSquaredTerm : public ZeroCenterTerm {
         std::shared_ptr<const index_converter::s_squared::IndexConverter> converter_;
 
 };
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito
 
 #endif // SPINNER_TOTALSSQUAREDTERM_H

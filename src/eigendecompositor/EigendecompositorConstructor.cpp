@@ -8,7 +8,7 @@
 #include "src/eigendecompositor/ImplicitQuantityEigendecompositor.h"
 #include "src/eigendecompositor/OneSymbolInHamiltonianEigendecompositor.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
     const quantum::linear_algebra::FactoriesList& factories) {
@@ -97,4 +97,4 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
     return std::move(eigendecompositor);
 }
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

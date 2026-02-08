@@ -5,7 +5,7 @@
 
 #include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 template <typename T>
 class ArmaSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   public:
@@ -36,5 +36,5 @@ class ArmaSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
 template <typename T>
 using ArmaSparseSymmetricMatrix = ArmaSparseDiagonalizableMatrix<T>;
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra
 #endif  //SPINNER_ARMASPARSEDIAGONALIZABLEMATRIX_H

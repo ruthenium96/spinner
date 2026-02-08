@@ -7,7 +7,7 @@
 #include "src/model/symbols/SymbolName.h"
 #include "src/model/symbols/SymbolicWorker.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 class AbstractWorker {
   public:
     // Different cases lead to different approaches of calculating <S2>.
@@ -24,6 +24,6 @@ class AbstractWorker {
 
     virtual ~AbstractWorker() = default;
 };
-}  // namespace magnetic_susceptibility::worker
+} // namespace spinner::magnetic_susceptibility::worker
 
 #endif  //SPINNER_ABSTRACTWORKER_H

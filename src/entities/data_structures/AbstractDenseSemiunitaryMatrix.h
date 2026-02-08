@@ -5,7 +5,7 @@
 
 #include "AbstractDenseSemiunitaryTransformer.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 class AbstractDenseSemiunitaryMatrix {
   public:
     virtual uint32_t size_rows() const = 0;
@@ -19,5 +19,5 @@ class AbstractDenseSemiunitaryMatrix {
 
     virtual ~AbstractDenseSemiunitaryMatrix() = default;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra
 #endif  //SPINNER_ABSTRACTDENSESEMIUNITARYMATRIX_H

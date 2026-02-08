@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 ExactEigendecompositor::ExactEigendecompositor(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
@@ -121,4 +121,4 @@ ExactEigendecompositor::energy_subspectrum_with_eigenvectors(
     return {std::move(energy_subspectrum), std::move(eigencouple.eigenvectors)};
 }
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

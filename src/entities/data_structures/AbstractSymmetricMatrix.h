@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <memory>
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 class AbstractSymmetricMatrix {
   public:
     virtual void add_to_position(double value, uint32_t i, uint32_t j) = 0;
@@ -16,6 +16,6 @@ class AbstractSymmetricMatrix {
 
     virtual ~AbstractSymmetricMatrix() = default;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra
 
 #endif  //SPINNER_ABSTRACTSYMMETRICMATRIX_H

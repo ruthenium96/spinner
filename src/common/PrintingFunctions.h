@@ -22,13 +22,13 @@
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/common/index_converter/s_squared/IndexConverter.h"
 
+namespace spinner {
+
 std::ostream& operator<<(std::ostream& os, const space::Space& space);
 std::ostream& operator<<(std::ostream& os, const space::Subspace& subspace);
 std::ostream& operator<<(std::ostream& os, const SpectrumRef& spectrum_ref);
-template <> struct spdlog::fmt_lib::formatter<SpectrumRef> : spdlog::fmt_lib::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Subspectrum& subspectrum);
 std::ostream& operator<<(std::ostream& os, const MatrixRef& matrix);
-template <> struct spdlog::fmt_lib::formatter<MatrixRef> : spdlog::fmt_lib::ostream_formatter {};
 std::ostream& operator<<(std::ostream& os, const Submatrix& submatrix);
 std::ostream& operator<<(std::ostream& os, const BlockProperties& properties);
 std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity);
@@ -41,10 +41,15 @@ std::ostream& operator<<(std::ostream& os, const OneOrMany<T>& one_or_many) {
     one_or_many);
     return os;
 }
-template <typename T> struct fmt::formatter<OneOrMany<T>> : fmt::ostream_formatter {};
+} // namespace spinner
+
+template <> struct spdlog::fmt_lib::formatter<spinner::SpectrumRef> : spdlog::fmt_lib::ostream_formatter {};
+template <> struct spdlog::fmt_lib::formatter<spinner::MatrixRef> : spdlog::fmt_lib::ostream_formatter {};
+template <> struct spdlog::fmt_lib::formatter<spinner::BlockProperties> : spdlog::fmt_lib::ostream_formatter {};
+template <typename T> struct spdlog::fmt_lib::formatter<spinner::OneOrMany<T>> : spdlog::fmt_lib::ostream_formatter {};
 
 // todo: move it to class in different file
-namespace common {
+namespace spinner::common {
 void inputPrint(const std::string& input_string);
 void nonSingleModeParametersPrint(const model::ModelInput& model_input);
 void preRegressionPrint(
@@ -70,6 +75,6 @@ void theoreticalValuesPrint(
 void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& order_of_summation);
 void sSquaredIndexConverterPrint(const index_converter::s_squared::IndexConverter& index_converter);
 void lexIndexConverterPrint(const index_converter::lexicographic::IndexConverter& index_converter);
-} // namespace common
+} // namespace spinner::common
 
 #endif  //SPINNER_PRINTINGFUNCTIONS_H

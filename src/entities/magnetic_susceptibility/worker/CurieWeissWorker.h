@@ -6,7 +6,7 @@
 #include "src/entities/magnetic_susceptibility/worker/AbstractWorker.h"
 #include "src/model/symbols/SymbolName.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 
 // It is a decorator. Takes concrete worker with mu^2(T) and returns T*mu^2(T)/(T-\Theta)
 class CurieWeissWorker: public AbstractWorker {
@@ -29,6 +29,6 @@ class CurieWeissWorker: public AbstractWorker {
     std::shared_ptr<const double> Theta_;
 };
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility
 
 #endif  //SPINNER_CURIEWEISSWORKER_H

@@ -54,6 +54,6 @@ struct MumxHash {
     }
 };
 
-}  // namespace ankerl
+} // namespace ankerl
 
 #endif  //SPINNER_MUMXHASH_H

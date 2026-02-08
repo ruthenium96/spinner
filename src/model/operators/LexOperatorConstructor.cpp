@@ -9,7 +9,7 @@
 #include "src/model/operators/terms/lexicographic/SzSzTwoCenterTerm.h"
 
 
-namespace model::operators {
+namespace spinner::model::operators {
 LexOperatorConstructor::LexOperatorConstructor(std::shared_ptr<index_converter::lexicographic::IndexConverter> converter) :
 	converter_(converter) {}
 
@@ -85,4 +85,4 @@ std::shared_ptr<Operator> LexOperatorConstructor::constructGSquaredT00Like(
     return g_squared_T00_operator_;
 }
 
-} // namespace model::operators
+} // namespace spinner::model::operators

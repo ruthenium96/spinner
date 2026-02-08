@@ -4,20 +4,21 @@
 
 #include "Tools.h"
 
+namespace {
 template<typename T, typename U, typename W>
 std::vector<W> zip_and_map(const std::vector<T>& ts,
-                   const OneOrMany<U>& us,
+                   const spinner::OneOrMany<U>& us,
                    std::function<W(const T&, const U&)> f) {
     std::vector<W> answer;
-    if (holdsOne(us)) {
+    if (spinner::holdsOne(us)) {
         answer.reserve(ts.size());
         for (const auto& t : ts) {
-            auto w = f(t, getOneRef(us));
+            auto w = f(t, spinner::getOneRef(us));
             answer.emplace_back(std::move(w));
         }
         return answer;
     } else {
-        const auto& us_v = getManyRef(us);
+        const auto& us_v = spinner::getManyRef(us);
         if (ts.empty() || us_v.empty()) {
             throw std::invalid_argument("Cannot zip empty vectors");
         }
@@ -57,8 +58,9 @@ std::vector<W> cartesian_and_map(const std::vector<T>& ts,
     }
     return answer;
 }
+} // namespace
 
-namespace input {
+namespace spinner::input {
 ModelInputParser::ModelInputParser(YAML::Node model_input_node) {
     auto mults =
         extractValue<std::vector<spin_algebra::Multiplicity>>(model_input_node, "multiplicities");
@@ -210,4 +212,4 @@ model::ModelInput ModelInputParser::returnModifiedModelInput(
     }
     return new_model_input;
 }
-}  // namespace input
+} // namespace spinner::input

@@ -15,7 +15,7 @@ namespace {
 #ifndef NDEBUG
 std::vector<double> squares_of_coefficients(
     size_t totalSpaceSize, 
-    const std::vector<space::Subspace>& subspace) {
+    const std::vector<spinner::space::Subspace>& subspace) {
     std::vector<double> squares_of_coefficients(totalSpaceSize, 0);
     for (const auto& subspace : subspace) {
         for (size_t col = 0; col < subspace.decomposition->size_cols(); ++col) {
@@ -57,7 +57,7 @@ void compare_two_vectors_of_squared_coefficients(
 
 } // namespace
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 Symmetrizer::Symmetrizer(
     std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator,
@@ -279,4 +279,4 @@ void Symmetrizer::move_vector_and_remember_it(
         hs[item.index].emplace_back(subspace_to.decomposition->size_cols() - 1);
     }
 }
-}  // namespace space::optimization
+} // namespace spinner::space::optimization

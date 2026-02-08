@@ -9,7 +9,7 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
 // Calculates ensemble-averaged values using Boltzmann distribution.
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 class FTLMEnsembleAverager : public AbstractEnsembleAverager {
   public:
     FTLMEnsembleAverager(std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra);
@@ -22,6 +22,6 @@ class FTLMEnsembleAverager : public AbstractEnsembleAverager {
   private:
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;
 };
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility
 
 #endif  //SPINNER_FTLMENSEMBLEAVERAGER_H

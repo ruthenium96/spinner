@@ -3,7 +3,7 @@
 #include "EmhashSparseSemiunitaryMatrix.h"
 #include "EmhashSparseSymmetricMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 std::unique_ptr<AbstractSparseSemiunitaryMatrix>
 EmhashSparseTransformFactory::createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) {
     auto answer = std::make_unique<EmhashSparseSemiunitaryMatrix>();
@@ -17,4 +17,4 @@ EmhashSparseTransformFactory::createSparseSymmetricMatrix(uint32_t size) {
     answer->resize(size);
     return answer;
 }
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra

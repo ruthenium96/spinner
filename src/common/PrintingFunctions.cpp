@@ -6,6 +6,8 @@
 #include <magic_enum.hpp>
 #include <string>
 
+namespace spinner {
+
 std::ostream& operator<<(std::ostream& os, const space::Space& space) {
     for (const space::Subspace& subspace : space.getBlocks()) {
         os << subspace;
@@ -76,7 +78,9 @@ std::ostream& operator<<(std::ostream& os, const common::QuantityEnum& quantity_
     return os;
 }
 
-namespace common {
+} // namespace spinner
+
+namespace spinner::common {
 void inputPrint(const std::string& input_string) {
     common::Logger::verbose_msg("Input file:");
     common::Logger::verbose("{}", input_string);
@@ -238,4 +242,4 @@ void lexIndexConverterPrint(const index_converter::lexicographic::IndexConverter
     common::Logger::separate(0, common::debug);
 }
 
-} // namespace common
+} // namespace spinner::common

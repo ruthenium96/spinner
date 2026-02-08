@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-namespace model::symbols {
+namespace spinner::model::symbols {
 NumericalWorker::NumericalWorker(SymbolicWorker symbolicWorker, size_t number_of_spins) :
     symbolicWorker_(std::move(symbolicWorker)),
     number_of_spins_(number_of_spins) {
@@ -282,4 +282,4 @@ void NumericalWorker::setNewValueToChangeableSymbol(
     // and other things
 }
 
-}  // namespace model::symbols
+} // namespace spinner::model::symbols

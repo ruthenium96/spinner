@@ -3,7 +3,7 @@
 
 #include "SymbolicWorker.h"
 
-namespace model::symbols {
+namespace spinner::model::symbols {
 
 class NumericalWorker {
   public:
@@ -65,6 +65,6 @@ class NumericalWorker {
     size_t number_of_spins_;
 };
 
-}  // namespace model::symbols
+} // namespace spinner::model::symbols
 
 #endif  //SPINNER_NUMERICALWORKER_H

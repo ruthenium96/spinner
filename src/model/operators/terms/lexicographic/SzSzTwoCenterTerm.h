@@ -6,7 +6,7 @@
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators::lexicographic {
+namespace spinner::model::operators::lexicographic {
 class SzSzTwoCenterTerm: public TwoCenterTerm {
   public:
     SzSzTwoCenterTerm(
@@ -26,5 +26,5 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
     std::shared_ptr<const TwoDNumericalParameters<double>> coefficients_;
     double prefactor_;
 };
-}  // namespace model::operators::lexicographic
+} // namespace spinner::model::operators::lexicographic
 #endif  //SPINNER_LEXSZSZTWOCENTERTERM_H

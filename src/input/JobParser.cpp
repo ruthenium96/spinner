@@ -12,7 +12,7 @@
 
 
 template<>
-magnetic_susceptibility::ValueAtTemperature YAML::Node::as() const {
+spinner::magnetic_susceptibility::ValueAtTemperature YAML::Node::as() const {
     auto temp_and_value = as<std::vector<double>>();
 
     if (temp_and_value.size() == 1 || temp_and_value.size() > 3) {
@@ -21,27 +21,27 @@ magnetic_susceptibility::ValueAtTemperature YAML::Node::as() const {
             + std::to_string(temp_and_value.size()) + " " +as<std::string>());
     }
     if (temp_and_value.size() == 2) {
-        return {temp_and_value[0], common::UncertainValue(temp_and_value[1])};
+        return {temp_and_value[0], spinner::common::UncertainValue(temp_and_value[1])};
     } else {
-        common::UncertainValue value(temp_and_value[1], temp_and_value[2], common::EXPERIMENT);
+        spinner::common::UncertainValue value(temp_and_value[1], temp_and_value[2], spinner::common::EXPERIMENT);
         return {temp_and_value[0], value};
     }
 }
 
 template<>
-std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> YAML::Node::as() const {
+std::shared_ptr<spinner::nonlinear_solver::AbstractNonlinearSolver> YAML::Node::as() const {
     auto solver_string = as<std::string>();
 
     if (solver_string == "optim_nm") {
-        return std::make_shared<nonlinear_solver::optimNMAdapter>();
+        return std::make_shared<spinner::nonlinear_solver::optimNMAdapter>();
     } else if (solver_string == "stl_bfgs") {
-        return std::make_shared<nonlinear_solver::stlbfgsAdapter>();
+        return std::make_shared<spinner::nonlinear_solver::stlbfgsAdapter>();
     } else {
         throw std::invalid_argument("Incorrect job::fit::solver: " + solver_string);
     }
 }
 
-namespace input {
+namespace spinner::input {
 const std::optional<std::vector<double>>& JobParser::getTemperaturesForSimulation() const {
     return temperatures_for_simulation_;
 }
@@ -146,4 +146,4 @@ void JobParser::read_data_from_file(
         exp_data.emplace_back(temp_and_value);
     }
 }
-}  // namespace input
+} // namespace spinner::input

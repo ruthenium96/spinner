@@ -7,7 +7,7 @@
 #include "src/entities/magnetic_susceptibility/assistant/ExperimentalValuesWorker.h"
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"
 
-namespace input {
+namespace spinner::input {
 
 class JobParser {
   public:
@@ -28,6 +28,6 @@ class JobParser {
                              const std::string& exp_filename);
 };
 
-}  // namespace input
+} // namespace spinner::input
 
 #endif  //SPINNER_JOBPARSER_H

@@ -10,7 +10,7 @@
 #include "src/group/Group.h"
 #include "src/space/Space.h"
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 class Symmetrizer {
   public:
@@ -44,6 +44,6 @@ class Symmetrizer {
     const group::Group group_;
     const quantum::linear_algebra::FactoriesList factories_;
 };
-}  // namespace space::optimization
+} // namespace spinner::space::optimization
 
 #endif  // SPINNER_SYMMETRIZER_H

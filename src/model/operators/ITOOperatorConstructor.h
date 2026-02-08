@@ -5,7 +5,7 @@
 
 #include "src/common/index_converter/s_squared/IndexConverter.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class ITOOperatorConstructor : public AbstractOperatorConstructor {
   public:
     ITOOperatorConstructor(std::shared_ptr<index_converter::s_squared::IndexConverter> converter);
@@ -33,6 +33,6 @@ class ITOOperatorConstructor : public AbstractOperatorConstructor {
     std::shared_ptr<index_converter::s_squared::IndexConverter> converter_;
 
 };
-} // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif // SPINNER_ITOOPERATORCONSTRUCTOR_H

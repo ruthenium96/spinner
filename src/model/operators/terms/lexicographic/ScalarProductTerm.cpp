@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-namespace model::operators::lexicographic {
+namespace spinner::model::operators::lexicographic {
 ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter, double value) :
     TwoCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
@@ -128,4 +128,4 @@ void ScalarProductTerm::add_scalar_product_nondiagonal_part(
         index_of_vector,
         index_of_new_vector);
 }
-}  // namespace model::operators::lexicographic
+} // namespace spinner::model::operators::lexicographic

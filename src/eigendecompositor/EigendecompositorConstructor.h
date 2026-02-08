@@ -4,7 +4,7 @@
 #include "AbstractEigendecompositor.h"
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 class EigendecompositorConstructor {
   public:
@@ -14,6 +14,6 @@ class EigendecompositorConstructor {
 
 };
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_EIGENDECOMPOSITORCONSTRUCTOR_H

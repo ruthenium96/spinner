@@ -12,7 +12,7 @@
 #include "OrderOfSummation.h"
 #include "src/common/PrintingFunctions.h"
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 
 IndexConverter::IndexConverter(
 	const std::vector<spin_algebra::Multiplicity>& mults,
@@ -137,4 +137,4 @@ std::shared_ptr<const OrderOfSummation> IndexConverter::getOrderOfSummation() co
     return order_of_summation_;
 }
 
-}
+} // namespace spinner::index_converter::s_squared

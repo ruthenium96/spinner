@@ -2,6 +2,8 @@
 
 #include <set>
 
+namespace spinner {
+
 Submatrix::Submatrix(
     std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
     BlockProperties properties_) :
@@ -42,3 +44,4 @@ Submatrix::Submatrix(
 
     subspace.decomposition->unitaryTransform(matrix_in_lexicografical_basis, raw_data);
 }
+} // namespace spinner

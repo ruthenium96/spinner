@@ -4,7 +4,7 @@
 #include "AbstractEigendecompositor.h"
 #include <functional>
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor {
   public:
@@ -52,6 +52,6 @@ class OneSymbolInHamiltonianEigendecompositor: public AbstractEigendecompositor 
     std::function<double()> currentValueGetter_;
 };
 
-}  // namespace eigendecompositor
+} // namespace spinnereigendecompositor
 
 #endif  //SPINNER_ONESYMBOLINHAMILTONIANEIGENDECOMPOSITOR_H

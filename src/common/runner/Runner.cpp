@@ -13,13 +13,13 @@
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
 
 namespace {
-std::vector<common::UncertainValue> construct_final_uncertain_values_of_parameters(
+std::vector<spinner::common::UncertainValue> construct_final_uncertain_values_of_parameters(
     const std::vector<double>& changeable_values,
     const std::optional<std::vector<double>>& mb_main_diagonal_of_inverse_hessian,
     double final_residual_error,
     size_t number_of_points) {
     size_t number_of_parameters = changeable_values.size();
-    std::vector<common::UncertainValue> final_changeable_uncertain_values(number_of_parameters);
+    std::vector<spinner::common::UncertainValue> final_changeable_uncertain_values(number_of_parameters);
 
     if (mb_main_diagonal_of_inverse_hessian.has_value()) {
         const auto& inv_hessian = mb_main_diagonal_of_inverse_hessian.value();
@@ -27,20 +27,20 @@ std::vector<common::UncertainValue> construct_final_uncertain_values_of_paramete
             double sigma_squared = final_residual_error * inv_hessian[i] / 
                 (number_of_points - number_of_parameters);
             final_changeable_uncertain_values[i] = 
-                common::UncertainValue(changeable_values[i], 
+                spinner::common::UncertainValue(changeable_values[i], 
                     std::sqrt(sigma_squared), 
-                    common::FIT);
+                    spinner::common::FIT);
         }
     } else {
         for (size_t i = 0; i < number_of_parameters; ++i) {
-            final_changeable_uncertain_values[i] = common::UncertainValue(changeable_values[i]);
+            final_changeable_uncertain_values[i] = spinner::common::UncertainValue(changeable_values[i]);
         }
     }
     return final_changeable_uncertain_values;
 }
-}
+} // namespace
 
-namespace runner {
+namespace spinner::runner {
 
 Runner::Runner(model::ModelInput model) :
     Runner(
@@ -336,4 +336,4 @@ const std::shared_ptr<eigendecompositor::FlattenedSpectra>& Runner::getFlattened
 
     return flattenedSpectra_;
 }
-}  // namespace runner
+} // namespace spinner::runner

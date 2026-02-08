@@ -1,6 +1,6 @@
 #include "GroupAdapter.h"
 
-namespace spin_algebra {
+namespace spinner::spin_algebra {
 
 GroupAdapter::GroupAdapter(const std::vector<group::Group>& groups, size_t number_of_mults) {
     // TODO: fix it somehow based on the information from groups:
@@ -21,4 +21,4 @@ std::shared_ptr<const index_converter::s_squared::OrderOfSummation> GroupAdapter
     return order_of_summations_;
 }
 
-}  // namespace spin_algebra
+} // namespace spinner::spin_algebra

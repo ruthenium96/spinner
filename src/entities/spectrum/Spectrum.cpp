@@ -1,5 +1,7 @@
 #include "Spectrum.h"
 
+namespace spinner {
+
 Spectrum::Spectrum(std::vector<Subspectrum>&& m) : blocks(std::move(m)) {}
 
 SpectrumRef::SpectrumRef(const Spectrum& spectrum) {
@@ -11,3 +13,5 @@ SpectrumRef::SpectrumRef(const Spectrum& spectrum) {
 SpectrumRef::SpectrumRef(std::vector<std::reference_wrapper<const Subspectrum>>&& blocks_) {
     blocks = std::move(blocks_);
 }
+
+} // namespace spinner

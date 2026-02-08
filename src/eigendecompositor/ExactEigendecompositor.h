@@ -6,7 +6,7 @@
 
 #include "AbstractEigendecompositor.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 class ExactEigendecompositor: public AbstractEigendecompositor {
   public:
     ExactEigendecompositor(
@@ -52,6 +52,6 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
         energy_subspectrum_with_eigenvectors(const Submatrix& hamiltonian_submatrix);
 };
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_EXACTEIGENDECOMPOSITOR_H

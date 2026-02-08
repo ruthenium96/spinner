@@ -8,6 +8,8 @@
 #include "src/entities/data_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
+namespace spinner {
+
 struct Matrix {
     Matrix() = default;
     Matrix(
@@ -27,5 +29,7 @@ struct MatrixRef {
     explicit MatrixRef(const Matrix& matrix);
     explicit MatrixRef(std::vector<std::reference_wrapper<const Submatrix>>&& blocks_);
 };
+
+} // namespace spinner
 
 #endif  //SPINNER_MATRIX_H

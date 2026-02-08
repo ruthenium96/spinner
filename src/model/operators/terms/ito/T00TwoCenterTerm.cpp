@@ -9,7 +9,7 @@
 #include "src/common/index_converter/s_squared/Level.h"
 #include "src/model/operators/terms/ito/WignerEckartHelper.h"
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 
 T00TwoCenterTerm::T00TwoCenterTerm(
     std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
@@ -109,4 +109,4 @@ T00TwoCenterTerm::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) co
     return answer;
 }
 
-}  // namespace model::operators::ito
+} // namespace spinner::model::operators::ito

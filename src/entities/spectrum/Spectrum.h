@@ -6,6 +6,8 @@
 
 #include "Subspectrum.h"
 
+namespace spinner {
+
 struct Spectrum {
     Spectrum() = default;
 
@@ -19,5 +21,7 @@ struct SpectrumRef {
     explicit SpectrumRef(const Spectrum& spectrum);
     explicit SpectrumRef(std::vector<std::reference_wrapper<const Subspectrum>>&& blocks_);
 };
+
+} // namespace spinner
 
 #endif  //SPINNER_SPECTRUM_H

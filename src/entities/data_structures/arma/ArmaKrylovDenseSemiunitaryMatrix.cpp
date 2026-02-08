@@ -2,7 +2,7 @@
 #include "ArmaKrylovDenseSemiunitaryTransformer.h"
 #include <stdexcept>
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 
 template <typename T>
 ArmaKrylovDenseSemiunitaryMatrix<T>::ArmaKrylovDenseSemiunitaryMatrix() {
@@ -74,4 +74,4 @@ arma::Col<T>& ArmaKrylovDenseSemiunitaryMatrix<T>::modifyBackProjectionVector() 
 
 template class ArmaKrylovDenseSemiunitaryMatrix<double>;
 template class ArmaKrylovDenseSemiunitaryMatrix<float>;
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra

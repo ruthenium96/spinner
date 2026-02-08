@@ -10,7 +10,7 @@
 #include "src/group/Group.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::symbols {
+namespace spinner::model::symbols {
 
 enum SymbolTypeEnum { J, g_factor, Theta, D };
 
@@ -87,5 +87,5 @@ class SymbolicWorker {
     SymbolProperty& modifySymbolProperty(const SymbolName& symbol_name);
 };
 
-}  // namespace model::symbols
+} // namespace spinner::model::symbols
 #endif  //SPINNER_SYMBOLICWORKER_H

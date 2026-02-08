@@ -17,7 +17,7 @@
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"
 #include "src/space/Space.h"
 
-namespace runner {
+namespace spinner::runner {
 class Runner {
   public:
     Runner(
@@ -95,6 +95,6 @@ class Runner {
         experimental_values_worker_;
 
 };
-}  // namespace runner
+} // namespace spinner::runner
 
 #endif  //SPINNER_RUNNER_H

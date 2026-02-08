@@ -6,7 +6,7 @@
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators::lexicographic {
+namespace spinner::model::operators::lexicographic {
 
 class SzSzOneCenterTerm: public OneCenterTerm {
   public:
@@ -24,5 +24,5 @@ class SzSzOneCenterTerm: public OneCenterTerm {
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter_;
     std::shared_ptr<const OneDNumericalParameters<double>> coefficients_;
 };
-}  // namespace model::operators::lexicographic
+} // namespace spinner::model::operators::lexicographic
 #endif  //SPINNER_LEXSZSZONECENTERTERM_H

@@ -3,7 +3,7 @@
 
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"
 
-namespace nonlinear_solver {
+namespace spinner::nonlinear_solver {
 
 class optimNMAdapter: public AbstractNonlinearSolver {
   public:
@@ -20,6 +20,6 @@ class optimNMAdapter: public AbstractNonlinearSolver {
     }
 };
 
-}  // namespace nonlinear_solver
+} // namespace spinner::nonlinear_solver
 
 #endif  //SPINNER_OPTIMNMADAPTER_H

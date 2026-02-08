@@ -10,20 +10,20 @@
 #endif
 
 template<>
-std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> YAML::Node::as() const {
+std::shared_ptr<spinner::quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> YAML::Node::as() const {
     auto dense_algebra_package_string = as<std::string>();
 
     if (dense_algebra_package_string == "default") {
-        return quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
+        return spinner::quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
     } else if (dense_algebra_package_string == "arma") {
 #ifdef _Arma_BUILT
-        return std::make_shared<quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory>();
+        return std::make_shared<spinner::quantum::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory>();
 #else
         throw std::invalid_argument("Arma was not found, thus cannot be used");
 #endif
     } else if (dense_algebra_package_string == "eigen") {
 #ifdef _Eigen_BUILT
-        return std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
+        return std::make_shared<spinner::quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
 #else
         throw std::invalid_argument("Eigen was not found, thus cannot be used");
 #endif
@@ -33,8 +33,7 @@ std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFac
     }
 }
 
-
-namespace input {
+namespace spinner::input {
 ControlParser::ControlParser(YAML::Node control_node, bool dry_run) {
     print_level_ = extractValue<common::PrintLevel>(control_node, "print_level");
     if (!dry_run) {
@@ -70,4 +69,4 @@ common::PrintLevel ControlParser::getPrintLevel() const {
 const std::optional<quantum::linear_algebra::FactoriesList>& ControlParser::getFactoriesList() const {
     return factoriesList_;
 }
-}  // namespace input
+} // namespace spinner::input

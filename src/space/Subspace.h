@@ -5,7 +5,7 @@
 #include "src/entities/BlockProperties.h"
 #include "src/entities/data_structures/AbstractSparseSemiunitaryMatrix.h"
 
-namespace space {
+namespace spinner::space {
 struct Subspace {
     BlockProperties properties;
     std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix> decomposition;
@@ -15,6 +15,6 @@ struct Subspace {
             
     uint32_t size() const;
 };
-}  // namespace space
+} // namespace spinner::space
 
 #endif  // SPINNER_SUBSPACE_H

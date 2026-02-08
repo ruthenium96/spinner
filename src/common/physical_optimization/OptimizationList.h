@@ -4,7 +4,7 @@
 #include <optional>
 #include "src/group/Group.h"
 
-namespace common::physical_optimization {
+namespace spinner::common::physical_optimization {
 // This class memorizes (physical) optimizations to apply and checks their _internal_ consistence.
 class OptimizationList {
   public:
@@ -51,5 +51,5 @@ class OptimizationList {
     bool isFTLMApproximated_ = false;
     std::optional<FTLMSettings> ftlmSettings_;
 };
-}  // namespace common::physical_optimization
+} // namespace spinner::common::physical_optimization
 #endif  //SPINNER_OPTIMIZATIONLIST_H

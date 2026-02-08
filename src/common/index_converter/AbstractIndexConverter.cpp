@@ -1,7 +1,9 @@
 #include "AbstractIndexConverter.h"
 #include <numeric>
 
-index_converter::AbstractIndexConverter::AbstractIndexConverter(
+namespace spinner::index_converter {
+
+AbstractIndexConverter::AbstractIndexConverter(
 	std::vector<spin_algebra::Multiplicity> mults) : mults_(mults) {
 
     // It is the size of our projection-based space.
@@ -21,19 +23,20 @@ index_converter::AbstractIndexConverter::AbstractIndexConverter(
 
 }
 
-const std::vector<spin_algebra::Multiplicity>&
-index_converter::AbstractIndexConverter::get_mults() const {
+const std::vector<spin_algebra::Multiplicity>& AbstractIndexConverter::get_mults() const {
     return mults_;
 }
 
-const std::vector<double>& index_converter::AbstractIndexConverter::get_spins() const {
+const std::vector<double>& AbstractIndexConverter::get_spins() const {
 	return spins_;
 }
 
-uint32_t index_converter::AbstractIndexConverter::get_total_space_size() const {
+uint32_t AbstractIndexConverter::get_total_space_size() const {
     return total_space_size_;
 }
 
-uint32_t index_converter::AbstractIndexConverter::get_max_ntz_proj() const {
+uint32_t AbstractIndexConverter::get_max_ntz_proj() const {
     return max_ntz_proj_;
 }
+
+} // namespace spinner::index_converter

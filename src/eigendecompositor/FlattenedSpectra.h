@@ -10,7 +10,7 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/model/symbols/SymbolName.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 class FlattenedSpectra {
   public:
     FlattenedSpectra() = default;
@@ -42,6 +42,6 @@ class FlattenedSpectra {
     std::unique_ptr<quantum::linear_algebra::AbstractDenseVector> degeneracyValues_;
     OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flattenedWeights_;
 };
-} // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif // SPINNER_FLATTENEDSPECTRA_H

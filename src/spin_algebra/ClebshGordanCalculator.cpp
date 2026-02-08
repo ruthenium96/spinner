@@ -4,7 +4,7 @@
 #include <wignerSymbols.h>
 #include <string>
 
-namespace spin_algebra {
+namespace spinner::spin_algebra {
 
 ClebshGordanCalculator::ClebshGordanCalculator() {
     hashed_CGs_for_all_threads = std::vector<Map>(omp_get_max_threads());
@@ -160,4 +160,4 @@ double ClebshGordanCalculator::ninej_element(
         throw std::invalid_argument("Invalid value of rank in 9j-symbol: " + ranks);
     }
 }
-}  // namespace spin_algebra
+} // namespace spinner::spin_algebra

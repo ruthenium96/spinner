@@ -6,7 +6,7 @@
 #include "magic_enum.hpp"
 #include "src/common/Quantity.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 ImplicitQuantityEigendecompositor::ImplicitQuantityEigendecompositor(
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
@@ -130,5 +130,4 @@ double ImplicitQuantityEigendecompositor::calculate_value(const BlockProperties&
     }
 }
 
-
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

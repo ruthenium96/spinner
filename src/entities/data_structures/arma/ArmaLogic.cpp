@@ -141,7 +141,7 @@ std::tuple<arma::Col<T>, arma::Mat<T>, arma::Col<T>> krylovProcedureDiagonalizeV
 
 } // namespace
 
-namespace quantum::linear_algebra {
+namespace spinner::quantum::linear_algebra {
 
 template <typename T>
 std::unique_ptr<AbstractDenseVector>
@@ -328,4 +328,4 @@ inline std::unique_ptr<AbstractDiagonalizableMatrix> unitaryTransform_(
 
 template class ArmaLogic<double>;
 template class ArmaLogic<float>;
-}  // namespace quantum::linear_algebra
+} // namespace spinner::quantum::linear_algebra

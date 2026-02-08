@@ -1,7 +1,7 @@
 #include "Level.h"
 #include <stdexcept>
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 
 Level::Level(std::shared_ptr<std::vector<spin_algebra::Multiplicity>> initialMultiplicities,
         size_t number_of_summations) {
@@ -61,4 +61,4 @@ double Level::getSpin(size_t number) const {
     return ((double)getMultiplicity(number) - 1.0) / 2.0;
 }
 
-} // namespace index_converter::s_squared
+} // namespace spinner::index_converter::s_squared

@@ -5,7 +5,7 @@
 #include "AbstractOperatorConstructor.h"
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class LexOperatorConstructor : public AbstractOperatorConstructor {
   public:
     LexOperatorConstructor(std::shared_ptr<index_converter::lexicographic::IndexConverter> converter);
@@ -33,6 +33,6 @@ class LexOperatorConstructor : public AbstractOperatorConstructor {
     std::shared_ptr<index_converter::lexicographic::IndexConverter> converter_;
 
 };
-} // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif // SPINNER_LEXOPERATORCONSTRUCTOR_H
