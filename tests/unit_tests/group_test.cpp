@@ -41,15 +41,15 @@ TEST(group_info_tests, size_of_element_of_group_in_form_of_generators_equals_num
     }
 }
 
-TEST(group_info_tests, size_of_dimension_of_representation_equals_number_of_representations) {
+TEST(group_info_tests, size_of_dimensions_of_representations_equals_number_of_representations) {
     for (auto& group_type : group_types) {
         const Group::AlgebraicProperties& group_info =
             Group::return_group_info_by_group_type(group_type);
         EXPECT_EQ(
             group_info.number_of_representations,
-            group_info.dimension_of_representation.size())
+            group_info.dimensions_of_representations.size())
             << "In the group '" << group_type.type_enum
-            << "' size of dimension_of_representation does not equal to number_of_representations";
+            << "' size of dimensions_of_representations does not equal to number_of_representations";
     }
 }
 
@@ -87,12 +87,12 @@ TEST(
     }
 }
 
-TEST(group_info_tests, sum_of_dimensions_of_representations_equals_group_size) {
+TEST(group_info_tests, sum_of_dimensions_of_representationss_equals_group_size) {
     for (auto& group_type : group_types) {
         const Group::AlgebraicProperties& group_info =
             Group::return_group_info_by_group_type(group_type);
         uint32_t sum_of_squares = 0;
-        for (auto d : group_info.dimension_of_representation) {
+        for (auto d : group_info.dimensions_of_representations) {
             sum_of_squares += d * d;
         }
         EXPECT_EQ(group_info.group_size, sum_of_squares)

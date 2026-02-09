@@ -87,7 +87,7 @@ Space Symmetrizer::apply(Space&& space) const {
         for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
             BlockProperties block_properties = subspace_parent.properties;
             block_properties.representation.emplace_back(repr);
-            block_properties.dimensionality *= group_.properties.dimension_of_representation[repr];
+            block_properties.dimensionality *= group_.properties.dimensions_of_representations[repr];
             vector_result[group_.properties.number_of_representations * i + repr].properties =
                 block_properties;
         }

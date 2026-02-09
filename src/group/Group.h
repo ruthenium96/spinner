@@ -40,7 +40,7 @@ class Group {
         uint8_t group_size;
         uint8_t number_of_representations;
         bool is_abelian;
-        std::vector<uint8_t> dimension_of_representation;
+        std::vector<uint8_t> dimensions_of_representations;
         std::vector<uint8_t> number_of_projectors_of_representation;
         uint8_t number_of_generators;
         std::vector<size_t> orders_of_generators;

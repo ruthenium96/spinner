@@ -95,12 +95,12 @@ Group::AlgebraicProperties constructDihedral(unsigned int order)
         properties.coefficients_of_projectors.resize(properties.number_of_representations);
         // four one-dimension representation:
         for (int repr = 0; repr < 4; ++repr) {
-            properties.dimension_of_representation.emplace_back(1);
+            properties.dimensions_of_representations.emplace_back(1);
             properties.number_of_projectors_of_representation.emplace_back(1);
         }
         // (order/2 - 1) two-dimension representation:
         for (int repr = 4; repr < (order + 6) / 2; ++repr) {
-            properties.dimension_of_representation.emplace_back(2);
+            properties.dimensions_of_representations.emplace_back(2);
             properties.number_of_projectors_of_representation.emplace_back(4);
             properties.coefficients_of_projectors[repr].resize(4);
         }
@@ -126,12 +126,12 @@ Group::AlgebraicProperties constructDihedral(unsigned int order)
         properties.coefficients_of_projectors.resize(properties.number_of_representations);
         // two one-dimension representation:
         for (int repr = 0; repr < 2; ++repr) {
-            properties.dimension_of_representation.emplace_back(1);
+            properties.dimensions_of_representations.emplace_back(1);
             properties.number_of_projectors_of_representation.emplace_back(1);
         }
         // (order - 1)/2 two-dimension representation:
         for (int repr = 2; repr < (order + 3) / 2; ++repr) {
-            properties.dimension_of_representation.emplace_back(2);
+            properties.dimensions_of_representations.emplace_back(2);
             properties.number_of_projectors_of_representation.emplace_back(4);
         }
         // A1:
