@@ -12,7 +12,6 @@ namespace spinner::group {
 
 using PermutationArrayType = uint8_t;
 using Permutation = std::vector<PermutationArrayType>;
-using CayleyTable = std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>;
 
 class Group {
   public:
