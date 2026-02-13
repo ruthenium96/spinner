@@ -8,7 +8,7 @@ Matrix::Matrix(
     const space::Space& space,
     const model::operators::Operator& new_operator,
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    const linear_algebra::FactoriesList& factories,
+    const linalg_structures::FactoriesList& factories,
     bool return_sparse_if_possible) {
     blocks.reserve(space.getBlocks().size());
 

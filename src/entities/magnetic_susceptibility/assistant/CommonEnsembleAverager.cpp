@@ -11,7 +11,7 @@ CommonEnsembleAverager::CommonEnsembleAverager(
     flattenedSpectra_(flattenedSpectra) {}
 
 common::UncertainValue CommonEnsembleAverager::ensemble_average(
-    OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>> value,
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>> value,
     double temperature) const {
     auto [value_numerator, partition_function] = 
         ensemble_average_numerator_denominator(getOneRef(value).get(), temperature);
@@ -19,7 +19,7 @@ common::UncertainValue CommonEnsembleAverager::ensemble_average(
 }
 
 std::pair<double, double> CommonEnsembleAverager::ensemble_average_numerator_denominator(
-    std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>> value,
+    std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>> value,
     double temperature) const {
     const auto& energy_vector = getOneRef(flattenedSpectra_->getFlattenSpectrum(common::Energy).value()).get();
     const auto& weights_vector = getOneRef(flattenedSpectra_->getWeights());

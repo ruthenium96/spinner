@@ -13,11 +13,11 @@ TEST(performanceTest, simple2ComponentSchema) {
     spinner::index_converter::lexicographic::IndexConverter converter(mults);
 
     auto sparseSemiunitaryfactories = constructAllSparseSemiunitaryMatrixFactories();
-    std::vector<spinner::linear_algebra::FactoriesList> allFactoriesLists;
+    std::vector<spinner::linalg_structures::FactoriesList> allFactoriesLists;
 
     for (const auto& sparseSemiunitaryfactory : sparseSemiunitaryfactories) {
-        spinner::linear_algebra::FactoriesList factoryList = spinner::linear_algebra::FactoriesList(
-            spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory(),
+        spinner::linalg_structures::FactoriesList factoryList = spinner::linalg_structures::FactoriesList(
+            spinner::linalg_structures::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory(),
             sparseSemiunitaryfactory);
         allFactoriesLists.push_back(factoryList);
     }

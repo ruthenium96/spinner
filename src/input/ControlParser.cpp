@@ -3,27 +3,27 @@
 #include "Tools.h"
 
 #ifdef _Eigen_BUILT
-    #include "src/entities/data_structures/eigen/EigenFactories.h"
+    #include "src/linalg_structures/eigen/EigenFactories.h"
 #endif
 #ifdef _Arma_BUILT
-    #include "src/entities/data_structures/arma/ArmaFactories.h"
+    #include "src/linalg_structures/arma/ArmaFactories.h"
 #endif
 
 template<>
-std::shared_ptr<spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory> YAML::Node::as() const {
+std::shared_ptr<spinner::linalg_structures::AbstractDenseTransformAndDiagonalizeFactory> YAML::Node::as() const {
     auto dense_algebra_package_string = as<std::string>();
 
     if (dense_algebra_package_string == "default") {
-        return spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
+        return spinner::linalg_structures::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
     } else if (dense_algebra_package_string == "arma") {
 #ifdef _Arma_BUILT
-        return std::make_shared<spinner::linear_algebra::ArmaDenseTransformAndDiagonalizeFactory>();
+        return std::make_shared<spinner::linalg_structures::ArmaDenseTransformAndDiagonalizeFactory>();
 #else
         throw std::invalid_argument("Arma was not found, thus cannot be used");
 #endif
     } else if (dense_algebra_package_string == "eigen") {
 #ifdef _Eigen_BUILT
-        return std::make_shared<spinner::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
+        return std::make_shared<spinner::linalg_structures::EigenDenseTransformAndDiagonalizeFactory>();
 #else
         throw std::invalid_argument("Eigen was not found, thus cannot be used");
 #endif
@@ -49,24 +49,24 @@ ControlParser::ControlParser(YAML::Node control_node, bool dry_run) {
 
 void ControlParser::constructFactoriesList(YAML::Node& control_node) {
     auto densePrecision =
-        extractValue<linear_algebra::Precision>(control_node, "dense_precision");
+        extractValue<linalg_structures::Precision>(control_node, "dense_precision");
 
     auto denseFactory = extractValue<
-        std::shared_ptr<linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>
+        std::shared_ptr<linalg_structures::AbstractDenseTransformAndDiagonalizeFactory>
         >(control_node, "dense_algebra_package");
     denseFactory->setPrecision(densePrecision);
 
     auto sparseFactory =
-        linear_algebra::AbstractSparseTransformFactory::defaultSparseFactory();
+        linalg_structures::AbstractSparseTransformFactory::defaultSparseFactory();
 
-    factoriesList_ = linear_algebra::FactoriesList(denseFactory, sparseFactory);
+    factoriesList_ = linalg_structures::FactoriesList(denseFactory, sparseFactory);
 }
 
 common::PrintLevel ControlParser::getPrintLevel() const {
     return print_level_.value();
 }
 
-const std::optional<linear_algebra::FactoriesList>& ControlParser::getFactoriesList() const {
+const std::optional<linalg_structures::FactoriesList>& ControlParser::getFactoriesList() const {
     return factoriesList_;
 }
 } // namespace spinner::input

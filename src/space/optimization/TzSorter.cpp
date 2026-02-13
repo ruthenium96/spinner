@@ -42,7 +42,7 @@ Space TzSorter::apply(Space&& space) const {
 
 TzSorter::TzSorter(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    linear_algebra::FactoriesList factories) :
+    linalg_structures::FactoriesList factories) :
     converter_(std::move(converter)),
     factories_(std::move(factories)) {
     max_ntz_proj_ = converter_->get_max_ntz_proj();

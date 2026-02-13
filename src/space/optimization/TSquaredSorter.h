@@ -2,7 +2,7 @@
 #define SPINNER_TSQUAREDSORTER_H
 
 #include "src/common/index_converter/s_squared/IndexConverter.h"
-#include "src/entities/data_structures/FactoriesList.h"
+#include "src/linalg_structures/FactoriesList.h"
 #include "src/space/Space.h"
 #include "src/spin_algebra/Multiplicity.h"
 
@@ -10,13 +10,13 @@ namespace spinner::space::optimization {
 class TSquaredSorter {
 public:
     TSquaredSorter(std::shared_ptr<const index_converter::s_squared::IndexConverter> indexConverter,
-        linear_algebra::FactoriesList factories);
+        linalg_structures::FactoriesList factories);
 
     Space apply(Space&& space) const;
 
 private:
     std::shared_ptr<const index_converter::s_squared::IndexConverter> converter_;
-    const linear_algebra::FactoriesList factories_;
+    const linalg_structures::FactoriesList factories_;
     uint32_t max_total_mult_;
 
     spin_algebra::Multiplicity number_of_block_to_multiplicity(size_t number_of_block) const;

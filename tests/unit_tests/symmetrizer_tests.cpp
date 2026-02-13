@@ -6,7 +6,7 @@
 using namespace spinner::common::physical_optimization;
 using namespace spinner::group;
 
-const auto factories = spinner::linear_algebra::FactoriesList();
+const auto factories = spinner::linalg_structures::FactoriesList();
 
 size_t number_of_vectors(const spinner::space::Space& space) {
     size_t acc = 0;
@@ -17,8 +17,8 @@ size_t number_of_vectors(const spinner::space::Space& space) {
 }
 
 void copySparseUnitaryMatrixToSparseUnitaryMatrix(
-    std::unique_ptr<spinner::linear_algebra::AbstractSparseSemiunitaryMatrix>& matrix_to,
-    const std::unique_ptr<spinner::linear_algebra::AbstractSparseSemiunitaryMatrix>& matrix_from,
+    std::unique_ptr<spinner::linalg_structures::AbstractSparseSemiunitaryMatrix>& matrix_to,
+    const std::unique_ptr<spinner::linalg_structures::AbstractSparseSemiunitaryMatrix>& matrix_from,
     size_t shift) {
     size_t matrix_in_space_basis_size = matrix_from->size_cols();
 
@@ -37,7 +37,7 @@ void copySparseUnitaryMatrixToSparseUnitaryMatrix(
     }
 }
 
-std::unique_ptr<spinner::linear_algebra::AbstractSparseSemiunitaryMatrix>
+std::unique_ptr<spinner::linalg_structures::AbstractSparseSemiunitaryMatrix>
 concatenateSpace(const spinner::space::Space& space) {
     EXPECT_FALSE(space.getBlocks().empty());
     auto unitary_matrix = factories.createSparseSemiunitaryMatrix(
@@ -90,8 +90,8 @@ size_t calculateTotalSpaceSize(const std::vector<spinner::spin_algebra::Multipli
 }
 
 bool isEqualUpToVectorOrder(
-    const std::unique_ptr<spinner::linear_algebra::AbstractSparseSemiunitaryMatrix>& lhs,
-    const std::unique_ptr<spinner::linear_algebra::AbstractSparseSemiunitaryMatrix>& rhs) {
+    const std::unique_ptr<spinner::linalg_structures::AbstractSparseSemiunitaryMatrix>& lhs,
+    const std::unique_ptr<spinner::linalg_structures::AbstractSparseSemiunitaryMatrix>& rhs) {
     std::vector<std::map<size_t, double>> lhs_(lhs->size_cols());
     std::vector<std::map<size_t, double>> rhs_(rhs->size_cols());
 
@@ -295,7 +295,7 @@ TEST(symmetrizer, 222222_Dih3_S2) {
             .Symmetrize(GroupTypeEnum::S2, {{3, 4, 5, 0, 1, 2}});
         spinner::space::Space space_first = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_first},
-            spinner::linear_algebra::FactoriesList());
+            spinner::linalg_structures::FactoriesList());
 
         EXPECT_EQ(totalSpaceSize, number_of_vectors(space_first));
         EXPECT_TRUE(orthogonality_of_basis(space_first)) << "Vectors are not orthogonal";
@@ -352,7 +352,7 @@ TEST(symmetrizer, 333333_Dih3_S2) {
             .Symmetrize(GroupTypeEnum::S2, {{3, 4, 5, 0, 1, 2}});
         spinner::space::Space space_first = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_first},
-            spinner::linear_algebra::FactoriesList());
+            spinner::linalg_structures::FactoriesList());
 
         EXPECT_EQ(totalSpaceSize, number_of_vectors(space_first));
         EXPECT_TRUE(orthogonality_of_basis(space_first)) << "Vectors are not orthogonal";

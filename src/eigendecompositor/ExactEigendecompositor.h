@@ -11,8 +11,8 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
   public:
     ExactEigendecompositor(
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-        linear_algebra::FactoriesList factories_list);
-    std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+        linalg_structures::FactoriesList factories_list);
+    std::optional<OneOrMany<std::shared_ptr<linalg_structures::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(
         size_t number_of_block, const space::Subspace& subspace) override;
 
@@ -25,7 +25,7 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
         getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
 
-    OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>
         getWeightsOfBlockStates(size_t number_of_block) const override;
 
     void initialize(
@@ -39,16 +39,16 @@ class ExactEigendecompositor: public AbstractEigendecompositor {
 
   private:
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter_;
-    linear_algebra::FactoriesList factories_list_;
+    linalg_structures::FactoriesList factories_list_;
     common::Quantity energy_;
     std::shared_ptr<const model::operators::Operator> energy_operator_;
     bool do_we_need_eigenvectors_;
     bool first_iteration_has_been_done_ = false;
-    std::vector<std::unique_ptr<linear_algebra::AbstractDenseVector>> weights_;
+    std::vector<std::unique_ptr<linalg_structures::AbstractDenseVector>> weights_;
 
     static Subspectrum energy_subspectrum_eigenvalues_only(const Submatrix& hamiltonian_submatrix);
     static std::
-        pair<Subspectrum, std::unique_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>
+        pair<Subspectrum, std::unique_ptr<linalg_structures::AbstractDenseSemiunitaryMatrix>>
         energy_subspectrum_with_eigenvectors(const Submatrix& hamiltonian_submatrix);
 };
 

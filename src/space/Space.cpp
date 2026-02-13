@@ -1,6 +1,6 @@
 #include "Space.h"
 namespace spinner::space {
-Space::Space(uint32_t total_space_size, const linear_algebra::FactoriesList& factories) {
+Space::Space(uint32_t total_space_size, const linalg_structures::FactoriesList& factories) {
     auto identity_decomposition =
         factories.createSparseSemiunitaryMatrix(total_space_size, total_space_size);
     for (uint32_t lex = 0; lex < total_space_size; ++lex) {

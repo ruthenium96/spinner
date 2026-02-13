@@ -2,7 +2,7 @@
 
 #include "gtest/gtest.h"
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
-#include "src/entities/data_structures/AbstractFactories.h"
+#include "src/linalg_structures/AbstractFactories.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/model/operators/terms/ConstantTerm.h"
 #include "src/model/operators/terms/lexicographic/ScalarProductTerm.h"
@@ -14,7 +14,7 @@ TEST(constant_operator, 2222_333_2345_44444) {
         // Construct Converter
         auto converter = std::make_shared<spinner::index_converter::lexicographic::IndexConverter>(mults);
 
-        auto factories_ = spinner::linear_algebra::FactoriesList();
+        auto factories_ = spinner::linalg_structures::FactoriesList();
 
         // Construct Space
         spinner::space::Space space_(converter->get_total_space_size(), factories_);
@@ -54,7 +54,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
         // Construct Converter
         auto converter = std::make_shared<spinner::index_converter::lexicographic::IndexConverter>(mults);
 
-        auto factories_ = spinner::linear_algebra::FactoriesList();
+        auto factories_ = spinner::linalg_structures::FactoriesList();
 
         // Construct Space
         spinner::space::Space space_(converter->get_total_space_size(), factories_);
@@ -100,7 +100,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         // Construct Converter
         auto converter = std::make_shared<spinner::index_converter::lexicographic::IndexConverter>(mults);
 
-        auto factories_ = spinner::linear_algebra::FactoriesList();
+        auto factories_ = spinner::linalg_structures::FactoriesList();
 
         // Construct Space
         spinner::space::Space space_(converter->get_total_space_size(), factories_);
@@ -112,7 +112,7 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
 
         // Create Factory:
         auto factory_ =
-            spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
+            spinner::linalg_structures::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
 
         // Build Matrix
         auto matrix = spinner::Matrix(space_, operator_, converter, factories_, true);

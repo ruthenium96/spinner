@@ -2,7 +2,7 @@
 #define SPINNER_OPTIMIZEDSPACECONSTRUCTOR_H
 
 #include "src/common/runner/ConsistentModelOptimizationList.h"
-#include "src/entities/data_structures/FactoriesList.h"
+#include "src/linalg_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
 namespace spinner::space::optimization {
@@ -12,7 +12,7 @@ class OptimizedSpaceConstructor {
   public:
     static Space construct(
         const runner::ConsistentModelOptimizationList&,
-        const linear_algebra::FactoriesList& factories);
+        const linalg_structures::FactoriesList& factories);
 };
 } // namespace spinner::space::optimization
 

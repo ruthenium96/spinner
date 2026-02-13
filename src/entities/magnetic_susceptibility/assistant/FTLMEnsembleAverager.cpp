@@ -23,7 +23,7 @@ FTLMEnsembleAverager::FTLMEnsembleAverager(
     flattenedSpectra_(flattenedSpectra) {}
 
 common::UncertainValue FTLMEnsembleAverager::ensemble_average(
-    OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>> values,
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>> values,
     double temperature) const {
     auto fraction = ensemble_average_numerator_denominator(values, temperature);
     size_t number_of_seeds = fraction.second.size();
@@ -34,7 +34,7 @@ common::UncertainValue FTLMEnsembleAverager::ensemble_average(
 }
 
 std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemble_average_numerator_denominator(
-    const OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>& values,
+    const OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>& values,
     double temperature) const {
     auto energy_vectors = flattenedSpectra_->getFlattenSpectrum(common::Energy).value();
     auto weights_vectors = flattenedSpectra_->getWeights();
@@ -42,9 +42,9 @@ std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemb
 
     OneOrMany<std::pair<double, double>> results = transform_one_or_many(
         std::function([this, temperature](
-            std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>> energy_vector, 
-            std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>> weights_vector, 
-            std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>> value_vector){
+            std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>> energy_vector, 
+            std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>> weights_vector, 
+            std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>> value_vector){
             return calculate_averaged_value_and_partition_function(
                 temperature,
                 energy_vector.get(),

@@ -7,8 +7,6 @@ target_link_libraries(matrix model)
 add_library(spectrum
         spectrum/Spectrum.cpp spectrum/Spectrum.h spectrum/Subspectrum.cpp spectrum/Subspectrum.h)
 
-add_subdirectory(data_structures)
-
 add_library(magnetic_susceptibility
         magnetic_susceptibility/MagneticSusceptibilityController.h
         magnetic_susceptibility/assistant/CommonEnsembleAverager.cpp

@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "src/entities/data_structures/AbstractFactories.h"
+#include "src/linalg_structures/AbstractFactories.h"
 
-std::vector<std::shared_ptr<spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>>
+std::vector<std::shared_ptr<spinner::linalg_structures::AbstractDenseTransformAndDiagonalizeFactory>>
 constructAllDenseTransformAndDiagonalizeFactories();
 
 #endif  //SPINNER_ALLSYMMETRICMATRIXFACTORIES_H

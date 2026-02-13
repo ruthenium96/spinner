@@ -1,0 +1,27 @@
+#ifndef SPINNER_ARMAFACTORIES_H
+#define SPINNER_ARMAFACTORIES_H
+
+#include "src/linalg_structures/AbstractFactories.h"
+
+namespace spinner::linalg_structures {
+class ArmaDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAndDiagonalizeFactory {
+  public:
+    std::unique_ptr<AbstractDiagonalizableMatrix>
+    createDenseDiagonalizableMatrix(uint32_t size) override;
+    std::unique_ptr<AbstractDiagonalizableMatrix>
+    createSparseDiagonalizableMatrix(uint32_t size) override;
+    std::unique_ptr<AbstractDenseSemiunitaryMatrix>
+    createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) override;
+    std::vector<std::unique_ptr<AbstractDenseVector>> createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) override;
+    std::unique_ptr<AbstractDenseVector> createVector() override;
+};
+
+class ArmaSparseTransformFactory: public AbstractSparseTransformFactory {
+  public:
+    std::unique_ptr<AbstractSparseSemiunitaryMatrix>
+    createSparseSemiunitaryMatrix(uint32_t rows, uint32_t cols) override;
+    std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) override;
+};
+
+} // namespace spinner::linalg_structures
+#endif  //SPINNER_ARMAFACTORIES_H
