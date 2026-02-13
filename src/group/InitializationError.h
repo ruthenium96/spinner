@@ -5,6 +5,9 @@
 #include <string>
 
 namespace spinner::group {
+/**
+ * @brief Exception thrown when group initialization fails.
+ */
 struct InitializationError: public std::logic_error {
     explicit InitializationError(const std::string& arg) : logic_error(arg) {}
 };
