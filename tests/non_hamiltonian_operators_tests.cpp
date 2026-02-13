@@ -114,8 +114,8 @@ std::string representationName(const std::vector<uint8_t>& representations) {
 }
 
 TEST(order_of_summation, AAAA_S1_S2_S2xS2) {
-    spinner::group::Group group_one(spinner::group::Group::S2, {{1, 0, 3, 2}});
-    spinner::group::Group group_two(spinner::group::Group::S2, {{2, 3, 0, 1}});
+    spinner::group::Group group_one(spinner::group::S2, {{1, 0, 3, 2}});
+    spinner::group::Group group_two(spinner::group::S2, {{2, 3, 0, 1}});
     size_t number_of_initial_mults = 4;
     size_t number_of_summation = 3;  // derived it from spinner::group information somehow
     size_t number_of_all_mults = number_of_initial_mults + number_of_summation;
@@ -136,8 +136,8 @@ TEST(order_of_summation, AAAA_S1_S2_S2xS2) {
 }
 
 TEST(order_of_summation, AAAAAAAAA_S1_S2_S2xS2) {
-    spinner::group::Group group_one(spinner::group::Group::S2, {{6, 7, 8, 3, 4, 5, 0, 1, 2}});
-    spinner::group::Group group_two(spinner::group::Group::S2, {{2, 1, 0, 5, 4, 3, 8, 7, 6}});
+    spinner::group::Group group_one(spinner::group::S2, {{6, 7, 8, 3, 4, 5, 0, 1, 2}});
+    spinner::group::Group group_two(spinner::group::S2, {{2, 1, 0, 5, 4, 3, 8, 7, 6}});
     size_t number_of_initial_mults = 9;
     size_t number_of_summation = 8;  // derived it from spinner::group information somehow
     size_t number_of_all_mults = number_of_initial_mults + number_of_summation;

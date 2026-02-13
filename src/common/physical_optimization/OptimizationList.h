@@ -24,7 +24,7 @@ class OptimizationList {
     OptimizationList& EliminatePositiveProjections();
     OptimizationList& Symmetrize(group::Group new_group);
     OptimizationList&
-    Symmetrize(group::Group::GroupType group_type, std::vector<group::Permutation> generators);
+    Symmetrize(group::GroupType group_type, std::vector<group::Permutation> generators);
     OptimizationList& NonAbelianSimplify();
     OptimizationList& FTLMApproximate(FTLMSettings ftlmSettings);
 

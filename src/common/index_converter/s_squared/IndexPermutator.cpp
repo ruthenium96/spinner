@@ -1,5 +1,6 @@
 #include "IndexPermutator.h"
 #include <cassert>
+#include <map>
 #include <stdexcept>
 #include "src/group/Group.h"
 #include "src/spin_algebra/Multiplicity.h"

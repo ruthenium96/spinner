@@ -1,20 +1,20 @@
 #include "Group.h"
 
 #include <algorithm>
-#include <numeric>
-#include <stdexcept>
+
+#include "InitializationError.h"
 
 namespace {
 
 bool NumberOfGeneratorsConsistent(
     std::vector<spinner::group::Permutation> const& generators,
-    spinner::group::Group::AlgebraicProperties const& info) {
+    spinner::group::AlgebraicProperties const& info) {
     return generators.size() == info.number_of_generators;
 }
 
 bool SizesAreEqual(
     std::vector<spinner::group::Permutation> const& generators,
-    spinner::group::Group::AlgebraicProperties const& info) {
+    spinner::group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         if (generators[0].size() != generators[i].size()) {
             return false;
@@ -25,7 +25,7 @@ bool SizesAreEqual(
 
 bool GeneratorIsValid(
     std::vector<spinner::group::Permutation> const& generators,
-    spinner::group::Group::AlgebraicProperties const& info) {
+    spinner::group::AlgebraicProperties const& info) {
     for (size_t i = 0; i < info.number_of_generators; ++i) {
         auto generator_sorted = generators[i];
         std::sort(generator_sorted.begin(), generator_sorted.end());
@@ -86,7 +86,7 @@ bool ElementsInPowerLowerThanItsOrderIsNotIdentity(
 namespace spinner::group {
 Group::Group(GroupType group_type, std::vector<Permutation> generators) :
     generators_(std::move(generators)),
-    properties(Group::return_group_info_by_group_type(group_type)) {
+    properties(AlgebraicProperties::constructAlgebraicProperties(group_type)) {
     if (!NumberOfGeneratorsConsistent(generators_, properties)) {
         throw InitializationError(
             "The number of generators does not equal to the number of group number_of_generators.");
@@ -188,20 +188,6 @@ bool Group::operator==(const Group& rhs) const {
 
 bool Group::operator!=(const Group& rhs) const {
     return !(rhs == *this);
-}
-
-Group::AlgebraicProperties
-Group::return_group_info_by_group_type(Group::GroupType group_type) {
-    if (group_type.type_enum == S2) {
-        return GroupInfoS2;
-    }
-    if (group_type.type_enum == Dihedral) {
-        if (!group_type.order.has_value()) {
-            throw InitializationError("Dihedral must have an order");
-        }
-        return constructDihedral(group_type.order.value());
-    }
-    throw InitializationError("Unknown group_type" + std::to_string(group_type.type_enum));
 }
 
 const std::vector<Permutation>& Group::getElements() const {

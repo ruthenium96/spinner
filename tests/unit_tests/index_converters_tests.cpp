@@ -27,8 +27,8 @@ TEST(converter_reversibility, s_squared_2222_3333_4444) {
 	std::vector<std::vector<spinner::spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2, 2, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}};
 	std::vector<std::shared_ptr<const s_squared::OrderOfSummation>> orders_of_summation;
-	spinner::group::Group group_one(spinner::group::Group::S2, {{1, 0, 3, 2}});
-	spinner::group::Group group_two(spinner::group::Group::S2, {{3, 2, 1, 0}});
+	spinner::group::Group group_one(spinner::group::S2, {{1, 0, 3, 2}});
+	spinner::group::Group group_two(spinner::group::S2, {{3, 2, 1, 0}});
 	auto orbits_one = group_one.construct_orbits_of_mults();
 	auto orbits_two = group_two.construct_orbits_of_mults();
 

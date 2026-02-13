@@ -141,7 +141,7 @@ TEST(symmetrizer, 2222_S2_broke_unitary_matrices) {
 
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
+        optimizationList.Symmetrize(S2, {{1, 0, 3, 2}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -161,7 +161,7 @@ TEST(symmetrizer, 4444_S2_S2) {
     // S2 group
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
+        optimizationList.Symmetrize(S2, {{1, 0, 3, 2}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -171,14 +171,14 @@ TEST(symmetrizer, 4444_S2_S2) {
     // S2 * the same S2 group
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-        EXPECT_THROW(optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
+        optimizationList.Symmetrize(S2, {{1, 0, 3, 2}});
+        EXPECT_THROW(optimizationList.Symmetrize(S2, {{1, 0, 3, 2}}), std::invalid_argument);
     }
     // S2 * other S2
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}})
-            .Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        optimizationList.Symmetrize(S2, {{1, 0, 3, 2}})
+            .Symmetrize(S2, {{3, 2, 1, 0}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -195,7 +195,7 @@ TEST(symmetrizer, 4444_S2_S2_ITO) {
     // S2 group
     {
         OptimizationList optimizationList(OptimizationList::ITO);
-        optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
+        optimizationList.Symmetrize(S2, {{1, 0, 3, 2}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -205,14 +205,14 @@ TEST(symmetrizer, 4444_S2_S2_ITO) {
     // S2 * the same S2 group
     {
         OptimizationList optimizationList(OptimizationList::ITO);
-        optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
-        EXPECT_THROW(optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}}), std::invalid_argument);
+        optimizationList.Symmetrize(S2, {{1, 0, 3, 2}});
+        EXPECT_THROW(optimizationList.Symmetrize(S2, {{1, 0, 3, 2}}), std::invalid_argument);
     }
     // S2 * other S2
     {
         OptimizationList optimizationList(OptimizationList::ITO);
-        optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}})
-            .Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        optimizationList.Symmetrize(S2, {{1, 0, 3, 2}})
+            .Symmetrize(S2, {{3, 2, 1, 0}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -229,8 +229,8 @@ TEST(symmetrizer, 22222222_S2_S2_ITO) {
     // S2 * other S2
     {
         OptimizationList optimizationList(OptimizationList::ITO);
-        optimizationList.Symmetrize(Group::S2, {{7, 6, 5, 4, 3, 2, 1, 0}})
-            .Symmetrize(Group::S2, {{3, 2, 1, 0, 7, 6, 5, 4}});
+        optimizationList.Symmetrize(S2, {{7, 6, 5, 4, 3, 2, 1, 0}})
+            .Symmetrize(S2, {{3, 2, 1, 0, 7, 6, 5, 4}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -247,7 +247,7 @@ TEST(symmetrizer, 333_Dih3) {
     // Dih3
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+        optimizationList.Symmetrize({Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -259,14 +259,14 @@ TEST(symmetrizer, 333_Dih3) {
     // Dih3 * the same Dih3
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-        EXPECT_THROW(optimizationList.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}}), std::invalid_argument);
+        optimizationList.Symmetrize({Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+        EXPECT_THROW(optimizationList.Symmetrize({Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}}), std::invalid_argument);
     }
     // Dih3 * the same Dih3 (but different generators)
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-        EXPECT_THROW(optimizationList.Symmetrize({Group::Dihedral, 3}, {{2, 0, 1}, {1, 0, 2}}), std::invalid_argument);
+        optimizationList.Symmetrize({Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+        EXPECT_THROW(optimizationList.Symmetrize({Dihedral, 3}, {{2, 0, 1}, {1, 0, 2}}), std::invalid_argument);
     }
 }
 
@@ -278,7 +278,7 @@ TEST(symmetrizer, 222222_Dih3_S2) {
     // Dih3
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        optimizationList.Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -291,8 +291,8 @@ TEST(symmetrizer, 222222_Dih3_S2) {
         // Dih3 * S2
         OptimizationList optimizationList_first;
         optimizationList_first
-            .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
-            .Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+            .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
+            .Symmetrize(S2, {{3, 4, 5, 0, 1, 2}});
         spinner::space::Space space_first = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_first},
             spinner::linear_algebra::FactoriesList());
@@ -302,8 +302,8 @@ TEST(symmetrizer, 222222_Dih3_S2) {
 
         // S2 * Dih3
         OptimizationList optimizationList_second;
-        optimizationList_second.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}})
-            .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        optimizationList_second.Symmetrize(S2, {{3, 4, 5, 0, 1, 2}})
+            .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
         spinner::space::Space space_second = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_second},
             factories);
@@ -335,7 +335,7 @@ TEST(symmetrizer, 333333_Dih3_S2) {
     // Dih3
     {
         OptimizationList optimizationList;
-        optimizationList.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        optimizationList.Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
         spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList},
             factories);
@@ -348,8 +348,8 @@ TEST(symmetrizer, 333333_Dih3_S2) {
         // Dih3 * S2
         OptimizationList optimizationList_first;
         optimizationList_first
-            .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
-            .Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+            .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}})
+            .Symmetrize(S2, {{3, 4, 5, 0, 1, 2}});
         spinner::space::Space space_first = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_first},
             spinner::linear_algebra::FactoriesList());
@@ -359,8 +359,8 @@ TEST(symmetrizer, 333333_Dih3_S2) {
 
         // S2 * Dih3
         OptimizationList optimizationList_second;
-        optimizationList_second.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}})
-            .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+        optimizationList_second.Symmetrize(S2, {{3, 4, 5, 0, 1, 2}})
+            .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
         spinner::space::Space space_second = spinner::space::optimization::OptimizedSpaceConstructor::construct(
             {model, optimizationList_second},
             factories);
@@ -390,7 +390,7 @@ TEST(symmetrizer, 3333_Dih4) {
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     OptimizationList optimizationList;
-    optimizationList.Symmetrize({Group::Dihedral, 4}, {{1, 2, 3, 0}, {1, 0, 3, 2}});
+    optimizationList.Symmetrize({Dihedral, 4}, {{1, 2, 3, 0}, {1, 0, 3, 2}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -406,7 +406,7 @@ TEST(symmetrizer, 33333_Dih5) {
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     OptimizationList optimizationList;
-    optimizationList.Symmetrize({Group::Dihedral, 5}, {{1, 2, 3, 4, 0}, {0, 4, 3, 2, 1}});
+    optimizationList.Symmetrize({Dihedral, 5}, {{1, 2, 3, 4, 0}, {0, 4, 3, 2, 1}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -421,7 +421,7 @@ TEST(symmetrizer, 333333_Dih6) {
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     OptimizationList optimizationList;
-    optimizationList.Symmetrize({Group::Dihedral, 6}, {{1, 2, 3, 4, 5, 0}, {0, 5, 4,  3, 2, 1}});
+    optimizationList.Symmetrize({Dihedral, 6}, {{1, 2, 3, 4, 5, 0}, {0, 5, 4,  3, 2, 1}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -436,7 +436,7 @@ TEST(symmetrizer, 3333333_Dih7) {
     uint32_t totalSpaceSize = calculateTotalSpaceSize(mults);
 
     OptimizationList optimizationList;
-    optimizationList.Symmetrize({Group::Dihedral, 7}, {{1, 2, 3, 4, 5, 6, 0}, {0, 6, 5, 4, 3, 2, 1}});
+    optimizationList.Symmetrize({Dihedral, 7}, {{1, 2, 3, 4, 5, 6, 0}, {0, 6, 5, 4, 3, 2, 1}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -452,8 +452,8 @@ TEST(symmetrizer, 222222222_Dih3xDih3) {
 
     OptimizationList optimizationList;
     optimizationList
-        .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+        .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -469,8 +469,8 @@ TEST(symmetrizer, 222222222_Dih3xDih3_different_one) {
 
     OptimizationList optimizationList;
     optimizationList
-        .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {6, 7, 8, 3, 4, 5, 0, 1, 2}});
+        .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {6, 7, 8, 3, 4, 5, 0, 1, 2}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -486,8 +486,8 @@ TEST(symmetrizer, 222222222_Dih3xDih3_different_two) {
 
     OptimizationList optimizationList;
     optimizationList
-        .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {3, 4, 5, 0, 1, 2, 6, 7, 8}});
+        .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {3, 4, 5, 0, 1, 2, 6, 7, 8}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -503,8 +503,8 @@ TEST(symmetrizer, 333333333_Dih3xDih3) {
 
     OptimizationList optimizationList;
     optimizationList
-        .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+        .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -520,8 +520,8 @@ TEST(symmetrizer, 333333333_Dih3xDih3_different_one) {
 
     OptimizationList optimizationList;
     optimizationList
-        .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {6, 7, 8, 3, 4, 5, 0, 1, 2}});
+        .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {6, 7, 8, 3, 4, 5, 0, 1, 2}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);
@@ -537,8 +537,8 @@ TEST(symmetrizer, 333333333_Dih3xDih3_different_two) {
 
     OptimizationList optimizationList;
     optimizationList
-        .Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
-        .Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {3, 4, 5, 0, 1, 2, 6, 7, 8}});
+        .Symmetrize({Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+        .Symmetrize({Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {3, 4, 5, 0, 1, 2, 6, 7, 8}});
     spinner::space::Space space = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationList},
         factories);

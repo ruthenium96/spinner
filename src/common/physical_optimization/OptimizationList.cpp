@@ -91,7 +91,7 @@ OptimizationList& OptimizationList::Symmetrize(group::Group new_group) {
 }
 
 OptimizationList& OptimizationList::Symmetrize(
-    group::Group::GroupType group_type,
+    group::GroupType group_type,
     std::vector<group::Permutation> generators) {
     group::Group new_group(group_type, std::move(generators));
     return Symmetrize(new_group);

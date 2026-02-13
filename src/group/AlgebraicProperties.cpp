@@ -1,9 +1,12 @@
+#include "AlgebraicProperties.h"
+
 #include <cmath>
 #include <cstddef>
 #include <numeric>
-#include "Group.h"
 
-namespace spinner::group {
+#include "InitializationError.h"
+
+namespace {
 
 // Projectors onto one-dimensional representations are uniquely specified using 
 // two characters: the rotation character (+1 or -1) and the reflection character (+1 or -1). 
@@ -58,15 +61,14 @@ std::vector<std::vector<double>> two_dimension_projector_generator(
     return std::move(projectors);
 }
 
-Group::AlgebraicProperties constructDihedral(unsigned int order)
+void constructDihedral(unsigned int order, spinner::group::AlgebraicProperties& properties)
 {
     if (order == 0) {
-        throw group::InitializationError("Order cannot be equal to zero");
+        throw spinner::group::InitializationError("Order cannot be equal to zero");
     }
     if (order == 1 || order == 2) {
-        throw group::InitializationError("For construction of Dih1 and Dih2 groups use S2 group");
+        throw spinner::group::InitializationError("For construction of Dih1 and Dih2 groups use S2 group");
     }
-    group::Group::AlgebraicProperties properties;
     properties.group_size = 2 * order;
     properties.is_abelian = false;
     // generators are one rotation and one mirror:
@@ -146,31 +148,43 @@ Group::AlgebraicProperties constructDihedral(unsigned int order)
                 two_dimension_projector_generator(order, two_dim_repr);
         }
     }
-
-    return properties;
 }
-
-
-// clang-format off
 
 /*
  It is symmetric group of order two. It has two group elements, two representations.
  Maximum size of orbit -- two, so the group has two projectors, one for each representation.
  */
-const Group::AlgebraicProperties GroupInfoS2 = {
-                                                       2,
-                                                       2,
-                                                       true,
-                                                       {1, 1},
-                                                       {1, 1},
-                                                       1,
-                                                       {2},
-                                                       {{0}, {1}},
-                                                       {1, 2},
-                                                       {{{1,  1}},  // "a" representation
-                                                       {{1, -1}}}  // "b" representation
-};
+void constructS2(spinner::group::AlgebraicProperties& properties) {
+    properties.group_size = 2;
+    properties.number_of_representations = 2;
+    properties.is_abelian = true;
+    properties.dimensions_of_representations = {1, 1};
+    properties.number_of_projectors_of_representation = {1, 1};
+    properties.number_of_generators = 1;
+    properties.orders_of_generators = {2};
+    properties.group_in_form_of_generators = {{0}, {1}};
+    properties.orders_of_elements = {1, 2};
+    properties.coefficients_of_projectors = {{{1,  1}},  // "a" representation
+                                        {{1, -1}}};  // "b" representation
+}
+} // namespace
 
-// clang-format on
+namespace spinner::group {
+
+const AlgebraicProperties AlgebraicProperties::constructAlgebraicProperties(GroupType group_type) {
+    AlgebraicProperties properties;
+    if (group_type.type_enum == S2) {
+        constructS2(properties);
+        return properties;
+    }
+    if (group_type.type_enum == Dihedral) {
+        if (!group_type.order.has_value()) {
+            throw InitializationError("Dihedral must have an order");
+        }
+        constructDihedral(group_type.order.value(), properties);
+        return properties;
+    }
+    throw InitializationError("Unknown group_type" + std::to_string(group_type.type_enum));
+}
 
 } // namespace spinner::group
