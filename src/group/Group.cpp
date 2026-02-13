@@ -1,6 +1,7 @@
 #include "Group.h"
 
 #include <algorithm>
+#include <cassert>
 
 #include "InitializationError.h"
 
@@ -81,6 +82,20 @@ bool ElementsInPowerLowerThanItsOrderIsNotIdentity(
     }
     return true;
 }
+
+// G x G -> G, such that result = lhs * rhs
+inline spinner::group::Permutation group_multiplication(
+    const spinner::group::Permutation& lhs, 
+    const spinner::group::Permutation& rhs) {
+    assert(lhs.size() == rhs.size());
+
+    spinner::group::Permutation result_element(rhs.size());
+    // over spin centers
+    for (uint32_t l = 0; l < rhs.size(); ++l) {
+        result_element[l] = rhs[lhs[l]];
+    }
+    return result_element;
+}
 } // namespace
 
 namespace spinner::group {
@@ -118,14 +133,10 @@ Group::Group(GroupType group_type, std::vector<Permutation> generators) :
         Permutation element = identity;
         // over group generators
         for (uint32_t j = 0; j < properties.number_of_generators; ++j) {
+            const auto& generator = generators_[j];
             // over generator's power
-            for (uint32_t k = 0; k < properties.group_in_form_of_generators[i][j]; ++k) {
-                Permutation result_element(element.size());
-                // over spin centers
-                for (uint32_t l = 0; l < generators_[0].size(); ++l) {
-                    result_element[l] = element[generators_[j][l]];
-                }
-                element = result_element;
+            for (uint32_t _ = 0; _ < properties.group_in_form_of_generators[i][j]; ++_) {
+                element = group_multiplication(generator, element);
             }
         }
         elements_[i] = element;
