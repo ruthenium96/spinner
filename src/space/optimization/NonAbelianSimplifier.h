@@ -1,17 +1,17 @@
 #ifndef SPINNER_NON_ABELIAN_SIMPLIFIER_H
 #define SPINNER_NON_ABELIAN_SIMPLIFIER_H
 
-#include "src/entities/data_structures/FactoriesList.h"
+#include "src/linalg_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
 namespace spinner::space::optimization {
 class NonAbelianSimplifier {
   public:
-    explicit NonAbelianSimplifier(linear_algebra::FactoriesList factories);
+    explicit NonAbelianSimplifier(linalg_structures::FactoriesList factories);
     Space apply(Space&& space) const;
 
   private:
-    const linear_algebra::FactoriesList factories_;
+    const linalg_structures::FactoriesList factories_;
 };
 } // namespace spinner::space::optimization
 

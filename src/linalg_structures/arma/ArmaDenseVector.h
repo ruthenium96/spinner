@@ -1,0 +1,40 @@
+#ifndef SPINNER_ARMADENSEVECTOR_H
+#define SPINNER_ARMADENSEVECTOR_H
+
+#include <armadillo>
+#include <cstddef>
+#include <cstdint>
+
+#include "src/linalg_structures/AbstractDenseVector.h"
+
+namespace spinner::linalg_structures {
+template <typename T>
+class ArmaDenseVector: public AbstractDenseVector {
+  public:
+    void resize(uint32_t new_size);
+    void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) override;
+    void add_identical_values(size_t number, double value) override;
+    void subtract_minimum() override;
+    void wise_exp() override;
+    void makeRandomUnitVector(uint32_t size);
+
+    std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const override;
+    double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
+    double triple_dot(const std::unique_ptr<AbstractDenseVector>& second, 
+      const std::unique_ptr<AbstractDenseVector>& third) const override;
+    std::unique_ptr<AbstractDenseVector>
+    element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
+    uint32_t size() const override;
+    double at(uint32_t i) const override;
+    void print(std::ostream& os) const override;
+
+    arma::Col<T>& modifyDenseVector();
+    const arma::Col<T>& getDenseVector() const;
+
+  private:
+    // c-like pointers are necessary to avoid double-free error
+    static const ArmaDenseVector* downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr);
+    arma::Col<T> vector_;
+};
+} // namespace spinner::linalg_structures
+#endif  //SPINNER_ARMADENSEVECTOR_H

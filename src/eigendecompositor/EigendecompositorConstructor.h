@@ -10,7 +10,7 @@ class EigendecompositorConstructor {
   public:
     static std::unique_ptr<AbstractEigendecompositor> construct(
         const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-        const linear_algebra::FactoriesList& factories);
+        const linalg_structures::FactoriesList& factories);
 
 };
 

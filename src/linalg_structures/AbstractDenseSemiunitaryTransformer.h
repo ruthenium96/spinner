@@ -1,0 +1,20 @@
+#ifndef SPINNER_ABSTRACTDENSESEMIUNITARYTRANSFORMER_H
+#define SPINNER_ABSTRACTDENSESEMIUNITARYTRANSFORMER_H
+
+#include <functional>
+#include <memory>
+
+namespace spinner::linalg_structures {
+class AbstractDenseVector;
+class AbstractDiagonalizableMatrix;
+
+// This class calculates UAU* main diagonals:
+class AbstractDenseSemiunitaryTransformer {
+public:
+    virtual std::unique_ptr<AbstractDenseVector> calculateUnitaryTransformationOfMatrix(
+        std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> matrix) const = 0;
+    virtual ~AbstractDenseSemiunitaryTransformer() = default;
+};
+} // namespace spinner::linalg_structures
+
+#endif  //SPINNER_ABSTRACTDENSESEMIUNITARYTRANSFORMER_H

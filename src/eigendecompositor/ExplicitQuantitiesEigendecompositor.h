@@ -10,7 +10,7 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
     ExplicitQuantitiesEigendecompositor(
         std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-        linear_algebra::FactoriesList factories_list);
+        linalg_structures::FactoriesList factories_list);
     std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
     getSubspectrum(common::QuantityEnum, size_t number_of_block) const override;
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
@@ -20,7 +20,7 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
     std::optional<OneOrMany<std::reference_wrapper<const Submatrix>>>
     getSubmatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&, size_t number_of_block) const override;
 
-    OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
+    OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>
     getWeightsOfBlockStates(size_t number_of_block) const override;
 
   protected:
@@ -31,14 +31,14 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
         uint32_t number_of_subspaces) override;
-    std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+    std::optional<OneOrMany<std::shared_ptr<linalg_structures::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(size_t number_of_block, const space::Subspace& subspace) override;
     void finalize() override;
 
   private:
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor_;
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter_;
-    linear_algebra::FactoriesList factories_list_;
+    linalg_structures::FactoriesList factories_list_;
     std::map<common::QuantityEnum, std::vector<OneOrMany<Subspectrum>>> quantities_spectra_map_;
     std::map<common::QuantityEnum, std::vector<Submatrix>> quantities_matrix_map_;
     std::map<std::pair<common::QuantityEnum, model::symbols::SymbolName>, std::vector<OneOrMany<Subspectrum>>> derivatives_spectra_map_;
@@ -52,7 +52,7 @@ class ExplicitQuantitiesEigendecompositor: public AbstractEigendecompositor {
 
     static OneOrMany<Subspectrum> non_energy_subspectrum(
         const Submatrix& non_hamiltonian_submatrix,
-        const OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>&
+        const OneOrMany<std::shared_ptr<linalg_structures::AbstractDenseSemiunitaryMatrix>>&
             unitary_transformation_matrix);
 };
 

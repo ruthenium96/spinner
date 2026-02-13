@@ -5,7 +5,7 @@
 namespace spinner {
 
 Submatrix::Submatrix(
-    std::unique_ptr<linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
+    std::unique_ptr<linalg_structures::AbstractDiagonalizableMatrix> raw_data_,
     BlockProperties properties_) :
     raw_data(std::move(raw_data_)),
     properties(properties_) {}
@@ -14,7 +14,7 @@ Submatrix::Submatrix(
     const space::Subspace& subspace,
     const model::operators::Operator& new_operator,
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    const linear_algebra::FactoriesList& factories,
+    const linalg_structures::FactoriesList& factories,
     bool return_sparse_if_possible) {
     auto totalSpaceSize = converter->get_total_space_size();
     auto matrix_in_lexicografical_basis = factories.createSparseSymmetricMatrix(totalSpaceSize);

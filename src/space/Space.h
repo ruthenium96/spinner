@@ -6,7 +6,7 @@
 #include <map>
 
 #include "Subspace.h"
-#include "src/entities/data_structures/FactoriesList.h"
+#include "src/linalg_structures/FactoriesList.h"
 
 namespace spinner::space {
 // Space is responsible for _sparse_ unitary transformation of Hamiltonian matrix.
@@ -15,7 +15,7 @@ class Space {
   public:
     explicit Space(
         uint32_t total_space_size,
-        const linear_algebra::FactoriesList& factories);
+        const linalg_structures::FactoriesList& factories);
     explicit Space(std::vector<Subspace>&& m);
 
     std::vector<Subspace>& getBlocks();

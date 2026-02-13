@@ -1,0 +1,23 @@
+#ifndef SPINNER_ABSTRACTDENSESEMIUNITARYMATRIX_H
+#define SPINNER_ABSTRACTDENSESEMIUNITARYMATRIX_H
+
+#include <memory>
+
+#include "AbstractDenseSemiunitaryTransformer.h"
+
+namespace spinner::linalg_structures {
+class AbstractDenseSemiunitaryMatrix {
+  public:
+    virtual uint32_t size_rows() const = 0;
+    virtual uint32_t size_cols() const = 0;
+
+    virtual double at(uint32_t i, uint32_t j) const = 0;
+
+    virtual void print(std::ostream& os) const = 0;
+
+    virtual const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& getUnitaryTransformer() const = 0;
+
+    virtual ~AbstractDenseSemiunitaryMatrix() = default;
+};
+} // namespace spinner::linalg_structures
+#endif  //SPINNER_ABSTRACTDENSESEMIUNITARYMATRIX_H

@@ -1,0 +1,94 @@
+#include "ArmaDenseDiagonalizableMatrix.h"
+
+#include "ArmaLogic.h"
+
+namespace spinner::linalg_structures {
+
+template <typename T>
+void ArmaDenseDiagonalizableMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
+    denseDiagonalizableMatrix_(i, j) += value;
+    if (i != j) {
+        denseDiagonalizableMatrix_(j, i) += value;
+    }
+}
+
+template <typename T>
+EigenCouple ArmaDenseDiagonalizableMatrix<T>::diagonalizeValuesVectors() const {
+    ArmaLogic<T> logic;
+
+    return logic.diagonalizeValuesVectors(*this);
+}
+
+template <typename T>
+std::unique_ptr<AbstractDenseVector> ArmaDenseDiagonalizableMatrix<T>::diagonalizeValues() const {
+    ArmaLogic<T> logic;
+
+    return logic.diagonalizeValues(*this);
+}
+
+template <typename T>
+KrylovCouple ArmaDenseDiagonalizableMatrix<T>::krylovDiagonalizeValues(
+    const std::unique_ptr<AbstractDenseVector>& seed_vector,
+    size_t krylov_subspace_size) const {
+    ArmaLogic<T> logic;
+
+    return logic.krylovDiagonalizeValues(
+        *this, 
+        *seed_vector, 
+        krylov_subspace_size);
+}
+
+template <typename T>
+KrylovTriple ArmaDenseDiagonalizableMatrix<T>::krylovDiagonalizeValuesVectors(
+    const std::unique_ptr<AbstractDenseVector>& seed_vector,
+    size_t krylov_subspace_size) const {
+    ArmaLogic<T> logic;
+ 
+    return logic.krylovDiagonalizeValuesVectors(
+        *this, 
+        *seed_vector, 
+        krylov_subspace_size);
+}
+
+template <typename T>
+std::unique_ptr<AbstractDiagonalizableMatrix>
+ArmaDenseDiagonalizableMatrix<T>::multiply_by(double multiplier) const {
+    auto answer = std::make_unique<ArmaDenseDiagonalizableMatrix>();
+    answer->resize(size());
+    answer->denseDiagonalizableMatrix_ = denseDiagonalizableMatrix_ * multiplier;
+    return answer;
+}
+
+template <typename T>
+uint32_t ArmaDenseDiagonalizableMatrix<T>::size() const {
+    return denseDiagonalizableMatrix_.n_rows;
+}
+
+template <typename T>
+double ArmaDenseDiagonalizableMatrix<T>::at(uint32_t i, uint32_t j) const {
+    return denseDiagonalizableMatrix_.at(i, j);
+}
+
+template <typename T>
+void ArmaDenseDiagonalizableMatrix<T>::print(std::ostream& os) const {
+    os << denseDiagonalizableMatrix_ << std::endl;
+}
+
+template <typename T>
+void ArmaDenseDiagonalizableMatrix<T>::resize(uint32_t size) {
+    denseDiagonalizableMatrix_.resize(size, size);
+}
+
+template <typename T>
+const arma::Mat<T>& ArmaDenseDiagonalizableMatrix<T>::getDenseDiagonalizableMatrix() const {
+    return denseDiagonalizableMatrix_;
+}
+
+template <typename T>
+arma::Mat<T>& ArmaDenseDiagonalizableMatrix<T>::modifyDenseDiagonalizableMatrix() {
+    return denseDiagonalizableMatrix_;
+}
+
+template class ArmaDenseDiagonalizableMatrix<double>;
+template class ArmaDenseDiagonalizableMatrix<float>;
+} // namespace spinner::linalg_structures

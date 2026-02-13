@@ -29,11 +29,11 @@ void initialize_nine_centers_torus(spinner::model::ModelInput& model, double fir
 
 class torus : public SpectrumFinalEquivalenceTest {};
 
-#define group_torus_hor Group({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}})
-#define group_torus_ver Group({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
+#define group_torus_hor Group({GroupTypeEnum::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}})
+#define group_torus_ver Group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}})
 
-#define group_torus_hor_S2 Group(Group::S2, {{0, 1, 2, 6, 7, 8, 3, 4, 5}})
-#define group_torus_ver_S2 Group(Group::S2, {{0, 2, 1, 3, 5, 4, 6, 8, 7}})
+#define group_torus_hor_S2 Group(GroupTypeEnum::S2, {{0, 1, 2, 6, 7, 8, 3, 4, 5}})
+#define group_torus_ver_S2 Group(GroupTypeEnum::S2, {{0, 2, 1, 3, 5, 4, 6, 8, 7}})
 
 TEST_P(torus, NoGFactors) {
     std::vector<double> js = {10, 17.17, 33};

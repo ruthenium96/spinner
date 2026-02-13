@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Submatrix.h"
-#include "src/entities/data_structures/FactoriesList.h"
+#include "src/linalg_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
 namespace spinner {
@@ -16,7 +16,7 @@ struct Matrix {
         const space::Space& space,
         const model::operators::Operator& new_operator,
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-        const linear_algebra::FactoriesList& factories,
+        const linalg_structures::FactoriesList& factories,
         bool return_sparse_if_possible);
 
     std::vector<Submatrix> blocks;

@@ -57,12 +57,12 @@ find_package(Armadillo 12.4)
 find_package(Eigen3 3.3)
 
 if (ARMADILLO_FOUND)
-    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaDoubleIndividual_tests.cpp)
-    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaFloatIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linalg_structures/armaDoubleIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linalg_structures/armaFloatIndividual_tests.cpp)
 endif ()
 if (Eigen3_FOUND)
-    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenDoubleIndividual_tests.cpp)
-    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/eigenFloatIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linalg_structures/eigenDoubleIndividual_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linalg_structures/eigenFloatIndividual_tests.cpp)
 endif ()
 
 target_sources(tests_tools PRIVATE
@@ -93,9 +93,9 @@ if (ARMADILLO_FOUND AND Eigen3_FOUND)
     target_sources(tests_tools PRIVATE
             tools/AllSymmetricMatrixFactories.cpp
             )
-    target_sources(spinner_test PRIVATE unit_tests/linear_algebra/armaEigenComparison_tests.cpp)
+    target_sources(spinner_test PRIVATE unit_tests/linalg_structures/armaEigenComparison_tests.cpp)
     target_sources(spinner_time_test PRIVATE
-            time_tests/linear_algebra/armaEigenPerfomance_tests.cpp
+            time_tests/linalg_structures/armaEigenPerfomance_tests.cpp
             )
 endif ()
 

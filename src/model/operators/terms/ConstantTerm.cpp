@@ -4,7 +4,7 @@
 
 namespace spinner::model::operators {
 void ConstantTerm::construct(
-    linear_algebra::AbstractSymmetricMatrix&
+    linalg_structures::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors) const {
     for (const auto& index_of_vector : indexes_of_vectors) {

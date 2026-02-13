@@ -6,21 +6,21 @@ using namespace spinner::group;
 
 TEST(consistentModelOptimizationList_tests, throw_groups_with_different_sizes_of_permutations) {
     OptimizationList optimizationList;
-    optimizationList.Symmetrize(Group::S2, {{0, 2, 1}});
-    EXPECT_THROW(optimizationList.Symmetrize(Group::S2, {{1, 0}}), std::invalid_argument);
+    optimizationList.Symmetrize(GroupTypeEnum::S2, {{0, 2, 1}});
+    EXPECT_THROW(optimizationList.Symmetrize(GroupTypeEnum::S2, {{1, 0}}), std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_noncommutative_groups) {
     OptimizationList optimizationList;
-    optimizationList.Symmetrize(Group::S2, {{0, 2, 1}});
-    EXPECT_THROW(optimizationList.Symmetrize(Group::S2, {{1, 0, 2}}), std::invalid_argument);
+    optimizationList.Symmetrize(GroupTypeEnum::S2, {{0, 2, 1}});
+    EXPECT_THROW(optimizationList.Symmetrize(GroupTypeEnum::S2, {{1, 0, 2}}), std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_permutation) {
     std::vector<spinner::spin_algebra::Multiplicity> mults = {4, 4, 4};
     spinner::model::ModelInput model(mults);
     OptimizationList optimizationList;
-    optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
+    optimizationList.Symmetrize(GroupTypeEnum::S2, {{1, 0, 3, 2}});
 
     EXPECT_THROW(
         spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
@@ -31,7 +31,7 @@ TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicit
     std::vector<spinner::spin_algebra::Multiplicity> mults = {4, 4, 4, 3};
     spinner::model::ModelInput model(mults);
     OptimizationList optimizationList;
-    optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
+    optimizationList.Symmetrize(GroupTypeEnum::S2, {{1, 0, 3, 2}});
 
     EXPECT_THROW(
         spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
@@ -53,8 +53,8 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_sy
 
     OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(GroupTypeEnum::S2, {{1, 0, 3, 2}})
+        .Symmetrize(GroupTypeEnum::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
         spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
@@ -74,8 +74,8 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symm
 
     OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(GroupTypeEnum::S2, {{1, 0, 3, 2}})
+        .Symmetrize(GroupTypeEnum::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
         spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
@@ -100,8 +100,8 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symm
 
     OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(GroupTypeEnum::S2, {{1, 0, 3, 2}})
+        .Symmetrize(GroupTypeEnum::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
         spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
@@ -127,8 +127,8 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmet
 
     OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(GroupTypeEnum::S2, {{1, 0, 3, 2}})
+        .Symmetrize(GroupTypeEnum::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
         spinner::runner::ConsistentModelOptimizationList(model, optimizationList),

@@ -11,7 +11,7 @@ class TotalSSquaredTerm : public ZeroCenterTerm {
     TotalSSquaredTerm(std::shared_ptr<const index_converter::s_squared::IndexConverter> converter);
     std::unique_ptr<Term> clone() const override;
     void construct(
-        linear_algebra::AbstractSymmetricMatrix& matrix,
+        linalg_structures::AbstractSymmetricMatrix& matrix,
         const std::set<unsigned int>& indexes_of_vectors) const override;
 
   private:

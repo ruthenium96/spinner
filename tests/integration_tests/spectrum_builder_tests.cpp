@@ -95,8 +95,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
         // S2_S2_symmetrize
         {
             spinner::common::physical_optimization::OptimizationList optimizationList;
-            optimizationList.Symmetrize(spinner::group::Group::S2, {{1, 0, 3, 2}})
-                .Symmetrize(spinner::group::Group::S2, {{3, 2, 1, 0}});
+            optimizationList.Symmetrize(spinner::group::GroupTypeEnum::S2, {{1, 0, 3, 2}})
+                .Symmetrize(spinner::group::GroupTypeEnum::S2, {{3, 2, 1, 0}});
 
             spinner::runner::Runner runner(model, optimizationList);
 
@@ -107,8 +107,8 @@ TEST(matrix_and_spectrum_bulders, size_consistence_2222_3333_4444) {
         {
             spinner::common::physical_optimization::OptimizationList optimizationList;
             optimizationList.TzSort()
-                .Symmetrize(spinner::group::Group::S2, {{1, 0, 3, 2}})
-                .Symmetrize(spinner::group::Group::S2, {{3, 2, 1, 0}});
+                .Symmetrize(spinner::group::GroupTypeEnum::S2, {{1, 0, 3, 2}})
+                .Symmetrize(spinner::group::GroupTypeEnum::S2, {{3, 2, 1, 0}});
 
             spinner::runner::Runner runner(model, optimizationList);
 
@@ -134,7 +134,7 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
         // Dih3_SYMMETRIZE
         {
             spinner::common::physical_optimization::OptimizationList optimizationList;
-            optimizationList.Symmetrize({spinner::group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+            optimizationList.Symmetrize({spinner::group::GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
 
             spinner::runner::Runner runner(model, optimizationList);
 
@@ -144,7 +144,7 @@ TEST(matrix_and_spectrum_bulders, size_consistence_222_333_444) {
         // TZ_SORT + Dih3_SYMMETRIZE
         {
             spinner::common::physical_optimization::OptimizationList optimizationList;
-            optimizationList.TzSort().Symmetrize({spinner::group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+            optimizationList.TzSort().Symmetrize({spinner::group::GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
             spinner::runner::Runner runner(model, optimizationList);
 
             EXPECT_SIZE_CONSISTENCE_OF_MATRICES(runner);

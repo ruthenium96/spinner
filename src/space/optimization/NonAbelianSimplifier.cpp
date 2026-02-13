@@ -37,6 +37,6 @@ Space NonAbelianSimplifier::apply(Space&& space) const {
     }
     return Space(std::move(vector_result));
 }
-NonAbelianSimplifier::NonAbelianSimplifier(linear_algebra::FactoriesList factories) :
+NonAbelianSimplifier::NonAbelianSimplifier(linalg_structures::FactoriesList factories) :
     factories_(std::move(factories)) {}
 } // namespace spinner::space::optimization

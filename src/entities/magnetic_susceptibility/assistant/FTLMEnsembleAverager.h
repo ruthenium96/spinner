@@ -6,7 +6,7 @@
 #include "AbstractEnsembleAverager.h"
 #include "src/common/UncertainValue.h"
 #include "src/eigendecompositor/FlattenedSpectra.h"
-#include "src/entities/data_structures/AbstractDenseVector.h"
+#include "src/linalg_structures/AbstractDenseVector.h"
 
 // Calculates ensemble-averaged values using Boltzmann distribution.
 namespace spinner::magnetic_susceptibility {
@@ -14,10 +14,10 @@ class FTLMEnsembleAverager : public AbstractEnsembleAverager {
   public:
     FTLMEnsembleAverager(std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra);
     common::UncertainValue ensemble_average(
-        OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>> values,
+        OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>> values,
         double temperature) const override;
     std::pair<std::vector<double>, std::vector<double>> ensemble_average_numerator_denominator(
-        const OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>& values,
+        const OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>& values,
         double temperature) const;  
   private:
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra_;

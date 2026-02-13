@@ -7,7 +7,7 @@
 using namespace spinner::common::physical_optimization;
 using namespace spinner::group;
 
-const auto factories = spinner::linear_algebra::FactoriesList();
+const auto factories = spinner::linalg_structures::FactoriesList();
 
 void compare_two_spaces(const spinner::space::Space& one, const spinner::space::Space& two) {
    ASSERT_EQ(one.getBlocks().size(), two.getBlocks().size())
@@ -73,9 +73,9 @@ TEST(nonAbelianSimplifier, 333_Dih3) {
     spinner::model::ModelInput model(mults);
 
     OptimizationList optimizationListFull;
-    optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+    optimizationListFull.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
     OptimizationList optimizationListSimplified;
-    optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+    optimizationListSimplified.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
     optimizationListSimplified.NonAbelianSimplify();
 
     spinner::space::Space space_full = spinner::space::optimization::OptimizedSpaceConstructor::construct(
@@ -93,9 +93,9 @@ TEST(nonAbelianSimplifier, 333333_Dih3) {
    spinner::model::ModelInput model(mults);
 
    OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   optimizationListFull.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
    OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   optimizationListSimplified.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
    optimizationListSimplified.NonAbelianSimplify();
 
    spinner::space::Space space_full = spinner::space::optimization::OptimizedSpaceConstructor::construct(
@@ -113,11 +113,11 @@ TEST(nonAbelianSimplifier, 333333_Dih3xS2) {
    spinner::model::ModelInput model(mults);
 
    OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-   optimizationListFull.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+   optimizationListFull.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   optimizationListFull.Symmetrize(GroupTypeEnum::S2, {{3, 4, 5, 0, 1, 2}});
    OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-   optimizationListSimplified.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+   optimizationListSimplified.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   optimizationListSimplified.Symmetrize(GroupTypeEnum::S2, {{3, 4, 5, 0, 1, 2}});
    optimizationListSimplified.NonAbelianSimplify();
 
    spinner::space::Space space_full = spinner::space::optimization::OptimizedSpaceConstructor::construct(
@@ -135,11 +135,11 @@ TEST(nonAbelianSimplifier, 222222222) {
    spinner::model::ModelInput model(mults);
 
    OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   optimizationListFull.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListFull.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
    OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   optimizationListSimplified.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListSimplified.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
    EXPECT_THROW(optimizationListSimplified.NonAbelianSimplify(), std::invalid_argument);
 }
 
@@ -148,10 +148,10 @@ TEST(nonAbelianSimplifier, 333333333) {
    spinner::model::ModelInput model(mults);
 
    OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   optimizationListFull.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListFull.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
    OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   optimizationListSimplified.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListSimplified.Symmetrize({GroupTypeEnum::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
    EXPECT_THROW(optimizationListSimplified.NonAbelianSimplify(), std::invalid_argument);
 }

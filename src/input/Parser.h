@@ -23,7 +23,7 @@ class Parser {
     const std::optional<std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>>& getNonlinearSolver() const;
     const std::optional<std::shared_ptr<magnetic_susceptibility::ExperimentalValuesWorker>>& getExperimentalValuesWorker() const;
 
-    const std::optional<linear_algebra::FactoriesList>& getFactoriesList() const;
+    const std::optional<linalg_structures::FactoriesList>& getFactoriesList() const;
   private:
     std::optional<input::ModelInputParser> model_input_parser_;
     std::optional<input::OptimizationsParser> optimizations_list_parser_;

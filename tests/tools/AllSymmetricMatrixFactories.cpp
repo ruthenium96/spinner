@@ -1,9 +1,9 @@
 #include "AllSymmetricMatrixFactories.h"
 
-#include "src/entities/data_structures/arma/ArmaFactories.h"
-#include "src/entities/data_structures/eigen/EigenFactories.h"
+#include "src/linalg_structures/arma/ArmaFactories.h"
+#include "src/linalg_structures/eigen/EigenFactories.h"
 
-using namespace spinner::linear_algebra;
+using namespace spinner::linalg_structures;
 
 std::vector<std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>>
 constructAllDenseTransformAndDiagonalizeFactories() {

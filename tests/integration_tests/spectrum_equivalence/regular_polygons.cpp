@@ -34,7 +34,7 @@ Group generate_Dn_group_for_polygon(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
-    return Group({Group::Dihedral, size}, 
+    return Group({GroupTypeEnum::Dihedral, size}, 
         {generator_rotation, generator_reflection});
 }
 
@@ -43,7 +43,7 @@ Group generate_first_C2_group_for_polygon(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
-    return Group(Group::S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 
@@ -57,14 +57,14 @@ Group generate_second_C2_group_for_polygon(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[i] = (i + size / 2) % size;
     }
-    return Group(Group::S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 
 class three_center_regular_polygon : public SpectrumFinalEquivalenceTest {};
 
-#define group_triangle_diff_one Group({Group::Dihedral, 3}, {{2, 0, 1}, {0, 2, 1}})
-#define group_triangle_diff_two Group({Group::Dihedral, 3}, {{1, 2, 0}, {1, 0, 2}})
+#define group_triangle_diff_one Group({GroupTypeEnum::Dihedral, 3}, {{2, 0, 1}, {0, 2, 1}})
+#define group_triangle_diff_two Group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {1, 0, 2}})
 
 TEST_P(three_center_regular_polygon, NoGFactors) {
     std::vector<double> js = {10, 17.17, 33};
@@ -121,8 +121,8 @@ spectrum_final_equivalence_test_name_generator
 
 class four_center_regular_polygon : public SpectrumFinalEquivalenceTest {};
 
-#define group_square_diff_one Group({Group::Dihedral, 4}, {{{1, 2, 3, 0}, {1, 0, 3, 2}}})
-#define group_square_diff_two Group({Group::Dihedral, 4}, {{{3, 0, 1, 2}, {0, 3, 2, 1}}})
+#define group_square_diff_one Group({GroupTypeEnum::Dihedral, 4}, {{{1, 2, 3, 0}, {1, 0, 3, 2}}})
+#define group_square_diff_two Group({GroupTypeEnum::Dihedral, 4}, {{{3, 0, 1, 2}, {0, 3, 2, 1}}})
 
 TEST_P(four_center_regular_polygon, NoGFactors) {
     std::vector<double> js = {10, -17.17, 33};
@@ -239,7 +239,7 @@ INSTANTIATE_TEST_SUITE_P(
             generate_first_C2_group_for_polygon(6),
             // TODO: generate_second_C2_group_for_polygon(6) (in combine with previous one) 
             // leads to an error in the case of ITO
-            Group(Group::S2, {{2, 1, 0, 5, 4, 3}})
+            Group(GroupTypeEnum::S2, {{2, 1, 0, 5, 4, 3}})
         })
     ),
     ::testing::Values(

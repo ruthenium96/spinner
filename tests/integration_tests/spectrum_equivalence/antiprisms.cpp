@@ -32,7 +32,7 @@ Group generate_Dn_group_for_antiprism(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
-    return Group({Group::Dihedral, size}, 
+    return Group({GroupTypeEnum::Dihedral, size}, 
         {generator_rotation, generator_reflection});
 }
 
@@ -41,7 +41,7 @@ Group generate_first_C2_group_for_antiprism(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
-    return Group(Group::S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 

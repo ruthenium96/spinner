@@ -1,0 +1,39 @@
+#ifndef SPINNER_EIGENDENSEVECTOR_H
+#define SPINNER_EIGENDENSEVECTOR_H
+
+#include <Eigen/Dense>
+
+#include "src/linalg_structures/AbstractDenseVector.h"
+
+namespace spinner::linalg_structures {
+template <typename T>
+class EigenDenseVector: public AbstractDenseVector {
+  public:
+    void resize(uint32_t new_size);
+    void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) override;
+    void add_identical_values(size_t number, double value) override;
+    void subtract_minimum() override;
+    void wise_exp() override;
+    void makeRandomUnitVector(uint32_t size);
+
+    std::unique_ptr<AbstractDenseVector> multiply_by(double multiplier) const override;
+    double dot(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
+    double triple_dot(const std::unique_ptr<AbstractDenseVector>& second, 
+      const std::unique_ptr<AbstractDenseVector>& third) const override;
+    std::unique_ptr<AbstractDenseVector>
+    element_wise_multiplication(const std::unique_ptr<AbstractDenseVector>& rhs) const override;
+    uint32_t size() const override;
+    double at(uint32_t i) const override;
+    void print(std::ostream& os) const override;
+
+    Eigen::Vector<T, -1>& modifyDenseVector();
+    const Eigen::Vector<T, -1>& getDenseVector() const;
+
+  private:
+    Eigen::Vector<T, -1> vector_;
+
+    // c-like pointers are necessary to avoid double-free error
+    static const EigenDenseVector* downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr);
+};
+} // namespace spinner::linalg_structures
+#endif  //SPINNER_EIGENDENSEVECTOR_H

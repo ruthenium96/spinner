@@ -19,7 +19,7 @@ std::unique_ptr<Term> T20TwoCenterTerm::clone() const {
 };
 
 void T20TwoCenterTerm::construct(
-	linear_algebra::AbstractSymmetricMatrix& matrix,
+	linalg_structures::AbstractSymmetricMatrix& matrix,
 	const std::set<unsigned int>& indexes_of_vectors,
 	uint32_t center_a, uint32_t center_b) const {
 	
@@ -34,7 +34,7 @@ void T20TwoCenterTerm::construct(
 };
 
 void T20TwoCenterTerm::add_ttwo_term(
-	linear_algebra::AbstractSymmetricMatrix& matrix,
+	linalg_structures::AbstractSymmetricMatrix& matrix,
 	const std::set<unsigned int>& indexes_of_vectors,
 	uint32_t center_a, uint32_t center_b,
 	double factor) const {

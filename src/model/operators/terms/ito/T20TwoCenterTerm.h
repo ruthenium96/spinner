@@ -16,7 +16,7 @@ class T20TwoCenterTerm : public TwoCenterTerm {
         double prefactor = 1);
     std::unique_ptr<Term> clone() const override;
     void construct(
-        linear_algebra::AbstractSymmetricMatrix& matrix,
+        linalg_structures::AbstractSymmetricMatrix& matrix,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a, uint32_t center_b) const override;
 
@@ -27,7 +27,7 @@ class T20TwoCenterTerm : public TwoCenterTerm {
     WignerEckartHelper wigner_eckart_helper_;
 
     void add_ttwo_term(
-        linear_algebra::AbstractSymmetricMatrix& matrix,
+        linalg_structures::AbstractSymmetricMatrix& matrix,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a,
         uint32_t center_b,

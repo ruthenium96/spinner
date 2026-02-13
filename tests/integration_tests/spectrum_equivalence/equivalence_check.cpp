@@ -16,7 +16,7 @@ inline std::vector<QuantumValues> construct_final_vector(spinner::runner::Runner
     auto factory = runner.getDataStructuresFactories();
     auto degeneracy_vector = factory.createVector();
 
-    std::array<std::optional<std::unique_ptr<spinner::linear_algebra::AbstractDenseVector>>, 
+    std::array<std::optional<std::unique_ptr<spinner::linalg_structures::AbstractDenseVector>>, 
         magic_enum::enum_count<spinner::common::QuantityEnum>()> values_vectors;
 
     for (const auto& quantity_enum_ : magic_enum::enum_values<spinner::common::QuantityEnum>()) {

@@ -14,7 +14,7 @@ class WorkerConstructor {
     static std::unique_ptr<AbstractWorker> construct(
         const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
         std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra,
-        const linear_algebra::FactoriesList& factories);
+        const linalg_structures::FactoriesList& factories);
 };
 
 } // namespace spinner::magnetic_susceptibility::worker

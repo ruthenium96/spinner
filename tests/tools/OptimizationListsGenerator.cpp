@@ -1,5 +1,7 @@
 #include "OptimizationListsGenerator.h"
 
+#include <stdexcept>
+
 using namespace spinner::common::physical_optimization;
 
 std::vector<OptimizationList> generate_all_optimization_lists(const std::vector<spinner::group::Group> groups) {

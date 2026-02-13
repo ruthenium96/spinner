@@ -1,0 +1,31 @@
+#ifndef SPINNER_ARMADENSESEMIUNITARYMATRIX_H
+#define SPINNER_ARMADENSESEMIUNITARYMATRIX_H
+
+#include <armadillo>
+
+#include "src/linalg_structures/AbstractDenseSemiunitaryMatrix.h"
+#include "src/linalg_structures/AbstractDenseSemiunitaryTransformer.h"
+
+namespace spinner::linalg_structures {
+template <typename T>
+class ArmaDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
+  public:
+    ArmaDenseSemiunitaryMatrix();
+
+    uint32_t size_rows() const override;
+    uint32_t size_cols() const override;
+    double at(uint32_t i, uint32_t j) const override;
+
+    void print(std::ostream& os) const override;
+    void resize(size_t size_rows, size_t size_cols);
+    const arma::Mat<T>& getDenseSemiunitaryMatrix() const;
+    arma::Mat<T>& modifyDenseSemiunitaryMatrix();
+
+    const std::unique_ptr<AbstractDenseSemiunitaryTransformer>& getUnitaryTransformer() const override;
+
+  private:
+    arma::Mat<T> denseSemiunitaryMatrix_;
+    std::unique_ptr<AbstractDenseSemiunitaryTransformer> transformer_;
+};
+} // namespace spinner::linalg_structures
+#endif  //SPINNER_ARMADENSESEMIUNITARYMATRIX_H

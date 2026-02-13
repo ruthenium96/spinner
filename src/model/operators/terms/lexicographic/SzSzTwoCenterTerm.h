@@ -15,7 +15,7 @@ class SzSzTwoCenterTerm: public TwoCenterTerm {
         double prefactor = 1);
     std::unique_ptr<Term> clone() const override;
     void construct(
-        linear_algebra::AbstractSymmetricMatrix&
+        linalg_structures::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a,

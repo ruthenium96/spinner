@@ -4,9 +4,9 @@
 #include <memory>
 #include <vector>
 
-#include "src/entities/data_structures/AbstractFactories.h"
+#include "src/linalg_structures/AbstractFactories.h"
 
-std::vector<std::shared_ptr<spinner::linear_algebra::AbstractSparseTransformFactory>>
+std::vector<std::shared_ptr<spinner::linalg_structures::AbstractSparseTransformFactory>>
 constructAllSparseSemiunitaryMatrixFactories();
 
 #endif  //SPINNER_ALLSPARSESEMIUNITARYMATRIXFACTORIES_H

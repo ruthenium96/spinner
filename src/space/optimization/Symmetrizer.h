@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "src/common/index_converter/AbstractIndexPermutator.h"
-#include "src/entities/data_structures/FactoriesList.h"
+#include "src/linalg_structures/FactoriesList.h"
 #include "src/group/Group.h"
 #include "src/space/Space.h"
 
@@ -17,24 +17,24 @@ class Symmetrizer {
     Symmetrizer(
         std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator,
         group::Group group,
-        linear_algebra::FactoriesList factories);
+        linalg_structures::FactoriesList factories);
     Space apply(Space&& space) const;
 
   private:
-    std::vector<std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>>
+    std::vector<std::unique_ptr<linalg_structures::AbstractSparseSemiunitaryMatrix>>
     get_symmetrical_projected_decompositions(Subspace& subspace, uint32_t index_of_vector) const;
 
     // TODO: these functions are not about symmetrization.
     //  Should we refactor them and create a new class?
     static void gram_schmidt_orthogonalize(
-        std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
+        std::unique_ptr<linalg_structures::AbstractSparseSemiunitaryMatrix>& decomposition_from,
         const std::unordered_map<uint32_t, std::vector<size_t>>& indexes_to_vectors_map,
         const Subspace& subspace_to);
     static void gram_schmidt_selforthogonalize(
-        std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>&
+        std::unique_ptr<linalg_structures::AbstractSparseSemiunitaryMatrix>&
             decomposition_from);
     static void move_vector_and_remember_it(
-        std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>&
+        std::unique_ptr<linalg_structures::AbstractSparseSemiunitaryMatrix>&
             decomposition_from,
         uint32_t index_of_vector,
         std::unordered_map<uint32_t, std::vector<size_t>>& hs,
@@ -42,7 +42,7 @@ class Symmetrizer {
 
     std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator_;
     const group::Group group_;
-    const linear_algebra::FactoriesList factories_;
+    const linalg_structures::FactoriesList factories_;
 };
 } // namespace spinner::space::optimization
 

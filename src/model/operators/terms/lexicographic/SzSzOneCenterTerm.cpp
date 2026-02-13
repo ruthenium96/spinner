@@ -9,7 +9,7 @@ std::unique_ptr<Term> SzSzOneCenterTerm::clone() const {
 }
 
 void SzSzOneCenterTerm::construct(
-    linear_algebra::AbstractSymmetricMatrix&
+    linalg_structures::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a) const {

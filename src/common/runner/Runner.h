@@ -10,7 +10,7 @@
 #include "src/eigendecompositor/AbstractEigendecompositor.h"
 #include "src/eigendecompositor/AllQuantitiesGetter.h"
 #include "src/eigendecompositor/FlattenedSpectra.h"
-#include "src/entities/data_structures/FactoriesList.h"
+#include "src/linalg_structures/FactoriesList.h"
 #include "src/entities/magnetic_susceptibility/MagneticSusceptibilityController.h"
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
@@ -23,13 +23,13 @@ class Runner {
     Runner(
         model::ModelInput model,
         common::physical_optimization::OptimizationList optimizationList,
-        linear_algebra::FactoriesList dataStructuresFactories);
+        linalg_structures::FactoriesList dataStructuresFactories);
     // constructor for Runner with default algebra package:
     Runner(
         model::ModelInput model,
         common::physical_optimization::OptimizationList optimizationList);
     // constructor for Runner with no optimizations:
-    Runner(model::ModelInput model, linear_algebra::FactoriesList dataStructuresFactories);
+    Runner(model::ModelInput model, linalg_structures::FactoriesList dataStructuresFactories);
     // constructor for Runner with no optimizations and default algebra package:
     explicit Runner(model::ModelInput model);
 
@@ -61,12 +61,12 @@ class Runner {
     getMagneticSusceptibilityController();
     const model::symbols::SymbolicWorker& getSymbolicWorker() const;
 
-    linear_algebra::FactoriesList getDataStructuresFactories() const;
+    linalg_structures::FactoriesList getDataStructuresFactories() const;
 
   private:
     ConsistentModelOptimizationList consistentModelOptimizationList_;
     const space::Space space_;
-    linear_algebra::FactoriesList dataStructuresFactories_;
+    linalg_structures::FactoriesList dataStructuresFactories_;
     std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor_;
     std::shared_ptr<eigendecompositor::FlattenedSpectra> flattenedSpectra_;
 

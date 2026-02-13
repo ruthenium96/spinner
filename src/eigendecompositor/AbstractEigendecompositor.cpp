@@ -168,15 +168,15 @@ size_t AbstractEigendecompositor::getSubspectrumSize(common::QuantityEnum quanti
     }
 }
 
-OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>
+OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>>
 AbstractEigendecompositor::getWeightsOfAllStates() const {
-    std::vector<OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>
+    std::vector<OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>>
         weights;
     for (size_t i = 0; i < number_of_subspaces_; ++i) {
         weights.push_back(getWeightsOfBlockStates(i));
     }
-    return getEntity<std::unique_ptr<linear_algebra::AbstractDenseVector>, 
-        std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>(
+    return getEntity<std::unique_ptr<linalg_structures::AbstractDenseVector>, 
+        std::vector<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>>(
         number_of_subspaces_, weights);
 }
 

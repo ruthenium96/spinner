@@ -66,7 +66,7 @@ void OptimizationsParser::symmetrizerParser(YAML::Node symmetrizer_node) {
 }
 
 void OptimizationsParser::groupParser(YAML::Node group_node) {
-    auto group_name = extractValue<group::Group::GroupTypeEnum>(group_node, "group_name");
+    auto group_name = extractValue<group::GroupTypeEnum>(group_node, "group_name");
     std::optional<unsigned int> order = std::nullopt;
     if (group_node["order"].IsDefined()) {
         order = extractValue<unsigned int>(group_node, "order");

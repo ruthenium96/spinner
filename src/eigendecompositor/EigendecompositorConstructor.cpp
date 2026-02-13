@@ -11,7 +11,7 @@
 namespace spinner::eigendecompositor {
 std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-    const linear_algebra::FactoriesList& factories) {
+    const linalg_structures::FactoriesList& factories) {
 
     const auto& indexConverter =
         consistentModelOptimizationList.getIndexConverter();

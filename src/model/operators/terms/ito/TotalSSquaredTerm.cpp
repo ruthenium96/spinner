@@ -11,7 +11,7 @@ std::unique_ptr<Term> TotalSSquaredTerm::clone() const {
 }
 
 void TotalSSquaredTerm::construct(
-	linear_algebra::AbstractSymmetricMatrix& matrix,
+	linalg_structures::AbstractSymmetricMatrix& matrix,
 	const std::set<unsigned int>& indexes_of_vectors) const {
     for (const auto& index : indexes_of_vectors) {
 		auto multiplicity = converter_->convert_index_to_total_multiplicity(index);

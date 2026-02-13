@@ -18,7 +18,7 @@ class T00TwoCenterTerm : public TwoCenterTerm {
     std::unique_ptr<Term> clone() const override;
 
     void construct(
-        linear_algebra::AbstractSymmetricMatrix&
+        linalg_structures::AbstractSymmetricMatrix&
             matrix,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a,
@@ -31,7 +31,7 @@ class T00TwoCenterTerm : public TwoCenterTerm {
     WignerEckartHelper wigner_eckart_helper_;
 
     void add_scalar_product(
-    linear_algebra::AbstractSymmetricMatrix& matrix,
+    linalg_structures::AbstractSymmetricMatrix& matrix,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
     uint32_t center_b,
