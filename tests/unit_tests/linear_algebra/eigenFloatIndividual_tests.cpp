@@ -1,16 +1,18 @@
 #include "abstractIndividual_tests.h"
 #include "src/entities/data_structures/eigen/EigenFactories.h"
 
+using namespace spinner::linear_algebra;
+
 template<>
-std::shared_ptr<quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory>
-createConcreteFactory<std::pair<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory, float>>() {
+std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>
+createConcreteFactory<std::pair<EigenDenseTransformAndDiagonalizeFactory, float>>() {
     auto factory =
-        std::make_shared<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory>();
-    factory->setPrecision(quantum::linear_algebra::SINGLE);
+        std::make_shared<EigenDenseTransformAndDiagonalizeFactory>();
+    factory->setPrecision(SINGLE);
     return factory;
 }
 
-typedef testing::Types<std::pair<quantum::linear_algebra::EigenDenseTransformAndDiagonalizeFactory, float>> EigenFloat;
+typedef testing::Types<std::pair<EigenDenseTransformAndDiagonalizeFactory, float>> EigenFloat;
 INSTANTIATE_TYPED_TEST_SUITE_P(
     EigenFloatIndividualTests,
     AbstractDenseTransformAndDiagonalizeFactoryIndividualTest,

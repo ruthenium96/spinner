@@ -2,7 +2,7 @@
 
 #include "ArmaDenseSemiunitaryTransformer.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 ArmaDenseSemiunitaryMatrix<T>::ArmaDenseSemiunitaryMatrix() {
     transformer_ = std::make_unique<ArmaDenseSemiunitaryTransformer<T>>(this);
@@ -51,4 +51,4 @@ arma::Mat<T>& ArmaDenseSemiunitaryMatrix<T>::modifyDenseSemiunitaryMatrix() {
 
 template class ArmaDenseSemiunitaryMatrix<double>;
 template class ArmaDenseSemiunitaryMatrix<float>;
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra

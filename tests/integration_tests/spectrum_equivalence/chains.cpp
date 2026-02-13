@@ -5,12 +5,13 @@
 #include "tests/integration_tests/spectrum_equivalence/equivalence_check.h"
 #include "tests/tools/OptimizationListsGenerator.h"
 
-using namespace common::physical_optimization;
+using namespace spinner::common::physical_optimization;
+using namespace spinner::group;
 
-void initialize_chain_system(model::ModelInput& model, 
+void initialize_chain_system(spinner::model::ModelInput& model, 
     const std::vector<double>& J_values) {
     const size_t number_of_centers = model.getMults().size();
-    std::vector<model::symbols::SymbolName> J_symbols;
+    std::vector<spinner::model::symbols::SymbolName> J_symbols;
     for (size_t i = 0; i < J_values.size(); ++i) {
         auto J_symbol = model.addSymbol("J" + std::to_string(i), J_values[i]);
         J_symbols.emplace_back(J_symbol);
@@ -37,7 +38,7 @@ void initialize_chain_system(model::ModelInput& model,
 }
 
 void initialize_same_g_factor_for_chain_system(
-    model::ModelInput& model, 
+    spinner::model::ModelInput& model, 
     double g_value) {
     auto g = model.addSymbol("g", g_value);
     for (int i = 0; i < model.getMults().size(); ++i) {
@@ -46,9 +47,9 @@ void initialize_same_g_factor_for_chain_system(
 }
 
 void initialize_different_g_factors_for_chain_system(
-    model::ModelInput& model, const std::vector<double>& g_values) {
+    spinner::model::ModelInput& model, const std::vector<double>& g_values) {
     const size_t number_of_centers = model.getMults().size();
-    std::vector<model::symbols::SymbolName> g_symbols;
+    std::vector<spinner::model::symbols::SymbolName> g_symbols;
     for (size_t i = 0; i < g_values.size(); ++i) {
         auto J_symbol = model.addSymbol("g" + std::to_string(i), g_values[i]);
         g_symbols.emplace_back(J_symbol);
@@ -70,12 +71,12 @@ void initialize_different_g_factors_for_chain_system(
     }
 }
 
-group::Group generate_S2_group_for_chain(size_t size) {
-    group::Permutation generator(size);
+Group generate_S2_group_for_chain(size_t size) {
+    Permutation generator(size);
     for (int i = 0; i < size; ++i) {
         generator[size - 1 - i] = i;
     }
-    return group::Group(group::Group::S2, {generator});
+    return Group(Group::S2, {generator});
 }
 
 class two_center_chain : public SpectrumFinalEquivalenceTest {};
@@ -83,12 +84,12 @@ class two_center_chain : public SpectrumFinalEquivalenceTest {};
 TEST_P(two_center_chain, NoGFactors) {
     std::vector<double> js = {-50, -40.1, -20, -1.01, 1, 33, 46};
     for (auto J_value : js) {
-        model::ModelInput model(std::get<1>(GetParam()));
+        spinner::model::ModelInput model(std::get<1>(GetParam()));
         initialize_chain_system(model, {J_value});
 
-        runner::Runner runner_simple(model);
+        spinner::runner::Runner runner_simple(model);
 
-        runner::Runner runner(model, std::get<0>(GetParam()));
+        spinner::runner::Runner runner(model, std::get<0>(GetParam()));
         expect_final_vectors_equivalence(runner_simple, runner);                
     }
 }
@@ -101,13 +102,13 @@ INSTANTIATE_TEST_SUITE_P(
         generate_all_optimization_lists({generate_S2_group_for_chain(2)})
     ),
     ::testing::Values(
-        std::vector<spin_algebra::Multiplicity>({2, 2}),
-        std::vector<spin_algebra::Multiplicity>({3, 3}),
-        std::vector<spin_algebra::Multiplicity>({4, 4}),
-        std::vector<spin_algebra::Multiplicity>({5, 5}),
-        std::vector<spin_algebra::Multiplicity>({6, 6}),
-        std::vector<spin_algebra::Multiplicity>({7, 7}),
-        std::vector<spin_algebra::Multiplicity>({8, 8})
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 4}),
+        std::vector<spinner::spin_algebra::Multiplicity>({5, 5}),
+        std::vector<spinner::spin_algebra::Multiplicity>({6, 6}),
+        std::vector<spinner::spin_algebra::Multiplicity>({7, 7}),
+        std::vector<spinner::spin_algebra::Multiplicity>({8, 8})
     )
     ),
     spectrum_final_equivalence_test_name_generator
@@ -118,12 +119,12 @@ class three_center_chain : public SpectrumFinalEquivalenceTest {};
 TEST_P(three_center_chain, NoGFactors) {
     std::vector<double> js = {-50, -40.1, -20, -1.01, 1, 33, 46};
     for (auto J_value : js) {
-        model::ModelInput model(std::get<1>(GetParam()));
+        spinner::model::ModelInput model(std::get<1>(GetParam()));
         initialize_chain_system(model, {J_value});
 
-        runner::Runner runner_simple(model);
+        spinner::runner::Runner runner_simple(model);
 
-        runner::Runner runner(model, std::get<0>(GetParam()));
+        spinner::runner::Runner runner(model, std::get<0>(GetParam()));
         expect_final_vectors_equivalence(runner_simple, runner);                
     }
 }
@@ -135,13 +136,13 @@ TEST_P(three_center_chain, DifferentGFactors) {
     };    
     for (auto J_value : js) {
         for (const auto& gs : gss) {
-            model::ModelInput model(std::get<1>(GetParam()));
+            spinner::model::ModelInput model(std::get<1>(GetParam()));
             initialize_chain_system(model, {J_value});
             initialize_different_g_factors_for_chain_system(model, gs);
 
-            runner::Runner runner_simple(model);
+            spinner::runner::Runner runner_simple(model);
 
-            runner::Runner runner(model, std::get<0>(GetParam()));
+            spinner::runner::Runner runner(model, std::get<0>(GetParam()));
             expect_final_vectors_equivalence(runner_simple, runner);
         }
     }
@@ -152,13 +153,13 @@ TEST_P(three_center_chain, SameGFactors) {
     std::vector<double> gs = {2.0, 2.2, 3.1, 5.1};
     for (auto J_value : js) {
         for (auto g_value : gs) {
-            model::ModelInput model(std::get<1>(GetParam()));
+            spinner::model::ModelInput model(std::get<1>(GetParam()));
             initialize_chain_system(model, {J_value});
             initialize_same_g_factor_for_chain_system(model, g_value);
 
-            runner::Runner runner_simple(model);
+            spinner::runner::Runner runner_simple(model);
 
-            runner::Runner runner(model, std::get<0>(GetParam()));
+            spinner::runner::Runner runner(model, std::get<0>(GetParam()));
             expect_final_vectors_equivalence(runner_simple, runner);
         }
     }
@@ -172,14 +173,14 @@ INSTANTIATE_TEST_SUITE_P(
         generate_all_optimization_lists({generate_S2_group_for_chain(3)})
     ),
     ::testing::Values(
-        std::vector<spin_algebra::Multiplicity>({2, 2, 2}),
-        std::vector<spin_algebra::Multiplicity>({3, 3, 3}),
-        std::vector<spin_algebra::Multiplicity>({4, 4, 4}),
-        std::vector<spin_algebra::Multiplicity>({5, 5, 5}),
-        std::vector<spin_algebra::Multiplicity>({2, 3, 2}),
-        std::vector<spin_algebra::Multiplicity>({2, 4, 2}),        
-        std::vector<spin_algebra::Multiplicity>({3, 2, 3}),        
-        std::vector<spin_algebra::Multiplicity>({4, 3, 4})
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 4, 4}),
+        std::vector<spinner::spin_algebra::Multiplicity>({5, 5, 5}),
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 3, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 4, 2}),        
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 2, 3}),        
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 3, 4})
     )
     ),
     spectrum_final_equivalence_test_name_generator
@@ -192,11 +193,11 @@ TEST_P(four_center_chain, NoGFactors) {
         {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
 
     for (auto [Jfirst, Jsecond] : js) {
-        model::ModelInput model(std::get<1>(GetParam()));
+        spinner::model::ModelInput model(std::get<1>(GetParam()));
         initialize_chain_system(model, {Jfirst, Jsecond});
 
-        runner::Runner runner_simple(model);
-        runner::Runner runner(model, std::get<0>(GetParam()));
+        spinner::runner::Runner runner_simple(model);
+        spinner::runner::Runner runner(model, std::get<0>(GetParam()));
         expect_final_vectors_equivalence(runner_simple, runner);                
     }
 }
@@ -210,12 +211,12 @@ TEST_P(four_center_chain, DifferentGFactors) {
 
     for (auto [Jfirst, Jsecond] : js) {
         for (const auto gs : gss) {
-            model::ModelInput model(std::get<1>(GetParam()));
+            spinner::model::ModelInput model(std::get<1>(GetParam()));
             initialize_chain_system(model, {Jfirst, Jsecond});
             initialize_different_g_factors_for_chain_system(model, gs);
 
-            runner::Runner runner_simple(model);
-            runner::Runner runner(model, std::get<0>(GetParam()));
+            spinner::runner::Runner runner_simple(model);
+            spinner::runner::Runner runner(model, std::get<0>(GetParam()));
             expect_final_vectors_equivalence(runner_simple, runner);
         }           
     }
@@ -228,12 +229,12 @@ TEST_P(four_center_chain, SameGFactors) {
 
     for (auto [Jfirst, Jsecond] : js) {
         for (const auto g : gs) {
-            model::ModelInput model(std::get<1>(GetParam()));
+            spinner::model::ModelInput model(std::get<1>(GetParam()));
             initialize_chain_system(model, {Jfirst, Jsecond});
             initialize_same_g_factor_for_chain_system(model, g);
 
-            runner::Runner runner_simple(model);
-            runner::Runner runner(model, std::get<0>(GetParam()));
+            spinner::runner::Runner runner_simple(model);
+            spinner::runner::Runner runner(model, std::get<0>(GetParam()));
             expect_final_vectors_equivalence(runner_simple, runner);
         }           
     }
@@ -247,11 +248,11 @@ INSTANTIATE_TEST_SUITE_P(
         generate_all_optimization_lists({generate_S2_group_for_chain(4)})
     ),
     ::testing::Values(
-        std::vector<spin_algebra::Multiplicity>({2, 2, 2, 2}),
-        std::vector<spin_algebra::Multiplicity>({2, 3, 3, 2}),
-        std::vector<spin_algebra::Multiplicity>({3, 3, 3, 3}),
-        std::vector<spin_algebra::Multiplicity>({3, 2, 2, 3}),
-        std::vector<spin_algebra::Multiplicity>({4, 4, 4, 4})
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 3, 3, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3, 3, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 2, 2, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 4, 4, 4})
     )
 ),
 spectrum_final_equivalence_test_name_generator
@@ -264,11 +265,11 @@ TEST_P(five_center_chain, NoGFactors) {
         {{10, 15}, {-10, 15}, {10, -15}, {-10, -15}, {-10, -10}, {10, 10}};
 
     for (auto [Jfirst, Jsecond] : js) {
-        model::ModelInput model(std::get<1>(GetParam()));
+        spinner::model::ModelInput model(std::get<1>(GetParam()));
         initialize_chain_system(model, {Jfirst, Jsecond});
 
-        runner::Runner runner_simple(model);
-        runner::Runner runner(model, std::get<0>(GetParam()));
+        spinner::runner::Runner runner_simple(model);
+        spinner::runner::Runner runner(model, std::get<0>(GetParam()));
         expect_final_vectors_equivalence(runner_simple, runner);                
     }
 }
@@ -282,12 +283,12 @@ TEST_P(five_center_chain, DifferentGFactors) {
 
     for (auto [Jfirst, Jsecond] : js) {
         for (const auto gs : gss) {
-            model::ModelInput model(std::get<1>(GetParam()));
+            spinner::model::ModelInput model(std::get<1>(GetParam()));
             initialize_chain_system(model, {Jfirst, Jsecond});
             initialize_different_g_factors_for_chain_system(model, gs);
 
-            runner::Runner runner_simple(model);
-            runner::Runner runner(model, std::get<0>(GetParam()));
+            spinner::runner::Runner runner_simple(model);
+            spinner::runner::Runner runner(model, std::get<0>(GetParam()));
             expect_final_vectors_equivalence(runner_simple, runner);
         }           
     }
@@ -300,12 +301,12 @@ TEST_P(five_center_chain, SameGFactors) {
 
     for (auto [Jfirst, Jsecond] : js) {
         for (const auto g : gs) {
-            model::ModelInput model(std::get<1>(GetParam()));
+            spinner::model::ModelInput model(std::get<1>(GetParam()));
             initialize_chain_system(model, {Jfirst, Jsecond});
             initialize_same_g_factor_for_chain_system(model, g);
 
-            runner::Runner runner_simple(model);
-            runner::Runner runner(model, std::get<0>(GetParam()));
+            spinner::runner::Runner runner_simple(model);
+            spinner::runner::Runner runner(model, std::get<0>(GetParam()));
             expect_final_vectors_equivalence(runner_simple, runner);
         }           
     }
@@ -319,11 +320,11 @@ INSTANTIATE_TEST_SUITE_P(
         generate_all_optimization_lists({generate_S2_group_for_chain(5)})
     ),
     ::testing::Values(
-        std::vector<spin_algebra::Multiplicity>({2, 2, 2, 2, 2}),
-        std::vector<spin_algebra::Multiplicity>({2, 2, 4, 2, 2}),
-        std::vector<spin_algebra::Multiplicity>({3, 3, 2, 3, 3}),
-        std::vector<spin_algebra::Multiplicity>({3, 3, 4, 3, 3}),
-        std::vector<spin_algebra::Multiplicity>({4, 2, 4, 2, 4})
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 2, 2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 4, 2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3, 2, 3, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3, 4, 3, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 2, 4, 2, 4})
     )
 ),
 spectrum_final_equivalence_test_name_generator

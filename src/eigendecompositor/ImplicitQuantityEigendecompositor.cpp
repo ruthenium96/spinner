@@ -6,11 +6,11 @@
 #include "magic_enum.hpp"
 #include "src/common/Quantity.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 ImplicitQuantityEigendecompositor::ImplicitQuantityEigendecompositor(
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
-    quantum::linear_algebra::FactoriesList factories_list,
+    linear_algebra::FactoriesList factories_list,
     common::QuantityEnum quantity_implicit_enum,
     uint32_t max_ntz_proj) :
     eigendecompositor_(std::move(eigendecompositor)),
@@ -28,7 +28,7 @@ ImplicitQuantityEigendecompositor::ImplicitQuantityEigendecompositor(
     quantity_implicit_spectrum_ = Spectrum();
 }
 
-std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 ImplicitQuantityEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
@@ -83,7 +83,7 @@ ImplicitQuantityEigendecompositor::getSubmatrixDerivative(common::QuantityEnum q
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
 ImplicitQuantityEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
 }
@@ -130,5 +130,4 @@ double ImplicitQuantityEigendecompositor::calculate_value(const BlockProperties&
     }
 }
 
-
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

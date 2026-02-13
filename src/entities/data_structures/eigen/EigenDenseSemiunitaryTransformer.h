@@ -5,7 +5,7 @@
 #include "src/entities/data_structures/AbstractDenseSemiunitaryTransformer.h"
 #include "EigenDenseSemiunitaryMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 class EigenDenseSemiunitaryTransformer: public AbstractDenseSemiunitaryTransformer {
 public:
@@ -18,5 +18,5 @@ private:
     const EigenDenseSemiunitaryMatrix<T>* unitary_matrix_;
 };
     
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_EIGENDENSESEMIUNITARYTRANSFORMER_H

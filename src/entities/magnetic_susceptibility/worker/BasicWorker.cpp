@@ -3,7 +3,7 @@
 #include "src/entities/magnetic_susceptibility/assistant/CommonEnsembleAverager.h"
 #include "src/entities/magnetic_susceptibility/assistant/FTLMEnsembleAverager.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 BasicWorker::BasicWorker(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra) {
     if (holdsMany(flattenedSpectra->getFlattenSpectrum(common::Energy).value())) {
@@ -26,4 +26,4 @@ void BasicWorker::setExperimentalValuesWorker(
     experimental_values_worker_ = experimental_values_worker;
 }
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility

@@ -8,26 +8,26 @@
 #include "src/model/operators/terms/lexicographic/ScalarProductTerm.h"
 
 TEST(constant_operator, 2222_333_2345_44444) {
-    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
+    std::vector<std::vector<spinner::spin_algebra::Multiplicity>> vector_of_mults =
         {{2, 2, 2, 2}, {3, 3, 3}, {2, 3, 4, 5}, {4, 4, 4, 4, 4}};
     for (const auto& mults : vector_of_mults) {
         // Construct Converter
-        auto converter = std::make_shared<index_converter::lexicographic::IndexConverter>(mults);
+        auto converter = std::make_shared<spinner::index_converter::lexicographic::IndexConverter>(mults);
 
-        auto factories_ = quantum::linear_algebra::FactoriesList();
+        auto factories_ = spinner::linear_algebra::FactoriesList();
 
         // Construct Space
-        space::Space space_(converter->get_total_space_size(), factories_);
+        spinner::space::Space space_(converter->get_total_space_size(), factories_);
 
         for (int constant = 0; constant < 100; constant += 11) {
             auto constant_ptr = std::make_shared<double>(constant);
             // Construct Operator
-            model::operators::Operator operator_;
+            spinner::model::operators::Operator operator_;
             operator_.emplace_back(
-                std::make_unique<model::operators::ConstantTerm>(constant_ptr));
+                std::make_unique<spinner::model::operators::ConstantTerm>(constant_ptr));
 
             // Build Matrix
-            Matrix matrix = Matrix(space_, operator_, converter, factories_, true);
+            auto matrix = spinner::Matrix(space_, operator_, converter, factories_, true);
 
             // Check results:
             for (const auto& matrix_block : matrix.blocks) {
@@ -47,25 +47,25 @@ TEST(constant_operator, 2222_333_2345_44444) {
 
 TEST(scalar_product, one_center_1_2_3_4_5_6) {
     // Construct matrix of interaction parameters
-    auto ptr_to_js = std::make_shared<const model::TwoDNumericalParameters<double>>(1, NAN);
+    auto ptr_to_js = std::make_shared<const spinner::model::TwoDNumericalParameters<double>>(1, NAN);
 
-    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults = {{1}, {2}, {3}, {4}, {5}, {6}};
+    std::vector<std::vector<spinner::spin_algebra::Multiplicity>> vector_of_mults = {{1}, {2}, {3}, {4}, {5}, {6}};
     for (const auto& mults : vector_of_mults) {
         // Construct Converter
-        auto converter = std::make_shared<index_converter::lexicographic::IndexConverter>(mults);
+        auto converter = std::make_shared<spinner::index_converter::lexicographic::IndexConverter>(mults);
 
-        auto factories_ = quantum::linear_algebra::FactoriesList();
+        auto factories_ = spinner::linear_algebra::FactoriesList();
 
         // Construct Space
-        space::Space space_(converter->get_total_space_size(), factories_);
+        spinner::space::Space space_(converter->get_total_space_size(), factories_);
 
         // Construct Operator
-        model::operators::Operator operator_;
+        spinner::model::operators::Operator operator_;
         operator_.emplace_back(
-            std::make_unique<model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js));
+            std::make_unique<spinner::model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js));
 
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter, factories_, true);
+        auto matrix = spinner::Matrix(space_, operator_, converter, factories_, true);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {
@@ -79,7 +79,7 @@ TEST(scalar_product, one_center_1_2_3_4_5_6) {
 }
 
 TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) {
-    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults = {
+    std::vector<std::vector<spinner::spin_algebra::Multiplicity>> vector_of_mults = {
         {2, 2},
         {2, 2, 2},
         {2, 2, 2, 2},
@@ -94,28 +94,28 @@ TEST(scalar_product, one_interaction_22_222_2222_33_333_3333_44_444_4444_23456) 
         // Construct matrix of interaction parameters
         double J = 10;
         auto ptr_to_js =
-            std::make_shared<model::TwoDNumericalParameters<double>>(mults.size(), NAN);
+            std::make_shared<spinner::model::TwoDNumericalParameters<double>>(mults.size(), NAN);
         ptr_to_js->at(0, 1) = J;
 
         // Construct Converter
-        auto converter = std::make_shared<index_converter::lexicographic::IndexConverter>(mults);
+        auto converter = std::make_shared<spinner::index_converter::lexicographic::IndexConverter>(mults);
 
-        auto factories_ = quantum::linear_algebra::FactoriesList();
+        auto factories_ = spinner::linear_algebra::FactoriesList();
 
         // Construct Space
-        space::Space space_(converter->get_total_space_size(), factories_);
+        spinner::space::Space space_(converter->get_total_space_size(), factories_);
 
         // Construct Operator
-        model::operators::Operator operator_;
+        spinner::model::operators::Operator operator_;
         operator_.emplace_back(
-            std::make_unique<model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js, -2.0));
+            std::make_unique<spinner::model::operators::lexicographic::ScalarProductTerm>(converter, ptr_to_js, -2.0));
 
         // Create Factory:
         auto factory_ =
-            quantum::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
+            spinner::linear_algebra::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
 
         // Build Matrix
-        Matrix matrix = Matrix(space_, operator_, converter, factories_, true);
+        auto matrix = spinner::Matrix(space_, operator_, converter, factories_, true);
 
         // Check results:
         for (const auto& matrix_block : matrix.blocks) {

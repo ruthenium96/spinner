@@ -1,6 +1,6 @@
 #include "TotalMSquaredTerm.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 
 TotalMSquaredTerm::TotalMSquaredTerm(
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter) :
@@ -11,7 +11,7 @@ std::unique_ptr<Term> TotalMSquaredTerm::clone() const {
 };
 
 void TotalMSquaredTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix&
+    linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors) const {
 
@@ -27,4 +27,4 @@ void TotalMSquaredTerm::construct(
     }
 }
 
-} // namespace model::operators
+} // namespace spinner::model::operators

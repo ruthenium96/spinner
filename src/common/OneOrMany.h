@@ -9,6 +9,8 @@
 #include <variant>
 #include <vector>
 
+namespace spinner {
+
 template <typename T>
 using OneOrMany = std::variant<T, std::vector<T>>;
 
@@ -181,5 +183,7 @@ void apply_to_one_or_many(std::function<void(const T&)> f, const OneOrMany<T>& o
         return;
     }
 }
+
+} // namespace spinner
 
 #endif // SPINNER_ONEORMANY_H

@@ -13,7 +13,7 @@ template<class T>
 class find_local_minima: public testing::Test {
   protected:
     find_local_minima() : solver_(createConcreteSolver<T>()) {}
-    std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver> const solver_;
+    std::shared_ptr<spinner::nonlinear_solver::AbstractNonlinearSolver> const solver_;
 };
 
 TYPED_TEST_SUITE_P(find_local_minima);

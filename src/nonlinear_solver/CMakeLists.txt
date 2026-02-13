@@ -3,7 +3,7 @@ add_library(nonlinear_solver AbstractNonlinearSolver.h)
 FetchContent_Declare(
         stlbfgs
         GIT_REPOSITORY https://github.com/ssloy/stlbfgs.git
-        GIT_TAG "0dedf926faf66cf95fffbdc3ff5c3e0067b70296"
+        GIT_TAG "78515c1d50007a915d36dc3746f53e5764212ce5"
 )
 FetchContent_MakeAvailable(stlbfgs)
 include_directories(${stlbfgs_SOURCE_DIR}/)

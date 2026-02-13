@@ -4,7 +4,7 @@
 #include "Tools.h"
 #include "src/common/physical_optimization/OptimizationList.h"
 
-namespace input {
+namespace spinner::input {
 OptimizationsParser::OptimizationsParser(YAML::Node optimizations_node) {
     auto mode_string = extractValue<std::string>(optimizations_node, "mode");
     if (mode_string == "none") {
@@ -97,4 +97,4 @@ void OptimizationsParser::ftlmParser(YAML::Node ftlm_node) {
     optimizations_list_->FTLMApproximate(settings);
 }
 
-}  // namespace input
+} // namespace spinner::input

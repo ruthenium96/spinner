@@ -31,10 +31,9 @@ std::vector<double> constructMainDiagonalOfInverseHessian(
     }
     return std::move(mainDiagonalOfInverseHessian);
 }
+} // namespace
 
-}  // namespace
-
-namespace nonlinear_solver {
+namespace spinner::nonlinear_solver {
 void stlbfgsAdapter::optimize(
     std::function<double(const std::vector<double>&, std::vector<double>&, bool)> oneStepFunction,
     std::vector<double>& changeable_values) {
@@ -62,4 +61,4 @@ std::optional<std::vector<double>> stlbfgsAdapter::getMainDiagonalOfInverseHessi
     return mainDiagonalOfInverseHessian_;
 }
 
-}  // namespace nonlinear_solver
+} // namespace spinner::nonlinear_solver

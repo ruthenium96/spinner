@@ -15,12 +15,12 @@ TEST(
     for (size_t _ = 0; _ < 20; ++_) {
         const double J_exact = J_dist(rng);
         const double g_exact = g_dist(rng);
-        std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+        std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        std::vector<spinner::magnetic_susceptibility::ValueAtTemperature> values;
 
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             double J_value = J_exact;
             auto J = model.addSymbol("J", J_value);
             model.assignSymbolToIsotropicExchange(J, 0, 1)
@@ -33,10 +33,10 @@ TEST(
                 model.assignSymbolToGFactor(g, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                spinner::magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
@@ -44,7 +44,7 @@ TEST(
         }
 
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             double J_value = -45.0;
             auto J = model.addSymbol("J", J_value);
             model.assignSymbolToIsotropicExchange(J, 0, 1)
@@ -62,13 +62,13 @@ TEST(
                 model.assignSymbolToGFactor(g_two, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
             runner.initializeExperimentalValues(
                 values,
-                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                spinner::magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            runner.minimizeResidualError(std::make_shared<nonlinear_solver::optimNMAdapter>());
+            runner.minimizeResidualError(std::make_shared<spinner::nonlinear_solver::optimNMAdapter>());
 
             auto residual_error =
                 runner.getMagneticSusceptibilityController().calculateResidualError();

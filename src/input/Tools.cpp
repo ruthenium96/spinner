@@ -1,6 +1,6 @@
 #include "Tools.h"
 
-namespace input {
+namespace spinner::input {
 std::vector<double> range_as(YAML::Node& node) {
     std::vector<double> answer;
     if (node.Tag() != "!range") {
@@ -29,4 +29,4 @@ void throw_if_node_is_not_empty(const YAML::Node& node) {
         throw std::invalid_argument("Unknown keys were found:\n" + stream.str());
     }
 }
-}
+} // namespace spinner::input

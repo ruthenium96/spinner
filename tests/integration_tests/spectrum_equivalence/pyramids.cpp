@@ -3,9 +3,10 @@
 #include "tests/integration_tests/spectrum_equivalence/equivalence_check.h"
 #include "tests/tools/OptimizationListsGenerator.h"
 
-using namespace common::physical_optimization;
+using namespace spinner::common::physical_optimization;
+using namespace spinner::group;
 
-void initialize_pyramid_system(model::ModelInput& model, double J_first_value, double J_second_value) {
+void initialize_pyramid_system(spinner::model::ModelInput& model, double J_first_value, double J_second_value) {
     auto number_of_spins = model.getMults().size();
     auto J_first = model.addSymbol("J1", J_first_value);
     auto J_second = model.addSymbol("J2", J_second_value);
@@ -17,41 +18,41 @@ void initialize_pyramid_system(model::ModelInput& model, double J_first_value, d
     }
 }
 
-group::Group generate_Dn_group_for_pyramid(size_t size) {
-    group::Permutation generator_rotation(size + 1);
+Group generate_Dn_group_for_pyramid(size_t size) {
+    Permutation generator_rotation(size + 1);
     for (int i = 0; i < size; ++i) {
         generator_rotation[i] = (i + 1) % (size);
     }
     generator_rotation[size] = size;
-    group::Permutation generator_reflection(size + 1);
+    Permutation generator_reflection(size + 1);
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
     generator_reflection[size] = size;
-    return group::Group({group::Group::Dihedral, size}, 
+    return Group({Group::Dihedral, size}, 
         {generator_rotation, generator_reflection});
 }
 
-group::Group generate_first_C2_group_for_pyramid(size_t size) {
-    group::Permutation generator_reflection(size + 1);
+Group generate_first_C2_group_for_pyramid(size_t size) {
+    Permutation generator_reflection(size + 1);
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
     generator_reflection[size] = size;
-    return group::Group(group::Group::S2, 
+    return Group(Group::S2, 
         {generator_reflection});
 }
 
-group::Group generate_second_C2_group_for_pyramid(size_t size) {
+Group generate_second_C2_group_for_pyramid(size_t size) {
     if (size % 2 == 1) {
         throw std::invalid_argument("Cannot construct second C2 group for odd pyramid");
     }
-    group::Permutation generator_reflection(size + 1);
+    Permutation generator_reflection(size + 1);
     for (int i = 0; i < size; ++i) {
         generator_reflection[i] = (i + size / 2) % size;
     }
     generator_reflection[size] = size;
-    return group::Group(group::Group::S2, 
+    return Group(Group::S2, 
         {generator_reflection});
 }
 
@@ -62,12 +63,12 @@ TEST_P(three_center_based_pyramid, NoGFactors) {
         {{10, -15}, {17.17, 11}, {33, 5}};
 
     for (const auto& js : jss) {
-        model::ModelInput model(std::get<1>(GetParam()));
+        spinner::model::ModelInput model(std::get<1>(GetParam()));
         initialize_pyramid_system(model, js[0], js[1]);
 
-        runner::Runner runner_simple(model);
+        spinner::runner::Runner runner_simple(model);
 
-        runner::Runner runner(model, std::get<0>(GetParam()));
+        spinner::runner::Runner runner(model, std::get<0>(GetParam()));
         expect_final_vectors_equivalence(runner_simple, runner);                
     }
 }
@@ -83,10 +84,10 @@ INSTANTIATE_TEST_SUITE_P(
         })
     ),
     ::testing::Values(
-        std::vector<spin_algebra::Multiplicity>({2, 2, 2, 2}),
-        std::vector<spin_algebra::Multiplicity>({3, 3, 3, 3}),
-        std::vector<spin_algebra::Multiplicity>({4, 4, 4, 4}),
-        std::vector<spin_algebra::Multiplicity>({5, 5, 5, 5})
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3, 3, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 4, 4, 4}),
+        std::vector<spinner::spin_algebra::Multiplicity>({5, 5, 5, 5})
     )
 ),
 spectrum_final_equivalence_test_name_generator
@@ -99,12 +100,12 @@ TEST_P(four_center_based_pyramid, NoGFactors) {
         {{10, -15}, {17.17, 11}, {33, 5}};
 
     for (const auto& js : jss) {
-        model::ModelInput model(std::get<1>(GetParam()));
+        spinner::model::ModelInput model(std::get<1>(GetParam()));
         initialize_pyramid_system(model, js[0], js[1]);
 
-        runner::Runner runner_simple(model);
+        spinner::runner::Runner runner_simple(model);
 
-        runner::Runner runner(model, std::get<0>(GetParam()));
+        spinner::runner::Runner runner(model, std::get<0>(GetParam()));
         expect_final_vectors_equivalence(runner_simple, runner);                
     }
 }
@@ -121,9 +122,9 @@ INSTANTIATE_TEST_SUITE_P(
         })
     ),
     ::testing::Values(
-        std::vector<spin_algebra::Multiplicity>({2, 2, 2, 2, 2}),
-        std::vector<spin_algebra::Multiplicity>({3, 3, 3, 3, 3}),
-        std::vector<spin_algebra::Multiplicity>({4, 4, 4, 4, 4})
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 2, 2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3, 3, 3, 3}),
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 4, 4, 4, 4})
     )
 ),
 spectrum_final_equivalence_test_name_generator
@@ -136,7 +137,7 @@ TEST_P(six_center_based_pyramid, NoGFactors) {
         {{10, -15}, {17.17, 11}, {33, 5}};
 
     for (const auto& js : jss) {
-        model::ModelInput model(std::get<1>(GetParam()));
+        spinner::model::ModelInput model(std::get<1>(GetParam()));
         initialize_pyramid_system(model, js[0], js[1]);
 
         OptimizationList reference(OptimizationList::LEX);
@@ -146,9 +147,9 @@ TEST_P(six_center_based_pyramid, NoGFactors) {
         .Symmetrize(generate_Dn_group_for_pyramid(6))
         .NonAbelianSimplify();
 
-        runner::Runner runner_reference(model, reference);
+        spinner::runner::Runner runner_reference(model, reference);
 
-        runner::Runner runner(model, std::get<0>(GetParam()));
+        spinner::runner::Runner runner(model, std::get<0>(GetParam()));
         expect_final_vectors_equivalence(runner_reference, runner, true);
     }
 }
@@ -167,7 +168,7 @@ INSTANTIATE_TEST_SUITE_P(
             .TzSort()
             .TSquaredSort()
             .EliminateNonMininalProjections()
-            .Symmetrize(group::Group(group::Group::S2, {{2, 1, 0, 5, 4, 3, 6}})),
+            .Symmetrize(Group(Group::S2, {{2, 1, 0, 5, 4, 3, 6}})),
         OptimizationList(OptimizationList::ITO)
             .TzSort()
             .TSquaredSort()
@@ -175,12 +176,12 @@ INSTANTIATE_TEST_SUITE_P(
             .Symmetrize(generate_first_C2_group_for_pyramid(6))
             // TODO: generate_second_C2_group_for_pyramid(6) (in combine with previous one) 
             // leads to an error in the case of ITO
-            .Symmetrize(group::Group(group::Group::S2, {{2, 1, 0, 5, 4, 3, 6}}))
+            .Symmetrize(Group(Group::S2, {{2, 1, 0, 5, 4, 3, 6}}))
     ),
     ::testing::Values(
-        std::vector<spin_algebra::Multiplicity>({2, 2, 2, 2, 2, 2, 2}),
-        std::vector<spin_algebra::Multiplicity>({3, 3, 3, 3, 3, 3, 2}),
-        std::vector<spin_algebra::Multiplicity>({4, 4, 4, 4, 4, 4, 2})
+        std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 2, 2, 2, 2, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({3, 3, 3, 3, 3, 3, 2}),
+        std::vector<spinner::spin_algebra::Multiplicity>({4, 4, 4, 4, 4, 4, 2})
     )
 ),
 spectrum_final_equivalence_test_name_generator

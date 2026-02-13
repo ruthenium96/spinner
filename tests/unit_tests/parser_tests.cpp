@@ -8,6 +8,8 @@
 
 #include <yaml-cpp/yaml.h>
 
+using namespace spinner::input;
+
 TEST(parser_tests, extractValuesEnum) {
     enum TestEnum {
         one, TWO, Three, fOUR
@@ -20,12 +22,12 @@ TEST(parser_tests, extractValuesEnum) {
     };
     for (const auto& s : correctValues) {
         auto node = YAML::Load(s);
-        EXPECT_NO_THROW(input::extractValue<TestEnum>(node, "key"));
-        EXPECT_NO_THROW(input::throw_if_node_is_not_empty(node));
+        EXPECT_NO_THROW(extractValue<TestEnum>(node, "key"));
+        EXPECT_NO_THROW(throw_if_node_is_not_empty(node));
     }
     std::string wrongValue = "key: five";
     auto wrong_node = YAML::Load(wrongValue);
-    EXPECT_ANY_THROW(input::extractValue<TestEnum>(wrong_node, "key"));
+    EXPECT_ANY_THROW(extractValue<TestEnum>(wrong_node, "key"));
 }
 
 TEST(parser_tests, range_as_no_tag) {
@@ -42,7 +44,7 @@ TEST(parser_tests, range_as_no_tag) {
 
     for (size_t i = 0; i < data_to_parse.size(); ++i) {
         auto node = YAML::Load(data_to_parse[i]);
-        auto parsed_node = input::range_as(node);
+        auto parsed_node = range_as(node);
         const auto& answer = answers[i];
         EXPECT_EQ(parsed_node, answer);
     }
@@ -62,7 +64,7 @@ TEST(parser_tests, range_as_range_tag) {
 
     for (size_t i = 0; i < data_to_parse.size(); ++i) {
         auto node = YAML::Load(data_to_parse[i]);
-        auto parsed_node = input::range_as(node);
+        auto parsed_node = range_as(node);
         const auto& answer = answers[i];
 
         size_t number_of_element_to_generate = ceil((answer[1] - answer[0]) / answer[2]);
@@ -82,40 +84,40 @@ TEST(parser_tests, optimizations_parser_modes) {
     std::string none_string = R""""(
 mode: none
 )"""";
-    EXPECT_NO_THROW(input::OptimizationsParser(YAML::Load(none_string)));
+    EXPECT_NO_THROW(OptimizationsParser(YAML::Load(none_string)));
 }
 
 TEST(parser_tests, optimizations_parser_throw) {
     {
         std::string string = R""""(
 )"""";
-        EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(OptimizationsParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: _incorrect_value_
 )"""";
-        EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(OptimizationsParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: custom
 )"""";
-        EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(OptimizationsParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: none
 custom:
 )"""";
-        EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(OptimizationsParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: custom
 custom:
 )"""";
-        EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(OptimizationsParser(YAML::Load(string)));
     }
 }
 
@@ -125,21 +127,21 @@ mode: custom
 custom:
   basis: lex
 )"""";
-    EXPECT_NO_THROW(input::OptimizationsParser(YAML::Load(lex_string)));
+    EXPECT_NO_THROW(OptimizationsParser(YAML::Load(lex_string)));
 
     std::string ito_string = R""""(
 mode: custom
 custom:
   basis: ito
 )"""";
-    EXPECT_NO_THROW(input::OptimizationsParser(YAML::Load(ito_string)));
+    EXPECT_NO_THROW(OptimizationsParser(YAML::Load(ito_string)));
 
         std::string wrong_basis_string = R""""(
 mode: custom
 custom:
   basis: _wrong_basis_
 )"""";
-    EXPECT_ANY_THROW(input::OptimizationsParser(YAML::Load(wrong_basis_string)));
+    EXPECT_ANY_THROW(OptimizationsParser(YAML::Load(wrong_basis_string)));
 }
 
 TEST(parser_tests, optimizations_parser_custom_lex) {
@@ -149,7 +151,7 @@ mode: custom
 custom:
   basis: lex
 )"""";
-        auto parser = input::OptimizationsParser(YAML::Load(string));
+        auto parser = OptimizationsParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getOptimizationList().value());
 
@@ -172,7 +174,7 @@ custom:
       order: 3
       generators: [[1, 2, 0, 4, 5, 3], [0, 2, 1, 3, 5, 4]]
 )"""";
-        auto parser = input::OptimizationsParser(YAML::Load(string));
+        auto parser = OptimizationsParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getOptimizationList().value());
 
@@ -192,7 +194,7 @@ mode: custom
 custom:
   basis: ito
 )"""";
-        auto parser = input::OptimizationsParser(YAML::Load(string));
+        auto parser = OptimizationsParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getOptimizationList().value());
 
@@ -212,7 +214,7 @@ custom:
   tsquared_sorter:
   positive_tz_eliminator:
 )"""";
-        auto parser = input::OptimizationsParser(YAML::Load(string));
+        auto parser = OptimizationsParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getOptimizationList().value());
 
@@ -232,7 +234,7 @@ custom:
     - group_name: S2
       generators: [[3, 4, 5, 0, 1, 2]]
 )"""";
-        auto parser = input::OptimizationsParser(YAML::Load(string));
+        auto parser = OptimizationsParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getOptimizationList().value());
 
@@ -252,7 +254,7 @@ mode: simulation
 simulation:
   temperatures: [1.0, 20.0, 200.0]
 )"""";
-        EXPECT_NO_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_NO_THROW(JobParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
@@ -265,7 +267,7 @@ fit:
     ratio: 1.0
     weights: per_interval
 )"""";
-        EXPECT_NO_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_NO_THROW(JobParser(YAML::Load(string)));
     }
 }
 
@@ -276,7 +278,7 @@ mode: simulation
 simulation:
   temperatures: [1.0, 20.0, 200.0]
 )"""";
-        auto parser = input::JobParser(YAML::Load(string));
+        auto parser = JobParser(YAML::Load(string));
         EXPECT_NO_THROW(parser.getTemperaturesForSimulation().value());
         EXPECT_FALSE(parser.getNonlinearSolver().has_value());
         EXPECT_FALSE(parser.getExperimentalValuesWorker().has_value());
@@ -295,7 +297,7 @@ fit:
     ratio: 1.0
     weights: per_interval
 )"""";
-        auto parser = input::JobParser(YAML::Load(string));
+        auto parser = JobParser(YAML::Load(string));
         EXPECT_FALSE(parser.getTemperaturesForSimulation().has_value());
         EXPECT_NO_THROW(parser.getNonlinearSolver().value());
         EXPECT_NO_THROW(parser.getExperimentalValuesWorker().value());
@@ -314,7 +316,7 @@ fit:
     ratio: 1.0
     weights: per_interval
 )"""";
-      auto parser = input::JobParser(YAML::Load(string));
+      auto parser = JobParser(YAML::Load(string));
       EXPECT_FALSE(parser.getTemperaturesForSimulation().has_value());
       EXPECT_NO_THROW(parser.getNonlinearSolver().value());
       EXPECT_NO_THROW(parser.getExperimentalValuesWorker().value());
@@ -325,39 +327,39 @@ TEST(parser_tests, job_parser_throw) {
     {
         std::string string = R""""(
 )"""";
-        EXPECT_ANY_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(JobParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: _incorrect_value_
 )"""";
-        EXPECT_ANY_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(JobParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: simulation
 )"""";
-        EXPECT_ANY_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(JobParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: simulation
 simulation:
 )"""";
-        EXPECT_ANY_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(JobParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: fit
 )"""";
-        EXPECT_ANY_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(JobParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
 mode: fit
 fit:
 )"""";
-        EXPECT_ANY_THROW(input::JobParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(JobParser(YAML::Load(string)));
     }
 }
 
@@ -387,13 +389,13 @@ parameters:
     value: -3
     fixed: false
 )"""";
-        auto parser = input::ModelInputParser(YAML::Load(string));
+        auto parser = ModelInputParser(YAML::Load(string));
 
-        auto model = model::ModelInput({2, 2, 2, 2});
+        auto model = spinner::model::ModelInput({2, 2, 2, 2});
         auto J1 = model.addSymbol("J1", -10, false);
         auto J2 = model.addSymbol("J2", +10, true);
         auto theta = model.addSymbol("theta", -3.0, true);
-        auto g = model.addSymbol("g", 2.0, true, model::symbols::g_factor);
+        auto g = model.addSymbol("g", 2.0, true, spinner::model::symbols::g_factor);
         model.assignSymbolToIsotropicExchange(J1, 0, 1)
             .assignSymbolToIsotropicExchange(J1, 2, 3)
             .assignSymbolToIsotropicExchange(J2, 3, 0)
@@ -422,7 +424,7 @@ parameters:
     fixed: false
     centers: all
 )"""";
-        auto parser = input::ModelInputParser(YAML::Load(string));
+        auto parser = ModelInputParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getModelInputs());
         EXPECT_EQ(parser.getModelInputs().size(), 1);
@@ -456,7 +458,7 @@ parameters:
     value: [-3]
     fixed: false
 )"""";
-        auto parser = input::ModelInputParser(YAML::Load(string));
+        auto parser = ModelInputParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getModelInputs());
         EXPECT_EQ(parser.getModelInputs().size(), 24);
@@ -489,7 +491,7 @@ parameters:
     value: -3
     fixed: false
 )"""";
-        auto parser = input::ModelInputParser(YAML::Load(string));
+        auto parser = ModelInputParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getModelInputs());
         EXPECT_EQ(parser.getModelInputs().size(), 4);
@@ -519,7 +521,7 @@ parameters:
     value: -3
     fixed: false
 )"""";
-        auto parser = input::ModelInputParser(YAML::Load(string));
+        auto parser = ModelInputParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getModelInputs());
         EXPECT_EQ(parser.getModelInputs().size(), 1);
@@ -549,7 +551,7 @@ parameters:
     value: -3
     fixed: false
 )"""";
-        auto parser = input::ModelInputParser(YAML::Load(string));
+        auto parser = ModelInputParser(YAML::Load(string));
 
         EXPECT_NO_THROW(parser.getModelInputs());
         EXPECT_EQ(parser.getModelInputs().size(), 1);
@@ -573,7 +575,7 @@ parameters:
     fixed: false
     pairs: [[3, 0], [1, 2]]
 )"""";
-        EXPECT_ANY_THROW(input::ModelInputParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(ModelInputParser(YAML::Load(string)));
     }
     {
         std::string string = R""""(
@@ -591,6 +593,6 @@ parameters:
     fixed: false
     pairs: [[3, 0], [1, 2]]
 )"""";
-        EXPECT_ANY_THROW(input::ModelInputParser(YAML::Load(string)));
+        EXPECT_ANY_THROW(ModelInputParser(YAML::Load(string)));
     }
 }

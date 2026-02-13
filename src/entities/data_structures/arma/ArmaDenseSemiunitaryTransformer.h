@@ -5,7 +5,7 @@
 #include "src/entities/data_structures/AbstractDenseSemiunitaryTransformer.h"
 #include "ArmaDenseSemiunitaryMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 class ArmaDenseSemiunitaryTransformer: public AbstractDenseSemiunitaryTransformer {
 public:
@@ -21,5 +21,5 @@ private:
     arma::Col<T> multiplyAndReturnMainDiagonal(const arma::Mat<T>& left, const arma::Mat<T>& right) const;
 };
     
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_ARMADENSESEMIUNITARYTRANSFORMER_H

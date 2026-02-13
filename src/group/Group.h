@@ -8,11 +8,10 @@
 #include <stdexcept>
 #include <vector>
 
-namespace group {
+namespace spinner::group {
 
 using PermutationArrayType = uint8_t;
 using Permutation = std::vector<PermutationArrayType>;
-using CayleyTable = std::map<std::pair<uint8_t, uint8_t>, std::set<uint8_t>>;
 
 class Group {
   public:
@@ -40,7 +39,7 @@ class Group {
         uint8_t group_size;
         uint8_t number_of_representations;
         bool is_abelian;
-        std::vector<uint8_t> dimension_of_representation;
+        std::vector<uint8_t> dimensions_of_representations;
         std::vector<uint8_t> number_of_projectors_of_representation;
         uint8_t number_of_generators;
         std::vector<size_t> orders_of_generators;
@@ -92,10 +91,10 @@ struct InitializationError: public std::logic_error {
     explicit InitializationError(const std::string& arg) : logic_error(arg) {}
 };
 
-}  // namespace group
+Group::AlgebraicProperties constructDihedral(unsigned int order);
 
-group::Group::AlgebraicProperties constructDihedral(unsigned int order);
+extern const Group::AlgebraicProperties GroupInfoS2;
 
-extern const group::Group::AlgebraicProperties GroupInfoS2;
+} // namespace spinner::group
 
 #endif  //SPINNER_GROUP_H

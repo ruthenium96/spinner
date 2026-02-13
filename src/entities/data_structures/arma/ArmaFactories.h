@@ -3,7 +3,7 @@
 
 #include "src/entities/data_structures/AbstractFactories.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 class ArmaDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAndDiagonalizeFactory {
   public:
     std::unique_ptr<AbstractDiagonalizableMatrix>
@@ -23,5 +23,5 @@ class ArmaSparseTransformFactory: public AbstractSparseTransformFactory {
     std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) override;
 };
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_ARMAFACTORIES_H

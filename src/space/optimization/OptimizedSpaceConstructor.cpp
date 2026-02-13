@@ -15,7 +15,7 @@
 
 
 namespace {
-std::vector<size_t> sizes_of_blocks(const space::Space& space) {
+std::vector<size_t> sizes_of_blocks(const spinner::space::Space& space) {
     std::vector<size_t> answer(space.getBlocks().size());
     for (int i = 0; i < space.getBlocks().size(); ++i) {
         answer[i] = space.getBlocks()[i].decomposition->size_cols();
@@ -23,20 +23,20 @@ std::vector<size_t> sizes_of_blocks(const space::Space& space) {
     return answer;
 }
 
-void print_sizes_of_blocks(const space::Space& space) {
-    common::Logger::verbose("Number of blocks: {}. Sizes of blocks:\n{}",
+void print_sizes_of_blocks(const spinner::space::Space& space) {
+    spinner::common::Logger::verbose("Number of blocks: {}. Sizes of blocks:\n{}",
         space.getBlocks().size(),
         spdlog::fmt_lib::join(sizes_of_blocks(space), ", "));
 }
-}
+} // namespace
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 // TODO: if Space/Subspace will be transformed into classes,
 //  it should be static constructor of Space.
 Space OptimizedSpaceConstructor::construct(
     const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-    const quantum::linear_algebra::FactoriesList& factories) {
+    const linear_algebra::FactoriesList& factories) {
 
     const common::physical_optimization::OptimizationList& optimizationList =
         consistentModelOptimizationList.getOptimizationList();
@@ -135,4 +135,4 @@ Space OptimizedSpaceConstructor::construct(
 
     return space;
 }
-}  // namespace space::optimization
+} // namespace spinner::space::optimization

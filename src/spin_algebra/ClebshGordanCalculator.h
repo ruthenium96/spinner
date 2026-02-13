@@ -6,7 +6,7 @@
 
 #include "src/common/MumxHash.h"
 
-namespace spin_algebra {
+namespace spinner::spin_algebra {
 class ClebshGordanCalculator {
   public:
     using Map = emhash8::HashMap<uint64_t, double, ankerl::MumxHash<uint64_t>>;
@@ -34,6 +34,6 @@ class ClebshGordanCalculator {
     mutable std::vector<Map> hashed_CGs_for_all_threads;
     mutable std::vector<Map> hashed_W6Js_for_all_threads;
 };
-}  // namespace spin_algebra
+} // namespace spinner::spin_algebra
 
 #endif  //SPINNER_CLEBSHGORDANCALCULATOR_H

@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 
 T20TwoCenterTerm::T20TwoCenterTerm(
 	std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
@@ -19,7 +19,7 @@ std::unique_ptr<Term> T20TwoCenterTerm::clone() const {
 };
 
 void T20TwoCenterTerm::construct(
-	quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+	linear_algebra::AbstractSymmetricMatrix& matrix,
 	const std::set<unsigned int>& indexes_of_vectors,
 	uint32_t center_a, uint32_t center_b) const {
 	
@@ -34,7 +34,7 @@ void T20TwoCenterTerm::construct(
 };
 
 void T20TwoCenterTerm::add_ttwo_term(
-	quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+	linear_algebra::AbstractSymmetricMatrix& matrix,
 	const std::set<unsigned int>& indexes_of_vectors,
 	uint32_t center_a, uint32_t center_b,
 	double factor) const {
@@ -105,4 +105,4 @@ std::vector<uint8_t> T20TwoCenterTerm::constructRanksOfTTwo(uint32_t center_a, u
     return answer;
 }
 
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito

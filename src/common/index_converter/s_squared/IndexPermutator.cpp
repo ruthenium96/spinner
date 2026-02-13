@@ -4,7 +4,7 @@
 #include "src/group/Group.h"
 #include "src/spin_algebra/Multiplicity.h"
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 
 IndexPermutator::IndexPermutator(std::shared_ptr<const IndexConverter> converter, const group::Group& group) :
 	converter_(converter) {
@@ -144,4 +144,4 @@ group::Permutation IndexPermutator::extendPermutation(const group::Permutation& 
     return extended_permutation;
 }
 
-} // namespace index_converter::s_squared
+} // namespace spinner::index_converter::s_squared

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-namespace common::physical_optimization {
+namespace spinner::common::physical_optimization {
 
 OptimizationList::OptimizationList(BasisType basis_type) {
     basis_type_ = basis_type;
@@ -160,4 +160,4 @@ const OptimizationList::FTLMSettings& OptimizationList::getFTLMSettings() const 
     return ftlmSettings_.value();
 }
 
-}  // namespace common::physical_optimization
+} // namespace spinner::common::physical_optimization

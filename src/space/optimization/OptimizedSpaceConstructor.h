@@ -5,15 +5,15 @@
 #include "src/entities/data_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 // This class constructs Space using ConsistentModelOptimizationList.
 // TODO: Can it be rewritten as function?
 class OptimizedSpaceConstructor {
   public:
     static Space construct(
         const runner::ConsistentModelOptimizationList&,
-        const quantum::linear_algebra::FactoriesList& factories);
+        const linear_algebra::FactoriesList& factories);
 };
-}  // namespace space::optimization
+} // namespace spinner::space::optimization
 
 #endif  //SPINNER_OPTIMIZEDSPACECONSTRUCTOR_H

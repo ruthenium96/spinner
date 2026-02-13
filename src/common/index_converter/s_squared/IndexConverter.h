@@ -9,7 +9,7 @@
 #include <optional>
 #include <vector>
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 
 class IndexConverter : public AbstractIndexConverter {
 public:
@@ -30,6 +30,6 @@ private:
     std::vector<std::vector<Level>> s_squared_levels_;
     std::vector<size_t> cumulative_sum_;
 };
-} // namespace index_converter::s_squared
+} // namespace spinner::index_converter::s_squared
 
 #endif // SPINNER_S2INDEXCONVERTER_H

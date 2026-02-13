@@ -17,19 +17,19 @@
 #include "src/nonlinear_solver/AbstractNonlinearSolver.h"
 #include "src/space/Space.h"
 
-namespace runner {
+namespace spinner::runner {
 class Runner {
   public:
     Runner(
         model::ModelInput model,
         common::physical_optimization::OptimizationList optimizationList,
-        quantum::linear_algebra::FactoriesList dataStructuresFactories);
+        linear_algebra::FactoriesList dataStructuresFactories);
     // constructor for Runner with default algebra package:
     Runner(
         model::ModelInput model,
         common::physical_optimization::OptimizationList optimizationList);
     // constructor for Runner with no optimizations:
-    Runner(model::ModelInput model, quantum::linear_algebra::FactoriesList dataStructuresFactories);
+    Runner(model::ModelInput model, linear_algebra::FactoriesList dataStructuresFactories);
     // constructor for Runner with no optimizations and default algebra package:
     explicit Runner(model::ModelInput model);
 
@@ -61,12 +61,12 @@ class Runner {
     getMagneticSusceptibilityController();
     const model::symbols::SymbolicWorker& getSymbolicWorker() const;
 
-    quantum::linear_algebra::FactoriesList getDataStructuresFactories() const;
+    linear_algebra::FactoriesList getDataStructuresFactories() const;
 
   private:
     ConsistentModelOptimizationList consistentModelOptimizationList_;
     const space::Space space_;
-    quantum::linear_algebra::FactoriesList dataStructuresFactories_;
+    linear_algebra::FactoriesList dataStructuresFactories_;
     std::unique_ptr<eigendecompositor::AbstractEigendecompositor> eigendecompositor_;
     std::shared_ptr<eigendecompositor::FlattenedSpectra> flattenedSpectra_;
 
@@ -95,6 +95,6 @@ class Runner {
         experimental_values_worker_;
 
 };
-}  // namespace runner
+} // namespace spinner::runner
 
 #endif  //SPINNER_RUNNER_H

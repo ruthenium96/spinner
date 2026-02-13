@@ -4,7 +4,7 @@
 #include "src/group/Group.h"
 #include "src/common/index_converter/s_squared/OrderOfSummation.h"
 
-namespace spin_algebra {
+namespace spinner::spin_algebra {
 
 class GroupAdapter {
   public:
@@ -15,6 +15,6 @@ class GroupAdapter {
     std::shared_ptr<const index_converter::s_squared::OrderOfSummation> order_of_summations_;
 };
 
-}  // namespace spin_algebra
+} // namespace spinner::spin_algebra
 
 #endif  //SPINNER_GROUPADAPTER_H

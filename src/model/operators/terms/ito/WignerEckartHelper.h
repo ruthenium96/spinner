@@ -5,7 +5,7 @@
 #include "src/common/index_converter/s_squared/OrderOfSummation.h"
 #include "src/spin_algebra/ClebshGordanCalculator.h"
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 class WignerEckartHelper {
   public:
 
@@ -40,6 +40,6 @@ class WignerEckartHelper {
 	spin_algebra::ClebshGordanCalculator clebshGordanCalculator_;
 	std::shared_ptr<const index_converter::s_squared::OrderOfSummation> order_of_summation_;
 };
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito
 
 #endif // SPINNER_T20ONECENTERTERM_H

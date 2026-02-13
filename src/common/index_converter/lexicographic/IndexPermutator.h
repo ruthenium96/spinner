@@ -7,7 +7,7 @@
 #include "src/common/index_converter/AbstractIndexPermutator.h"
 #include "src/group/Group.h"
 
-namespace index_converter::lexicographic {
+namespace spinner::index_converter::lexicographic {
 
 class IndexPermutator : public AbstractIndexPermutator {
 public:
@@ -19,6 +19,6 @@ private:
     std::shared_ptr<const IndexConverter> converter_;
     group::Group group_;
 };
-} // namespace index_converter::lexicographic
+} // namespace spinner::index_converter::lexicographic
 
 #endif // SPINNER_LEXINDEXPERMUTATOR_H

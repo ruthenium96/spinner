@@ -12,17 +12,17 @@
 #include <functional>
 #include <numeric>
 
-spin_algebra::MultiplicityDirectSum
-spin_addition(const std::vector<spin_algebra::MultiplicityDirectSum>& mults) {
+spinner::spin_algebra::MultiplicityDirectSum
+spin_addition(const std::vector<spinner::spin_algebra::MultiplicityDirectSum>& mults) {
     return std::accumulate(
         mults.begin(),
         mults.end(),
-        spin_algebra::MultiplicityDirectSum(1),  // Identity element of spin addition: S=0.
+        spinner::spin_algebra::MultiplicityDirectSum(1),  // Identity element of spin addition: S=0.
         std::multiplies<>());
 }
 
 std::vector<uint16_t> duplicate_multiplicity_multiplicity_times(
-    const spin_algebra::MultiplicityDirectSum& multiplicities) {
+    const spinner::spin_algebra::MultiplicityDirectSum& multiplicities) {
     std::vector<uint16_t> duplicated_multiplicities;
     for (auto mult : multiplicities.getMultiplicities()) {
         for (size_t j = 0; j < mult; ++j) {
@@ -34,43 +34,43 @@ std::vector<uint16_t> duplicate_multiplicity_multiplicity_times(
 }
 
 TEST(spin_addition, 22) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}};
-    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3};
+    std::vector<spinner::spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}};
+    spinner::spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 222) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}, {2}};
-    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 2, 4};
+    std::vector<spinner::spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}, {2}};
+    spinner::spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 2, 4};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 2222) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}, {2}, {2}};
-    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 1, 3, 3, 3, 5};
+    std::vector<spinner::spin_algebra::MultiplicityDirectSum> mults = {{2}, {2}, {2}, {2}};
+    spinner::spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 1, 3, 3, 3, 5};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 23) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{2}, {3}};
-    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 4};
+    std::vector<spinner::spin_algebra::MultiplicityDirectSum> mults = {{2}, {3}};
+    spinner::spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {2, 4};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 33) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{3}, {3}};
-    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5};
+    std::vector<spinner::spin_algebra::MultiplicityDirectSum> mults = {{3}, {3}};
+    spinner::spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 TEST(spin_addition, 44) {
-    std::vector<spin_algebra::MultiplicityDirectSum> mults = {{4}, {4}};
-    spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5, 7};
+    std::vector<spinner::spin_algebra::MultiplicityDirectSum> mults = {{4}, {4}};
+    spinner::spin_algebra::MultiplicityDirectSum expected_total_multiplicities = {1, 3, 5, 7};
     EXPECT_EQ(spin_addition(mults), expected_total_multiplicities);
 }
 
 void allMultiplicitiesWereSummedExactlyOnce(
-    const index_converter::s_squared::OrderOfSummation& order_of_summation,
+    const spinner::index_converter::s_squared::OrderOfSummation& order_of_summation,
     size_t number_of_all_mults) {
     std::vector<bool> multiplicity_was_summed(number_of_all_mults - 1, false);
     for (const auto& instruction : order_of_summation) {
@@ -88,7 +88,7 @@ void allMultiplicitiesWereSummedExactlyOnce(
 }
 
 void allMultiplicitiesAreReachableLeftToRight(
-    const index_converter::s_squared::OrderOfSummation& order_of_summation,
+    const spinner::index_converter::s_squared::OrderOfSummation& order_of_summation,
     size_t number_of_initial_mults,
     size_t number_of_all_mults) {
     std::vector<bool> multiplicity_are_reachable(number_of_all_mults, false);
@@ -114,17 +114,17 @@ std::string representationName(const std::vector<uint8_t>& representations) {
 }
 
 TEST(order_of_summation, AAAA_S1_S2_S2xS2) {
-    group::Group group_one(group::Group::S2, {{1, 0, 3, 2}});
-    group::Group group_two(group::Group::S2, {{2, 3, 0, 1}});
+    spinner::group::Group group_one(spinner::group::Group::S2, {{1, 0, 3, 2}});
+    spinner::group::Group group_two(spinner::group::Group::S2, {{2, 3, 0, 1}});
     size_t number_of_initial_mults = 4;
-    size_t number_of_summation = 3;  // derived it from group information somehow
+    size_t number_of_summation = 3;  // derived it from spinner::group information somehow
     size_t number_of_all_mults = number_of_initial_mults + number_of_summation;
 
-    std::vector<std::vector<group::Group>> set_of_groups =
+    std::vector<std::vector<spinner::group::Group>> set_of_groups =
         {{}, {group_one}, {group_two}, {group_one, group_two}, {group_two, group_one}};
 
     for (const auto& groups : set_of_groups) {
-        auto group_adapter = spin_algebra::GroupAdapter(groups, number_of_initial_mults);
+        auto group_adapter = spinner::spin_algebra::GroupAdapter(groups, number_of_initial_mults);
         allMultiplicitiesWereSummedExactlyOnce(
             *group_adapter.getOrderOfSummations(),
             number_of_all_mults);
@@ -136,17 +136,17 @@ TEST(order_of_summation, AAAA_S1_S2_S2xS2) {
 }
 
 TEST(order_of_summation, AAAAAAAAA_S1_S2_S2xS2) {
-    group::Group group_one(group::Group::S2, {{6, 7, 8, 3, 4, 5, 0, 1, 2}});
-    group::Group group_two(group::Group::S2, {{2, 1, 0, 5, 4, 3, 8, 7, 6}});
+    spinner::group::Group group_one(spinner::group::Group::S2, {{6, 7, 8, 3, 4, 5, 0, 1, 2}});
+    spinner::group::Group group_two(spinner::group::Group::S2, {{2, 1, 0, 5, 4, 3, 8, 7, 6}});
     size_t number_of_initial_mults = 9;
-    size_t number_of_summation = 8;  // derived it from group information somehow
+    size_t number_of_summation = 8;  // derived it from spinner::group information somehow
     size_t number_of_all_mults = number_of_initial_mults + number_of_summation;
 
-    std::vector<std::vector<group::Group>> set_of_groups =
+    std::vector<std::vector<spinner::group::Group>> set_of_groups =
         {{}, {group_one}, {group_two}, {group_one, group_two}, {group_two, group_one}};
 
     for (const auto& groups : set_of_groups) {
-        auto group_adapter = spin_algebra::GroupAdapter(groups, number_of_initial_mults);
+        auto group_adapter = spinner::spin_algebra::GroupAdapter(groups, number_of_initial_mults);
         allMultiplicitiesWereSummedExactlyOnce(
             *group_adapter.getOrderOfSummations(),
             number_of_all_mults);
@@ -160,18 +160,18 @@ TEST(order_of_summation, AAAAAAAAA_S1_S2_S2xS2) {
 TEST(
     initialize_s_squared,
     eigenvalues_of_s_squared_matrix_correspond_to_spin_addition_1_22_333_4444_23456) {
-    std::vector<std::vector<spin_algebra::Multiplicity>> vector_of_mults =
+    std::vector<std::vector<spinner::spin_algebra::Multiplicity>> vector_of_mults =
         {{1}, {2, 2}, {3, 3, 3}, {4, 4, 4, 4}, {2, 3, 4, 5, 6}};
 
     for (const auto& mults : vector_of_mults) {
-        model::ModelInput model(mults);
+        spinner::model::ModelInput model(mults);
 
-        runner::Runner runner(model);
-        index_converter::lexicographic::IndexConverter converter(mults);
+        spinner::runner::Runner runner(model);
+        spinner::index_converter::lexicographic::IndexConverter converter(mults);
 
-        Matrix s_squared_matrix = Matrix(
+        spinner::Matrix s_squared_matrix = spinner::Matrix(
             runner.getSpace(),
-            *runner.getOperator(common::QuantityEnum::S_total_squared).value(),
+            *runner.getOperator(spinner::common::QuantityEnum::S_total_squared).value(),
             runner.getIndexConverter(),
             runner.getDataStructuresFactories(),
             true);
@@ -189,7 +189,7 @@ TEST(
         std::sort(total_multiplicities.begin(), total_multiplicities.end());
 
         // TODO: refactor it!
-        std::vector<spin_algebra::MultiplicityDirectSum> copied_mults;
+        std::vector<spinner::spin_algebra::MultiplicityDirectSum> copied_mults;
         copied_mults.reserve(mults.size());
         for (const auto& i : mults) {
             copied_mults.emplace_back(i);

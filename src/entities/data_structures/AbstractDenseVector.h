@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <memory>
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 class AbstractDenseVector {
   public:
     virtual void concatenate_with(const std::unique_ptr<AbstractDenseVector>& rhs) = 0;
@@ -27,6 +27,6 @@ class AbstractDenseVector {
 
     virtual ~AbstractDenseVector() = default;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 
 #endif  //SPINNER_ABSTRACTDENSEVECTOR_H

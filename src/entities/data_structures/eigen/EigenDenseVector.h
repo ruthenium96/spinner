@@ -5,7 +5,7 @@
 
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 class EigenDenseVector: public AbstractDenseVector {
   public:
@@ -35,5 +35,5 @@ class EigenDenseVector: public AbstractDenseVector {
     // c-like pointers are necessary to avoid double-free error
     static const EigenDenseVector* downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr);
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_EIGENDENSEVECTOR_H

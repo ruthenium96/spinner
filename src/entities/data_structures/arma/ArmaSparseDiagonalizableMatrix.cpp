@@ -2,7 +2,7 @@
 
 #include "ArmaLogic.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 template <typename T>
 void ArmaSparseDiagonalizableMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
@@ -91,4 +91,4 @@ arma::SpMat<T>& ArmaSparseDiagonalizableMatrix<T>::modifySparseSymmetricMatrix()
 
 template class ArmaSparseDiagonalizableMatrix<double>;
 template class ArmaSparseDiagonalizableMatrix<float>;
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra

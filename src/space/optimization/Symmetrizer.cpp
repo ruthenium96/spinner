@@ -15,7 +15,7 @@ namespace {
 #ifndef NDEBUG
 std::vector<double> squares_of_coefficients(
     size_t totalSpaceSize, 
-    const std::vector<space::Subspace>& subspace) {
+    const std::vector<spinner::space::Subspace>& subspace) {
     std::vector<double> squares_of_coefficients(totalSpaceSize, 0);
     for (const auto& subspace : subspace) {
         for (size_t col = 0; col < subspace.decomposition->size_cols(); ++col) {
@@ -57,12 +57,12 @@ void compare_two_vectors_of_squared_coefficients(
 
 } // namespace
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 Symmetrizer::Symmetrizer(
     std::shared_ptr<const index_converter::AbstractIndexPermutator> permutator,
     group::Group group,
-    quantum::linear_algebra::FactoriesList factories) :
+    linear_algebra::FactoriesList factories) :
     permutator_(std::move(permutator)),
     group_(std::move(group)),
     factories_(std::move(factories)) {}
@@ -87,7 +87,7 @@ Space Symmetrizer::apply(Space&& space) const {
         for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
             BlockProperties block_properties = subspace_parent.properties;
             block_properties.representation.emplace_back(repr);
-            block_properties.dimensionality *= group_.properties.dimension_of_representation[repr];
+            block_properties.dimensionality *= group_.properties.dimensions_of_representations[repr];
             vector_result[group_.properties.number_of_representations * i + repr].properties =
                 block_properties;
         }
@@ -102,7 +102,7 @@ Space Symmetrizer::apply(Space&& space) const {
             // so we add basi and its orbits to visited,
             // because there is no reason to work with them over and over
             std::vector<
-                std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
+                std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>>
                 projected_basi = get_symmetrical_projected_decompositions(subspace_parent, l);
             for (size_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
                 size_t j = group_.properties.number_of_representations * i + repr;
@@ -135,11 +135,11 @@ Space Symmetrizer::apply(Space&& space) const {
     return Space(std::move(vector_result));
 }
 
-std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
+std::vector<std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>>
 Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32_t index_of_vector)
     const {
     // it is a set (partitioned by representations) of all projected decompositions:
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>>
+    std::vector<std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>>
         projections;
     for (uint8_t repr = 0; repr < group_.properties.number_of_representations; ++repr) {
         projections.emplace_back(std::move(factories_.createSparseSemiunitaryMatrix(
@@ -179,7 +179,7 @@ Symmetrizer::get_symmetrical_projected_decompositions(Subspace& subspace, uint32
 }
 
 void Symmetrizer::gram_schmidt_orthogonalize(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
+    std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
     const std::unordered_map<uint32_t, std::vector<size_t>>& indexes_to_vectors_map,
     const Subspace& subspace_to) {
     std::unordered_set<uint32_t> indexes_in_decomposition;
@@ -232,7 +232,7 @@ void Symmetrizer::gram_schmidt_orthogonalize(
 }
 
 void Symmetrizer::gram_schmidt_selforthogonalize(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>&
+    std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>&
         decomposition_from) {
     for (size_t col_j = 0; col_j < decomposition_from->size_cols(); ++col_j) {
         auto first_iterator = decomposition_from->GetNewIterator(col_j);
@@ -266,7 +266,7 @@ void Symmetrizer::gram_schmidt_selforthogonalize(
 }
 
 void Symmetrizer::move_vector_and_remember_it(
-    std::unique_ptr<quantum::linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
+    std::unique_ptr<linear_algebra::AbstractSparseSemiunitaryMatrix>& decomposition_from,
     uint32_t index_of_vector,
     std::unordered_map<uint32_t, std::vector<size_t>>& hs,
     Subspace& subspace_to) {
@@ -279,4 +279,4 @@ void Symmetrizer::move_vector_and_remember_it(
         hs[item.index].emplace_back(subspace_to.decomposition->size_cols() - 1);
     }
 }
-}  // namespace space::optimization
+} // namespace spinner::space::optimization

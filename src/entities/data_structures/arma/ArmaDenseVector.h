@@ -7,7 +7,7 @@
 
 #include "src/entities/data_structures/AbstractDenseVector.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 class ArmaDenseVector: public AbstractDenseVector {
   public:
@@ -36,5 +36,5 @@ class ArmaDenseVector: public AbstractDenseVector {
     static const ArmaDenseVector* downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr);
     arma::Col<T> vector_;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_ARMADENSEVECTOR_H

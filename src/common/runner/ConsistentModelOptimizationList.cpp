@@ -16,23 +16,23 @@
 
 namespace {
 void checkMultiplicitiesGroupConsistence(
-    const std::vector<spin_algebra::Multiplicity>& mults,
-    const group::Group& group);
+    const std::vector<spinner::spin_algebra::Multiplicity>& mults,
+    const spinner::group::Group& group);
 bool checkSymbolNamesGroupElementConsistence(
-    const std::function<std::optional<model::symbols::SymbolName>(size_t, size_t)>& getter,
-    group::Permutation element);
+    const std::function<std::optional<spinner::model::symbols::SymbolName>(size_t, size_t)>& getter,
+    spinner::group::Permutation element);
 bool checkSymbolNamesGroupElementConsistence(
-    const std::function<model::symbols::SymbolName(size_t)>& getter,
-    group::Permutation element);
+    const std::function<spinner::model::symbols::SymbolName(size_t)>& getter,
+    spinner::group::Permutation element);
 void checkAllSymbolNamesGroupConsistence(
-    const model::symbols::SymbolicWorker& symbols,
-    const group::Group& group);
+    const spinner::model::symbols::SymbolicWorker& symbols,
+    const spinner::group::Group& group);
 void checkModelOptimizationListConsistence(
-    const model::ModelInput& modelInput,
-    const common::physical_optimization::OptimizationList& optimizationList);
-}  // namespace
+    const spinner::model::ModelInput& modelInput,
+    const spinner::common::physical_optimization::OptimizationList& optimizationList);
+} // namespace
 
-namespace runner {
+namespace spinner::runner {
 
 const model::Model& ConsistentModelOptimizationList::getModel() const {
     return *model_;
@@ -178,12 +178,12 @@ bool ConsistentModelOptimizationList::isGSzSquaredPossible() const {
     return !getModel().gFactorsAreNone();
 }
 
-}  // namespace runner
+} // namespace spinner::runner
 
 namespace {
 void checkModelOptimizationListConsistence(
-    const model::ModelInput& modelInput,
-    const common::physical_optimization::OptimizationList& optimizationList) {
+    const spinner::model::ModelInput& modelInput,
+    const spinner::common::physical_optimization::OptimizationList& optimizationList) {
     // Symmetrizer can be applied for all types of Hamiltonian terms...
     for (const auto& group : optimizationList.getGroupsToApply()) {
         // ...if spins invariant to group elements:
@@ -194,15 +194,15 @@ void checkModelOptimizationListConsistence(
 }
 
 void checkMultiplicitiesGroupConsistence(
-    const std::vector<spin_algebra::Multiplicity>& mults,
-    const group::Group& group) {
+    const std::vector<spinner::spin_algebra::Multiplicity>& mults,
+    const spinner::group::Group& group) {
     // TODO: split code above (maybe rewrite checkSymbolNamesGroupElementConsistence with templates?)
     if (mults.size() != group.size_of_permutations()) {
         throw std::length_error(
             "The size of group elements does not equal to the number of spins.");
     }
     for (const auto& el : group.getElements()) {
-        std::vector<spin_algebra::Multiplicity> permutated_mults(mults);
+        auto permutated_mults = mults;
         for (size_t i = 0; i < group.size_of_permutations(); ++i) {
             permutated_mults[i] = mults[el[i]];
         }
@@ -213,12 +213,12 @@ void checkMultiplicitiesGroupConsistence(
 }
 
 bool checkSymbolNamesGroupElementConsistence(
-    const std::function<std::optional<model::symbols::SymbolName>(size_t, size_t)>& getter,
-    group::Permutation element) {
+    const std::function<std::optional<spinner::model::symbols::SymbolName>(size_t, size_t)>& getter,
+    spinner::group::Permutation element) {
     // Construct here both initialSymbols and permutatedSymbols:
-    std::vector<std::vector<std::optional<model::symbols::SymbolName>>> initialSymbols(
+    std::vector<std::vector<std::optional<spinner::model::symbols::SymbolName>>> initialSymbols(
         element.size(),
-        std::vector<std::optional<model::symbols::SymbolName>>(element.size(), std::nullopt));
+        std::vector<std::optional<spinner::model::symbols::SymbolName>>(element.size(), std::nullopt));
     auto permutatedSymbols = initialSymbols;
     for (size_t i = 0; i < element.size(); ++i) {
         for (size_t j = 0; j < element.size(); ++j) {
@@ -231,9 +231,9 @@ bool checkSymbolNamesGroupElementConsistence(
 }
 
 bool checkSymbolNamesGroupElementConsistence(
-    const std::function<model::symbols::SymbolName(size_t)>& getter,
-    group::Permutation element) {
-    std::vector<model::symbols::SymbolName> initialSymbols(element.size());
+    const std::function<spinner::model::symbols::SymbolName(size_t)>& getter,
+    spinner::group::Permutation element) {
+    std::vector<spinner::model::symbols::SymbolName> initialSymbols(element.size());
     auto permutatedSymbols = initialSymbols;
 
     for (size_t i = 0; i < element.size(); ++i) {
@@ -245,11 +245,11 @@ bool checkSymbolNamesGroupElementConsistence(
 }
 
 void checkAllSymbolNamesGroupConsistence(
-    const model::symbols::SymbolicWorker& symbols,
-    const group::Group& group) {
+    const spinner::model::symbols::SymbolicWorker& symbols,
+    const spinner::group::Group& group) {
     if (symbols.isIsotropicExchangeInitialized()) {
         for (const auto& element : group.getElements()) {
-            std::function<std::optional<model::symbols::SymbolName>(size_t, size_t)>
+            std::function<std::optional<spinner::model::symbols::SymbolName>(size_t, size_t)>
                 getterFunction = [ObjectPtr = &symbols](size_t i, size_t j) {
                     return ObjectPtr->getIsotropicExchangeSymbolName(i, j);
                 };
@@ -262,7 +262,7 @@ void checkAllSymbolNamesGroupConsistence(
     }
     if (symbols.isGFactorInitialized()) {
         for (const auto& element : group.getElements()) {
-            std::function<model::symbols::SymbolName(size_t)> getterFunction =
+            std::function<spinner::model::symbols::SymbolName(size_t)> getterFunction =
                 [ObjectPtr = &symbols](size_t i) { return ObjectPtr->getGFactorSymbolName(i); };
             if (!checkSymbolNamesGroupElementConsistence(getterFunction, element)) {
                 throw std::invalid_argument("g factor symbols do not match applied symmetries");
@@ -271,4 +271,4 @@ void checkAllSymbolNamesGroupConsistence(
         }
     }
 }
-}  // namespace
+} // namespace

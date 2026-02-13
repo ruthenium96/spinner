@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace model::symbols {
+namespace spinner::model::symbols {
 
 struct SymbolName {
   public:
@@ -16,6 +16,6 @@ struct SymbolName {
     std::string name_;
 };
 
-}  // namespace symbols
+} // namespace spinner::model::symbols
 
 #endif  //SPINNER_SYMBOLNAME_H

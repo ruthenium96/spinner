@@ -5,7 +5,7 @@
 
 #include "Multiplicity.h"
 
-namespace spin_algebra {
+namespace spinner::spin_algebra {
 
 class MultiplicityDirectSum {
   private:
@@ -28,5 +28,5 @@ class MultiplicityDirectSum {
     bool operator!=(const MultiplicityDirectSum& rhs) const;
 };
 
-}  // namespace spin_algebra
+} // namespace spinner::spin_algebra
 #endif  //SPINNER_MULTIPLICITYDIRECTSUM_H

@@ -4,7 +4,7 @@
 #include "src/common/PrintingFunctions.h"
 #include "src/common/index_converter/AbstractIndexConverter.h"
 
-namespace index_converter::lexicographic {
+namespace spinner::index_converter::lexicographic {
 
 IndexConverter::IndexConverter(std::vector<spin_algebra::Multiplicity> mults) :
     AbstractIndexConverter(mults) {
@@ -56,4 +56,4 @@ IndexConverter::ladder_projection(uint32_t lex, uint32_t center, int ladder) con
     return lex + ladder * cumulative_product_[center + 1];
 }
 
-}
+} // namespace spinner::index_converter::lexicographic

@@ -6,7 +6,7 @@
 #include <vector>
 
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 
 class OrderOfSummation {
   public:
@@ -28,5 +28,5 @@ class OrderOfSummation {
   private:
     std::vector<AdditionInstruction> instructions_;
 };
-}  // namespace index_converter::s_squared
+} // namespace spinner::index_converter::s_squared
 #endif  //SPINNER_ORDEROFSUMMATION_H

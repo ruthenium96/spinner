@@ -4,7 +4,7 @@
 #include "hash_table8.hpp"
 #include "src/entities/data_structures/AbstractSymmetricMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
   public:
@@ -23,5 +23,5 @@ class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
     size_t size_;
     emhash8::HashMap<uint32_t, Map> hashmap_;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_EMHASHSPARSESYMMETRICMATRIX_H

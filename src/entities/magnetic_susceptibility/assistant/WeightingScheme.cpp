@@ -4,7 +4,7 @@
 
 #include "src/common/IncorrectEnumError.h"
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 WeightingScheme::WeightingScheme(
     std::vector<double> abscissa,
@@ -49,4 +49,4 @@ double WeightingScheme::at(size_t i) const {
 const std::vector<double>& WeightingScheme::getWeights() const {
     return weights_;
 }
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility

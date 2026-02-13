@@ -4,16 +4,16 @@
 #include "AbstractEigendecompositor.h"
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 class EigendecompositorConstructor {
   public:
     static std::unique_ptr<AbstractEigendecompositor> construct(
         const runner::ConsistentModelOptimizationList& consistentModelOptimizationList,
-        const quantum::linear_algebra::FactoriesList& factories);
+        const linear_algebra::FactoriesList& factories);
 
 };
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_EIGENDECOMPOSITORCONSTRUCTOR_H

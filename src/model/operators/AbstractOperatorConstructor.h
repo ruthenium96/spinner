@@ -6,7 +6,7 @@
 
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class AbstractOperatorConstructor {
   public:
     virtual ~AbstractOperatorConstructor() = default;
@@ -29,6 +29,6 @@ class AbstractOperatorConstructor {
         std::shared_ptr<const OneDNumericalParameters<double>> diagonal_parameters,
         std::shared_ptr<const TwoDNumericalParameters<double>> nondiagonal_parameters) const = 0;
 };
-} // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif // SPINNER_ABSTRACTOPERATORCONSTRUCTOR_H

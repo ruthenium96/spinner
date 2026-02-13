@@ -5,7 +5,7 @@
 #include "IndexConverter.h"
 #include "src/group/Group.h"
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 
 class IndexPermutator : public AbstractIndexPermutator {
   public:
@@ -20,6 +20,6 @@ class IndexPermutator : public AbstractIndexPermutator {
     size_t initial_size_of_permutation_;
     void construct_level_and_sign(const group::Permutation& extended_g, const Level& level, Level& permutated_level, int8_t& sign) const;
 };
-}
+} // namespace spinner::index_converter::s_squared
 
 #endif // SPINNER_S2INDEXPERMUTATOR_H

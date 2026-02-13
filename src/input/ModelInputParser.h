@@ -6,7 +6,7 @@
 #include "src/common/OneOrMany.h"
 #include "src/model/ModelInput.h"
 
-namespace input {
+namespace spinner::input {
 
 class ModelInputParser {
   public:
@@ -34,6 +34,6 @@ class ModelInputParser {
         model::symbols::SymbolTypeEnum symbol_type);
 };
 
-}  // namespace input
+} // namespace spinner::input
 
 #endif  //SPINNER_MODELINPUTPARSER_H

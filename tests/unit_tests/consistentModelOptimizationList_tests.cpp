@@ -1,43 +1,46 @@
 #include "gtest/gtest.h"
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 
+using namespace spinner::common::physical_optimization;
+using namespace spinner::group;
+
 TEST(consistentModelOptimizationList_tests, throw_groups_with_different_sizes_of_permutations) {
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.Symmetrize(group::Group::S2, {{0, 2, 1}});
-    EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0}}), std::invalid_argument);
+    OptimizationList optimizationList;
+    optimizationList.Symmetrize(Group::S2, {{0, 2, 1}});
+    EXPECT_THROW(optimizationList.Symmetrize(Group::S2, {{1, 0}}), std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_noncommutative_groups) {
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.Symmetrize(group::Group::S2, {{0, 2, 1}});
-    EXPECT_THROW(optimizationList.Symmetrize(group::Group::S2, {{1, 0, 2}}), std::invalid_argument);
+    OptimizationList optimizationList;
+    optimizationList.Symmetrize(Group::S2, {{0, 2, 1}});
+    EXPECT_THROW(optimizationList.Symmetrize(Group::S2, {{1, 0, 2}}), std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_wrong_size_of_permutation) {
-    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4};
-    model::ModelInput model(mults);
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {4, 4, 4};
+    spinner::model::ModelInput model(mults);
+    OptimizationList optimizationList;
+    optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
 
     EXPECT_THROW(
-        runner::ConsistentModelOptimizationList(model, optimizationList),
+        spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
         std::length_error);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_permutes_different_multiplicities) {
-    std::vector<spin_algebra::Multiplicity> mults = {4, 4, 4, 3};
-    model::ModelInput model(mults);
-    common::physical_optimization::OptimizationList optimizationList;
-    optimizationList.Symmetrize(group::Group::S2, {{1, 0, 3, 2}});
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {4, 4, 4, 3};
+    spinner::model::ModelInput model(mults);
+    OptimizationList optimizationList;
+    optimizationList.Symmetrize(Group::S2, {{1, 0, 3, 2}});
 
     EXPECT_THROW(
-        runner::ConsistentModelOptimizationList(model, optimizationList),
+        spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
         std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_symmetry) {
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
-    model::ModelInput model(mults);
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+    spinner::model::ModelInput model(mults);
     double J_value = 10;
     auto tripledJ = model.addSymbol("3J", 3 * J_value);
     auto J = model.addSymbol("J", J_value);
@@ -48,19 +51,19 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_inconsistent_sy
         .assignSymbolToIsotropicExchange(doubledJ, 2, 3)
         .assignSymbolToIsotropicExchange(J, 3, 0);
 
-    common::physical_optimization::OptimizationList optimizationList;
+    OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
-        runner::ConsistentModelOptimizationList(model, optimizationList),
+        spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
         std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symmetry) {
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
-    model::ModelInput model(mults);
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+    spinner::model::ModelInput model(mults);
     double J = 10;
     auto firstJ = model.addSymbol("J1", J);
     auto secondJ = model.addSymbol("J2", J);
@@ -69,19 +72,19 @@ TEST(consistentModelOptimizationList_tests, throw_2222_isotropic_accidental_symm
         .assignSymbolToIsotropicExchange(firstJ, 2, 3)
         .assignSymbolToIsotropicExchange(secondJ, 3, 0);
 
-    common::physical_optimization::OptimizationList optimizationList;
+    OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
-        runner::ConsistentModelOptimizationList(model, optimizationList),
+        spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
         std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symmetry) {
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
-    model::ModelInput model(mults);
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+    spinner::model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.addSymbol("J", J_value);
     auto firstg = model.addSymbol("g1", 2.0);
@@ -95,19 +98,19 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_inconsistent_symm
         .assignSymbolToGFactor(firstg, 2)
         .assignSymbolToGFactor(secondg, 3);
 
-    common::physical_optimization::OptimizationList optimizationList;
+    OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
-        runner::ConsistentModelOptimizationList(model, optimizationList),
+        spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
         std::invalid_argument);
 }
 
 TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmetry) {
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
-    model::ModelInput model(mults);
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2, 2, 2};
+    spinner::model::ModelInput model(mults);
     double J_value = 10;
     double g_value = 2.0;
     auto J = model.addSymbol("J", J_value);
@@ -122,12 +125,12 @@ TEST(consistentModelOptimizationList_tests, throw_2222_gfactor_accidental_symmet
         .assignSymbolToGFactor(firstg, 2)
         .assignSymbolToGFactor(secondg, 3);
 
-    common::physical_optimization::OptimizationList optimizationList;
+    OptimizationList optimizationList;
     optimizationList.TzSort()
-        .Symmetrize(group::Group::S2, {{1, 0, 3, 2}})
-        .Symmetrize(group::Group::S2, {{3, 2, 1, 0}});
+        .Symmetrize(Group::S2, {{1, 0, 3, 2}})
+        .Symmetrize(Group::S2, {{3, 2, 1, 0}});
 
     EXPECT_THROW(
-        runner::ConsistentModelOptimizationList(model, optimizationList),
+        spinner::runner::ConsistentModelOptimizationList(model, optimizationList),
         std::invalid_argument);
 }

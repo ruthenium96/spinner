@@ -7,7 +7,7 @@
 #include "src/model/NumericalParameters.h"
 #include "WignerEckartHelper.h"
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 class T20TwoCenterTerm : public TwoCenterTerm {
   public:
     T20TwoCenterTerm(
@@ -16,7 +16,7 @@ class T20TwoCenterTerm : public TwoCenterTerm {
         double prefactor = 1);
     std::unique_ptr<Term> clone() const override;
     void construct(
-        quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+        linear_algebra::AbstractSymmetricMatrix& matrix,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a, uint32_t center_b) const override;
 
@@ -27,7 +27,7 @@ class T20TwoCenterTerm : public TwoCenterTerm {
     WignerEckartHelper wigner_eckart_helper_;
 
     void add_ttwo_term(
-        quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+        linear_algebra::AbstractSymmetricMatrix& matrix,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a,
         uint32_t center_b,
@@ -35,6 +35,6 @@ class T20TwoCenterTerm : public TwoCenterTerm {
     std::vector<uint8_t> constructRanksOfTTwo(uint32_t center_a, uint32_t center_b) const;
 };
 
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito
 
 #endif // SPINNER_T20TWOCENTERTERM_H

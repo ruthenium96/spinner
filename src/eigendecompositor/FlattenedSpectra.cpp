@@ -11,11 +11,11 @@
 
 namespace {
 
-OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flatten(
-    OneOrMany<SpectrumRef> spectrum,
-    const quantum::linear_algebra::FactoriesList& factories) {
+spinner::OneOrMany<std::unique_ptr<spinner::linear_algebra::AbstractDenseVector>> flatten(
+    spinner::OneOrMany<spinner::SpectrumRef> spectrum,
+    const spinner::linear_algebra::FactoriesList& factories) {
     return std::move(transform_one_or_many(
-        std::function([factories](SpectrumRef spectrum){
+        std::function([factories](spinner::SpectrumRef spectrum){
             auto vector = factories.createVector();
             for (const auto& subspectrum_ref : spectrum.blocks) {
                 const auto& subspectrum = subspectrum_ref.get();
@@ -27,10 +27,10 @@ OneOrMany<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> flatten
     }
 } // namespace
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGetter,
-    const quantum::linear_algebra::FactoriesList& factories) {
+    const linear_algebra::FactoriesList& factories) {
     flattenedSpectra_.clear();
     degeneracyValues_ = factories.createVector();
     for (const auto& quantity_enum : magic_enum::enum_values<common::QuantityEnum>()) {
@@ -41,7 +41,7 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
         }
     }
     flattenedWeights_ = transform_one_or_many(
-        std::function([factories](std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> weights_all){
+        std::function([factories](std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>> weights_all){
             auto vector = factories.createVector();
             for (auto ref_weights_of_block : weights_all) {
                 const auto& weights_of_block = ref_weights_of_block.get();
@@ -51,7 +51,7 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
         }),
         allQuantitiesGetter.getWeightsOfAllStates());
     apply_to_one_or_many(
-        std::function([](const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& energy_spectrum){
+        std::function([](const std::unique_ptr<linear_algebra::AbstractDenseVector>& energy_spectrum){
             energy_spectrum.get()->subtract_minimum();
         }), 
         flattenedSpectra_[common::Energy]);
@@ -59,7 +59,7 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
 
 void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuantitiesGetter,
     const std::vector<model::symbols::SymbolName>& symbol_names,
-    const quantum::linear_algebra::FactoriesList& factories) {
+    const linear_algebra::FactoriesList& factories) {
     flattenedDerivativeSpectra_.clear();
     for (const auto& quantity_enum : magic_enum::enum_values<common::QuantityEnum>()) {
         for (const auto& symbol_name : symbol_names) {
@@ -85,8 +85,8 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
             flattenedDerivativeProductSpectra_[derivative_product_key] = 
                 transform_one_or_many(
                 std::function([](
-                    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& a, 
-                    const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>& b){
+                    const std::unique_ptr<linear_algebra::AbstractDenseVector>& a, 
+                    const std::unique_ptr<linear_algebra::AbstractDenseVector>& b){
                     return a->element_wise_multiplication(b);
                 }), 
                 spectrum,
@@ -95,48 +95,48 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
     }
 }
 
-std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
+std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>> 
 FlattenedSpectra::getFlattenSpectrum(common::QuantityEnum quantity_enum) const {
     if (flattenedSpectra_.contains(quantity_enum)) {
         const auto& spectrum = flattenedSpectra_.at(quantity_enum);
-        return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
-            std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(spectrum);
+        return copyRef<std::unique_ptr<linear_algebra::AbstractDenseVector>, 
+            std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>(spectrum);
     } else {
         return std::nullopt;
     }
 }
 
-std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
+std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>> 
 FlattenedSpectra::getFlattenDerivativeSpectrum(common::QuantityEnum quantity_enum, 
         const model::symbols::SymbolName& symbol_name) const {
     if (flattenedDerivativeSpectra_.contains({quantity_enum, symbol_name})) {
         const auto& spectrum = flattenedDerivativeSpectra_.at({quantity_enum, symbol_name});
-        return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
-            std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(spectrum);
+        return copyRef<std::unique_ptr<linear_algebra::AbstractDenseVector>, 
+            std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>(spectrum);
     } else {
         return std::nullopt;
     }
 }
 
-std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>> 
+std::optional<OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>> 
 FlattenedSpectra::getFlattenDerivativeProductSpectrum(common::QuantityEnum quantity_enum, common::QuantityEnum quantity_enum_derivative,
 const model::symbols::SymbolName& symbol_name) const {
     std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>> key = {quantity_enum, {quantity_enum_derivative, symbol_name}};
     if (flattenedDerivativeProductSpectra_.contains(key)) {
         const auto& spectrum = flattenedDerivativeProductSpectra_.at(key);
-        return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
-            std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(spectrum);
+        return copyRef<std::unique_ptr<linear_algebra::AbstractDenseVector>, 
+            std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>(spectrum);
     } else {
         return std::nullopt;
     }
 }
 
 
-OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>> 
+OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>> 
     FlattenedSpectra::getWeights() const {
-    return copyRef<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
-        std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>(flattenedWeights_);
+    return copyRef<std::unique_ptr<linear_algebra::AbstractDenseVector>, 
+        std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>(flattenedWeights_);
 }
 
 
-} // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

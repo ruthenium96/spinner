@@ -3,14 +3,14 @@
 #include <cmath>
 #include <utility>
 
-namespace model::operators {
+namespace spinner::model::operators {
 
 std::unique_ptr<Term> LocalSSquaredOneCenterTerm::clone() const {
     return std::make_unique<LocalSSquaredOneCenterTerm>(converter_, coefficients_, prefactor_);
 }
 
 void LocalSSquaredOneCenterTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix&
+    linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a) const {
@@ -44,4 +44,4 @@ LocalSSquaredOneCenterTerm::LocalSSquaredOneCenterTerm(
     OneCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)) {}
-}  // namespace model::operators
+} // namespace spinner::model::operators

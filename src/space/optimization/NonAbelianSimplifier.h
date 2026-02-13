@@ -4,15 +4,15 @@
 #include "src/entities/data_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 class NonAbelianSimplifier {
   public:
-    explicit NonAbelianSimplifier(quantum::linear_algebra::FactoriesList factories);
+    explicit NonAbelianSimplifier(linear_algebra::FactoriesList factories);
     Space apply(Space&& space) const;
 
   private:
-    const quantum::linear_algebra::FactoriesList factories_;
+    const linear_algebra::FactoriesList factories_;
 };
-}  // namespace space::optimization
+} // namespace spinner::space::optimization
 
 #endif  //SPINNER_NON_ABELIAN_SIMPLIFIER_H

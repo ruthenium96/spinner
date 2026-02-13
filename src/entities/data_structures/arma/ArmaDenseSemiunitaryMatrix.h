@@ -6,7 +6,7 @@
 #include "src/entities/data_structures/AbstractDenseSemiunitaryMatrix.h"
 #include "src/entities/data_structures/AbstractDenseSemiunitaryTransformer.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 class ArmaDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
   public:
@@ -27,5 +27,5 @@ class ArmaDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
     arma::Mat<T> denseSemiunitaryMatrix_;
     std::unique_ptr<AbstractDenseSemiunitaryTransformer> transformer_;
 };
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_ARMADENSESEMIUNITARYMATRIX_H

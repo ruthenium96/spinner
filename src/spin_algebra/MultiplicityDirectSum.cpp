@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace spin_algebra {
+namespace spinner::spin_algebra {
 
 MultiplicityDirectSum::MultiplicityDirectSum(Multiplicity single_multiplicity) {
     multiplicities_.push_back(single_multiplicity);
@@ -92,4 +92,4 @@ bool MultiplicityDirectSum::operator!=(const MultiplicityDirectSum& rhs) const {
     return !(rhs == *this);
 }
 
-}  // namespace spin_algebra
+} // namespace spinner::spin_algebra

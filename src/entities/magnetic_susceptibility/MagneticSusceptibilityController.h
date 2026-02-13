@@ -7,7 +7,7 @@
 #include "src/model/symbols/SymbolicWorker.h"
 #include "worker/AbstractWorker.h"
 
-namespace magnetic_susceptibility {
+namespace spinner::magnetic_susceptibility {
 
 // Class for calculating mu^2 and dmu^2/dparameter.
 // Different types of Hamiltonian and expressions in worker::AbstractWorker.
@@ -33,5 +33,5 @@ class MagneticSusceptibilityController {
     std::unique_ptr<worker::AbstractWorker> worker_;
 };
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility
 #endif  //SPINNER_MAGNETICSUSCEPTIBILITYCONTROLLER_H

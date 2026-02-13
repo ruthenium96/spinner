@@ -1,7 +1,7 @@
 #include "WignerEckartHelper.h"
 #include <cmath>
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 
 WignerEckartHelper::WignerEckartHelper(
 	std::shared_ptr<const index_converter::s_squared::OrderOfSummation> order_of_summation
@@ -154,4 +154,4 @@ void WignerEckartHelper::construct_overlapping_levels(
     }
 }
 
-} // namespace model::operators::ito
+} // namespace spinner::model::operators::ito

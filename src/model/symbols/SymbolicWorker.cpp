@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-namespace model::symbols {
+namespace spinner::model::symbols {
 SymbolicWorker::SymbolicWorker(size_t number_of_spins) : number_of_spins_(number_of_spins) {}
 
 SymbolicWorker& SymbolicWorker::assignSymbolToIsotropicExchange(
@@ -228,4 +228,4 @@ SymbolicWorker::SymbolProperty& SymbolicWorker::modifySymbolProperty(const Symbo
     }
     return symbolsProperties_.at(symbol_name);
 }
-}  // namespace model::symbols
+} // namespace spinner::model::symbols

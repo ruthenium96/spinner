@@ -3,7 +3,7 @@
 #include <functional>
 #include <utility>
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 OneSymbolInHamiltonianEigendecompositor::OneSymbolInHamiltonianEigendecompositor(
     std::unique_ptr<AbstractEigendecompositor> eigendecompositor,
@@ -18,7 +18,7 @@ OneSymbolInHamiltonianEigendecompositor::OneSymbolInHamiltonianEigendecompositor
     }
 }
 
-std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
 OneSymbolInHamiltonianEigendecompositor::BuildSubspectra(
     size_t number_of_block,
     const space::Subspace& subspace) {
@@ -110,7 +110,7 @@ OneSymbolInHamiltonianEigendecompositor::getSubmatrixDerivative(common::Quantity
     return eigendecompositor_->getSubmatrixDerivative(quantity_enum, symbol_name, number_of_block);
 }
 
-OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>
+OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>
 OneSymbolInHamiltonianEigendecompositor::getWeightsOfBlockStates(size_t number_of_block) const {
     return eigendecompositor_->getWeightsOfBlockStates(number_of_block);
 }
@@ -164,4 +164,4 @@ void OneSymbolInHamiltonianEigendecompositor::finalize() {
     first_iteration_has_been_done_ = true;
 }
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

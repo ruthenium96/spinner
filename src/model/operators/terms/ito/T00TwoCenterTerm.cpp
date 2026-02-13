@@ -9,7 +9,7 @@
 #include "src/common/index_converter/s_squared/Level.h"
 #include "src/model/operators/terms/ito/WignerEckartHelper.h"
 
-namespace model::operators::ito {
+namespace spinner::model::operators::ito {
 
 T00TwoCenterTerm::T00TwoCenterTerm(
     std::shared_ptr<const index_converter::s_squared::IndexConverter> converter,
@@ -22,7 +22,7 @@ T00TwoCenterTerm::T00TwoCenterTerm(
     wigner_eckart_helper_(converter->getOrderOfSummation()) {}
 
 void T00TwoCenterTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+    linear_algebra::AbstractSymmetricMatrix& matrix,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
     uint32_t center_b) const {
@@ -38,7 +38,7 @@ void T00TwoCenterTerm::construct(
 }
 
 void T00TwoCenterTerm::add_scalar_product(
-    quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+    linear_algebra::AbstractSymmetricMatrix& matrix,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
     uint32_t center_b,
@@ -109,4 +109,4 @@ T00TwoCenterTerm::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) co
     return answer;
 }
 
-}  // namespace model::operators::ito
+} // namespace spinner::model::operators::ito

@@ -4,7 +4,7 @@
 #include "src/common/OneOrMany.h"
 #include "src/eigendecompositor/AllQuantitiesGetter.h"
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 class AbstractEigendecompositor : public AllQuantitiesGetter {
   public:
@@ -25,7 +25,7 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
     getMatrixDerivative(common::QuantityEnum, const model::symbols::SymbolName&) const override;
     size_t getSubspectrumSize(common::QuantityEnum, size_t number_of_block) const;
 
-    OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>
+    OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>
     getWeightsOfAllStates() const override;
 
     virtual ~AbstractEigendecompositor() = default;
@@ -37,7 +37,7 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
             std::pair<common::QuantityEnum, model::symbols::SymbolName>,
             std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
         uint32_t number_of_subspaces) = 0;
-    virtual std::optional<OneOrMany<std::shared_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>>>
+    virtual std::optional<OneOrMany<std::shared_ptr<linear_algebra::AbstractDenseSemiunitaryMatrix>>>
     BuildSubspectra(size_t number_of_block, const space::Subspace& subspace) = 0;
     virtual void finalize() = 0;
   private:
@@ -45,6 +45,6 @@ class AbstractEigendecompositor : public AllQuantitiesGetter {
     uint32_t number_of_subspaces_;
 };
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor
 
 #endif  //SPINNER_ABSTRACTEIGENDECOMPOSITOR_H

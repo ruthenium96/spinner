@@ -3,13 +3,13 @@
 #include <cmath>
 #include <utility>
 
-namespace model::operators::lexicographic {
+namespace spinner::model::operators::lexicographic {
 std::unique_ptr<Term> SzSzOneCenterTerm::clone() const {
     return std::make_unique<SzSzOneCenterTerm>(converter_, coefficients_);
 }
 
 void SzSzOneCenterTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix&
+    linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a) const {
@@ -37,4 +37,4 @@ SzSzOneCenterTerm::SzSzOneCenterTerm(
     OneCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
     coefficients_(std::move(coefficients)) {}
-}  // namespace model::operators::lexicographic
+} // namespace spinner::model::operators::lexicographic

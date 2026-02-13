@@ -8,13 +8,15 @@
 #include "src/entities/data_structures/FactoriesList.h"
 #include "src/space/Space.h"
 
+namespace spinner {
+
 struct Matrix {
     Matrix() = default;
     Matrix(
         const space::Space& space,
         const model::operators::Operator& new_operator,
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-        const quantum::linear_algebra::FactoriesList& factories,
+        const linear_algebra::FactoriesList& factories,
         bool return_sparse_if_possible);
 
     std::vector<Submatrix> blocks;
@@ -27,5 +29,7 @@ struct MatrixRef {
     explicit MatrixRef(const Matrix& matrix);
     explicit MatrixRef(std::vector<std::reference_wrapper<const Submatrix>>&& blocks_);
 };
+
+} // namespace spinner
 
 #endif  //SPINNER_MATRIX_H

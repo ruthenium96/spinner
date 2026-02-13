@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-namespace index_converter::s_squared {
+namespace spinner::index_converter::s_squared {
 class Level {
   public:
     Level(
@@ -28,6 +28,6 @@ class Level {
     std::shared_ptr<std::vector<spin_algebra::Multiplicity>> initialMultiplicities_;
     std::vector<spin_algebra::Multiplicity> intermediateMultiplicities_;
 };
-} // namespace index_converter::s_squared
+} // namespace spinner::index_converter::s_squared
 
 #endif // SPINNER_S2LEVEL_H

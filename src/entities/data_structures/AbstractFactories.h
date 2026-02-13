@@ -8,7 +8,7 @@
 #include "AbstractSparseSemiunitaryMatrix.h"
 #include "AbstractSymmetricMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 enum Precision { SINGLE, DOUBLE };
 
@@ -46,6 +46,6 @@ class AbstractSparseTransformFactory {
     ~AbstractSparseTransformFactory() = default;
 };
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 
 #endif  //SPINNER_ABSTRACTFACTORIES_H

@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+namespace spinner {
+
 struct BlockProperties {
     std::string get_representation_name() const;
 
@@ -18,5 +20,7 @@ struct BlockProperties {
 
     bool operator==(const BlockProperties&) const = default;
 };
+
+} // namespace spinner
 
 #endif  //SPINNER_BLOCKPROPERTIES_H

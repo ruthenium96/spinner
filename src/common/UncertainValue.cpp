@@ -6,9 +6,9 @@ template <typename T>
 inline constexpr int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
-}
+} // namespace
 
-namespace common {
+namespace spinner::common {
 
 UncertainValue::UncertainValue() : mean_(0.0), stdevs_({}) {}
 
@@ -167,4 +167,4 @@ UncertainValue UncertainValue::inv(const UncertainValue& value) {
     return answer;
 }
 
-} // common
+} // namespace spinner::common

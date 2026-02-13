@@ -5,7 +5,7 @@
 #include <optional>
 #include <vector>
 
-namespace nonlinear_solver {
+namespace spinner::nonlinear_solver {
 
 class AbstractNonlinearSolver {
   public:
@@ -21,6 +21,6 @@ class AbstractNonlinearSolver {
     virtual ~AbstractNonlinearSolver() = default;
 };
 
-}  // namespace nonlinear_solver
+} // namespace spinner::nonlinear_solver
 
 #endif  //SPINNER_ABSTRACTNONLINEARSOLVER_H

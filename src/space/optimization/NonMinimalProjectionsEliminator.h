@@ -3,7 +3,7 @@
 
 #include "src/space/Space.h"
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 class NonMinimalProjectionsEliminator {
   public:
     explicit NonMinimalProjectionsEliminator(uint32_t max_total_mult);
@@ -12,6 +12,6 @@ class NonMinimalProjectionsEliminator {
   private:
     uint32_t max_total_mult_;
 };
-} // namespace space::optimization
+} // namespace spinner::space::optimization
 
 #endif // SPINNER_NONMINIMALPROJECTIONSELIMINATOR_H

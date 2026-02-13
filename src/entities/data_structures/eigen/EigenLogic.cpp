@@ -153,7 +153,7 @@ std::tuple<Eigen::Vector<T, -1>, Eigen::Matrix<T, -1, -1>, Eigen::Vector<T, -1>>
 
 } // namespace
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 template <typename T, typename M>
 inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
@@ -351,4 +351,4 @@ EigenLogic<T>::diagonalizeValuesVectors(const AbstractDiagonalizableMatrix& symm
 
 template class EigenLogic<double>;
 template class EigenLogic<float>;
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra

@@ -4,10 +4,12 @@
 #include "src/common/Logger.h"
 #include "src/space/optimization/OptimizedSpaceConstructor.h"
 
+using namespace spinner::common::physical_optimization;
+using namespace spinner::group;
 
-const auto factories = quantum::linear_algebra::FactoriesList();
+const auto factories = spinner::linear_algebra::FactoriesList();
 
-void compare_two_spaces(const space::Space& one, const space::Space& two) {
+void compare_two_spaces(const spinner::space::Space& one, const spinner::space::Space& two) {
    ASSERT_EQ(one.getBlocks().size(), two.getBlocks().size())
        << "Numbers of subspaces do not equal";
    for (size_t i = 0; i < one.getBlocks().size(); ++i) {
@@ -67,19 +69,19 @@ void compare_two_spaces(const space::Space& one, const space::Space& two) {
 }
 
 TEST(nonAbelianSimplifier, 333_Dih3) {
-    std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3};
-    model::ModelInput model(mults);
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3};
+    spinner::model::ModelInput model(mults);
 
-    common::physical_optimization::OptimizationList optimizationListFull;
-    optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
-    common::physical_optimization::OptimizationList optimizationListSimplified;
-    optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+    OptimizationList optimizationListFull;
+    optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
+    OptimizationList optimizationListSimplified;
+    optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}});
     optimizationListSimplified.NonAbelianSimplify();
 
-    space::Space space_full = space::optimization::OptimizedSpaceConstructor::construct(
+    spinner::space::Space space_full = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationListFull},
         factories);
-    space::Space space_simplified = space::optimization::OptimizedSpaceConstructor::construct(
+    spinner::space::Space space_simplified = spinner::space::optimization::OptimizedSpaceConstructor::construct(
         {model, optimizationListFull},
         factories);
 
@@ -87,19 +89,19 @@ TEST(nonAbelianSimplifier, 333_Dih3) {
 }
 
 TEST(nonAbelianSimplifier, 333333_Dih3) {
-   std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
-   model::ModelInput model(mults);
+   std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
+   spinner::model::ModelInput model(mults);
 
-   common::physical_optimization::OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-   common::physical_optimization::OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   OptimizationList optimizationListFull;
+   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   OptimizationList optimizationListSimplified;
+   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
    optimizationListSimplified.NonAbelianSimplify();
 
-   space::Space space_full = space::optimization::OptimizedSpaceConstructor::construct(
+   spinner::space::Space space_full = spinner::space::optimization::OptimizedSpaceConstructor::construct(
        {model, optimizationListFull},
        factories);
-   space::Space space_simplified = space::optimization::OptimizedSpaceConstructor::construct(
+   spinner::space::Space space_simplified = spinner::space::optimization::OptimizedSpaceConstructor::construct(
        {model, optimizationListFull},
        factories);
 
@@ -107,21 +109,21 @@ TEST(nonAbelianSimplifier, 333333_Dih3) {
 }
 
 TEST(nonAbelianSimplifier, 333333_Dih3xS2) {
-   std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
-   model::ModelInput model(mults);
+   std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3};
+   spinner::model::ModelInput model(mults);
 
-   common::physical_optimization::OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-   optimizationListFull.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
-   common::physical_optimization::OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
-   optimizationListSimplified.Symmetrize(group::Group::S2, {{3, 4, 5, 0, 1, 2}});
+   OptimizationList optimizationListFull;
+   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   optimizationListFull.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
+   OptimizationList optimizationListSimplified;
+   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3}, {0, 2, 1, 3, 5, 4}});
+   optimizationListSimplified.Symmetrize(Group::S2, {{3, 4, 5, 0, 1, 2}});
    optimizationListSimplified.NonAbelianSimplify();
 
-   space::Space space_full = space::optimization::OptimizedSpaceConstructor::construct(
+   spinner::space::Space space_full = spinner::space::optimization::OptimizedSpaceConstructor::construct(
        {model, optimizationListFull},
        factories);
-   space::Space space_simplified = space::optimization::OptimizedSpaceConstructor::construct(
+   spinner::space::Space space_simplified = spinner::space::optimization::OptimizedSpaceConstructor::construct(
        {model, optimizationListFull},
        factories);
 
@@ -129,27 +131,27 @@ TEST(nonAbelianSimplifier, 333333_Dih3xS2) {
 }
 
 TEST(nonAbelianSimplifier, 222222222) {
-   std::vector<spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
-   model::ModelInput model(mults);
+   std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2, 2, 2, 2, 2, 2, 2, 2};
+   spinner::model::ModelInput model(mults);
 
-   common::physical_optimization::OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-   common::physical_optimization::OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   OptimizationList optimizationListFull;
+   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   OptimizationList optimizationListSimplified;
+   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
    EXPECT_THROW(optimizationListSimplified.NonAbelianSimplify(), std::invalid_argument);
 }
 
 TEST(nonAbelianSimplifier, 333333333) {
-   std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
-   model::ModelInput model(mults);
+   std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3, 3, 3, 3, 3, 3};
+   spinner::model::ModelInput model(mults);
 
-   common::physical_optimization::OptimizationList optimizationListFull;
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListFull.Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
-   common::physical_optimization::OptimizationList optimizationListSimplified;
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
-   optimizationListSimplified.Symmetrize({group::Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   OptimizationList optimizationListFull;
+   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListFull.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
+   OptimizationList optimizationListSimplified;
+   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{1, 2, 0, 4, 5, 3, 7, 8, 6}, {0, 2, 1, 3, 5, 4, 6, 8, 7}});
+   optimizationListSimplified.Symmetrize({Group::Dihedral, 3}, {{3, 4, 5, 6, 7, 8, 0, 1, 2}, {0, 1, 2, 6, 7, 8, 3, 4, 5}});
    EXPECT_THROW(optimizationListSimplified.NonAbelianSimplify(), std::invalid_argument);
 }

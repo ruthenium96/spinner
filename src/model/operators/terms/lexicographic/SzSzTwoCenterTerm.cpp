@@ -2,7 +2,7 @@
 
 #include <utility>
 
-namespace model::operators::lexicographic {
+namespace spinner::model::operators::lexicographic {
 
 SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter,
@@ -14,7 +14,7 @@ SzSzTwoCenterTerm::SzSzTwoCenterTerm(
     prefactor_(prefactor) {}
 
 void SzSzTwoCenterTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix&
+    linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
@@ -40,4 +40,4 @@ std::unique_ptr<Term> SzSzTwoCenterTerm::clone() const {
     return std::make_unique<SzSzTwoCenterTerm>(converter_, coefficients_, prefactor_);
 }
 
-}  // namespace model::operators::lexicographic
+} // namespace spinner::model::operators::lexicographic

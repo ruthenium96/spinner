@@ -7,7 +7,7 @@
 #include "src/entities/data_structures/AbstractDenseVector.h"
 #include "src/entities/data_structures/AbstractDiagonalizableMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 template <typename T>
 class EigenLogic {
   public:
@@ -26,6 +26,6 @@ class EigenLogic {
       size_t krylov_subspace_size) const;
 };
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 
 #endif  //SPINNER_EIGENLOGIC_H

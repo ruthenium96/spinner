@@ -8,7 +8,7 @@
 #include "src/common/index_converter/lexicographic/IndexConverter.h"
 #include "src/common/index_converter/s_squared/IndexConverter.h"
 
-namespace runner {
+namespace spinner::runner {
 // This class keeps consistent pair (Model, OptimizationList).
 // If inconsistent pair was passed to constructor, it throws a suitable exception.
 class ConsistentModelOptimizationList {
@@ -55,6 +55,6 @@ class ConsistentModelOptimizationList {
     std::shared_ptr<index_converter::s_squared::IndexConverter> s_squared_index_converter_;
     std::shared_ptr<index_converter::lexicographic::IndexConverter> lex_index_converter_;
 };
-}  // namespace runner
+} // namespace spinner::runner
 
 #endif  //SPINNER_CONSISTENTMODELOPTIMIZATIONLIST_H

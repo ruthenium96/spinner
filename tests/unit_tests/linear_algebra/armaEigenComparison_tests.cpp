@@ -4,6 +4,8 @@
 #include "tests/tools/AllSymmetricMatrixFactories.h"
 #include "tests/tools/GenerateSameMatrix.h"
 
+using namespace spinner::linear_algebra;
+
 inline int sign_f(double a, double b)
 {
     return -2 * (std::signbit(a) ^ std::signbit(b)) + 1;
@@ -39,7 +41,7 @@ TEST(linearAlgebraFactories, throw_combination_of_different_objects) {
         }
     }
 
-    std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectors;
+    std::vector<std::unique_ptr<AbstractDenseVector>> denseVectors;
     for (int i = 0; i < denseUnitaryMatrices.size(); ++i) {
         denseVectors.emplace_back(denseDiagonalizableMatrices[i]->diagonalizeValues());
     }
@@ -77,7 +79,7 @@ TEST(linearAlgebraFactories, eigendecomposition) {
         // only-values-eigendecomposition:
         {
             // decomposition
-            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectors;
+            std::vector<std::unique_ptr<AbstractDenseVector>> denseVectors;
             for (const auto& matrix : matrices) {
                 denseVectors.emplace_back(matrix->diagonalizeValues());
             }
@@ -99,7 +101,7 @@ TEST(linearAlgebraFactories, eigendecomposition) {
         // eigendecomposition-with-eigenvectors
         {
             // decomposition
-            std::vector<quantum::linear_algebra::EigenCouple> denseEigenCouples;
+            std::vector<EigenCouple> denseEigenCouples;
             for (const auto& matrix : matrices) {
                 denseEigenCouples.emplace_back(matrix->diagonalizeValuesVectors());
             }
@@ -154,8 +156,8 @@ TEST(linearAlgebraFactories, krylov_eigendecomposition) {
         // only-values-eigendecomposition:
         {
             // decomposition
-            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsEnergy;
-            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsWeights;
+            std::vector<std::unique_ptr<AbstractDenseVector>> denseVectorsEnergy;
+            std::vector<std::unique_ptr<AbstractDenseVector>> denseVectorsWeights;
             for (int i = 0; i < matrices.size(); ++i) {
                 const auto& matrix = matrices[i];
                 const auto& orth_vector = orth_vectors[i];
@@ -184,9 +186,9 @@ TEST(linearAlgebraFactories, krylov_eigendecomposition) {
         // eigendecomposition-with-eigenvectors
         {
             // decomposition
-            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsEnergy;
-            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>> denseVectorsWeights;
-            std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseSemiunitaryMatrix>> denseUnitaryMatrices;
+            std::vector<std::unique_ptr<AbstractDenseVector>> denseVectorsEnergy;
+            std::vector<std::unique_ptr<AbstractDenseVector>> denseVectorsWeights;
+            std::vector<std::unique_ptr<AbstractDenseSemiunitaryMatrix>> denseUnitaryMatrices;
             for (int i = 0; i < matrices.size(); ++i) {
                 const auto& matrix = matrices[i];
                 const auto& orth_vector = orth_vectors[i];
@@ -247,7 +249,7 @@ TEST(linearAlgebraFactories, unitary_transformation_and_return_main_diagonal) {
             rng);
 
         // unitary transformation and returning main diagonal:
-        std::vector<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>
+        std::vector<std::unique_ptr<AbstractDenseVector>>
             denseTransformedMainDiagonal;
         for (size_t i = 0; i < denseDiagonalizableMatrices.size(); ++i) {
             const auto& denseDiagonalizableMatrix = denseDiagonalizableMatrices[i];

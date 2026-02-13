@@ -9,22 +9,26 @@
 
 #include "src/common/index_converter/AbstractIndexConverter.h"
 
+namespace spinner {
+
 struct Submatrix {
     BlockProperties properties;
-    std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data;
+    std::unique_ptr<linear_algebra::AbstractDiagonalizableMatrix> raw_data;
 
     Submatrix() = default;
 
     Submatrix(
-        std::unique_ptr<quantum::linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
+        std::unique_ptr<linear_algebra::AbstractDiagonalizableMatrix> raw_data_,
         BlockProperties properties_);
 
     Submatrix(
         const space::Subspace& subspace,
         const model::operators::Operator& new_operator,
         std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-        const quantum::linear_algebra::FactoriesList& factories,
+        const linear_algebra::FactoriesList& factories,
         bool return_sparse_if_possible);
 };
+
+} // namespace spinner
 
 #endif  //SPINNER_SUBMATRIX_H

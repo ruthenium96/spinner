@@ -1,6 +1,8 @@
 #include "EmhashSparseSymmetricMatrix.h"
 
-namespace quantum::linear_algebra {
+#include <ostream>
+
+namespace spinner::linear_algebra {
 
 void EmhashSparseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     if (!hashmap_.contains(i)) {
@@ -54,4 +56,4 @@ void EmhashSparseSymmetricMatrix::print(std::ostream& os) const {
     }
 }
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra

@@ -4,7 +4,7 @@
 #include "src/entities/matrix/Matrix.h"
 #include "src/entities/spectrum/Spectrum.h"
 
-namespace common {
+namespace spinner::common {
 enum QuantityEnum {
     Energy,
     S_total_squared, M_total_squared,
@@ -14,6 +14,6 @@ struct Quantity {
     Matrix matrix_;
     Spectrum spectrum_;
 };
-}  // namespace common
+} // namespace spinner::common
 
 #endif  //SPINNER_QUANTITYENUM_H

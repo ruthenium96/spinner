@@ -4,7 +4,7 @@
 #include "EmhashSparseSemiunitaryMatrix.h"
 #include "EmhashSparseSymmetricMatrix.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 class EmhashLogic {
   public:
@@ -14,6 +14,6 @@ class EmhashLogic {
         const AbstractSparseSemiunitaryMatrix& unitaryMatrix) const;
 };
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 
 #endif  //SPINNER_EMHASHLOGIC_H

@@ -9,18 +9,18 @@
 
 namespace {
 template <typename T, typename U>
-OneOrMany<U> getEntity(
+spinner::OneOrMany<U> getEntity(
     size_t number_of_subspaces, 
-    const std::vector<OneOrMany<std::reference_wrapper<const T>>>& data) {
+    const std::vector<spinner::OneOrMany<std::reference_wrapper<const T>>>& data) {
     if (std::all_of(
         data.cbegin(), 
         data.cend(), 
-        holdsOne<std::reference_wrapper<const T>>
+        spinner::holdsOne<std::reference_wrapper<const T>>
         )       
     ) {
         std::vector<std::reference_wrapper<const T>> answer;
         for (const auto& el: data) {
-            answer.push_back(getOneRef(el));
+            answer.push_back(spinner::getOneRef(el));
         }
         return U(std::move(answer));
     } else {
@@ -28,18 +28,18 @@ OneOrMany<U> getEntity(
         auto it = std::find_if(
             data.cbegin(),
             data.cend(),
-            holdsMany<std::reference_wrapper<const T>>
+            spinner::holdsMany<std::reference_wrapper<const T>>
         );
-        size_t number_of_many = getManyRef(*it).size();
+        size_t number_of_many = spinner::getManyRef(*it).size();
         std::vector<std::vector<std::reference_wrapper<const T>>> vector_of_answers(number_of_many);
         for (const auto& el: data) {
-            if (holdsOne(el)) {
-                auto reference = getOneRef(el);
+            if (spinner::holdsOne(el)) {
+                auto reference = spinner::getOneRef(el);
                 for (int j = 0; j < number_of_many; ++j) {
                     vector_of_answers[j].push_back(reference);
                 }
             } else {
-                auto vector_of_references = getManyRef(el);
+                auto vector_of_references = spinner::getManyRef(el);
                 for (int j = 0; j < number_of_many; ++j) {
                     vector_of_answers[j].push_back(vector_of_references[j]);
                 }
@@ -54,10 +54,10 @@ OneOrMany<U> getEntity(
 }
 
 template <typename T, typename U>
-std::optional<OneOrMany<U>> getEntity(
+std::optional<spinner::OneOrMany<U>> getEntity(
     size_t number_of_subspaces, 
-    std::function<std::optional<OneOrMany<std::reference_wrapper<const T>>>(size_t)> getter) {
-    std::vector<std::optional<OneOrMany<std::reference_wrapper<const T>>>> mb_data;
+    std::function<std::optional<spinner::OneOrMany<std::reference_wrapper<const T>>>(size_t)> getter) {
+    std::vector<std::optional<spinner::OneOrMany<std::reference_wrapper<const T>>>> mb_data;
     for (int i = 0; i < number_of_subspaces; ++i) {
         mb_data.push_back(getter(i));
     }
@@ -69,16 +69,15 @@ std::optional<OneOrMany<U>> getEntity(
         throw std::logic_error("Some Subspectra were not defined, while some were defined!");
     }
 
-    std::vector<OneOrMany<std::reference_wrapper<const T>>> data;
+    std::vector<spinner::OneOrMany<std::reference_wrapper<const T>>> data;
     for (const auto& mb_el : mb_data) {
         data.push_back(mb_el.value());
     }
     return getEntity<T, U>(number_of_subspaces, data);
 }
-
 } // namespace
 
-namespace eigendecompositor {
+namespace spinner::eigendecompositor {
 
 void AbstractEigendecompositor::BuildSpectra(
     const std::map<common::QuantityEnum, std::shared_ptr<const model::operators::Operator>>&
@@ -169,16 +168,16 @@ size_t AbstractEigendecompositor::getSubspectrumSize(common::QuantityEnum quanti
     }
 }
 
-OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>
+OneOrMany<std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>
 AbstractEigendecompositor::getWeightsOfAllStates() const {
-    std::vector<OneOrMany<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>
+    std::vector<OneOrMany<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>
         weights;
     for (size_t i = 0; i < number_of_subspaces_; ++i) {
         weights.push_back(getWeightsOfBlockStates(i));
     }
-    return getEntity<std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>, 
-        std::vector<std::reference_wrapper<const std::unique_ptr<quantum::linear_algebra::AbstractDenseVector>>>>(
+    return getEntity<std::unique_ptr<linear_algebra::AbstractDenseVector>, 
+        std::vector<std::reference_wrapper<const std::unique_ptr<linear_algebra::AbstractDenseVector>>>>(
         number_of_subspaces_, weights);
 }
 
-}  // namespace eigendecompositor
+} // namespace spinner::eigendecompositor

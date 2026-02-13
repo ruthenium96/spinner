@@ -6,7 +6,7 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/spdlog.h>
 
-namespace common {
+namespace spinner::common {
 
 enum PrintLevel {
     trace, debug, verbose, detailed, basic, error, off
@@ -126,6 +126,6 @@ class SpdlogStreamMsg : public std::stringbuf {
   private:
     PrintLevel level_;
 };
-}
+} // namespace spinner::common
 
 #endif  //SPINNER_LOGGER_H

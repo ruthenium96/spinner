@@ -5,7 +5,7 @@
 #include "src/spin_algebra/Multiplicity.h"
 
 
-namespace index_converter {
+namespace spinner::index_converter {
 
 class AbstractIndexConverter {
   public:
@@ -26,7 +26,7 @@ class AbstractIndexConverter {
     uint32_t total_space_size_;
     uint32_t max_ntz_proj_;
 };
-} // namespace index_converter
+} // namespace spinner::index_converter
 
 
 #endif  // SPINNER_ABSTRACT_INDEX_CONVERTER_H

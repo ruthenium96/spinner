@@ -5,7 +5,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace input {
+namespace spinner::input {
 
 Parser::Parser(const std::string& filename, bool dry_run) {
     auto input_node = YAML::LoadFile(filename);
@@ -51,7 +51,7 @@ Parser::getExperimentalValuesWorker() const {
     return job_parser_->getExperimentalValuesWorker();
 }
 
-const std::optional<quantum::linear_algebra::FactoriesList>& Parser::getFactoriesList() const {
+const std::optional<linear_algebra::FactoriesList>& Parser::getFactoriesList() const {
     return control_parser_->getFactoriesList();
 }
-}  // namespace input
+} // namespace spinner::input

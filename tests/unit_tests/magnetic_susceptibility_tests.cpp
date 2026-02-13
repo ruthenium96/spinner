@@ -6,18 +6,20 @@
 #include "src/common/UncertainValue.h"
 #include "src/common/runner/Runner.h"
 
-TEST(magnetic_susceptibility, throw_experimental_values_worker_set_values_length_error) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
-        {1, common::UncertainValue(1)}, 
-        {2, common::UncertainValue(2)}, 
-        {3, common::UncertainValue(3)}};
+using namespace spinner::magnetic_susceptibility;
 
-    magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
+TEST(magnetic_susceptibility, throw_experimental_values_worker_set_values_length_error) {
+    std::vector<ValueAtTemperature> exp_values = {
+        {1, spinner::common::UncertainValue(1)}, 
+        {2, spinner::common::UncertainValue(2)}, 
+        {3, spinner::common::UncertainValue(3)}};
+
+    ExperimentalValuesWorker experimental_values_worker(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1);
 
-    std::vector<magnetic_susceptibility::ValueAtTemperature> theor_values = exp_values;
+    std::vector<ValueAtTemperature> theor_values = exp_values;
     theor_values.pop_back();
 
     EXPECT_THROW(
@@ -26,62 +28,62 @@ TEST(magnetic_susceptibility, throw_experimental_values_worker_set_values_length
 }
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_get_values_empty) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
-        {1, common::UncertainValue(1)}, 
-        {2, common::UncertainValue(2)}, 
-        {3, common::UncertainValue(3)}};
+    std::vector<ValueAtTemperature> exp_values = {
+        {1, spinner::common::UncertainValue(1)}, 
+        {2, spinner::common::UncertainValue(2)}, 
+        {3, spinner::common::UncertainValue(3)}};
 
-    magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
+    ExperimentalValuesWorker experimental_values_worker(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1);
 
     EXPECT_THROW(experimental_values_worker.getTheoreticalValues(), std::length_error);
 }
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_residual_error_empty) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
-        {1, common::UncertainValue(1)}, 
-        {2, common::UncertainValue(2)}, 
-        {3, common::UncertainValue(3)}};
+    std::vector<ValueAtTemperature> exp_values = {
+        {1, spinner::common::UncertainValue(1)}, 
+        {2, spinner::common::UncertainValue(2)}, 
+        {3, spinner::common::UncertainValue(3)}};
 
-    magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
+    ExperimentalValuesWorker experimental_values_worker(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1);
 
     EXPECT_THROW(experimental_values_worker.calculateResidualError(), std::length_error);
 }
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_derivative_empty) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {
-        {1, common::UncertainValue(1)}, 
-        {2, common::UncertainValue(2)}, 
-        {3, common::UncertainValue(3)}};
+    std::vector<ValueAtTemperature> exp_values = {
+        {1, spinner::common::UncertainValue(1)}, 
+        {2, spinner::common::UncertainValue(2)}, 
+        {3, spinner::common::UncertainValue(3)}};
 
-    magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
+    ExperimentalValuesWorker experimental_values_worker(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1);
 
     EXPECT_THROW(experimental_values_worker.calculateDerivative(), std::length_error);
 }
 
 TEST(magnetic_susceptibility, throw_experimental_values_worker_empty_experimental_values) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {};
+    std::vector<ValueAtTemperature> exp_values = {};
 
     EXPECT_THROW(
-        magnetic_susceptibility::ExperimentalValuesWorker experimental_values_worker(
+        ExperimentalValuesWorker experimental_values_worker(
             exp_values,
-            magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+            mu_squared_in_bohr_magnetons_squared,
             1),
         std::length_error);
 }
 
 TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, common::UncertainValue(20)}};
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2};
-    model::ModelInput model(mults);
+    std::vector<ValueAtTemperature> exp_values = {{1, spinner::common::UncertainValue(20)}};
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2};
+    spinner::model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.addSymbol("J", J_value);
     model.assignSymbolToIsotropicExchange(J, 0, 1);
@@ -91,20 +93,20 @@ TEST(magnetic_susceptibility, do_not_throw_experimental_before_theoretical) {
         model.assignSymbolToGFactor(g, i);
     }
 
-    runner::Runner runner(model);
+    spinner::runner::Runner runner(model);
 
     runner.initializeExperimentalValues(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1);
 
     EXPECT_NO_THROW(runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(100));
 }
 
 TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values = {{1, common::UncertainValue(20)}};
-    std::vector<spin_algebra::Multiplicity> mults = {2, 2};
-    model::ModelInput model(mults);
+    std::vector<ValueAtTemperature> exp_values = {{1, spinner::common::UncertainValue(20)}};
+    std::vector<spinner::spin_algebra::Multiplicity> mults = {2, 2};
+    spinner::model::ModelInput model(mults);
     double J_value = 10;
     auto J = model.addSymbol("J", J_value);
     model.assignSymbolToIsotropicExchange(J, 0, 1);
@@ -114,51 +116,51 @@ TEST(magnetic_susceptibility, do_not_throw_theoretical_before_experimental) {
         model.assignSymbolToGFactor(g, i);
     }
 
-    runner::Runner runner(model);
+    spinner::runner::Runner runner(model);
 
     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(100);
     EXPECT_NO_THROW(runner.initializeExperimentalValues(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1));
 }
 
 TEST(magnetic_susceptibility, sort_experimental_temperatues) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values =
-        {{10, common::UncertainValue(20)}, 
-        {4, common::UncertainValue(20)}, 
-        {5, common::UncertainValue(20)}, 
-        {11, common::UncertainValue(20)}, 
-        {8, common::UncertainValue(20)}, 
-        {9, common::UncertainValue(20)}};
-    auto worker = magnetic_susceptibility::ExperimentalValuesWorker(
+    std::vector<ValueAtTemperature> exp_values =
+        {{10, spinner::common::UncertainValue(20)}, 
+        {4, spinner::common::UncertainValue(20)}, 
+        {5, spinner::common::UncertainValue(20)}, 
+        {11, spinner::common::UncertainValue(20)}, 
+        {8, spinner::common::UncertainValue(20)}, 
+        {9, spinner::common::UncertainValue(20)}};
+    auto worker = ExperimentalValuesWorker(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1);
     auto temperatures = worker.getTemperatures();
     EXPECT_TRUE(std::is_sorted(temperatures.begin(), temperatures.end()));
 }
 
 TEST(magnetic_susceptibility, equvalence_of_weight_schemes_on_equidistant_data) {
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values;
+    std::vector<ValueAtTemperature> exp_values;
 
     for (size_t i = 1; i < 300; i += 3) {
-        magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+        ValueAtTemperature value_at_temperature = {
             static_cast<double>(i),
-            common::UncertainValue(1.0)};
+            spinner::common::UncertainValue(1.0)};
         exp_values.push_back(value_at_temperature);
     }
 
-    magnetic_susceptibility::ExperimentalValuesWorker worker_per_point(
+    ExperimentalValuesWorker worker_per_point(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1.0,
-        magnetic_susceptibility::per_point);
-    magnetic_susceptibility::ExperimentalValuesWorker worker_per_interval(
+        per_point);
+    ExperimentalValuesWorker worker_per_interval(
         exp_values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1.0,
-        magnetic_susceptibility::per_interval);
+        per_interval);
 
     const auto& weights_per_point = worker_per_point.getWeights();
     const auto& weights_per_interval = worker_per_interval.getWeights();
@@ -170,28 +172,28 @@ TEST(magnetic_susceptibility, equvalence_of_weight_schemes_on_equidistant_data) 
 }
 
 TEST(magnetic_susceptibility, value_mu_squared_reversibility) {
-    std::vector<magnetic_susceptibility::ExperimentalValuesEnum> values_enum = {
-        magnetic_susceptibility::mu_in_bohr_magnetons,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
-        magnetic_susceptibility::chiT_in_cm_cubed_kelvin_per_mol,
-        magnetic_susceptibility::chi_in_cm_cubed_per_mol};
+    std::vector<ExperimentalValuesEnum> values_enum = {
+        mu_in_bohr_magnetons,
+        mu_squared_in_bohr_magnetons_squared,
+        chiT_in_cm_cubed_kelvin_per_mol,
+        chi_in_cm_cubed_per_mol};
 
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist(1, 100);
 
-    std::vector<magnetic_susceptibility::ValueAtTemperature> exp_values;
+    std::vector<ValueAtTemperature> exp_values;
 
     for (size_t i = 1; i < 300; ++i) {
-        magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+        ValueAtTemperature value_at_temperature = {
             static_cast<double>(i),
-            common::UncertainValue(static_cast<double>(dist(rng)))};
+            spinner::common::UncertainValue(static_cast<double>(dist(rng)))};
         exp_values.push_back(value_at_temperature);
     }
 
     for (const auto& value_enum : values_enum) {
         for (size_t ratio = 1; ratio < 10; ++ratio) {
-            magnetic_susceptibility::ExperimentalValuesWorker worker(exp_values, value_enum, ratio);
+            ExperimentalValuesWorker worker(exp_values, value_enum, ratio);
             worker.setTheoreticalMuSquared(worker.getExperimentalMuSquared());
             auto double_transformed = worker.getTheoreticalValues();
             for (size_t i = 0; i < double_transformed.size(); ++i) {
@@ -208,30 +210,30 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
 
     for (size_t _ = 0; _ < 20; ++_) {
         const double g_factor = g_dist(rng);
-        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
+        std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values_unique;
+        std::vector<ValueAtTemperature> values_unique;
 
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             auto g = model.addSymbol("g", g_factor);
             for (size_t i = 0; i < mults.size(); ++i) {
                 model.assignSymbolToGFactor(g, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values_unique.push_back(value_at_temperature);
             }
         }
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values_different;
+        std::vector<ValueAtTemperature> values_different;
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             auto g_one = model.addSymbol("g1", g_factor);
             auto g_two = model.addSymbol("g2", g_factor);
             for (size_t i = 0; i < mults.size() / 2; ++i) {
@@ -241,10 +243,10 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference) {
                 model.assignSymbolToGFactor(g_two, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values_different.push_back(value_at_temperature);
@@ -271,12 +273,12 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
         const double J_exact = J_dist(rng);
         const double g_factor = g_dist(rng);
 
-        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
+        std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values_unique;
+        std::vector<ValueAtTemperature> values_unique;
 
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             auto J = model.addSymbol("J", J_exact);
             model.assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
@@ -288,19 +290,19 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
                 model.assignSymbolToGFactor(g, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values_unique.push_back(value_at_temperature);
             }
         }
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values_different;
+        std::vector<ValueAtTemperature> values_different;
         {
-            model::ModelInput model(mults);
+            spinner::model::ModelInput model(mults);
             auto J = model.addSymbol("J", J_exact);
             model.assignSymbolToIsotropicExchange(J, 0, 1)
                 .assignSymbolToIsotropicExchange(J, 1, 2)
@@ -315,10 +317,10 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
                 model.assignSymbolToGFactor(g_two, i);
             }
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values_different.push_back(value_at_temperature);
@@ -335,11 +337,11 @@ TEST(magnetic_susceptibility, unique_g_different_g_difference_J) {
     }
 }
 
-model::ModelInput constructFourCenterModel_g_J(
-    const std::vector<spin_algebra::Multiplicity>& mults,
+spinner::model::ModelInput constructFourCenterModel_g_J(
+    const std::vector<spinner::spin_algebra::Multiplicity>& mults,
     double J_value,
     double g_value) {
-    model::ModelInput model(mults);
+    spinner::model::ModelInput model(mults);
     auto J = model.addSymbol("J", J_value);
     model.assignSymbolToIsotropicExchange(J, 0, 1)
         .assignSymbolToIsotropicExchange(J, 1, 2)
@@ -354,13 +356,13 @@ model::ModelInput constructFourCenterModel_g_J(
 }
 
 double calculateResidualError(
-    model::ModelInput model,
-    const std::vector<magnetic_susceptibility::ValueAtTemperature>& values) {
-    runner::Runner runner(std::move(model));
+    spinner::model::ModelInput model,
+    const std::vector<ValueAtTemperature>& values) {
+    spinner::runner::Runner runner(std::move(model));
 
     runner.initializeExperimentalValues(
         values,
-        magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+        mu_squared_in_bohr_magnetons_squared,
         1);
 
     return runner.getMagneticSusceptibilityController().calculateResidualError().mean();
@@ -376,15 +378,15 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
         const double J_exact = J_dist(rng);
         const double g_factor = g_dist(rng);
 
-        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
+        std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        std::vector<ValueAtTemperature> values;
         {
             auto model = constructFourCenterModel_g_J(mults, J_exact, g_factor);
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
@@ -405,15 +407,15 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
         {
             auto model = constructFourCenterModel_g_J(mults, J_value, g_value);
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             runner.initializeExperimentalValues(
                 values,
-                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
-            auto g = runner.getSymbolicWorker().getChangeableNames(model::symbols::g_factor)[0];
+            auto J = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::J)[0];
+            auto g = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::g_factor)[0];
 
             auto derivative_map = runner.calculateTotalDerivatives();
             analytical_dR2_wrt_dJ = derivative_map[J];
@@ -446,13 +448,13 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g) {
     }
 }
 
-model::ModelInput constructRingModel_J_J_g_g(
-    const std::vector<spin_algebra::Multiplicity>& mults,
+spinner::model::ModelInput constructRingModel_J_J_g_g(
+    const std::vector<spinner::spin_algebra::Multiplicity>& mults,
     double J_one_value,
     double J_two_value,
     double g_one_value,
     double g_two_value) {
-    model::ModelInput model(mults);
+    spinner::model::ModelInput model(mults);
     auto J_one = model.addSymbol("J1", J_one_value);
     auto J_two = model.addSymbol("J2", J_two_value);
     size_t size = mults.size();
@@ -483,15 +485,15 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_J_g_
         const double g_one_factor = g_dist_one(rng);
         const double g_two_factor = g_dist_two(rng);
 
-        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
+        std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        std::vector<ValueAtTemperature> values;
         {
             auto model = constructRingModel_J_J_g_g(mults, J_one_exact, J_two_exact, g_one_factor, g_two_factor);
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
@@ -519,17 +521,17 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_J_g_
         {
             auto model = constructRingModel_J_J_g_g(mults, J_value_one, J_value_two, g_value_one, g_value_two);
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             runner.initializeExperimentalValues(
                 values,
-                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            auto J_one = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
-            auto J_two = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[1];
-            auto g_one = runner.getSymbolicWorker().getChangeableNames(model::symbols::g_factor)[0];
-            auto g_two = runner.getSymbolicWorker().getChangeableNames(model::symbols::g_factor)[1];
+            auto J_one = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::J)[0];
+            auto J_two = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::J)[1];
+            auto g_one = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::g_factor)[0];
+            auto g_two = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::g_factor)[1];
 
             auto derivative_map = runner.calculateTotalDerivatives();
             analytical_dR2_wrt_dJ_one = derivative_map[J_one];
@@ -599,12 +601,12 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_J_g_
     }
 }
 
-model::ModelInput constructRingModel_J_g_D(
-    const std::vector<spin_algebra::Multiplicity>& mults,
+spinner::model::ModelInput constructRingModel_J_g_D(
+    const std::vector<spinner::spin_algebra::Multiplicity>& mults,
     double J_value,
     double g_value,
     double D_value) {
-    model::ModelInput model(mults);
+    spinner::model::ModelInput model(mults);
     auto J = model.addSymbol("J", J_value);
     size_t size = mults.size();
     for (size_t i = 0; i < size; ++i) {
@@ -632,15 +634,15 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g_D)
         const double D_exact = D_dist(rng);
         const double g_factor = 2.0;
 
-        std::vector<spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
+        std::vector<spinner::spin_algebra::Multiplicity> mults = {3, 3, 3, 3};
 
-        std::vector<magnetic_susceptibility::ValueAtTemperature> values;
+        std::vector<ValueAtTemperature> values;
         {
             auto model = constructRingModel_J_g_D(mults, J_exact, g_factor, D_exact);
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             for (size_t i = 1; i < 301; ++i) {
-                magnetic_susceptibility::ValueAtTemperature value_at_temperature = {
+                ValueAtTemperature value_at_temperature = {
                     static_cast<double>(i),
                     runner.getMagneticSusceptibilityController().calculateTheoreticalMuSquared(i)};
                 values.push_back(value_at_temperature);
@@ -661,15 +663,15 @@ TEST(magnetic_susceptibility, analytical_derivative_vs_finite_differences_J_g_D)
         {
             auto model = constructRingModel_J_g_D(mults, J_value, g_factor, D_value);
 
-            runner::Runner runner(model);
+            spinner::runner::Runner runner(model);
 
             runner.initializeExperimentalValues(
                 values,
-                magnetic_susceptibility::mu_squared_in_bohr_magnetons_squared,
+                mu_squared_in_bohr_magnetons_squared,
                 1);
 
-            auto J = runner.getSymbolicWorker().getChangeableNames(model::symbols::J)[0];
-            auto D = runner.getSymbolicWorker().getChangeableNames(model::symbols::D)[0];
+            auto J = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::J)[0];
+            auto D = runner.getSymbolicWorker().getChangeableNames(spinner::model::symbols::D)[0];
 
             auto derivative_map = runner.calculateTotalDerivatives();
             analytical_dR2_wrt_dJ = derivative_map[J];

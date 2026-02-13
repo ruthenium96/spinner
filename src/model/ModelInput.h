@@ -6,7 +6,7 @@
 #include "src/common/Quantity.h"
 #include "src/model/operators/Operator.h"
 #include "src/model/symbols/SymbolicWorker.h"
-namespace model {
+namespace spinner::model {
 // class ModelInput is responsible for user input: SymbolicWorker and Multiplicities
 class ModelInput {
   public:
@@ -36,6 +36,6 @@ class ModelInput {
     symbols::SymbolicWorker symbols_;
     std::vector<spin_algebra::Multiplicity> mults_;
 };
-}  // namespace model
+} // namespace spinner::model
 
 #endif  //SPINNER_MODELINPUT_H

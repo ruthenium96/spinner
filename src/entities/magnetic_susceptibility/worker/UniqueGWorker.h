@@ -5,7 +5,7 @@
 #include "src/common/Quantity.h"
 #include "src/model/symbols/SymbolName.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 
 // mu^2 = mu_B^2 * g_{iso}^2 * <S^2_{total}> or
 // mu^2 = 3 * mu_B^2 * g_{iso}^2 * <M^2_{total}>
@@ -29,6 +29,6 @@ class UniqueGWorker: public BasicWorker {
     common::QuantityEnum quantity_enum_for_averaging_;
 };
 
-}  // namespace magnetic_susceptibility
+} // namespace spinner::magnetic_susceptibility
 
 #endif  //SPINNER_UNIQUEGWORKER_H

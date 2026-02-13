@@ -3,13 +3,13 @@
 
 #include <stdexcept>
 
-namespace common {
+namespace spinner::common {
 
 class IncorrectEnumError: public std::logic_error {
   public:
     explicit IncorrectEnumError(const std::string& arg) : logic_error(arg) {}
 };
 
-}  // namespace common
+} // namespace spinner::common
 
 #endif  //SPINNER_INCORRECTENUMERROR_H

@@ -3,7 +3,7 @@
 #include <cassert>
 #include <utility>
 
-namespace space::optimization {
+namespace spinner::space::optimization {
 
 Space NonAbelianSimplifier::apply(Space&& space) const {
     assert(!space.getBlocks().empty());
@@ -37,6 +37,6 @@ Space NonAbelianSimplifier::apply(Space&& space) const {
     }
     return Space(std::move(vector_result));
 }
-NonAbelianSimplifier::NonAbelianSimplifier(quantum::linear_algebra::FactoriesList factories) :
+NonAbelianSimplifier::NonAbelianSimplifier(linear_algebra::FactoriesList factories) :
     factories_(std::move(factories)) {}
-}  // namespace space::optimization
+} // namespace spinner::space::optimization

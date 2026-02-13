@@ -1,7 +1,7 @@
 FetchContent_Declare(
         wignersymbols
         GIT_REPOSITORY https://github.com/ruthenium96/wignerSymbols.git
-        GIT_TAG "ee884a90825e788160fd9837f1fba2f4f844b738"
+        GIT_TAG "044ddbc084453f6cdb0e01c3d0b3936c13322826"
 )
 FetchContent_MakeAvailable(wignersymbols)
 include_directories(${wignersymbols_SOURCE_DIR}/include/)

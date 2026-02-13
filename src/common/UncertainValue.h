@@ -4,7 +4,7 @@
 #include <array>
 #include <cmath>
 
-namespace common {
+namespace spinner::common {
 
 enum UncertaintySources {
     FTLM,
@@ -53,6 +53,6 @@ class UncertainValue {
     static UncertainValue inv(const UncertainValue& value);
 };
 
-} // common
+} // namespace spinner::common
 
 #endif //SPINNER_UNCERTAINVALUE_H

@@ -6,9 +6,9 @@
 #include "tests/unit_tests/nonlinear_solver/abstractSolver_tests.h"
 
 template<>
-std::shared_ptr<nonlinear_solver::AbstractNonlinearSolver>
-createConcreteSolver<nonlinear_solver::stlbfgsAdapter>();
+std::shared_ptr<spinner::nonlinear_solver::AbstractNonlinearSolver>
+createConcreteSolver<spinner::nonlinear_solver::stlbfgsAdapter>();
 
-typedef testing::Types<nonlinear_solver::stlbfgsAdapter> stlbfgs;
+typedef testing::Types<spinner::nonlinear_solver::stlbfgsAdapter> stlbfgs;
 
 #endif  //SPINNER_CREATE_STLBFGS_H

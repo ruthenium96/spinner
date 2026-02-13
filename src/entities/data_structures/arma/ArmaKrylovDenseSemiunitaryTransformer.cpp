@@ -3,7 +3,7 @@
 #include "ArmaSparseDiagonalizableMatrix.h"
 #include "ArmaDenseVector.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 template<typename T, typename M>
 inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
@@ -46,4 +46,4 @@ std::unique_ptr<AbstractDenseVector> ArmaKrylovDenseSemiunitaryTransformer<T>::c
 
 template class ArmaKrylovDenseSemiunitaryTransformer<double>;
 template class ArmaKrylovDenseSemiunitaryTransformer<float>;
-} // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra

@@ -9,7 +9,7 @@
 #include "src/model/operators/terms/ito/T20TwoCenterTerm.h"
 #include "src/model/operators/terms/ito/TotalSSquaredTerm.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 ITOOperatorConstructor::ITOOperatorConstructor(std::shared_ptr<index_converter::s_squared::IndexConverter> converter) :
 	converter_(converter) {}
 
@@ -90,4 +90,4 @@ std::shared_ptr<Operator> ITOOperatorConstructor::constructGSquaredT00Like(
     return g_squared_T00_operator_;
 }
 
-} // namespace model::operators
+} // namespace spinner::model::operators

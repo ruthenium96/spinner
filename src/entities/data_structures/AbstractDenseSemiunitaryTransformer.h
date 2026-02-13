@@ -4,7 +4,7 @@
 #include <functional>
 #include <memory>
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 class AbstractDenseVector;
 class AbstractDiagonalizableMatrix;
 
@@ -15,6 +15,6 @@ public:
         std::reference_wrapper<const std::unique_ptr<AbstractDiagonalizableMatrix>> matrix) const = 0;
     virtual ~AbstractDenseSemiunitaryTransformer() = default;
 };
-} // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 
 #endif  //SPINNER_ABSTRACTDENSESEMIUNITARYTRANSFORMER_H

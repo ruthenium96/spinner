@@ -1,12 +1,14 @@
 #include "Matrix.h"
 
+namespace spinner {
+
 Matrix::Matrix(std::vector<Submatrix>&& m) : blocks(std::move(m)) {}
 
 Matrix::Matrix(
     const space::Space& space,
     const model::operators::Operator& new_operator,
     std::shared_ptr<const index_converter::AbstractIndexConverter> converter,
-    const quantum::linear_algebra::FactoriesList& factories,
+    const linear_algebra::FactoriesList& factories,
     bool return_sparse_if_possible) {
     blocks.reserve(space.getBlocks().size());
 
@@ -24,3 +26,5 @@ MatrixRef::MatrixRef(const Matrix& matrix) {
 MatrixRef::MatrixRef(std::vector<std::reference_wrapper<const Submatrix>>&& blocks_) {
     blocks = std::move(blocks_);
 }
+
+} // namespace spinner

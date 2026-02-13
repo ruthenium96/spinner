@@ -2,9 +2,9 @@
 
 #include <utility>
 
-namespace model::operators {
+namespace spinner::model::operators {
 void ConstantTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix&
+    linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors) const {
     for (const auto& index_of_vector : indexes_of_vectors) {
@@ -18,4 +18,4 @@ ConstantTerm::ConstantTerm(std::shared_ptr<const double> constant) :
 std::unique_ptr<Term> ConstantTerm::clone() const {
     return std::make_unique<ConstantTerm>(constant_);
 }
-}  // namespace model::operators
+} // namespace spinner::model::operators

@@ -6,7 +6,7 @@
 #include "src/common/index_converter/AbstractIndexConverter.h"
 #include "src/model/NumericalParameters.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class LocalSSquaredOneCenterTerm: public OneCenterTerm {
   public:
     LocalSSquaredOneCenterTerm(
@@ -18,7 +18,7 @@ class LocalSSquaredOneCenterTerm: public OneCenterTerm {
         double prefactor);
     std::unique_ptr<Term> clone() const override;
     void construct(
-        quantum::linear_algebra::AbstractSymmetricMatrix&
+        linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         const std::set<unsigned int>& indexes_of_vectors,
         uint32_t center_a) const override;
@@ -29,6 +29,6 @@ class LocalSSquaredOneCenterTerm: public OneCenterTerm {
     const double prefactor_ = 1;
 };
 
-}  // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif  //SPINNER_LOCALSSQUAREDONECENTERTERM_H

@@ -3,7 +3,7 @@
 
 #include "Term.h"
 
-namespace model::operators {
+namespace spinner::model::operators {
 class ConstantTerm: public ZeroCenterTerm {
   public:
     explicit ConstantTerm(std::shared_ptr<const double> constant);
@@ -11,13 +11,13 @@ class ConstantTerm: public ZeroCenterTerm {
     std::unique_ptr<Term> clone() const override;
 
     void construct(
-        quantum::linear_algebra::AbstractSymmetricMatrix&
+        linear_algebra::AbstractSymmetricMatrix&
             matrix_in_lexicografical_basis,
         const std::set<unsigned int>& indexes_of_vectors) const override;
 
   private:
     std::shared_ptr<const double> constant_;
 };
-}  // namespace model::operators
+} // namespace spinner::model::operators
 
 #endif  //SPINNER_CONSTANTTERM_H

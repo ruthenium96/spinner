@@ -7,7 +7,7 @@
 #include "src/spin_algebra/Multiplicity.h"
 #include "src/common/index_converter/AbstractIndexConverter.h"
 
-namespace index_converter::lexicographic {
+namespace spinner::index_converter::lexicographic {
 class IndexConverter : public AbstractIndexConverter {
   public:
     explicit IndexConverter(std::vector<spin_algebra::Multiplicity> mults);
@@ -23,6 +23,6 @@ class IndexConverter : public AbstractIndexConverter {
   private:
     std::vector<uint32_t> cumulative_product_;
 };
-}  // namespace index_converter::lexicographic
+} // namespace spinner::index_converter::lexicographic
 
 #endif  // SPINNER_LEXINDEXCONVERTER_H

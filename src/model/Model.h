@@ -7,7 +7,7 @@
 
 #include "src/model/operators/AbstractOperatorConstructor.h"
 
-namespace model {
+namespace spinner::model {
 
 class Model {
   public:
@@ -65,6 +65,6 @@ class Model {
         derivatives_map_;
 };
 
-}  // namespace model
+} // namespace spinner::model
 
 #endif  //SPINNER_MODEL_H

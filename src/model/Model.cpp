@@ -6,7 +6,7 @@
 #include "src/common/Quantity.h"
 #include "src/model/operators/Operator.h"
 
-namespace model {
+namespace spinner::model {
 Model::Model(ModelInput modelInput, std::unique_ptr<operators::AbstractOperatorConstructor>&& operator_constructor) :
     numericalWorker_(modelInput.getSymbolicWorker(), modelInput.getMults().size()),
     operator_constructor_(std::move(operator_constructor)) {
@@ -126,4 +126,4 @@ void Model::setNewValueToChangeableSymbol(
     double new_value) {
     numericalWorker_.setNewValueToChangeableSymbol(symbol_name, new_value);
 }
-}  // namespace model
+} // namespace spinner::model

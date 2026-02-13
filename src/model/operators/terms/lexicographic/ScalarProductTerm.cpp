@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-namespace model::operators::lexicographic {
+namespace spinner::model::operators::lexicographic {
 ScalarProductTerm::ScalarProductTerm(std::shared_ptr<const index_converter::lexicographic::IndexConverter> converter, double value) :
     TwoCenterTerm(converter->get_mults().size()),
     converter_(std::move(converter)),
@@ -30,7 +30,7 @@ ScalarProductTerm::ScalarProductTerm(
     prefactor_(prefactor) {}
 
 void ScalarProductTerm::construct(
-    quantum::linear_algebra::AbstractSymmetricMatrix&
+    linear_algebra::AbstractSymmetricMatrix&
         matrix_in_lexicografical_basis,
     const std::set<unsigned int>& indexes_of_vectors,
     uint32_t center_a,
@@ -53,7 +53,7 @@ std::unique_ptr<Term> ScalarProductTerm::clone() const {
 }
 
 void ScalarProductTerm::add_scalar_product(
-    quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+    linear_algebra::AbstractSymmetricMatrix& matrix,
     uint32_t index_of_vector,
     uint32_t center_a,
     uint32_t center_b,
@@ -92,7 +92,7 @@ void ScalarProductTerm::add_scalar_product(
 }
 
 void ScalarProductTerm::add_scalar_product_nondiagonal_part(
-    quantum::linear_algebra::AbstractSymmetricMatrix& matrix,
+    linear_algebra::AbstractSymmetricMatrix& matrix,
     uint32_t index_of_vector,
     uint32_t plus_center,
     uint32_t minus_center,
@@ -128,4 +128,4 @@ void ScalarProductTerm::add_scalar_product_nondiagonal_part(
         index_of_vector,
         index_of_new_vector);
 }
-}  // namespace model::operators::lexicographic
+} // namespace spinner::model::operators::lexicographic

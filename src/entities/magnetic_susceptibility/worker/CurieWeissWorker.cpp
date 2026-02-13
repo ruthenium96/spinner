@@ -4,7 +4,7 @@
 #include "src/common/UncertainValue.h"
 #include "src/model/symbols/SymbolName.h"
 
-namespace magnetic_susceptibility::worker {
+namespace spinner::magnetic_susceptibility::worker {
 
 CurieWeissWorker::CurieWeissWorker(
     std::unique_ptr<AbstractWorker>&& worker,
@@ -49,4 +49,4 @@ std::vector<ValueAtTemperature> CurieWeissWorker::calculateDerivative(
     }
 }
 
-}  // namespace magnetic_susceptibility::worker
+} // namespace spinner::magnetic_susceptibility::worker

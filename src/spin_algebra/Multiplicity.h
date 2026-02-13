@@ -3,8 +3,8 @@
 
 #include <cstdint>
 
-namespace spin_algebra {
+namespace spinner::spin_algebra {
 using Multiplicity = uint32_t;
-}
+} // namespace spinner::spin_algebra
 
 #endif  //SPINNER_MULTIPLICITY_H

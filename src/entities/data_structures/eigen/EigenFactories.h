@@ -3,7 +3,7 @@
 
 #include "src/entities/data_structures/AbstractFactories.h"
 
-namespace quantum::linear_algebra {
+namespace spinner::linear_algebra {
 
 class EigenDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAndDiagonalizeFactory {
   public:
@@ -17,5 +17,5 @@ class EigenDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAnd
     std::unique_ptr<AbstractDenseVector> createVector() override;
 };
 
-}  // namespace quantum::linear_algebra
+} // namespace spinner::linear_algebra
 #endif  //SPINNER_EIGENFACTORIES_H

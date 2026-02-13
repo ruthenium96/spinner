@@ -3,7 +3,7 @@
 #include "src/common/PrintingFunctions.h"
 #include "src/common/runner/ConsistentModelOptimizationList.h"
 
-namespace runner {
+namespace spinner::runner {
 void Executer::execute(input::Parser parser) {
     auto optimization_list = parser.getOptimizationList().value();
     auto factoriesList = parser.getFactoriesList().value();
@@ -41,4 +41,4 @@ void Executer::dry_execute(input::Parser parser) {
     }
 }
 
-}  // namespace runner
+} // namespace spinner::runner
