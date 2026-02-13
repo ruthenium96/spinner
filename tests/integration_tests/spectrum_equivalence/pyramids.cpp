@@ -29,7 +29,7 @@ Group generate_Dn_group_for_pyramid(size_t size) {
         generator_reflection[size - 1 - i] = i;
     }
     generator_reflection[size] = size;
-    return Group({Dihedral, size}, 
+    return Group({GroupTypeEnum::Dihedral, size}, 
         {generator_rotation, generator_reflection});
 }
 
@@ -39,7 +39,7 @@ Group generate_first_C2_group_for_pyramid(size_t size) {
         generator_reflection[size - 1 - i] = i;
     }
     generator_reflection[size] = size;
-    return Group(S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 
@@ -52,7 +52,7 @@ Group generate_second_C2_group_for_pyramid(size_t size) {
         generator_reflection[i] = (i + size / 2) % size;
     }
     generator_reflection[size] = size;
-    return Group(S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 
@@ -168,7 +168,7 @@ INSTANTIATE_TEST_SUITE_P(
             .TzSort()
             .TSquaredSort()
             .EliminateNonMininalProjections()
-            .Symmetrize(Group(S2, {{2, 1, 0, 5, 4, 3, 6}})),
+            .Symmetrize(Group(GroupTypeEnum::S2, {{2, 1, 0, 5, 4, 3, 6}})),
         OptimizationList(OptimizationList::ITO)
             .TzSort()
             .TSquaredSort()
@@ -176,7 +176,7 @@ INSTANTIATE_TEST_SUITE_P(
             .Symmetrize(generate_first_C2_group_for_pyramid(6))
             // TODO: generate_second_C2_group_for_pyramid(6) (in combine with previous one) 
             // leads to an error in the case of ITO
-            .Symmetrize(Group(S2, {{2, 1, 0, 5, 4, 3, 6}}))
+            .Symmetrize(Group(GroupTypeEnum::S2, {{2, 1, 0, 5, 4, 3, 6}}))
     ),
     ::testing::Values(
         std::vector<spinner::spin_algebra::Multiplicity>({2, 2, 2, 2, 2, 2, 2}),

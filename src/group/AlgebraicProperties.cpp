@@ -173,18 +173,18 @@ namespace spinner::group {
 
 const AlgebraicProperties AlgebraicProperties::constructAlgebraicProperties(GroupType group_type) {
     AlgebraicProperties properties;
-    if (group_type.type_enum == S2) {
+    if (group_type.type_enum == GroupTypeEnum::S2) {
         constructS2(properties);
         return properties;
     }
-    if (group_type.type_enum == Dihedral) {
+    if (group_type.type_enum == GroupTypeEnum::Dihedral) {
         if (!group_type.order.has_value()) {
             throw InitializationError("Dihedral must have an order");
         }
         constructDihedral(group_type.order.value(), properties);
         return properties;
     }
-    throw InitializationError("Unknown group_type" + std::to_string(group_type.type_enum));
+    throw InitializationError("Unknown group_type");
 }
 
 } // namespace spinner::group

@@ -33,7 +33,7 @@ Group generate_Dn_half_group_for_alternating_polygon(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
-    return Group({Dihedral, size / 2},
+    return Group({GroupTypeEnum::Dihedral, size / 2},
         {generator_rotation, generator_reflection});
 }
 
@@ -42,7 +42,7 @@ Group generate_first_C2_group_for_alternating_polygon(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[size - 1 - i] = i;
     }
-    return Group(S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 
@@ -54,7 +54,7 @@ Group generate_second_C2_group_for_alternating_polygon(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator_reflection[i] = (i + size / 2) % size;
     }
-    return Group(S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 

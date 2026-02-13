@@ -76,7 +76,7 @@ Group generate_S2_group_for_chain(size_t size) {
     for (int i = 0; i < size; ++i) {
         generator[size - 1 - i] = i;
     }
-    return Group(S2, {generator});
+    return Group(GroupTypeEnum::S2, {generator});
 }
 
 class two_center_chain : public SpectrumFinalEquivalenceTest {};

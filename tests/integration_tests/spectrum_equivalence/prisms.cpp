@@ -37,7 +37,7 @@ Group generate_Dn_group_for_prism(size_t size) {
         generator_reflection[size - 1 - i] = i;
         generator_reflection[2 * size - 1 - i] = i + size;
     }
-    return Group({Dihedral, size}, 
+    return Group({GroupTypeEnum::Dihedral, size}, 
         {generator_rotation, generator_reflection});
 }
 
@@ -47,7 +47,7 @@ Group generate_C2_mirror_group_for_prism(size_t size) {
         generator_mirror[i] = i + size;
         generator_mirror[i + size] = i;
     }
-    return Group(S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_mirror});
 }
 
@@ -57,7 +57,7 @@ Group generate_first_C2_group_for_prysm(size_t size) {
         generator_reflection[size - 1 - i] = i;
         generator_reflection[2 * size - 1 - i] = i + size;
     }
-    return Group(S2, 
+    return Group(GroupTypeEnum::S2, 
         {generator_reflection});
 }
 

@@ -23,7 +23,7 @@ TEST(algebraic_properties_tests, size_of_group_in_form_of_generators_equals_grou
     for (auto& group_type : group_types) {
         const auto group_info = AlgebraicProperties::constructAlgebraicProperties(group_type);
         EXPECT_EQ(group_info.group_in_form_of_generators.size(), group_info.group_size)
-            << "The size of group '" << group_type.type_enum
+            << "The size of group '" << magic_enum::enum_name(group_type.type_enum)
             << "' does not equal the size of group_in_form_of_generators";
     }
 }
@@ -35,7 +35,7 @@ TEST(algebraic_properties_tests, size_of_element_of_group_in_form_of_generators_
             EXPECT_EQ(
                 group_info.group_in_form_of_generators[i].size(),
                 group_info.number_of_generators)
-                << i << " element of the group '" << group_type.type_enum
+                << i << " element of the group '" << magic_enum::enum_name(group_type.type_enum)
                 << "' in the form of generators has wrong size";
         }
     }
@@ -47,7 +47,7 @@ TEST(algebraic_properties_tests, size_of_dimensions_of_representations_equals_nu
         EXPECT_EQ(
             group_info.number_of_representations,
             group_info.dimensions_of_representations.size())
-            << "In the group '" << group_type.type_enum
+            << "In the group '" << magic_enum::enum_name(group_type.type_enum)
             << "' size of dimensions_of_representations does not equal to number_of_representations";
     }
 }
@@ -56,7 +56,7 @@ TEST(algebraic_properties_tests, size_of_orders_of_generators_equals_number_of_g
     for (auto& group_type : group_types) {
         const auto group_info = AlgebraicProperties::constructAlgebraicProperties(group_type);
         EXPECT_EQ(group_info.number_of_generators, group_info.orders_of_generators.size())
-            << "In the group '" << group_type.type_enum
+            << "In the group '" << magic_enum::enum_name(group_type.type_enum)
             << "' size of orders_of_generators does not equal to number_of_generators";
     }
 }
@@ -65,7 +65,7 @@ TEST(algebraic_properties_tests, size_of_orders_of_elements_equals_group_size) {
     for (auto& group_type : group_types) {
         const auto group_info = AlgebraicProperties::constructAlgebraicProperties(group_type);
         EXPECT_EQ(group_info.group_size, group_info.orders_of_elements.size())
-            << "In the group '" << group_type.type_enum
+            << "In the group '" << magic_enum::enum_name(group_type.type_enum)
             << "' size of orders_of_elements does not equal to group_size";
     }
 }
@@ -78,7 +78,7 @@ TEST(
         EXPECT_EQ(
             group_info.number_of_representations,
             group_info.number_of_projectors_of_representation.size())
-            << "In the group '" << group_type.type_enum
+            << "In the group '" << magic_enum::enum_name(group_type.type_enum)
             << "' size of number_of_projectors_of_representation does not equal to number_of_representations";
     }
 }
@@ -91,7 +91,7 @@ TEST(algebraic_properties_tests, sum_of_dimensions_of_representationss_equals_gr
             sum_of_squares += d * d;
         }
         EXPECT_EQ(group_info.group_size, sum_of_squares)
-            << "Sum of representations' dimensions of group '" << group_type.type_enum
+            << "Sum of representations' dimensions of group '" << magic_enum::enum_name(group_type.type_enum)
             << "' does not equal to group_size";
     }
 }
@@ -102,7 +102,7 @@ TEST(algebraic_properties_tests, size_of_coefficients_of_projectors_equals_numbe
         EXPECT_EQ(
             group_info.number_of_representations,
             group_info.coefficients_of_projectors.size())
-            << "Vector size of coefficients_of_projectors in the group '" << group_type.type_enum
+            << "Vector size of coefficients_of_projectors in the group '" << magic_enum::enum_name(group_type.type_enum)
             << "' does not equal to number_of_representations";
     }
 }
@@ -115,7 +115,7 @@ TEST(algebraic_properties_tests, number_of_projectors_of_representation_equals_a
                 group_info.number_of_projectors_of_representation[repr],
                 group_info.coefficients_of_projectors[repr].size())
                 << "number_of_projectors_of_representation '" << repr << "' in the group '"
-                << group_type.type_enum << "' does not equal actual number of projectors";
+                << magic_enum::enum_name(group_type.type_enum) << "' does not equal actual number of projectors";
         }
     }
 }
@@ -128,7 +128,7 @@ TEST(algebraic_properties_tests, size_of_projectors_equals_group_size) {
                 EXPECT_EQ(
                     group_info.group_size,
                     group_info.coefficients_of_projectors[repr][k].size())
-                    << "In the group '" << group_type.type_enum << "', representation '" << repr
+                    << "In the group '" << magic_enum::enum_name(group_type.type_enum) << "', representation '" << repr
                     << "', projector '" << k << "', vector size does not equal to group_size";
             }
         }
@@ -144,7 +144,7 @@ TEST(algebraic_properties_tests, descending_order_of_generators_order) {
             for (auto& v : group_info.group_in_form_of_generators) {
                 order_of_generator = std::max(order_of_generator, v[generator]);
                 EXPECT_GE(last_order_of_generator, order_of_generator)
-                    << "In the group '" << group_type.type_enum << "' generator '" << generator
+                    << "In the group '" << magic_enum::enum_name(group_type.type_enum) << "' generator '" << generator
                     << "' has element order bigger than '" << (generator - 1)
                     << "', it can cause problems";
             }
@@ -169,7 +169,7 @@ TEST(algebraic_properties_tests, projectors_orthogonality) {
                     accumulator += projectors[i][g] * projectors[j][g];
                 }
                 EXPECT_NEAR(accumulator, 0.0, 1e-12)
-                << "In the group '" << group_type.type_enum << "' projectors '"
+                << "In the group '" << magic_enum::enum_name(group_type.type_enum) << "' projectors '"
                 << i << "' and '" << j << "' are not orthogonal";
             }
         }
@@ -180,13 +180,13 @@ TEST(algebraic_properties_tests, 00_corresponds_to_full_symmetric_representation
     for (auto& group_type : group_types) {
         const auto group_info = AlgebraicProperties::constructAlgebraicProperties(group_type);
         EXPECT_EQ(group_info.coefficients_of_projectors[0].size(), 1)
-            << "In the group '" << group_type.type_enum << "' first representation has "
+            << "In the group '" << magic_enum::enum_name(group_type.type_enum) << "' first representation has "
             << group_info.coefficients_of_projectors[0].size()
             << " projectors, but must have only one, because it should be full-symmetric representation";
         double value = group_info.coefficients_of_projectors[0][0][0];
         for (auto d : group_info.coefficients_of_projectors[0][0]) {
             EXPECT_EQ(d, value)
-                << "In the group '" << group_type.type_enum
+                << "In the group '" << magic_enum::enum_name(group_type.type_enum)
                 << "' projector of the first representation has different coefficients, "
                 << "this means it is not full-symmetric projector";
         }
@@ -195,68 +195,68 @@ TEST(algebraic_properties_tests, 00_corresponds_to_full_symmetric_representation
 
 TEST(group_tests, throw_wrong_number_of_generators) {
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1}, {0, 0, 0}}),
         InitializationError);
-    EXPECT_THROW(Group group({Dihedral, 3}, {{1, 2, 0}}), InitializationError);
+    EXPECT_THROW(Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}}), InitializationError);
 }
 
 TEST(group_tests, throw_wrong_size_of_generators) {
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0}, {0, 2, 1, 4}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 1, 4}}),
         InitializationError);
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0}, {0, 2}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2}}),
         InitializationError);
 }
 
 TEST(group_tests, throw_duplicate_of_number_in_generator) {
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0}, {0, 2, 2}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 2}}),
         InitializationError);
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0}, {2, 2, 2}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {2, 2, 2}}),
         InitializationError);
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 0, 0}, {0, 2, 1}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 0, 0}, {0, 2, 1}}),
         InitializationError);
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{0, 0, 0}, {0, 2, 1}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{0, 0, 0}, {0, 2, 1}}),
         InitializationError);
 }
 
 TEST(group_tests, throw_contains_wrong_number) {
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0}, {0, 2, 3}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0}, {0, 2, 3}}),
         InitializationError);
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 3}, {0, 2, 1}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 3}, {0, 2, 1}}),
         InitializationError);
 }
 
 TEST(group_tests, throw_wrong_order_of_generators) {
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 3, 0}, {0, 2, 1, 3}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 3, 0}, {0, 2, 1, 3}}),
         InitializationError);
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0, 3}, {1, 2, 0, 3}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 3}, {1, 2, 0, 3}}),
         InitializationError);
 }
 
 TEST(group_tests, throw_wrong_order_of_elements) {
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0, 3}, {0, 1, 3, 2}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 3}, {0, 1, 3, 2}}),
         InitializationError);
     EXPECT_THROW(
-        Group group({Dihedral, 3}, {{1, 2, 0, 3}, {3, 1, 2, 0}}),
+        Group group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 3}, {3, 1, 2, 0}}),
         InitializationError);
 }
 
 TEST(group_tests, construct_orbits_of_mults) {
     std::vector<std::pair<Group, std::vector<std::set<size_t>>>> cases = {
-        {Group(S2, {{1, 0, 3, 2, 4}}), {{0, 1}, {2, 3}, {4}}},
-        {Group(S2, {{4, 3, 2, 1, 0}}), {{0, 4}, {1, 3}, {2}}},
-        {Group(S2, {{4, 1, 2, 3, 0}}), {{0, 4}, {1}, {2}, {3}}},
-        {Group({Dihedral, 3}, {{1, 2, 0, 3}, {0, 2, 1, 3}}), {{0, 1, 2}, {3}}},
+        {Group(GroupTypeEnum::S2, {{1, 0, 3, 2, 4}}), {{0, 1}, {2, 3}, {4}}},
+        {Group(GroupTypeEnum::S2, {{4, 3, 2, 1, 0}}), {{0, 4}, {1, 3}, {2}}},
+        {Group(GroupTypeEnum::S2, {{4, 1, 2, 3, 0}}), {{0, 4}, {1}, {2}, {3}}},
+        {Group({GroupTypeEnum::Dihedral, 3}, {{1, 2, 0, 3}, {0, 2, 1, 3}}), {{0, 1, 2}, {3}}},
     };
     for (const auto& [group, right_answer] : cases) {
         auto orbits_of_mults = group.construct_orbits_of_mults();
@@ -266,21 +266,21 @@ TEST(group_tests, construct_orbits_of_mults) {
 }
 
 TEST(group_tests, noncommutation_of_P2s_in_triangle) {
-    auto group_one = Group(S2, {{0, 2, 1}});
-    auto group_two = Group(S2, {{1, 0, 2}});
+    auto group_one = Group(GroupTypeEnum::S2, {{0, 2, 1}});
+    auto group_two = Group(GroupTypeEnum::S2, {{1, 0, 2}});
     EXPECT_FALSE(group_one.do_groups_commute(group_two));
     EXPECT_FALSE(group_two.do_groups_commute(group_one));
 }
 
 TEST(group_tests, commutation_of_P2s_in_rectangle) {
-    auto group_one = Group(S2, {{1, 0, 3, 2}});
-    auto group_two = Group(S2, {{2, 3, 0, 1}});
+    auto group_one = Group(GroupTypeEnum::S2, {{1, 0, 3, 2}});
+    auto group_two = Group(GroupTypeEnum::S2, {{2, 3, 0, 1}});
     EXPECT_TRUE(group_one.do_groups_commute(group_two));
     EXPECT_TRUE(group_two.do_groups_commute(group_one));
 }
 
 TEST(group_tests, commutation_of_P3s_in_toroid) {
-    auto group_one = Group({Dihedral, 3}, {
+    auto group_one = Group({GroupTypeEnum::Dihedral, 3}, {
                                                         {
                                                             3, 4, 5,
                                                             6, 7, 8,
@@ -292,7 +292,7 @@ TEST(group_tests, commutation_of_P3s_in_toroid) {
                                                             6, 7, 8,
                                                         }
                                                     });
-    auto group_two = Group({Dihedral, 3}, {
+    auto group_two = Group({GroupTypeEnum::Dihedral, 3}, {
                                                         {
                                                             1, 2, 0,
                                                             4, 5, 3,
