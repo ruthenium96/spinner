@@ -54,7 +54,7 @@ void FlattenedSpectra::updateValues(const AllQuantitiesGetter& allQuantitiesGett
         std::function([](const std::unique_ptr<linalg_structures::AbstractDenseVector>& energy_spectrum){
             energy_spectrum.get()->subtract_minimum();
         }), 
-        flattenedSpectra_[common::Energy]);
+        flattenedSpectra_[common::QuantityEnum::Energy]);
 }
 
 void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuantitiesGetter,
@@ -71,12 +71,12 @@ void FlattenedSpectra::updateDerivativeValues(const AllQuantitiesGetter& allQuan
         }
     }
     for (const auto& [quantity_enum, spectrum] : flattenedSpectra_) {
-        if (quantity_enum == common::Energy) {
+        if (quantity_enum == common::QuantityEnum::Energy) {
             continue;
         }
         for (const auto& [derivative_key, spectrum_derivative] : flattenedDerivativeSpectra_) {
             const auto& [quantity_enum_derivative, symbol_name] = derivative_key;
-            if (quantity_enum_derivative != common::Energy) {
+            if (quantity_enum_derivative != common::QuantityEnum::Energy) {
                 continue;
             }
             std::pair<common::QuantityEnum, std::pair<common::QuantityEnum, model::symbols::SymbolName>> 

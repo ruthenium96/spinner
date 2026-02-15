@@ -5,6 +5,7 @@
 #include <numeric>
 
 #include "InitializationError.h"
+#include "src/common/IncorrectEnumError.h"
 
 namespace {
 
@@ -184,7 +185,8 @@ const AlgebraicProperties AlgebraicProperties::constructAlgebraicProperties(Grou
         constructDihedral(group_type.order.value(), properties);
         return properties;
     }
-    throw InitializationError("Unknown group_type");
+    throw spinner::common::IncorrectEnumError(
+            "Unknown type of GroupTypeEnum has been passed to AlgebraicProperties");
 }
 
 } // namespace spinner::group

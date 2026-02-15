@@ -40,11 +40,11 @@ std::vector<ValueAtTemperature> DifferentGWorker::calculateDerivative(
     } else {
         // d(mu_squared)/da = d(<A>)/da = (<A>*<dE/da>-<A*dE/da>)/T
         auto energy_derivative =
-            flattenedSpectra_->getFlattenDerivativeSpectrum(common::Energy, symbol_name).value();
+            flattenedSpectra_->getFlattenDerivativeSpectrum(common::QuantityEnum::Energy, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             auto first_term = ensemble_averager_->ensemble_average(quantity, temperatures[i])
                 * ensemble_averager_->ensemble_average(energy_derivative, temperatures[i]);
-            auto quantity_derivative_product = flattenedSpectra_->getFlattenDerivativeProductSpectrum(quantity_enum_for_averaging_, common::Energy, symbol_name).value();
+            auto quantity_derivative_product = flattenedSpectra_->getFlattenDerivativeProductSpectrum(quantity_enum_for_averaging_, common::QuantityEnum::Energy, symbol_name).value();
             auto second_term = ensemble_averager_->ensemble_average(quantity_derivative_product, temperatures[i]);
             auto value = quantity_factor_ * (first_term - second_term) / temperatures[i];
             derivatives[i] = {temperatures[i], value};

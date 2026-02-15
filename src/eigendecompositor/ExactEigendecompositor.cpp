@@ -58,10 +58,10 @@ void ExactEigendecompositor::initialize(
         weights_.resize(number_of_subspaces);
     }
 
-    energy_operator_ = operators_to_calculate.at(common::Energy);
+    energy_operator_ = operators_to_calculate.at(common::QuantityEnum::Energy);
     do_we_need_eigenvectors_ =
         !(operators_to_calculate.size() == 1 && derivatives_operators_to_calculate.empty());
-    std::erase_if(operators_to_calculate, [](const auto& p) { return p.first == common::Energy; });
+    std::erase_if(operators_to_calculate, [](const auto& p) { return p.first == common::QuantityEnum::Energy; });
 }
 
 void ExactEigendecompositor::finalize() {
@@ -70,7 +70,7 @@ void ExactEigendecompositor::finalize() {
 
 std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 ExactEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
-    if (quantity_enum == common::Energy) {
+    if (quantity_enum == common::QuantityEnum::Energy) {
         return energy_.spectrum_.blocks[number_of_block];
     }
     return std::nullopt;

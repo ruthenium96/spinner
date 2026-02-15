@@ -30,12 +30,12 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         };
         common::QuantityEnum quantity_enum_for_averaging;
         double quantity_factor;
-        if (flattenedSpectra->getFlattenSpectrum(common::S_total_squared).has_value()) {
-            quantity_enum_for_averaging = common::S_total_squared;
+        if (flattenedSpectra->getFlattenSpectrum(common::QuantityEnum::S_total_squared).has_value()) {
+            quantity_enum_for_averaging = common::QuantityEnum::S_total_squared;
             quantity_factor = 1.0;
             common::Logger::detailed("UniqueGWorker will be used with S_total_squared.");
-        } else if (flattenedSpectra->getFlattenSpectrum(common::M_total_squared).has_value()) {
-            quantity_enum_for_averaging = common::M_total_squared;
+        } else if (flattenedSpectra->getFlattenSpectrum(common::QuantityEnum::M_total_squared).has_value()) {
+            quantity_enum_for_averaging = common::QuantityEnum::M_total_squared;
             quantity_factor = 3.0;
             common::Logger::detailed("UniqueGWorker will be used with M_total_squared.");
         } else {
@@ -52,12 +52,12 @@ std::unique_ptr<AbstractWorker> WorkerConstructor::construct(
         || consistentModelOptimizationList.isGSzSquaredPossible()) {
         common::QuantityEnum quantity_enum_for_averaging;
         double quantity_factor;
-        if (flattenedSpectra->getFlattenSpectrum(common::g_squared_T00).has_value()) {
-            quantity_enum_for_averaging = common::g_squared_T00;
+        if (flattenedSpectra->getFlattenSpectrum(common::QuantityEnum::g_squared_T00).has_value()) {
+            quantity_enum_for_averaging = common::QuantityEnum::g_squared_T00;
             quantity_factor = 3.0;
             common::Logger::detailed("GSzSquaredWorker will be used with g_squared_T00.");
-        } else if (flattenedSpectra->getFlattenSpectrum(common::gSz_total_squared).has_value()) {
-            quantity_enum_for_averaging = common::gSz_total_squared;
+        } else if (flattenedSpectra->getFlattenSpectrum(common::QuantityEnum::gSz_total_squared).has_value()) {
+            quantity_enum_for_averaging = common::QuantityEnum::gSz_total_squared;
             quantity_factor = 3.0;
             common::Logger::detailed("GSzSquaredWorker will be used with gSz_total_squared.");
         } else {

@@ -10,27 +10,27 @@ namespace spinner::model {
 Model::Model(ModelInput modelInput, std::unique_ptr<operators::AbstractOperatorConstructor>&& operator_constructor) :
     numericalWorker_(modelInput.getSymbolicWorker(), modelInput.getMults().size()),
     operator_constructor_(std::move(operator_constructor)) {
-    operators_map_[common::Energy] = std::make_shared<operators::Operator>();
-    operators_map_[common::S_total_squared] = operator_constructor_->constructSSquared();
-    operators_map_[common::M_total_squared] = operator_constructor_->constructMSquared();
+    operators_map_[common::QuantityEnum::Energy] = std::make_shared<operators::Operator>();
+    operators_map_[common::QuantityEnum::S_total_squared] = operator_constructor_->constructSSquared();
+    operators_map_[common::QuantityEnum::M_total_squared] = operator_constructor_->constructMSquared();
     
     if (getSymbolicWorker().isGFactorInitialized()) {
-        operators_map_[common::gSz_total_squared] = operator_constructor_->constructGSzSquaredLike(
+        operators_map_[common::QuantityEnum::gSz_total_squared] = operator_constructor_->constructGSzSquaredLike(
             getNumericalWorker().getGGParameters().first,
             getNumericalWorker().getGGParameters().second);
 
-        operators_map_[common::g_squared_T00] = operator_constructor_->constructGSquaredT00Like(
+        operators_map_[common::QuantityEnum::g_squared_T00] = operator_constructor_->constructGSquaredT00Like(
             getNumericalWorker().getGGParameters().first,
             getNumericalWorker().getGGParameters().second);;
     
         for (const auto& symbol :
             getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::g_factor)) {
             auto pair_of_parameters = getNumericalWorker().constructGGDerivativeParameters(symbol);
-            derivatives_map_[{common::gSz_total_squared, symbol}] = operator_constructor_->constructGSzSquaredLike(
+            derivatives_map_[{common::QuantityEnum::gSz_total_squared, symbol}] = operator_constructor_->constructGSzSquaredLike(
                 pair_of_parameters.first,
                 pair_of_parameters.second
             );
-            derivatives_map_[{common::g_squared_T00, symbol}] = operator_constructor_->constructGSquaredT00Like(
+            derivatives_map_[{common::QuantityEnum::g_squared_T00, symbol}] = operator_constructor_->constructGSquaredT00Like(
                 pair_of_parameters.first,
                 pair_of_parameters.second
             );
@@ -39,20 +39,20 @@ Model::Model(ModelInput modelInput, std::unique_ptr<operators::AbstractOperatorC
 
     if (getSymbolicWorker().isZFSInitialized()) {
         operator_constructor_->emplaceZeroFieldSplittingLike(
-            operators_map_[common::Energy], 
+            operators_map_[common::QuantityEnum::Energy], 
             getNumericalWorker().getZFSParameters().first);
 
         for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::D)) {
             auto operator_derivative = std::make_shared<operators::Operator>();
             auto derivative_parameters = getNumericalWorker().constructZFSDerivativeParameters(symbol);
             operator_constructor_->emplaceZeroFieldSplittingLike(operator_derivative, derivative_parameters);
-            derivatives_map_[{common::Energy, symbol}] = operator_derivative;
+            derivatives_map_[{common::QuantityEnum::Energy, symbol}] = operator_derivative;
         }
     }
 
     if (getSymbolicWorker().isIsotropicExchangeInitialized()) {
         operator_constructor_->emplaceIsotropicExchangeLike(
-            operators_map_[common::Energy],
+            operators_map_[common::QuantityEnum::Energy],
             getNumericalWorker().getIsotropicExchangeParameters());
 
         for (const auto& symbol : getSymbolicWorker().getChangeableNames(symbols::SymbolTypeEnum::J)) {
@@ -60,7 +60,7 @@ Model::Model(ModelInput modelInput, std::unique_ptr<operators::AbstractOperatorC
             operator_constructor_->emplaceIsotropicExchangeLike(
                 operator_derivative, 
                 getNumericalWorker().constructIsotropicExchangeDerivativeParameters(symbol));
-            derivatives_map_[{common::Energy, symbol}] = operator_derivative;
+            derivatives_map_[{common::QuantityEnum::Energy, symbol}] = operator_derivative;
         }
     }
 }

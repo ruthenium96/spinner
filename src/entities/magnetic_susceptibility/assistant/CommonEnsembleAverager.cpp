@@ -21,7 +21,7 @@ common::UncertainValue CommonEnsembleAverager::ensemble_average(
 std::pair<double, double> CommonEnsembleAverager::ensemble_average_numerator_denominator(
     std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>> value,
     double temperature) const {
-    const auto& energy_vector = getOneRef(flattenedSpectra_->getFlattenSpectrum(common::Energy).value()).get();
+    const auto& energy_vector = getOneRef(flattenedSpectra_->getFlattenSpectrum(common::QuantityEnum::Energy).value()).get();
     const auto& weights_vector = getOneRef(flattenedSpectra_->getWeights());
     const auto& value_vector = value.get();
     return calculate_averaged_value_and_partition_function(

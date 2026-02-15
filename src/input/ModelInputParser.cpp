@@ -3,6 +3,7 @@
 #include <functional>
 
 #include "Tools.h"
+#include "src/common/IncorrectEnumError.h"
 
 namespace {
 template<typename T, typename U, typename W>
@@ -162,6 +163,8 @@ OneOrMany<double> ModelInputParser::valuesParser(YAML::Node values_node) {
             throw std::invalid_argument("Incorrect format of model_input::parameters::value");
         }
     }
+    throw spinner::common::IncorrectEnumError(
+        "Unknown type of ModelInputModeEnum has been used to ModelInputParser::valuesParser");
 }
 
 model::ModelInput ModelInputParser::returnModifiedModelInput(

@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <utility>
 #include "magic_enum.hpp"
+#include "src/common/IncorrectEnumError.h"
 #include "src/common/Quantity.h"
 
 namespace spinner::eigendecompositor {
@@ -17,8 +18,8 @@ ImplicitQuantityEigendecompositor::ImplicitQuantityEigendecompositor(
     max_ntz_proj_(max_ntz_proj),
     factories_list_(std::move(factories_list)),
     quantity_implicit_enum_(quantity_implicit_enum) {
-    if (quantity_implicit_enum_ != common::S_total_squared 
-        && quantity_implicit_enum_ != common::M_total_squared) {
+    if (quantity_implicit_enum_ != common::QuantityEnum::S_total_squared 
+        && quantity_implicit_enum_ != common::QuantityEnum::M_total_squared) {
         std::ostringstream os; 
         os << "ImplicitQuantityEigendecompositor cannot construct ";
         os << magic_enum::enum_name(quantity_implicit_enum_);
@@ -40,7 +41,7 @@ ImplicitQuantityEigendecompositor::BuildSubspectra(
     if (!first_iteration_has_been_done_) {
         double value = calculate_value(subspace.properties);
 
-        size_t size_of_subspectrum = getSubspectrumSize(common::Energy, number_of_block);
+        size_t size_of_subspectrum = getSubspectrumSize(common::QuantityEnum::Energy, number_of_block);
 
         auto raw_data = factories_list_.createVector();
         raw_data->add_identical_values(size_of_subspectrum, value);
@@ -95,11 +96,11 @@ void ImplicitQuantityEigendecompositor::initialize(
         std::pair<common::QuantityEnum, model::symbols::SymbolName>,
         std::shared_ptr<const model::operators::Operator>>& derivatives_operators_to_calculate,
     uint32_t number_of_subspaces) {
-    if (operators_to_calculate.contains(common::S_total_squared)) {
+    if (operators_to_calculate.contains(common::QuantityEnum::S_total_squared)) {
         throw std::invalid_argument(
             "Explicit S^2 operator passed to ImplicitSSquareEigendecompositor");
     }
-    if (operators_to_calculate.contains(common::M_total_squared)) {
+    if (operators_to_calculate.contains(common::QuantityEnum::M_total_squared)) {
         throw std::invalid_argument(
             "Explicit M^2 operator passed to ImplicitSSquareEigendecompositor");
     }
@@ -118,16 +119,18 @@ void ImplicitQuantityEigendecompositor::finalize() {
 }
 
 double ImplicitQuantityEigendecompositor::calculate_value(const BlockProperties& properties) const {
-    if (quantity_implicit_enum_ == common::S_total_squared) {
+    if (quantity_implicit_enum_ == common::QuantityEnum::S_total_squared) {
         double mult = properties.total_mult.value();
         double spin = (mult - 1) / 2.0;
         return spin * (spin + 1);    
     }
-    if (quantity_implicit_enum_ == common::M_total_squared) {
+    if (quantity_implicit_enum_ == common::QuantityEnum::M_total_squared) {
         auto max_spin = ((double)max_ntz_proj_ - 1.0) / 2.0;
         double total_projection = properties.n_proj.value() - max_spin;
         return total_projection * total_projection;    
     }
+    throw spinner::common::IncorrectEnumError(
+        "Unknown type of QuantityEnum has been passed to ImplicitQuantityEigendecompositor::calculate_value");
 }
 
 } // namespace spinner::eigendecompositor

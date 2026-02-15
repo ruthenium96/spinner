@@ -105,8 +105,8 @@ FTLMEigendecompositor::BuildSubspectra(
 
 std::optional<OneOrMany<std::reference_wrapper<const Subspectrum>>>
 FTLMEigendecompositor::getSubspectrum(common::QuantityEnum quantity_enum, size_t number_of_block) const {
-    if (quantity_enum == common::Energy) {
-        auto exact_subspectrumref = ExactEigendecompositor::getSubspectrum(common::Energy, number_of_block).value();
+    if (quantity_enum == common::QuantityEnum::Energy) {
+        auto exact_subspectrumref = ExactEigendecompositor::getSubspectrum(common::QuantityEnum::Energy, number_of_block).value();
 
         const auto& ftlm_subspectrumref = energy_spectra_[number_of_block];
 
@@ -202,7 +202,7 @@ void FTLMEigendecompositor::initialize(
         }
     }
 
-    energy_operator_ = operators_to_calculate.at(common::Energy);
+    energy_operator_ = operators_to_calculate.at(common::QuantityEnum::Energy);
     do_we_need_eigenvectors_ =
         !(operators_to_calculate.size() == 1 && derivatives_operators_to_calculate.empty());
     // Do not do

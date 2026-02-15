@@ -68,25 +68,25 @@ ConsistentModelOptimizationList::ConsistentModelOptimizationList(
 
     model_ = std::make_unique<model::Model>(std::move(modelInput), std::move(operator_constructor));
 
-    operators_for_explicit_construction_[common::Energy] =
-        model_->getOperator(common::Energy).value();
+    operators_for_explicit_construction_[common::QuantityEnum::Energy] =
+        model_->getOperator(common::QuantityEnum::Energy).value();
 
     if (isImplicitSSquarePossible() || isImplicitMSquarePossible()) {
         return;
     }
     if (isExplicitMSquarePossible()) {
-        operators_for_explicit_construction_[common::M_total_squared] = 
-            model_->getOperator(common::M_total_squared).value();
+        operators_for_explicit_construction_[common::QuantityEnum::M_total_squared] = 
+            model_->getOperator(common::QuantityEnum::M_total_squared).value();
         return;
     }
     if (isGSquaredT00Possible()) {
-        operators_for_explicit_construction_[common::g_squared_T00] = 
-            model_->getOperator(common::g_squared_T00).value();
+        operators_for_explicit_construction_[common::QuantityEnum::g_squared_T00] = 
+            model_->getOperator(common::QuantityEnum::g_squared_T00).value();
         return;
     }
     if (isGSzSquaredPossible()) {
-        operators_for_explicit_construction_[common::gSz_total_squared] =
-            model_->getOperator(common::gSz_total_squared).value();
+        operators_for_explicit_construction_[common::QuantityEnum::gSz_total_squared] =
+            model_->getOperator(common::QuantityEnum::gSz_total_squared).value();
         return;
     }
 }
@@ -100,13 +100,13 @@ void ConsistentModelOptimizationList::InitializeDerivatives() {
                 if (isImplicitSSquarePossible() || isImplicitMSquarePossible()) {
                     continue;
                 }
-                if (isExplicitMSquarePossible() && quantity_enum != common::M_total_squared) {
+                if (isExplicitMSquarePossible() && quantity_enum != common::QuantityEnum::M_total_squared) {
                     continue;
                 }
-                if (isGSquaredT00Possible() && quantity_enum != common::g_squared_T00) {
+                if (isGSquaredT00Possible() && quantity_enum != common::QuantityEnum::g_squared_T00) {
                     continue;
                 }
-                if (isGSzSquaredPossible() && quantity_enum != common::gSz_total_squared) {
+                if (isGSzSquaredPossible() && quantity_enum != common::QuantityEnum::gSz_total_squared) {
                     continue;
                 }
             }

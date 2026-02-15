@@ -6,7 +6,7 @@
 namespace spinner::magnetic_susceptibility::worker {
 BasicWorker::BasicWorker(
     std::shared_ptr<const eigendecompositor::FlattenedSpectra> flattenedSpectra) {
-    if (holdsMany(flattenedSpectra->getFlattenSpectrum(common::Energy).value())) {
+    if (holdsMany(flattenedSpectra->getFlattenSpectrum(common::QuantityEnum::Energy).value())) {
         ensemble_averager_ = std::make_shared<FTLMEnsembleAverager>(flattenedSpectra);
     } else {
         ensemble_averager_ = std::make_shared<CommonEnsembleAverager>(flattenedSpectra);

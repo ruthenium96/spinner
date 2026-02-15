@@ -36,7 +36,7 @@ common::UncertainValue FTLMEnsembleAverager::ensemble_average(
 std::pair<std::vector<double>, std::vector<double>> FTLMEnsembleAverager::ensemble_average_numerator_denominator(
     const OneOrMany<std::reference_wrapper<const std::unique_ptr<linalg_structures::AbstractDenseVector>>>& values,
     double temperature) const {
-    auto energy_vectors = flattenedSpectra_->getFlattenSpectrum(common::Energy).value();
+    auto energy_vectors = flattenedSpectra_->getFlattenSpectrum(common::QuantityEnum::Energy).value();
     auto weights_vectors = flattenedSpectra_->getWeights();
     const auto& value_vectors = values;
 

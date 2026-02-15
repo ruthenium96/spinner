@@ -74,7 +74,7 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
         eigendecompositor = std::make_unique<eigendecompositor::ImplicitQuantityEigendecompositor>(
             std::move(eigendecompositor),
             factories,
-            common::S_total_squared,
+            common::QuantityEnum::S_total_squared,
             indexConverter->get_max_ntz_proj());    
     }
     if (consistentModelOptimizationList.isImplicitMSquarePossible()) {
@@ -82,7 +82,7 @@ std::unique_ptr<AbstractEigendecompositor> EigendecompositorConstructor::constru
             eigendecompositor = std::make_unique<eigendecompositor::ImplicitQuantityEigendecompositor>(
                 std::move(eigendecompositor),
                 factories,
-                common::M_total_squared,
+                common::QuantityEnum::M_total_squared,
                 indexConverter->get_max_ntz_proj());
     }
 

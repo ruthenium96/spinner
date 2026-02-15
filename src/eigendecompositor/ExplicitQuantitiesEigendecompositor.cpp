@@ -105,7 +105,7 @@ void ExplicitQuantitiesEigendecompositor::initialize(
         number_of_subspaces);
 
     for (const auto& [quantity_enum, operator_to_calculate] : operators_to_calculate) {
-        if (quantity_enum == common::Energy) {
+        if (quantity_enum == common::QuantityEnum::Energy) {
             throw std::invalid_argument(
                 "Energy operator passed to ExplicitQuantitiesEigendecompositor");
         }

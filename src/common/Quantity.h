@@ -5,7 +5,7 @@
 #include "src/entities/spectrum/Spectrum.h"
 
 namespace spinner::common {
-enum QuantityEnum {
+enum class QuantityEnum {
     Energy,
     S_total_squared, M_total_squared,
     g_squared_T00, gSz_total_squared};

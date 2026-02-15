@@ -37,11 +37,11 @@ std::vector<ValueAtTemperature> UniqueGWorker::calculateDerivative(
     } else {
         // d(mu_squared)/da = d(g^2*<S^2>)/da = g^2*d(<S^2>)/da = g^2*(<S^2>*<dE/da>-<S^2*dE/da>)/T
         auto energy_derivative =
-            flattenedSpectra_->getFlattenDerivativeSpectrum(common::Energy, symbol_name).value();
+            flattenedSpectra_->getFlattenDerivativeSpectrum(common::QuantityEnum::Energy, symbol_name).value();
         for (size_t i = 0; i < temperatures.size(); ++i) {
             auto first_term = ensemble_averager_->ensemble_average(quantity, temperatures[i])
                 * ensemble_averager_->ensemble_average(energy_derivative, temperatures[i]);
-            auto quantity_derivative_product = flattenedSpectra_->getFlattenDerivativeProductSpectrum(quantity_enum_for_averaging_, common::Energy, symbol_name).value();
+            auto quantity_derivative_product = flattenedSpectra_->getFlattenDerivativeProductSpectrum(quantity_enum_for_averaging_, common::QuantityEnum::Energy, symbol_name).value();
             auto second_term = ensemble_averager_->ensemble_average(quantity_derivative_product, temperatures[i]);
             auto value = g_unique_getter_() * g_unique_getter_() * quantity_factor_ * 
                 (first_term - second_term) / temperatures[i];

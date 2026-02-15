@@ -21,14 +21,14 @@ size_t size_of_spectrum_with_degeneracy(const spinner::SpectrumRef& spectrum_ref
 }
 
 void EXPECT_SIZE_CONSISTENCE_OF_MATRICES(spinner::runner::Runner& runner) {
-    auto mb_energy_matrix = runner.getMatrix(spinner::common::Energy);
+    auto mb_energy_matrix = runner.getMatrix(spinner::common::QuantityEnum::Energy);
     if (mb_energy_matrix.has_value()) {
         auto energy_matrix = getOneRef(mb_energy_matrix.value());
         EXPECT_EQ(
             runner.getIndexConverter()->get_total_space_size(),
             size_of_matrix_with_degeneracy(energy_matrix));
     }
-    auto mb_s_squared_matrix = runner.getMatrix(spinner::common::S_total_squared);
+    auto mb_s_squared_matrix = runner.getMatrix(spinner::common::QuantityEnum::S_total_squared);
     if (mb_s_squared_matrix.has_value()) {
         auto s_squared_matrix = getOneRef(mb_s_squared_matrix.value());
         EXPECT_EQ(

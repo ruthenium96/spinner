@@ -29,8 +29,8 @@ inline std::vector<QuantumValues> construct_final_vector(spinner::runner::Runner
         }
     }
 
-    EXPECT_TRUE(holdsOne(runner.getSpectrum(spinner::common::Energy).value()));
-    spinner::SpectrumRef energy_spectrum_ref = getOneRef(runner.getSpectrum(spinner::common::Energy).value());
+    EXPECT_TRUE(holdsOne(runner.getSpectrum(spinner::common::QuantityEnum::Energy).value()));
+    spinner::SpectrumRef energy_spectrum_ref = getOneRef(runner.getSpectrum(spinner::common::QuantityEnum::Energy).value());
     for (const auto& subspectrum_ref : energy_spectrum_ref.blocks) {
         const auto& subspectrum = subspectrum_ref.get();
         degeneracy_vector->add_identical_values(
@@ -49,7 +49,7 @@ inline std::vector<QuantumValues> construct_final_vector(spinner::runner::Runner
         }
     }
 
-    values_vectors[magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)].value().get()->subtract_minimum();
+    values_vectors[magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)].value().get()->subtract_minimum();
 
     for (size_t i = 0; i < degeneracy_vector->size(); ++i) {
         QuantumValues quantum_values;
@@ -77,7 +77,7 @@ void expect_final_vectors_equivalence(spinner::runner::Runner& simple, spinner::
     QuantumValues quantum_values_sum_second;
 
     for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
-        if (j == magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)) {
+        if (j == magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)) {
             continue;
         }
         if (first_vector.at(0)[j].has_value()) {
@@ -93,23 +93,23 @@ void expect_final_vectors_equivalence(spinner::runner::Runner& simple, spinner::
     for (size_t i = 0; i < first_vector.size(); ++i) {
         // TODO: epsilon
         if (assert) {
-            ASSERT_NEAR(first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)].value(), 
-                second_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)].value(), 1e-9);
+            ASSERT_NEAR(first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)].value(), 
+                second_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)].value(), 1e-9);
         } else {
-            EXPECT_NEAR(first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)].value(), 
-                second_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)].value(), 1e-9);
+            EXPECT_NEAR(first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)].value(), 
+                second_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)].value(), 1e-9);
         }
 
         // TODO: values may differ, but the sums of values for degenerate eigenvectors should be the same
-        if (std::abs(last_energy - first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)].value()) > 1e-5) {
+        if (std::abs(last_energy - first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)].value()) > 1e-5) {
             for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
                 for (int k = 0; k < quantum_values_sum_second.size(); ++k) {
                     if (quantum_values_sum_first[j].has_value() 
                         && quantum_values_sum_second[k].has_value()) {
-                        if (magic_enum::enum_value<spinner::common::QuantityEnum>(j) != spinner::common::S_total_squared) {
+                        if (magic_enum::enum_value<spinner::common::QuantityEnum>(j) != spinner::common::QuantityEnum::S_total_squared) {
                             quantum_values_sum_first[j].value() *= 3;
                         }
-                        if (magic_enum::enum_value<spinner::common::QuantityEnum>(k) != spinner::common::S_total_squared) {
+                        if (magic_enum::enum_value<spinner::common::QuantityEnum>(k) != spinner::common::QuantityEnum::S_total_squared) {
                             quantum_values_sum_second[k].value() *= 3;
                         }
                         if (assert) {
@@ -128,15 +128,14 @@ void expect_final_vectors_equivalence(spinner::runner::Runner& simple, spinner::
             }
         }
         for (int j = 0; j < quantum_values_sum_first.size(); ++j) {
-            const auto& quantity_enum_ = magic_enum::enum_value<spinner::common::QuantityEnum>(j);
             if (quantum_values_sum_first[j].has_value()) {
-                quantum_values_sum_first[j].value() += first_vector[i][quantity_enum_].value();
+                quantum_values_sum_first[j].value() += first_vector[i][j].value();
             }
             if (quantum_values_sum_second[j].has_value()) {
-                quantum_values_sum_second[j].value() += second_vector[i][quantity_enum_].value();  
+                quantum_values_sum_second[j].value() += second_vector[i][j].value();  
             }
         }
-        last_energy = first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::Energy)].value();
+        last_energy = first_vector[i][magic_enum::enum_integer<spinner::common::QuantityEnum>(spinner::common::QuantityEnum::Energy)].value();
     }
 }
 
