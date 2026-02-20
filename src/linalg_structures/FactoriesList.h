@@ -34,6 +34,11 @@ class FactoriesList {
      */
     std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
+    /**
+     * @brief Creates a sparse symmetric matrix.
+     * @param size Matrix dimension.
+     * @return std::unique_ptr<AbstractSymmetricMatrix>
+     */
     std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) const;
 
   private:

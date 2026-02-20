@@ -36,8 +36,32 @@ class AbstractDenseTransformAndDiagonalizeFactory {
     }
 };
 
+/**
+ * @class AbstractSparseTransformFactory
+ * @brief Factory for sparse matrix structures tailored to incremental assembly.
+ *
+ * This factory produces sparse semi‑unitary and sparse symmetric matrices that
+ * are built incrementally via `add_to_position()` calls. For sparse semi‑unitary
+ * matrices, the key operation `move_vector_from()` efficiently transfers whole
+ * rows between matrices, which is essential for the performance.
+ *
+ * @note These structures deliberately avoid using standard sparse storage
+ *       formats (like CSC or CSR) because implementing `add_to_position` and
+ *       `move_vector_from` efficiently in those formats would be impractical.
+ *       Instead, the concrete implementations use custom data layouts optimized
+ *       for incremental construction and row moves (e.g. hashmaps). Consequently,
+ *       they are provided by a separate factory, distinct from the dense linear 
+ *       algebra backend factory.
+ */
 class AbstractSparseTransformFactory {
   public:
+    /**
+     * @brief Returns a default (concrete) factory instance.
+     *
+     * The exact type depends on the CMake configuration.
+     *
+     * @return std::shared_ptr<AbstractSparseTransformFactory>
+     */
     static std::shared_ptr<AbstractSparseTransformFactory> defaultSparseFactory();
     /**
      * @brief Creates a sparse semi‑unitary matrix.
@@ -47,6 +71,11 @@ class AbstractSparseTransformFactory {
      */
     virtual std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
+    /**
+     * @brief Creates a sparse symmetric matrix.
+     * @param size Matrix dimension.
+     * @return std::unique_ptr<AbstractSymmetricMatrix>
+     */
     virtual std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) = 0;
 
     /// Virtual destructor.
