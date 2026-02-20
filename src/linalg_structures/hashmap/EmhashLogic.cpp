@@ -6,14 +6,10 @@ namespace spinner::linalg_structures {
 void EmhashLogic::unitaryTransform(
     const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
     std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd,
-    const AbstractSparseSemiunitaryMatrix& unitaryMatrix) const {
-    const auto maybeSemiunitaryMatrix =
-        dynamic_cast<const EmhashSparseSemiunitaryMatrix*>(&unitaryMatrix);
-    if (maybeSemiunitaryMatrix == nullptr) {
-        throw std::bad_cast();
-    }
-    const auto& semiunitaryMatrixData = maybeSemiunitaryMatrix->getSparseSemiunitaryMatrix();
-    size_t matrix_in_space_basis_size = maybeSemiunitaryMatrix->size_cols();
+    const EmhashSparseSemiunitaryMatrix& unitaryMatrix) const {
+
+    const auto& semiunitaryMatrixData = unitaryMatrix.getSparseSemiunitaryMatrix();
+    size_t matrix_in_space_basis_size = unitaryMatrix.size_cols();
 
     auto maybeSymmetricMatrix =
         dynamic_cast<const EmhashSparseSymmetricMatrix*>(symmetricMatrixToTransform.get());

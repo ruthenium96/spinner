@@ -11,7 +11,7 @@ class EmhashLogic {
     void unitaryTransform(
         const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
         std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd,
-        const AbstractSparseSemiunitaryMatrix& unitaryMatrix) const;
+        const EmhashSparseSemiunitaryMatrix& unitaryMatrix) const;
 };
 
 } // namespace spinner::linalg_structures
