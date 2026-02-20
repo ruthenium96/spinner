@@ -1,7 +1,7 @@
 #include "ArmaDenseVector.h"
 #include <stdexcept>
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 
 template <typename T>
 void ArmaDenseVector<T>::resize(uint32_t new_size) {
@@ -128,4 +128,4 @@ const arma::Col<T>& ArmaDenseVector<T>::getDenseVector() const {
 
 template class ArmaDenseVector<double>;
 template class ArmaDenseVector<float>;
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo

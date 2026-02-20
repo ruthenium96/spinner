@@ -6,7 +6,7 @@
 #include "src/linalg_structures/AbstractDenseSemiunitaryMatrix.h"
 #include "src/linalg_structures/AbstractDenseSemiunitaryTransformer.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 template <typename T>
 class ArmaKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
   public:
@@ -34,5 +34,5 @@ class ArmaKrylovDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
 
     std::unique_ptr<AbstractDenseSemiunitaryTransformer> transformer_;
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo
 #endif  //SPINNER_ARMAKRYLOVDENSESEMIUNITARYMATRIX_H

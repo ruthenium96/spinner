@@ -3,7 +3,7 @@
 #include "EigenSparseDiagonalizableMatrix.h"
 #include "EigenDenseVector.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 
 template<typename T, typename M>
 inline std::unique_ptr<AbstractDenseVector> unitaryTransformAndReturnMainDiagonal_(
@@ -46,4 +46,4 @@ std::unique_ptr<AbstractDenseVector> EigenKrylovDenseSemiunitaryTransformer<T>::
 
 template class EigenKrylovDenseSemiunitaryTransformer<double>;
 template class EigenKrylovDenseSemiunitaryTransformer<float>;
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen

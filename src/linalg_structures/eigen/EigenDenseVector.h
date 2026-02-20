@@ -5,7 +5,7 @@
 
 #include "src/linalg_structures/AbstractDenseVector.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 template <typename T>
 class EigenDenseVector: public AbstractDenseVector {
   public:
@@ -35,5 +35,5 @@ class EigenDenseVector: public AbstractDenseVector {
     // c-like pointers are necessary to avoid double-free error
     static const EigenDenseVector* downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr);
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen
 #endif  //SPINNER_EIGENDENSEVECTOR_H

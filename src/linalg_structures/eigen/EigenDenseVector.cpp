@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <random>
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 
 template <typename T>
 void EigenDenseVector<T>::resize(uint32_t new_size) {
@@ -134,4 +134,4 @@ EigenDenseVector<T>::downcast_ptr(const std::unique_ptr<AbstractDenseVector>& pt
 
 template class EigenDenseVector<double>;
 template class EigenDenseVector<float>;
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen

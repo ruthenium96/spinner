@@ -4,7 +4,7 @@
 #include "Eigen/Sparse"
 #include "src/linalg_structures/AbstractDiagonalizableMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 template <typename T>
 class EigenSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   public:
@@ -33,5 +33,5 @@ class EigenSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   private:
     Eigen::SparseMatrix<T> sparseDiagonalizableMatrix_;
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen
 #endif  //SPINNER_EIGENSPARSEDIAGONALIZABLEMATRIX_H

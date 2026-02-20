@@ -7,7 +7,7 @@
 
 #include "src/linalg_structures/AbstractDenseVector.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 template <typename T>
 class ArmaDenseVector: public AbstractDenseVector {
   public:
@@ -36,5 +36,5 @@ class ArmaDenseVector: public AbstractDenseVector {
     static const ArmaDenseVector* downcast_ptr(const std::unique_ptr<AbstractDenseVector>& ptr);
     arma::Col<T> vector_;
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo
 #endif  //SPINNER_ARMADENSEVECTOR_H

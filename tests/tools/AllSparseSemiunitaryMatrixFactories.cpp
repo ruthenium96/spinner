@@ -8,6 +8,6 @@ using namespace spinner::linalg_structures;
 std::vector<std::shared_ptr<AbstractSparseTransformFactory>>
 constructAllSparseSemiunitaryMatrixFactories() {
     return {
-        std::make_shared<ArmaSparseTransformFactory>(),
-        std::make_shared<EmhashSparseTransformFactory>()};
+        std::make_shared<armadillo::ArmaSparseTransformFactory>(),
+        std::make_shared<hashmap::EmhashSparseTransformFactory>()};
 }

@@ -2,7 +2,7 @@
 
 #include <hash_table8.hpp>
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::hashmap {
 void EmhashLogic::unitaryTransform(
     const std::unique_ptr<AbstractSymmetricMatrix>& symmetricMatrixToTransform,
     std::unique_ptr<AbstractDiagonalizableMatrix>& symmetricMatrixToAdd,
@@ -70,4 +70,4 @@ void EmhashLogic::unitaryTransform(
         }
     }
 }
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::hashmap

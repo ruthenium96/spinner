@@ -2,7 +2,7 @@
 
 #include "ArmaLogic.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 
 template <typename T>
 void ArmaSparseDiagonalizableMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
@@ -91,4 +91,4 @@ arma::SpMat<T>& ArmaSparseDiagonalizableMatrix<T>::modifySparseSymmetricMatrix()
 
 template class ArmaSparseDiagonalizableMatrix<double>;
 template class ArmaSparseDiagonalizableMatrix<float>;
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo

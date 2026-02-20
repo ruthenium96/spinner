@@ -2,7 +2,7 @@
 
 #include <ostream>
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::hashmap {
 
 void EmhashSparseSymmetricMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
     if (!hashmap_.contains(i)) {
@@ -56,4 +56,4 @@ void EmhashSparseSymmetricMatrix::print(std::ostream& os) const {
     }
 }
 
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::hashmap

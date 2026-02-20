@@ -2,7 +2,7 @@
 
 #include "EigenLogic.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 
 template <typename T>
 void EigenSparseDiagonalizableMatrix<T>::add_to_position(double value, uint32_t i, uint32_t j) {
@@ -94,4 +94,4 @@ void EigenSparseDiagonalizableMatrix<T>::print(std::ostream& os) const {
 
 template class EigenSparseDiagonalizableMatrix<double>;
 template class EigenSparseDiagonalizableMatrix<float>;
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen

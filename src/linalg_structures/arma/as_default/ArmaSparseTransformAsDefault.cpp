@@ -1,10 +1,10 @@
 #include "src/linalg_structures/AbstractFactories.h"
 #include "src/linalg_structures/arma/ArmaFactories.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 
 std::shared_ptr<AbstractSparseTransformFactory>
 AbstractSparseTransformFactory::defaultSparseFactory() {
     return std::make_shared<ArmaSparseTransformFactory>();
 }
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo

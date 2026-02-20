@@ -5,7 +5,7 @@
 #include "src/linalg_structures/AbstractDenseSemiunitaryTransformer.h"
 #include "EigenKrylovDenseSemiunitaryMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 template <typename T>
 class EigenKrylovDenseSemiunitaryTransformer: public AbstractDenseSemiunitaryTransformer {
 public:
@@ -18,5 +18,5 @@ private:
     const EigenKrylovDenseSemiunitaryMatrix<T>* unitary_matrix_;
 };
     
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen
 #endif  //SPINNER_EIGENKRYLOVDENSESEMIUNITARYTRANSFORMER_H

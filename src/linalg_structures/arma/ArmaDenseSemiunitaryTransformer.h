@@ -5,7 +5,7 @@
 #include "src/linalg_structures/AbstractDenseSemiunitaryTransformer.h"
 #include "ArmaDenseSemiunitaryMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 template <typename T>
 class ArmaDenseSemiunitaryTransformer: public AbstractDenseSemiunitaryTransformer {
 public:
@@ -21,5 +21,5 @@ private:
     arma::Col<T> multiplyAndReturnMainDiagonal(const arma::Mat<T>& left, const arma::Mat<T>& right) const;
 };
     
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo
 #endif  //SPINNER_ARMADENSESEMIUNITARYTRANSFORMER_H

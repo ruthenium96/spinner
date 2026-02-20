@@ -5,7 +5,7 @@
 
 #include "EmhashLogic.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::hashmap {
 
 struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
     EmhashSparseSemiunitaryMatrix::Map::const_iterator iter;
@@ -155,4 +155,4 @@ void EmhashSparseSemiunitaryMatrix::unitaryTransform(
 
     logic.unitaryTransform(symmetricMatrixToTransform, symmetricMatrixToAdd, *this);
 }
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::hashmap

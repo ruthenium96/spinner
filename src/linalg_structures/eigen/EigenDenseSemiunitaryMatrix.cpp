@@ -2,7 +2,7 @@
 
 #include "EigenDenseSemiunitaryTransformer.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 
 template <typename T>
 EigenDenseSemiunitaryMatrix<T>::EigenDenseSemiunitaryMatrix() {
@@ -52,4 +52,4 @@ Eigen::Matrix<T, -1, -1>& EigenDenseSemiunitaryMatrix<T>::modifyDenseSemiunitary
 
 template class EigenDenseSemiunitaryMatrix<double>;
 template class EigenDenseSemiunitaryMatrix<float>;
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen

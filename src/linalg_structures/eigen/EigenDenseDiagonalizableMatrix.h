@@ -5,7 +5,7 @@
 
 #include "src/linalg_structures/AbstractDiagonalizableMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 template <typename T>
 class EigenDenseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   public:
@@ -32,5 +32,5 @@ class EigenDenseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   private:
     Eigen::Matrix<T, -1, -1> denseDiagonalizableMatrix_;
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen
 #endif  //SPINNER_EIGENDENSEDIAGONALIZABLEMATRIX_H

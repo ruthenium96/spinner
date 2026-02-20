@@ -2,7 +2,7 @@
 
 #include "ArmaDenseSemiunitaryTransformer.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 template <typename T>
 ArmaDenseSemiunitaryMatrix<T>::ArmaDenseSemiunitaryMatrix() {
     transformer_ = std::make_unique<ArmaDenseSemiunitaryTransformer<T>>(this);
@@ -51,4 +51,4 @@ arma::Mat<T>& ArmaDenseSemiunitaryMatrix<T>::modifyDenseSemiunitaryMatrix() {
 
 template class ArmaDenseSemiunitaryMatrix<double>;
 template class ArmaDenseSemiunitaryMatrix<float>;
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo

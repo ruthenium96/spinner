@@ -7,7 +7,7 @@
 #include "src/linalg_structures/AbstractDenseVector.h"
 #include "src/linalg_structures/AbstractDiagonalizableMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 template <typename T>
 class EigenLogic {
   public:
@@ -26,6 +26,6 @@ class EigenLogic {
       size_t krylov_subspace_size) const;
 };
 
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen
 
 #endif  //SPINNER_EIGENLOGIC_H

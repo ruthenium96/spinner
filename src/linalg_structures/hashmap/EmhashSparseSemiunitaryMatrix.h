@@ -10,7 +10,7 @@
 
 #include "src/linalg_structures/AbstractSparseSemiunitaryMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::hashmap {
 class EmhashSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   public:
     using Map = emhash8::HashMap<uint32_t, double>;
@@ -59,6 +59,6 @@ class EmhashSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
     static EmhashSparseSemiunitaryMatrix*
     downcast_ptr(std::unique_ptr<AbstractSparseSemiunitaryMatrix>& ptr);
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::hashmap
 
 #endif  //SPINNER_EMHASHSPARSESEMIUNITARYMATRIX_H

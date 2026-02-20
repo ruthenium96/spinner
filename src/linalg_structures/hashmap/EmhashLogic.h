@@ -4,7 +4,7 @@
 #include "EmhashSparseSemiunitaryMatrix.h"
 #include "EmhashSparseSymmetricMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::hashmap {
 
 class EmhashLogic {
   public:
@@ -14,6 +14,6 @@ class EmhashLogic {
         const EmhashSparseSemiunitaryMatrix& unitaryMatrix) const;
 };
 
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::hashmap
 
 #endif  //SPINNER_EMHASHLOGIC_H

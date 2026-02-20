@@ -3,7 +3,7 @@
 
 #include "src/linalg_structures/AbstractFactories.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 class ArmaDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAndDiagonalizeFactory {
   public:
     std::unique_ptr<AbstractDiagonalizableMatrix>
@@ -23,5 +23,5 @@ class ArmaSparseTransformFactory: public AbstractSparseTransformFactory {
     std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) override;
 };
 
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo
 #endif  //SPINNER_ARMAFACTORIES_H

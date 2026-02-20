@@ -5,7 +5,7 @@
 
 #include "src/linalg_structures/AbstractSparseSemiunitaryMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 class ArmaSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   public:
     std::unique_ptr<Iterator> GetNewIterator(size_t col) const override;
@@ -33,5 +33,5 @@ class ArmaSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
   private:
     arma::sp_mat sparseSemiunitaryMatrix_;
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo
 #endif  //SPINNER_ARMASPARSESEMIUNITARYMATRIX_H

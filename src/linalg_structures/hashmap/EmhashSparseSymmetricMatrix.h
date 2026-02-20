@@ -4,7 +4,7 @@
 #include "hash_table8.hpp"
 #include "src/linalg_structures/AbstractSymmetricMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::hashmap {
 
 class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
   public:
@@ -23,5 +23,5 @@ class EmhashSparseSymmetricMatrix: public AbstractSymmetricMatrix {
     size_t size_;
     emhash8::HashMap<uint32_t, Map> hashmap_;
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::hashmap
 #endif  //SPINNER_EMHASHSPARSESYMMETRICMATRIX_H

@@ -5,7 +5,7 @@
 
 #include "src/linalg_structures/AbstractDiagonalizableMatrix.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::armadillo {
 template <typename T>
 class ArmaSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
   public:
@@ -36,5 +36,5 @@ class ArmaSparseDiagonalizableMatrix: public AbstractDiagonalizableMatrix {
 template <typename T>
 using ArmaSparseSymmetricMatrix = ArmaSparseDiagonalizableMatrix<T>;
 
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::armadillo
 #endif  //SPINNER_ARMASPARSEDIAGONALIZABLEMATRIX_H

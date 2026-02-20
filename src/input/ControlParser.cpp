@@ -17,13 +17,13 @@ std::shared_ptr<spinner::linalg_structures::AbstractDenseTransformAndDiagonalize
         return spinner::linalg_structures::AbstractDenseTransformAndDiagonalizeFactory::defaultFactory();
     } else if (dense_algebra_package_string == "arma") {
 #ifdef _Arma_BUILT
-        return std::make_shared<spinner::linalg_structures::ArmaDenseTransformAndDiagonalizeFactory>();
+        return std::make_shared<spinner::linalg_structures::armadillo::ArmaDenseTransformAndDiagonalizeFactory>();
 #else
         throw std::invalid_argument("Arma was not found, thus cannot be used");
 #endif
     } else if (dense_algebra_package_string == "eigen") {
 #ifdef _Eigen_BUILT
-        return std::make_shared<spinner::linalg_structures::EigenDenseTransformAndDiagonalizeFactory>();
+        return std::make_shared<spinner::linalg_structures::eigen::EigenDenseTransformAndDiagonalizeFactory>();
 #else
         throw std::invalid_argument("Eigen was not found, thus cannot be used");
 #endif

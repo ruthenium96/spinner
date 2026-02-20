@@ -3,7 +3,7 @@
 
 #include "src/linalg_structures/AbstractFactories.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 
 class EigenDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAndDiagonalizeFactory {
   public:
@@ -17,5 +17,5 @@ class EigenDenseTransformAndDiagonalizeFactory: public AbstractDenseTransformAnd
     std::unique_ptr<AbstractDenseVector> createVector() override;
 };
 
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen
 #endif  //SPINNER_EIGENFACTORIES_H

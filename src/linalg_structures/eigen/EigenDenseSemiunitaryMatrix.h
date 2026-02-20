@@ -6,7 +6,7 @@
 #include "src/linalg_structures/AbstractDenseSemiunitaryMatrix.h"
 #include "src/linalg_structures/AbstractDenseSemiunitaryTransformer.h"
 
-namespace spinner::linalg_structures {
+namespace spinner::linalg_structures::eigen {
 template <typename T>
 class EigenDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
   public:
@@ -29,5 +29,5 @@ class EigenDenseSemiunitaryMatrix: public AbstractDenseSemiunitaryMatrix {
 
     std::unique_ptr<AbstractDenseSemiunitaryTransformer> transformer_;
 };
-} // namespace spinner::linalg_structures
+} // namespace spinner::linalg_structures::eigen
 #endif  //SPINNER_EIGENDENSESEMIUNITARYMATRIX_H
