@@ -24,10 +24,22 @@ class FactoriesList {
     createSparseDiagonalizableMatrix(uint32_t size) const;
     std::unique_ptr<AbstractDenseSemiunitaryMatrix>
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
+    /**
+     * @brief Creates a given number of random unit vectors (using AbstractDenseTransformAndDiagonalizeFactory).
+     * For each vector 1) independently generates size_of_vector elements 
+     * according to some distribution, 2) Euclid-normalize these elements.
+     * @param size_of_vector  Dimension of each vector.
+     * @param number_of_vectors How many vectors to create.
+     * @return std::vector of unique_ptrs to AbstractDenseVector, each of unit norm.
+     */
     std::vector<std::unique_ptr<AbstractDenseVector>> createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) const;
+    /**
+     * @brief Creates an empty dense vector (using AbstractDenseTransformAndDiagonalizeFactory).
+     * @return std::unique_ptr<AbstractDenseVector>
+     */
     std::unique_ptr<AbstractDenseVector> createVector() const;
     /**
-     * @brief Creates a sparse semi‑unitary matrix.
+     * @brief Creates a sparse semi‑unitary matrix (using AbstractSparseTransformFactory).
      * @param cols Number of columns (vectors).
      * @param rows Number of rows.
      * @return std::unique_ptr<AbstractSparseSemiunitaryMatrix>
@@ -35,7 +47,7 @@ class FactoriesList {
     std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
     /**
-     * @brief Creates a sparse symmetric matrix.
+     * @brief Creates a sparse symmetric matrix (using AbstractSparseTransformFactory).
      * @param size Matrix dimension.
      * @return std::unique_ptr<AbstractSymmetricMatrix>
      */

@@ -21,9 +21,22 @@ class AbstractDenseTransformAndDiagonalizeFactory {
     createSparseDiagonalizableMatrix(uint32_t size) = 0;
     virtual std::unique_ptr<AbstractDenseSemiunitaryMatrix>
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
+    /**
+     * @brief Creates a given number of random unit vectors.
+     * For each vector 1) independently generates size_of_vector elements 
+     * according to some distribution, 2) Euclid-normalize these elements.
+     * @param size_of_vector  Dimension of each vector.
+     * @param number_of_vectors How many vectors to create.
+     * @return std::vector of unique_ptrs to AbstractDenseVector, each of unit norm.
+     */
     virtual std::vector<std::unique_ptr<AbstractDenseVector>> createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) = 0;
+    /**
+     * @brief Creates an empty dense vector.
+     * @return std::unique_ptr<AbstractDenseVector>
+     */
     virtual std::unique_ptr<AbstractDenseVector> createVector() = 0;
 
+    /// Virtual destructor.
     ~AbstractDenseTransformAndDiagonalizeFactory() = default;
   private:
     Precision precision_ = Precision::DOUBLE;
