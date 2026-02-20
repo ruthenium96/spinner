@@ -39,10 +39,17 @@ class AbstractDenseTransformAndDiagonalizeFactory {
 class AbstractSparseTransformFactory {
   public:
     static std::shared_ptr<AbstractSparseTransformFactory> defaultSparseFactory();
+    /**
+     * @brief Creates a sparse semi‑unitary matrix.
+     * @param cols Number of columns (vectors).
+     * @param rows Number of rows.
+     * @return std::unique_ptr<AbstractSparseSemiunitaryMatrix>
+     */
     virtual std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
     virtual std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) = 0;
 
+    /// Virtual destructor.
     ~AbstractSparseTransformFactory() = default;
 };
 

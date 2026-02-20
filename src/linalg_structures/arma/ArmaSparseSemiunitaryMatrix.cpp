@@ -34,11 +34,11 @@ struct IteratorImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
 };
 
 std::unique_ptr<AbstractSparseSemiunitaryMatrix::Iterator>
-ArmaSparseSemiunitaryMatrix::GetNewIterator(size_t index_of_vector) const {
+ArmaSparseSemiunitaryMatrix::GetNewIterator(size_t col) const {
     return std::make_unique<IteratorImpl>(
-        sparseSemiunitaryMatrix_.begin_col(index_of_vector),
-        sparseSemiunitaryMatrix_.end_col(index_of_vector),
-        sparseSemiunitaryMatrix_.col(index_of_vector).n_nonzero);
+        sparseSemiunitaryMatrix_.begin_col(col),
+        sparseSemiunitaryMatrix_.end_col(col),
+        sparseSemiunitaryMatrix_.col(col).n_nonzero);
 }
 
 uint32_t ArmaSparseSemiunitaryMatrix::size_rows() const {
@@ -53,8 +53,8 @@ bool ArmaSparseSemiunitaryMatrix::empty() const {
     return sparseSemiunitaryMatrix_.n_nonzero == 0;
 }
 
-bool ArmaSparseSemiunitaryMatrix::vempty(uint32_t index_of_vector) const {
-    return sparseSemiunitaryMatrix_.col(index_of_vector).n_nonzero == 0;
+bool ArmaSparseSemiunitaryMatrix::vempty(uint32_t col) const {
+    return sparseSemiunitaryMatrix_.col(col).n_nonzero == 0;
 }
 
 void ArmaSparseSemiunitaryMatrix::clear() {
@@ -65,12 +65,12 @@ void ArmaSparseSemiunitaryMatrix::eraseExplicitZeros() {
     sparseSemiunitaryMatrix_.clean(0.001);
 }
 
-bool ArmaSparseSemiunitaryMatrix::is_zero(uint32_t i, uint32_t j) const {
-    return (sparseSemiunitaryMatrix_(j, i) == 0);
+bool ArmaSparseSemiunitaryMatrix::is_zero(uint32_t col, uint32_t row) const {
+    return (sparseSemiunitaryMatrix_(row, col) == 0);
 }
 
 void ArmaSparseSemiunitaryMatrix::move_vector_from(
-    uint32_t i,
+    uint32_t col,
     std::unique_ptr<AbstractSparseSemiunitaryMatrix>& subspace_from) {
     auto mb_rhs = dynamic_cast<ArmaSparseSemiunitaryMatrix*>(subspace_from.get());
     if (mb_rhs == nullptr) {
@@ -81,19 +81,19 @@ void ArmaSparseSemiunitaryMatrix::move_vector_from(
     auto old_in_cols = sparseSemiunitaryMatrix_.n_cols;
     sparseSemiunitaryMatrix_.resize(old_in_rows, old_in_cols + 1);
 
-    sparseSemiunitaryMatrix_.col(old_in_cols) = mb_rhs->sparseSemiunitaryMatrix_.col(i);
+    sparseSemiunitaryMatrix_.col(old_in_cols) = mb_rhs->sparseSemiunitaryMatrix_.col(col);
 }
 
 void ArmaSparseSemiunitaryMatrix::resize(uint32_t cols, uint32_t rows) {
     sparseSemiunitaryMatrix_.resize(rows, cols);
 }
 
-void ArmaSparseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
-    sparseSemiunitaryMatrix_(j, i) += value;
+void ArmaSparseSemiunitaryMatrix::add_to_position(double value, uint32_t col, uint32_t row) {
+    sparseSemiunitaryMatrix_(row, col) += value;
 }
 
-double ArmaSparseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    return sparseSemiunitaryMatrix_(j, i);
+double ArmaSparseSemiunitaryMatrix::at(uint32_t col, uint32_t row) const {
+    return sparseSemiunitaryMatrix_(row, col);
 }
 
 void ArmaSparseSemiunitaryMatrix::normalize() {

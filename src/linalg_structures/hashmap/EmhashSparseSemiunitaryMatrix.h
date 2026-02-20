@@ -22,24 +22,24 @@ class EmhashSparseSemiunitaryMatrix: public AbstractSparseSemiunitaryMatrix {
     EmhashSparseSemiunitaryMatrix& operator=(EmhashSparseSemiunitaryMatrix&&) noexcept = default;
     ~EmhashSparseSemiunitaryMatrix() override = default;
 
-    std::unique_ptr<Iterator> GetNewIterator(size_t index_of_vector) const override;
+    std::unique_ptr<Iterator> GetNewIterator(size_t col) const override;
 
     uint32_t size_rows() const override;
     uint32_t size_cols() const override;
     bool empty() const override;
-    bool vempty(uint32_t index_of_vector) const override;
+    bool vempty(uint32_t col) const override;
     void clear() override;
 
     void eraseExplicitZeros() override;
 
-    bool is_zero(uint32_t i, uint32_t j) const override;
+    bool is_zero(uint32_t col, uint32_t row) const override;
     void move_vector_from(
-        uint32_t i,
+        uint32_t col,
         std::unique_ptr<AbstractSparseSemiunitaryMatrix>& subspace_from) override;
     void resize(uint32_t cols, uint32_t rows);
 
-    void add_to_position(double value, uint32_t i, uint32_t j) override;
-    double at(uint32_t i, uint32_t j) const override;
+    void add_to_position(double value, uint32_t col, uint32_t row) override;
+    double at(uint32_t col, uint32_t row) const override;
 
     void normalize() override;
 

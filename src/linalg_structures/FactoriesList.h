@@ -26,6 +26,12 @@ class FactoriesList {
     createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
     std::vector<std::unique_ptr<AbstractDenseVector>> createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) const;
     std::unique_ptr<AbstractDenseVector> createVector() const;
+    /**
+     * @brief Creates a sparse semi‑unitary matrix.
+     * @param cols Number of columns (vectors).
+     * @param rows Number of rows.
+     * @return std::unique_ptr<AbstractSparseSemiunitaryMatrix>
+     */
     std::unique_ptr<AbstractSparseSemiunitaryMatrix>
     createSparseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
     std::unique_ptr<AbstractSymmetricMatrix> createSparseSymmetricMatrix(uint32_t size) const;

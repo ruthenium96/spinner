@@ -38,11 +38,11 @@ struct IteratorStdImpl: public AbstractSparseSemiunitaryMatrix::Iterator {
 };
 
 std::unique_ptr<AbstractSparseSemiunitaryMatrix::Iterator>
-EmhashSparseSemiunitaryMatrix::GetNewIterator(size_t index_of_vector) const {
+EmhashSparseSemiunitaryMatrix::GetNewIterator(size_t col) const {
     return std::make_unique<IteratorStdImpl>(
-        basis_[index_of_vector].cbegin(),
-        basis_[index_of_vector].cend(),
-        basis_[index_of_vector].size());
+        basis_[col].cbegin(),
+        basis_[col].cend(),
+        basis_[col].size());
 }
 
 uint32_t EmhashSparseSemiunitaryMatrix::size_cols() const {
@@ -57,8 +57,8 @@ bool EmhashSparseSemiunitaryMatrix::empty() const {
     return basis_.empty();
 }
 
-bool EmhashSparseSemiunitaryMatrix::vempty(uint32_t index_of_vector) const {
-    return basis_[index_of_vector].empty();
+bool EmhashSparseSemiunitaryMatrix::vempty(uint32_t col) const {
+    return basis_[col].empty();
 }
 
 void EmhashSparseSemiunitaryMatrix::clear() {
@@ -72,19 +72,19 @@ void EmhashSparseSemiunitaryMatrix::move_vector_from(
     basis_.emplace_back(std::move(rhs_->basis_[i]));
 }
 
-void EmhashSparseSemiunitaryMatrix::add_to_position(double value, uint32_t i, uint32_t j) {
-    if (!basis_[i].contains(j)) {
-        basis_[i].emplace(j, value);
+void EmhashSparseSemiunitaryMatrix::add_to_position(double value, uint32_t col, uint32_t row) {
+    if (!basis_[col].contains(row)) {
+        basis_[col].emplace(row, value);
     } else {
-        basis_[i][j] += value;
+        basis_[col][row] += value;
     }
 }
 
-double EmhashSparseSemiunitaryMatrix::at(uint32_t i, uint32_t j) const {
-    if (!basis_.at(i).contains(j)) {
+double EmhashSparseSemiunitaryMatrix::at(uint32_t col, uint32_t row) const {
+    if (!basis_.at(col).contains(row)) {
         return 0;
     }
-    return basis_.at(i).at(j);
+    return basis_.at(col).at(row);
 }
 
 void EmhashSparseSemiunitaryMatrix::resize(uint32_t cols, uint32_t rows) {
@@ -92,8 +92,8 @@ void EmhashSparseSemiunitaryMatrix::resize(uint32_t cols, uint32_t rows) {
     rows_ = rows;
 }
 
-bool EmhashSparseSemiunitaryMatrix::is_zero(uint32_t i, uint32_t j) const {
-    return !basis_.at(i).contains(j);
+bool EmhashSparseSemiunitaryMatrix::is_zero(uint32_t col, uint32_t row) const {
+    return !basis_.at(col).contains(row);
 }
 
 void EmhashSparseSemiunitaryMatrix::eraseExplicitZeros() {
