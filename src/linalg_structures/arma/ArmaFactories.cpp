@@ -35,20 +35,6 @@ ArmaDenseTransformAndDiagonalizeFactory::createSparseDiagonalizableMatrix(uint32
     }
 }
 
-std::unique_ptr<AbstractDenseSemiunitaryMatrix>
-ArmaDenseTransformAndDiagonalizeFactory::createDenseSemiunitaryMatrix(
-    uint32_t cols,
-    uint32_t rows) {
-    if (getPrecision() == Precision::SINGLE) {
-        auto matrix = std::make_unique<ArmaDenseSemiunitaryMatrix<float>>();
-        matrix->resize(rows, cols);
-        return matrix;
-    } else {
-        auto matrix = std::make_unique<ArmaDenseSemiunitaryMatrix<double>>();
-        matrix->resize(rows, cols);
-        return matrix;
-    }
-}
 
 std::unique_ptr<AbstractDenseVector> ArmaDenseTransformAndDiagonalizeFactory::createVector() {
     if (getPrecision() == Precision::SINGLE) {

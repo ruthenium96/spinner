@@ -33,21 +33,6 @@ EigenDenseTransformAndDiagonalizeFactory::createSparseDiagonalizableMatrix(uint3
     }
 }
 
-std::unique_ptr<AbstractDenseSemiunitaryMatrix>
-EigenDenseTransformAndDiagonalizeFactory::createDenseSemiunitaryMatrix(
-    uint32_t cols,
-    uint32_t rows) {
-    if (getPrecision() == Precision::SINGLE) {
-        auto matrix = std::make_unique<EigenDenseSemiunitaryMatrix<float>>();
-        matrix->resize(rows, cols);
-        return matrix;
-    } else {
-        auto matrix = std::make_unique<EigenDenseSemiunitaryMatrix<double>>();
-        matrix->resize(rows, cols);
-        return matrix;
-    }
-}
-
 std::vector<std::unique_ptr<AbstractDenseVector>> 
 EigenDenseTransformAndDiagonalizeFactory::createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) {
     std::vector<std::unique_ptr<AbstractDenseVector>> answer;

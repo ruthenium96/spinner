@@ -19,8 +19,6 @@ class AbstractDenseTransformAndDiagonalizeFactory {
     createDenseDiagonalizableMatrix(uint32_t size) = 0;
     virtual std::unique_ptr<AbstractDiagonalizableMatrix>
     createSparseDiagonalizableMatrix(uint32_t size) = 0;
-    virtual std::unique_ptr<AbstractDenseSemiunitaryMatrix>
-    createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) = 0;
     /**
      * @brief Creates a given number of random unit vectors.
      * For each vector 1) independently generates size_of_vector elements 

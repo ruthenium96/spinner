@@ -22,8 +22,6 @@ class FactoriesList {
     createDenseDiagonalizableMatrix(uint32_t size) const;
     std::unique_ptr<AbstractDiagonalizableMatrix>
     createSparseDiagonalizableMatrix(uint32_t size) const;
-    std::unique_ptr<AbstractDenseSemiunitaryMatrix>
-    createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const;
     /**
      * @brief Creates a given number of random unit vectors (using AbstractDenseTransformAndDiagonalizeFactory).
      * For each vector 1) independently generates size_of_vector elements 

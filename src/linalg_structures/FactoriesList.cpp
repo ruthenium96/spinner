@@ -13,11 +13,6 @@ FactoriesList::createSparseDiagonalizableMatrix(uint32_t size) const {
     return denseFactory_->createSparseDiagonalizableMatrix(size);
 }
 
-std::unique_ptr<AbstractDenseSemiunitaryMatrix>
-FactoriesList::createDenseSemiunitaryMatrix(uint32_t cols, uint32_t rows) const {
-    return denseFactory_->createDenseSemiunitaryMatrix(cols, rows);
-}
-
 std::vector<std::unique_ptr<AbstractDenseVector>> 
 FactoriesList::createRandomUnitVectors(uint32_t size_of_vector, uint32_t number_of_vectors) const {
     return denseFactory_->createRandomUnitVectors(size_of_vector, number_of_vectors);
