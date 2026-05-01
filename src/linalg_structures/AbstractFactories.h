@@ -9,14 +9,46 @@
 #include "AbstractSymmetricMatrix.h"
 
 namespace spinner::linalg_structures {
+/**
+ * @enum Precision
+ * @brief Numeric precision for matrix/vector entries.
+ */
+enum Precision {
+    SINGLE, ///< Single precision (float).
+    DOUBLE  ///< Double precision (double).
+};
 
-enum Precision { SINGLE, DOUBLE };
-
+/**
+ * @class AbstractDenseTransformAndDiagonalizeFactory
+ * @brief Factory for dense linear algebra objects that require full linear algebra backends.
+ *
+ * This factory creates wrappers around matrix/vector implementations from
+ * standard linear algebra packages. The objects produced are intended for
+ * operations that rely on matrix multiplication with one or several dense matrices,
+ * eigenvalue solvers, and other dense linear algebra routines. 
+ */
 class AbstractDenseTransformAndDiagonalizeFactory {
   public:
+    /**
+     * @brief Returns a default (concrete) factory instance.
+     *
+     * The exact type depends on the CMake configuration.
+     *
+     * @return std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory>
+     */
     static std::shared_ptr<AbstractDenseTransformAndDiagonalizeFactory> defaultFactory();
+    /**
+     * @brief Creates an dense diagonalizable matrix.
+     * @param size Size of the diagonalizable matrix.
+     * @return std::unique_ptr<AbstractDiagonalizableMatrix>
+     */
     virtual std::unique_ptr<AbstractDiagonalizableMatrix>
     createDenseDiagonalizableMatrix(uint32_t size) = 0;
+    /**
+     * @brief Creates an sparse diagonalizable matrix.
+     * @param size Size of the diagonalizable matrix.
+     * @return std::unique_ptr<AbstractDiagonalizableMatrix>
+     */
     virtual std::unique_ptr<AbstractDiagonalizableMatrix>
     createSparseDiagonalizableMatrix(uint32_t size) = 0;
     /**
@@ -39,9 +71,17 @@ class AbstractDenseTransformAndDiagonalizeFactory {
   private:
     Precision precision_ = Precision::DOUBLE;
   public:
+    /**
+     * @brief Sets the precision for subsequent creations.
+     * @param precision Precision enum (SINGLE or DOUBLE).
+     */
     void setPrecision(Precision precision) {
         precision_ = precision;
     }
+    /**
+     * @brief Returns the current precision setting.
+     * @return Precision
+     */
     Precision getPrecision() const {
         return precision_;
     }

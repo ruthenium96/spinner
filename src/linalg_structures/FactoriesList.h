@@ -18,8 +18,18 @@ class FactoriesList {
         std::shared_ptr<AbstractSparseTransformFactory> sparseMatrix =
             AbstractSparseTransformFactory::defaultSparseFactory());
 
+    /**
+     * @brief Creates an dense diagonalizable matrix.
+     * @param size Size of the diagonalizable matrix.
+     * @return std::unique_ptr<AbstractDiagonalizableMatrix>
+     */
     std::unique_ptr<AbstractDiagonalizableMatrix>
     createDenseDiagonalizableMatrix(uint32_t size) const;
+    /**
+     * @brief Creates an sparse diagonalizable matrix.
+     * @param size Size of the diagonalizable matrix.
+     * @return std::unique_ptr<AbstractDiagonalizableMatrix>
+     */
     std::unique_ptr<AbstractDiagonalizableMatrix>
     createSparseDiagonalizableMatrix(uint32_t size) const;
     /**
