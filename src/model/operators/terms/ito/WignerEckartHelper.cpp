@@ -52,9 +52,9 @@ double WignerEckartHelper::total_9j_coefficient(
 	double square_roots_prod = 1;
 
 	for (const auto& instruction : order_of_summation_->getInstructions()) {
-		size_t pos_one = instruction.positions_of_summands[0];
-		size_t pos_two = instruction.positions_of_summands[1];
-		size_t pos_fin = instruction.position_of_sum;
+		size_t pos_one = instruction.left;
+		size_t pos_two = instruction.right;
+		size_t pos_fin = instruction.result;
 
 		double left_one = left.getSpin(pos_one);
 		double left_two = left.getSpin(pos_two);
@@ -103,9 +103,9 @@ void WignerEckartHelper::construct_overlapping_levels(
     std::vector<index_converter::s_squared::Level> temp_result;
 
     for (const auto& instruction : order_of_summation_->getInstructions()) {
-        auto pos_one = instruction.positions_of_summands[0];
-        auto pos_two = instruction.positions_of_summands[1];
-        auto pos_fin = instruction.position_of_sum;
+        auto pos_one = instruction.left;
+        auto pos_two = instruction.right;
+        auto pos_fin = instruction.result;
         temp_result.reserve(answer.capacity());
 
         for (int i = 0; i < answer.size(); ++i) {

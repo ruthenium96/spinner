@@ -38,9 +38,9 @@ inline void IndexPermutator::construct_level_and_sign(
     std::map<unsigned long, spin_algebra::Multiplicity> visited_multiplicities;
 
     for (const auto& instruction : converter_->getOrderOfSummation()->getInstructions()) {
-        const auto pos_one = instruction.positions_of_summands[0];
-        const auto pos_two = instruction.positions_of_summands[1];
-        const auto pos_res = instruction.position_of_sum;
+        const auto pos_one = instruction.left;
+        const auto pos_two = instruction.right;
+        const auto pos_res = instruction.result;
 
         if (pos_one == extended_g[pos_one] || pos_two == extended_g[pos_two]) {
             continue;
@@ -104,27 +104,28 @@ group::Permutation IndexPermutator::extendPermutation(const group::Permutation& 
         std::vector<OrderOfSummation::AdditionInstruction> permuted_order;
         permuted_order.reserve(order_of_summation->size());
         for (const auto& instruction : order_of_summation->getInstructions()) {
-            auto pos_one = instruction.positions_of_summands[0];
-            auto pos_two = instruction.positions_of_summands[1];
+            auto pos_one = instruction.left;
+            auto pos_two = instruction.right;
             if (mb_extended_permutation[pos_one].has_value() && 
                 mb_extended_permutation[pos_two].has_value()) {
                 auto perm_pos_one = mb_extended_permutation[pos_one].value();
                 auto perm_pos_two = mb_extended_permutation[pos_two].value();
                 OrderOfSummation::AdditionInstruction perm_instruction;
-                perm_instruction.positions_of_summands = {perm_pos_one, perm_pos_two};
-                perm_instruction.position_of_sum = instruction.position_of_sum;
+                perm_instruction.left = perm_pos_one;
+                perm_instruction.right = perm_pos_two;
+                perm_instruction.result = instruction.result;
                 permuted_order.push_back(perm_instruction);
             }
         }
 
         for (const auto& perm_instruction : permuted_order) {
-            auto perm_pos_one = perm_instruction.positions_of_summands[0];
-            auto perm_pos_two = perm_instruction.positions_of_summands[1];
-            auto perm_pos_sum = perm_instruction.position_of_sum;
+            auto perm_pos_one = perm_instruction.left;
+            auto perm_pos_two = perm_instruction.right;
+            auto perm_pos_sum = perm_instruction.result;
             for (const auto& instruction : order_of_summation->getInstructions()) {
-                auto pos_one = instruction.positions_of_summands[0];
-                auto pos_two = instruction.positions_of_summands[1];
-                auto pos_sum = instruction.position_of_sum;
+                auto pos_one = instruction.left;
+                auto pos_two = instruction.right;
+                auto pos_sum = instruction.result;
 
                 if ((perm_pos_one == pos_one && perm_pos_two == pos_two) ||
                 (perm_pos_two == pos_one && perm_pos_one == pos_two)) {

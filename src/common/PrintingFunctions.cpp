@@ -203,9 +203,10 @@ void theoreticalValuesPrint(
 void orderOfSummationPrint(const index_converter::s_squared::OrderOfSummation& order_of_summation) {
     common::Logger::verbose_msg("Order of spin summation:");
     for (const auto& instruction : order_of_summation) {
-        common::Logger::verbose("{} -> {}",
-                                spdlog::fmt_lib::join(instruction.positions_of_summands, " + "),
-                                instruction.position_of_sum);
+        common::Logger::verbose("{} + {} -> {}",
+                                instruction.left,
+                                instruction.right,
+                                instruction.result);
     }
 }
 

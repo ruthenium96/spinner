@@ -74,7 +74,7 @@ void allMultiplicitiesWereSummedExactlyOnce(
     size_t number_of_all_mults) {
     std::vector<bool> multiplicity_was_summed(number_of_all_mults - 1, false);
     for (const auto& instruction : order_of_summation) {
-        for (const auto& position : instruction.positions_of_summands) {
+        for (const auto& position : {instruction.left, instruction.right}) {
             EXPECT_FALSE(multiplicity_was_summed[position])
                 << "Multiplicity " << position << " has been summed multiple times.";
             multiplicity_was_summed[position] = true;
@@ -97,11 +97,11 @@ void allMultiplicitiesAreReachableLeftToRight(
     }
 
     for (const auto& instruction : order_of_summation) {
-        for (const auto& position : instruction.positions_of_summands) {
+        for (const auto& position : {instruction.left, instruction.right}) {
             EXPECT_TRUE(multiplicity_are_reachable[position])
                 << "Multiplicity " << position << " is not reachable.";
         }
-        multiplicity_are_reachable[instruction.position_of_sum] = true;
+        multiplicity_are_reachable[instruction.result] = true;
     }
 }
 

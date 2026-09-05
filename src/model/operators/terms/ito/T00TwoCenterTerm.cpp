@@ -98,9 +98,9 @@ T00TwoCenterTerm::constructRanksOfTZero(uint32_t center_a, uint32_t center_b) co
     }
 
     for (const auto& instruction : *converter_->getOrderOfSummation()) {
-        size_t first_spin = instruction.positions_of_summands.at(0);
-        size_t second_spin = instruction.positions_of_summands.at(1);
-        size_t result_spin = instruction.position_of_sum;
+        size_t first_spin = instruction.left;
+        size_t second_spin = instruction.right;
+        size_t result_spin = instruction.result;
 
         uint8_t result_rank = (answer[first_spin] + answer[second_spin]) % 2;
         answer[result_spin] = result_rank;

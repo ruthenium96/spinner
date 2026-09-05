@@ -28,11 +28,9 @@ IndexConverter::IndexConverter(
     std::vector<Level> result_of_summation = {empty_level};
 
     for (const auto& instruction : *order_of_summation_) {
-        // we currently do not support cases with three or more summands:
-        assert(instruction.positions_of_summands.size() == 2);
-        size_t pos_one = instruction.positions_of_summands[0];
-        size_t pos_two = instruction.positions_of_summands[1];
-        size_t pos_sum = instruction.position_of_sum;
+        size_t pos_one = instruction.left;
+        size_t pos_two = instruction.right;
+        size_t pos_sum = instruction.result;
         std::vector<Level> temp_result;
         for (const auto& level : result_of_summation) {
             spin_algebra::MultiplicityDirectSum mult_one(level.getMultiplicity(pos_one));

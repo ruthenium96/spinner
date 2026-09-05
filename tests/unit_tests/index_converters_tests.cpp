@@ -32,10 +32,10 @@ TEST(converter_reversibility, s_squared_2222_3333_4444) {
 	auto orbits_one = group_one.construct_orbits_of_mults();
 	auto orbits_two = group_two.construct_orbits_of_mults();
 
-	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>(), 4, 3));
-	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>({orbits_one}), 4, 3));
-	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>({orbits_two}), 4, 3));
-	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>({orbits_one, orbits_two}), 4, 3));
+	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>(), 4));
+	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>({orbits_one}), 4));
+	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>({orbits_two}), 4));
+	orders_of_summation.push_back(s_squared::OrderOfSummation::constructFromOrbits(std::vector<std::vector<std::set<size_t>>>({orbits_one, orbits_two}), 4));
 	for (const auto& mults : vector_of_mults) {
 		for (const auto& order_of_summation : orders_of_summation) {
 		auto converter = std::make_shared<s_squared::IndexConverter>(mults, order_of_summation);
